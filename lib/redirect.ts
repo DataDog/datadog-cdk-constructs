@@ -1,5 +1,5 @@
 import { RuntimeType, runtimeLookup } from "./index";
-import * as lambda from '@aws-cdk/aws-lambda';
+import * as lambda from "@aws-cdk/aws-lambda";
 export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
 export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
 export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
@@ -12,22 +12,21 @@ export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
  * replacement handler to find.
  */
 
-
 export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
-    lambdas.forEach((downstream) => {
-      const cfnFunction = downstream.node.defaultChild as lambda.CfnFunction;
-      const originalHandler = cfnFunction.handler;
-      downstream.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
-      const handler = getDDHandler(downstream, addLayers);
-      if (handler === undefined) {
-        return;
-      }
-      cfnFunction.handler = handler;   
-    });
-  }
+  lambdas.forEach((l) => {
+    const cfnFunction = l.node.defaultChild as lambda.CfnFunction;
+    const originalHandler = cfnFunction.handler;
+    l.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
+    const handler = getDDHandler(l, addLayers);
+    if (handler === undefined) {
+      return;
+    }
+    cfnFunction.handler = handler;
+  });
+}
 
-function getDDHandler(downstream: lambda.Function, addLayers: boolean) {
-  let runtime: string = downstream.runtime.name + '';
+function getDDHandler(l: lambda.Function, addLayers: boolean) {
+  let runtime: string = l.runtime.name;
   let lambdaRuntime: RuntimeType = runtimeLookup[runtime];
   if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
     return;
