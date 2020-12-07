@@ -12,7 +12,7 @@ export enum RuntimeType {
 // Self defined interface that only applies to the macro - the FunctionProperties interface
 // defined in index.ts matches the CloudFormation AWS::Lambda::Function Properties interface.
 
-const LayerPrefix: string = "DatadogLayer";
+const LayerPrefix = "DatadogLayer";
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs10.x": RuntimeType.NODE,
   "nodejs12.x": RuntimeType.NODE,
@@ -47,10 +47,10 @@ export function applyLayers(
   //   return [];
   // }
   const errors: string[] = [];
-  let layerValue: number = 0;
+  let layerValue = 0;
   lambdas.forEach((l) => {
-    let runtime: string = l.runtime.name;
-    let lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
+    const runtime: string = l.runtime.name;
+    const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       return;
     }
@@ -73,7 +73,7 @@ export function applyLayers(
       layerARN = getLayerARN(region, nodeLayerVersion, runtime);
     }
     if (layerARN !== undefined) {
-      var layer = layers.get(layerARN);
+      let layer = layers.get(layerARN);
       if (layer === undefined) {
         layer = lambda.LayerVersion.fromLayerVersionArn(scope, LayerPrefix + layerValue, layerARN);
         layers.set(layerARN, layer); // could have token in key string

@@ -26,8 +26,8 @@ export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean)
 }
 
 function getDDHandler(l: lambda.Function, addLayers: boolean) {
-  let runtime: string = l.runtime.name;
-  let lambdaRuntime: RuntimeType = runtimeLookup[runtime];
+  const runtime: string = l.runtime.name;
+  const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
   if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
     return;
   }
