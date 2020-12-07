@@ -2,7 +2,8 @@ import { RuntimeType, runtimeLookup } from "./index";
 import * as lambda from "@aws-cdk/aws-lambda";
 export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
 export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
-export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
+export const JS_HANDLER_WITH_LAYERS =
+  "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
 export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
 
 /**
@@ -12,7 +13,10 @@ export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
  * replacement handler to find.
  */
 
-export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
+export function redirectHandlers(
+  lambdas: lambda.Function[],
+  addLayers: boolean
+) {
   lambdas.forEach((l) => {
     const cfnFunction = l.node.defaultChild as lambda.CfnFunction;
     const originalHandler = cfnFunction.handler;
@@ -28,7 +32,10 @@ export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean)
 function getDDHandler(l: lambda.Function, addLayers: boolean) {
   const runtime: string = l.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
-  if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
+  if (
+    lambdaRuntime === undefined ||
+    lambdaRuntime === RuntimeType.UNSUPPORTED
+  ) {
     return;
   }
   switch (lambdaRuntime) {
