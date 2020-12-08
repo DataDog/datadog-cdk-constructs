@@ -43,9 +43,6 @@ export function applyLayers(
   nodeLayerVersion?: number
 ) {
   // TODO: check region availability
-  // if (!availableRegions.has(region)) {
-  //   return [];
-  // }
   const errors: string[] = [];
   let layerValue = 0;
   lambdas.forEach((l) => {
@@ -94,7 +91,7 @@ export function applyLayers(
   return errors;
 }
 
-function getLayerARN(region: string, version: number, runtime: string) {
+export function getLayerARN(region: string, version: number, runtime: string) {
   const layerName = runtimeToLayerName[runtime];
   //TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
@@ -106,7 +103,7 @@ function getLayerARN(region: string, version: number, runtime: string) {
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-function getMissingLayerVersionErrorMsg(
+export function getMissingLayerVersionErrorMsg(
   functionKey: string,
   formalRuntime: string,
   paramRuntime: string
