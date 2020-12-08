@@ -26,9 +26,9 @@ class CdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     const datadog = new Datadog(this, "Datadog", {
-      lambdaFunctions: [<LAMBLA_FUNCTIONS>],
-      nodeLayerVersion: "<LAYER_VERSION>",
-      pythonLayerVersion: "<LAYER_VERSION>",
+      lambdaFunctions: [<LAMBDA_FUNCTIONS>],
+      nodeLayerVersion: <LAYER_VERSION>,
+      pythonLayerVersion: <LAYER_VERSION>,
       addLayers: <BOOLEAN>,
     });
   }
