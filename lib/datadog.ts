@@ -6,15 +6,16 @@ export interface DatadogProps {
   lambdaFunctions: lambda.Function[];
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
-  addLayers: boolean;
+  addLayers?: boolean;
 }
 
 export class Datadog extends cdk.Construct {
   /** allows accessing the counter function */
   constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
     super(scope, id);
-    //takes in region of first lambda function
-    //TODO: logic for no layer version
+    if (props.addLayers === undefined) {
+      props.addLayers = true;
+    }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
       applyLayers(

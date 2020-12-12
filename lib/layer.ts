@@ -42,7 +42,6 @@ export function applyLayers(
   pythonLayerVersion?: number,
   nodeLayerVersion?: number
 ) {
-  
   // TODO: check region availability
   const errors: string[] = [];
   let layerValue = 0;
