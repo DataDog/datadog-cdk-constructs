@@ -57,7 +57,7 @@ export function applyLayers(
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(
-          getMissingLayerVersionErrorMsg(l.toString(), "Python", "python")
+          getMissingLayerVersionErrorMsg(l.node.id, "Python", "python")
         );
         return;
       }
@@ -67,7 +67,7 @@ export function applyLayers(
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
         errors.push(
-          getMissingLayerVersionErrorMsg(l.toString(), "Node.js", "node")
+          getMissingLayerVersionErrorMsg(l.node.id, "Node.js", "node")
         );
         return;
       }

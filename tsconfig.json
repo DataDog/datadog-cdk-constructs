@@ -21,7 +21,8 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "stripInternal": false,
-    "target": "ES2018"
+    "target": "ES2018",
+    "types": ["jest"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"],
