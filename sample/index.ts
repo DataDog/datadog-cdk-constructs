@@ -25,11 +25,13 @@ export class ExampleStack extends cdk.Stack {
       handler: "hello_py.handler",
     });
 
-    const datadog = new Datadog(this, "Datadog", {
+    new Datadog(this, "Datadog", {
       lambdaFunctions: [hello, hello1, hello2],
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       addLayers: true,
+      forwarderARN:
+        "arn:aws:lambda:us-east-1:172597598159:function:datadog-forwarder-prod-org-11287",
     });
   }
 }

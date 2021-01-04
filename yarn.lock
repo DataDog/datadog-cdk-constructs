@@ -108,6 +108,17 @@
     "@aws-cdk/region-info" "1.71.0"
     constructs "^3.2.0"
 
+"@aws-cdk/aws-kinesis@1.71.0":
+  version "1.71.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-kinesis/-/aws-kinesis-1.71.0.tgz#48b9352404cee4eb0d6b1d45f1f65fafb31e3940"
+  integrity sha512-JD2spfr8BuxAqESIEzKHKhfic/BJPOI8GFNpz9xlwtCXRM35VoZxYalFUvf2TA/RYnZf9p4O2grn9vAu2eNGsA==
+  dependencies:
+    "@aws-cdk/aws-iam" "1.71.0"
+    "@aws-cdk/aws-kms" "1.71.0"
+    "@aws-cdk/aws-logs" "1.71.0"
+    "@aws-cdk/core" "1.71.0"
+    constructs "^3.2.0"
+
 "@aws-cdk/aws-kms@1.71.0":
   version "1.71.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-kms/-/aws-kms-1.71.0.tgz#3343dc1c2d685b0d90d4d327e1611e9d9321e0c2"
@@ -135,6 +146,18 @@
     "@aws-cdk/aws-sqs" "1.71.0"
     "@aws-cdk/core" "1.71.0"
     "@aws-cdk/cx-api" "1.71.0"
+    constructs "^3.2.0"
+
+"@aws-cdk/aws-logs-destinations@1.71.0":
+  version "1.71.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-logs-destinations/-/aws-logs-destinations-1.71.0.tgz#ef74b5defc514876fc3ed226b2bb1a12944dcbfa"
+  integrity sha512-MiWtEE0Njt5rACevxBFWHdCXnwSgxBXqqtKjFPMVKuMocvTqsWhQ8S6BA3rPfCYX3HNrkR5MmcdlZVpV57XCFw==
+  dependencies:
+    "@aws-cdk/aws-iam" "1.71.0"
+    "@aws-cdk/aws-kinesis" "1.71.0"
+    "@aws-cdk/aws-lambda" "1.71.0"
+    "@aws-cdk/aws-logs" "1.71.0"
+    "@aws-cdk/core" "1.71.0"
     constructs "^3.2.0"
 
 "@aws-cdk/aws-logs@1.71.0":

@@ -8,10 +8,6 @@ export enum RuntimeType {
   PYTHON,
   UNSUPPORTED,
 }
-
-// Self defined interface that only applies to the macro - the FunctionProperties interface
-// defined in index.ts matches the CloudFormation AWS::Lambda::Function Properties interface.
-
 const LayerPrefix = "DatadogLayer";
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs10.x": RuntimeType.NODE,

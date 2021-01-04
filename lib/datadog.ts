@@ -1,12 +1,13 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
-import { applyLayers, redirectHandlers } from "./index";
+import { applyLayers, redirectHandlers, addForwarder } from "./index";
 
 export interface DatadogProps {
   lambdaFunctions: lambda.Function[];
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   addLayers?: boolean;
+  forwarderARN: string;
 }
 
 export class Datadog extends cdk.Construct {
@@ -26,6 +27,7 @@ export class Datadog extends cdk.Construct {
         props.nodeLayerVersion
       );
       redirectHandlers(props.lambdaFunctions, props.addLayers);
+      addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
     }
   }
 }
