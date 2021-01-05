@@ -30,6 +30,7 @@ class CdkStack extends cdk.Stack {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
       addLayers: <BOOLEAN>,
+      forwarderArn: "<FORWARDER_ARN>"
     });
   }
 }
