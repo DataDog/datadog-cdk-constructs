@@ -36,7 +36,7 @@ export function applyLayers(
   region: string,
   lambdas: lambda.Function[],
   pythonLayerVersion?: number,
-  nodeLayerVersion?: number
+  nodeLayerVersion?: number,
 ) {
   // TODO: check region availability
   const errors: string[] = [];
@@ -53,7 +53,7 @@ export function applyLayers(
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(
-          getMissingLayerVersionErrorMsg(l.node.id, "Python", "python")
+          getMissingLayerVersionErrorMsg(l.node.id, "Python", "python"),
         );
         return;
       }
@@ -63,7 +63,7 @@ export function applyLayers(
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
         errors.push(
-          getMissingLayerVersionErrorMsg(l.node.id, "Node.js", "node")
+          getMissingLayerVersionErrorMsg(l.node.id, "Node.js", "node"),
         );
         return;
       }
@@ -75,7 +75,7 @@ export function applyLayers(
         layer = lambda.LayerVersion.fromLayerVersionArn(
           scope,
           LayerPrefix + layerValue,
-          layerARN
+          layerARN,
         );
         layers.set(layerARN, layer); // could have token in key string
         layerValue += 1;
@@ -102,7 +102,7 @@ export function getLayerARN(region: string, version: number, runtime: string) {
 export function getMissingLayerVersionErrorMsg(
   functionKey: string,
   formalRuntime: string,
-  paramRuntime: string
+  paramRuntime: string,
 ) {
   return (
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +

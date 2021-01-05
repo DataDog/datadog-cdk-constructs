@@ -7,7 +7,7 @@ export interface DatadogProps {
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   addLayers?: boolean;
-  forwarderARN: string;
+  forwarderARN?: string;
 }
 
 export class Datadog extends cdk.Construct {
@@ -24,10 +24,12 @@ export class Datadog extends cdk.Construct {
         region,
         props.lambdaFunctions,
         props.pythonLayerVersion,
-        props.nodeLayerVersion
+        props.nodeLayerVersion,
       );
       redirectHandlers(props.lambdaFunctions, props.addLayers);
-      addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
+      if (props.forwarderARN != undefined) {
+        addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
+      }
     }
   }
 }
