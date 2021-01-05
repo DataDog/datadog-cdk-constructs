@@ -17,8 +17,8 @@ export function addForwarder(
   );
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((l) => {
-    const subscriptionFilterValue = Md5.hashStr(l.functionArn).toString();
-    const subscriptionFilterValueLengnth = subscriptionFilterValue.length;
+    let subscriptionFilterValue = Md5.hashStr(l.functionArn).toString();
+    let subscriptionFilterValueLengnth = subscriptionFilterValue.length;
     l.logGroup.addSubscriptionFilter(
       SubscriptionFilterPrefix +
         subscriptionFilterValue.substring(
