@@ -32,6 +32,6 @@
     "@aws-cdk/aws-logs-destinations": "1.71.0",
     "@aws-cdk/core": "1.71.0",
     "@types/jest": "^26.0.18",
-    "ts-md5": "^1.2.7"
+    "crypto": "^1.0.1"
   }
 }

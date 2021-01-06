@@ -1,10 +1,9 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern } from "@aws-cdk/aws-logs";
-import { Md5 } from "ts-md5/dist/md5";
+import * as crypto from 'crypto';
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 const SubscriptionFilterPrefix = "DatadogSubscriptionFilter";
-// let subscriptionFilterValue = 0;
 export function addForwarder(
   scope: cdk.Construct,
   lambdaFunctions: lambda.Function[],
@@ -17,7 +16,7 @@ export function addForwarder(
   );
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((l) => {
-    let subscriptionFilterValue = Md5.hashStr(l.functionArn).toString();
+    let subscriptionFilterValue: string = crypto.createHash('md5').update(l.functionArn).digest('hex');
     let subscriptionFilterValueLengnth = subscriptionFilterValue.length;
     l.logGroup.addSubscriptionFilter(
       SubscriptionFilterPrefix +
