@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "CDK Construct library to automatically instrument python and node functions with datadog tracing",
   "bin": {
-    "datadog-cdk-constructs": "src/datadog.js"
+    "datadog-cdk-constructs": "src/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.71.0",
-    "@types/node": "10.17.27",
+    "@types/node": "^10.17.27",
     "@typescript-eslint/eslint-plugin": "^4.9.1",
     "@typescript-eslint/parser": "^4.9.1",
     "aws-cdk": "1.71.0",
@@ -28,7 +28,10 @@
   },
   "dependencies": {
     "@aws-cdk/aws-lambda": "1.71.0",
+    "@aws-cdk/aws-logs": "1.71.0",
+    "@aws-cdk/aws-logs-destinations": "1.71.0",
     "@aws-cdk/core": "1.71.0",
-    "@types/jest": "^26.0.18"
+    "@types/jest": "^26.0.18",
+    "crypto": "^1.0.1"
   }
 }
