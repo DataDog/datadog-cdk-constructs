@@ -16,13 +16,13 @@ export function addForwarder(
   );
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((l) => {
-    let subscriptionFilterValue: string = crypto.createHash('md5').update(l.functionArn).digest('hex');
-    let subscriptionFilterValueLengnth = subscriptionFilterValue.length;
+    let subscriptionFilterValue: string = crypto.createHash('sha256').update(l.functionArn).digest('hex');
+    let subscriptionFilterValueLength = subscriptionFilterValue.length;
     l.logGroup.addSubscriptionFilter(
       SubscriptionFilterPrefix +
         subscriptionFilterValue.substring(
-          subscriptionFilterValueLengnth - 8,
-          subscriptionFilterValueLengnth,
+          subscriptionFilterValueLength - 8,
+          subscriptionFilterValueLength,
         ),
       {
         destination: forwarderDestination,
