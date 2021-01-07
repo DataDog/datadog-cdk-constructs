@@ -46,7 +46,7 @@ To further configure your plugin, use the following custom parameters:
 | `addLayers`          | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.         |
 | `pythonLayerVersion` | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and `addLayers` is true. Find the latest version number from [https://github.com/DataDog/datadog-lambda-python/releases][5]. |
 | `nodeLayerVersion`   | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is true. Find the latest version number from [https://github.com/DataDog/datadog-lambda-js/releases][6].   |
-| `forwarderArn`         | When set, the plugin will automatically subscribe the functions' log groups to the Datadog Forwarder.  |
+| `forwarderArn`       | When set, the plugin will automatically subscribe the functions' log groups to the Datadog Forwarder.                                                                                                                                                                |
 
 ## How it works
 

@@ -20,7 +20,8 @@ describe("applyLayers", () => {
       code: lambda.Code.inline("test"),
       handler: "hello.handler",
     });
-    new Datadog(stack, "Datadog", {
+    const DatadogCDK = new Datadog(stack, "Datadog");
+    DatadogCDK.addLambdaFunction({
       lambdaFunctions: [hello],
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
@@ -49,7 +50,8 @@ describe("applyLayers", () => {
       code: lambda.Code.inline("test"),
       handler: "hello.handler",
     });
-    new Datadog(stack, "Datadog", {
+    const DatadogCDK = new Datadog(stack, "Datadog");
+    DatadogCDK.addLambdaFunction({
       lambdaFunctions: [hello],
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
@@ -68,6 +70,48 @@ describe("applyLayers", () => {
   });
 
   it("subscription filter is added", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_6,
+      code: lambda.Code.inline("test"),
+      handler: "hello.handler",
+    });
+    const hello1 = new lambda.Function(stack, "HelloHandler1", {
+      runtime: lambda.Runtime.PYTHON_3_6,
+      code: lambda.Code.inline("test"),
+      handler: "hello.handler",
+    });
+    const hello2 = new lambda.Function(stack, "HelloHandler2", {
+      runtime: lambda.Runtime.PYTHON_3_6,
+      code: lambda.Code.inline("test"),
+      handler: "hello.handler",
+    });
+
+    const DatadogCDK = new Datadog(stack, "Datadog");
+    DatadogCDK.addLambdaFunction({
+      lambdaFunctions: [hello, hello1, hello2],
+      nodeLayerVersion: 39,
+      pythonLayerVersion: 24,
+      forwarderARN: "forwarder-arn",
+    });
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Handler: `${PYTHON_HANDLER}`,
+    });
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+        },
+      },
+    });
+  });
+  it("works when properties are passed during object creation", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {

@@ -12,23 +12,31 @@ export interface DatadogProps {
 
 export class Datadog extends cdk.Construct {
   /** allows accessing the counter function */
-  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+  scope: cdk.Construct;
+  constructor(scope: cdk.Construct, id: string, props?: DatadogProps) {
     super(scope, id);
+    this.scope = scope;
+    if (props != undefined) {
+      this.addLambdaFunction(props);
+    }
+  }
+
+  public addLambdaFunction(props: DatadogProps) {
     if (props.addLayers === undefined) {
       props.addLayers = true;
     }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
       applyLayers(
-        scope,
+        this.scope,
         region,
         props.lambdaFunctions,
         props.pythonLayerVersion,
-        props.nodeLayerVersion,
+        props.nodeLayerVersion
       );
       redirectHandlers(props.lambdaFunctions, props.addLayers);
       if (props.forwarderARN != undefined) {
-        addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
+        addForwarder(this.scope, props.lambdaFunctions, props.forwarderARN);
       }
     }
   }

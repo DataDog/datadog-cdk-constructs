@@ -25,7 +25,8 @@ export class ExampleStack extends cdk.Stack {
       handler: "hello_py.handler",
     });
 
-    new Datadog(this, "Datadog", {
+    const DatadogCDK = new Datadog(this, "Datadog");
+    DatadogCDK.addLambdaFunction({
       lambdaFunctions: [hello, hello1, hello2],
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,

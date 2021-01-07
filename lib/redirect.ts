@@ -15,7 +15,7 @@ export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
 
 export function redirectHandlers(
   lambdas: lambda.Function[],
-  addLayers: boolean,
+  addLayers: boolean
 ) {
   lambdas.forEach((l) => {
     const cfnFunction = l.node.defaultChild as lambda.CfnFunction;
