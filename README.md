@@ -35,6 +35,25 @@ class CdkStack extends cdk.Stack {
   }
 }
 ```
+Or this can be done:
+```typescript
+import * as cdk from "@aws-cdk/core";
+import { Datadog } from "datadog-cdk-constructs/lib/index";
+
+class CdkStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+    const datadog = new Datadog(this, "Datadog");
+    datadog.addLambdaFunction({
+      lambdaFunctions: [<LAMBDA_FUNCTIONS>],
+      nodeLayerVersion: <LAYER_VERSION>,
+      pythonLayerVersion: <LAYER_VERSION>,
+      addLayers: <BOOLEAN>,
+      forwarderArn: "<FORWARDER_ARN>"
+    });
+  }
+}
+```
 
 ## Configuration
 
