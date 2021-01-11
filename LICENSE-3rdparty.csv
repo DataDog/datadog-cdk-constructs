@@ -40,7 +40,7 @@ color-name,github.com/colorjs/color-name,MIT,Copyright (c) 2015 Dmitry Ivanov
 concat-map,github.com/substack/node-concat-map,MIT,
 constructs,github.com/aws/constructs,Apache-2.0,Copyright License. Subject to the terms and conditions of
 crypto,github.com/npm/deprecate-holder,ISC,
-datadog-cdk-constructs,github.com/DataDog/datadog-cdk-constructs,Apache-2.0,
+datadog-cdk-constructs,github.com/DataDog/datadog-cdk-constructs,Apache-2.0,Copyright 2019 Datadog, Inc.
 diff-sequences,github.com/facebook/jest,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
 fs-extra,github.com/jprichardson/node-fs-extra,MIT,Copyright (c) 2011-2017 JP Richardson
 graceful-fs,github.com/isaacs/node-graceful-fs,ISC,"Copyright (c) Isaac Z. Schlueter, Ben Noordhuis, and Contributors"
