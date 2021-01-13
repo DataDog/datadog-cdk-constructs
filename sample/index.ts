@@ -38,8 +38,8 @@ export class ExampleStack extends cdk.Stack {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       addLayers: true,
-      forwarderARN:
-        "arn:aws:lambda:us-east-1:172597598159:function:datadog-forwarder-prod-org-11287",
+      forwarderARN:"arn:aws:lambda:us-east-1:601427279990:function:anthony-lam-dd-forwarder",
+      flushMetricsToLogs: false
     });
   }
 }

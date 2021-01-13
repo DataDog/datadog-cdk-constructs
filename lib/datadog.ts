@@ -8,7 +8,7 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
-import { applyLayers, redirectHandlers, addForwarder } from "./index";
+import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables } from "./index";
 
 export interface DatadogProps {
   lambdaFunctions: lambda.Function[];
@@ -16,6 +16,7 @@ export interface DatadogProps {
   nodeLayerVersion?: number;
   addLayers?: boolean;
   forwarderARN?: string;
+  flushMetricsToLogs?: boolean;
 }
 
 export class Datadog extends cdk.Construct {
@@ -24,6 +25,9 @@ export class Datadog extends cdk.Construct {
     super(scope, id);
     if (props.addLayers === undefined) {
       props.addLayers = true;
+    }
+    if (props.flushMetricsToLogs === undefined) {
+      props.flushMetricsToLogs = true;
     }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
@@ -38,6 +42,7 @@ export class Datadog extends cdk.Construct {
       if (props.forwarderARN != undefined) {
         addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
       }
+      applyEnvVariables(props.lambdaFunctions, props.flushMetricsToLogs)
     }
   }
 }
