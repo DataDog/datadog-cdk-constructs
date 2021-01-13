@@ -17,6 +17,7 @@ export interface DatadogProps {
   addLayers?: boolean;
   forwarderARN?: string;
   flushMetricsToLogs?: boolean;
+  site?: string;
 }
 
 export class Datadog extends cdk.Construct {
@@ -28,6 +29,9 @@ export class Datadog extends cdk.Construct {
     }
     if (props.flushMetricsToLogs === undefined) {
       props.flushMetricsToLogs = true;
+    }
+    if (props.site === undefined) {
+      props.site = "datadoghq.com"
     }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
@@ -42,7 +46,10 @@ export class Datadog extends cdk.Construct {
       if (props.forwarderARN != undefined) {
         addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
       }
-      applyEnvVariables(props.lambdaFunctions, props.flushMetricsToLogs)
+      applyEnvVariables(
+        props.lambdaFunctions,
+        props.flushMetricsToLogs,
+        props.site)
     }
   }
 }
