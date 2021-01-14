@@ -18,6 +18,8 @@ export interface DatadogProps {
   forwarderARN?: string;
   flushMetricsToLogs?: boolean;
   site?: string;
+  apiKey?: string | undefined;
+  apiKMSKey?: string | undefined;
 }
 
 export class Datadog extends cdk.Construct {
@@ -32,6 +34,9 @@ export class Datadog extends cdk.Construct {
     }
     if (props.site === undefined) {
       props.site = "datadoghq.com"
+    }
+    if (props.site != "datadoghq.com" && props.site != "datadoghq.eu") {
+      throw new Error('Site URL must be either datadoghq.com or datadoghq.eu')
     }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
@@ -49,7 +54,10 @@ export class Datadog extends cdk.Construct {
       applyEnvVariables(
         props.lambdaFunctions,
         props.flushMetricsToLogs,
-        props.site)
+        props.site,
+        props.apiKey,
+        props.apiKMSKey,
+        )
     }
   }
 }

@@ -13,7 +13,8 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.71.0",
+    "@aws-cdk/assert": "^1.71.0",
+    "@types/jest": "^26.0.19",
     "@types/node": "^10.17.27",
     "@typescript-eslint/eslint-plugin": "^4.9.1",
     "@typescript-eslint/parser": "^4.9.1",
@@ -31,7 +32,6 @@
     "@aws-cdk/aws-logs": "1.71.0",
     "@aws-cdk/aws-logs-destinations": "1.71.0",
     "@aws-cdk/core": "1.71.0",
-    "@types/jest": "^26.0.18",
     "crypto": "^1.0.1"
   }
 }
