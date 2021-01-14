@@ -21,6 +21,8 @@ export interface DatadogProps {
   apiKey?: string | undefined;
   apiKMSKey?: string | undefined;
   logLevel?: string;
+  enableXrayTracing?: boolean;
+  enableDDTracing?: boolean;
 }
 
 export class Datadog extends cdk.Construct {
@@ -34,16 +36,22 @@ export class Datadog extends cdk.Construct {
       props.flushMetricsToLogs = true;
     }
     if (props.site === undefined) {
-      props.site = "datadoghq.com"
+      props.site = "datadoghq.com";
     }
     if (props.site != "datadoghq.com" && props.site != "datadoghq.eu") {
-      throw new Error('Site URL must be either datadoghq.com or datadoghq.eu')
+      throw new Error('Invalid site URL. Must be either datadoghq.com or datadoghq.eu')
     }
     if (props.logLevel === undefined) {
-      props.logLevel = "info"
+      props.logLevel = "info";
     }
     if (props.logLevel != "debug" && props.logLevel != "info") {
-      throw new Error('Log level must be either info or debug')
+      throw new Error('Invalid log level. Must be either info or debug')
+    }
+    if (props.enableDDTracing === undefined) {
+      props.enableDDTracing = true;
+    }
+    if (props.enableDDTracing != true && props.enableDDTracing != false) {
+      throw new Error('Invalid value. Please either enable Datadog Tracing (set this to true) or disable Datadog Tracing (set this to false)')
     }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
@@ -64,8 +72,9 @@ export class Datadog extends cdk.Construct {
         props.site,
         props.apiKey,
         props.apiKMSKey,
-        props.logLevel
-        )
+        props.logLevel,
+        props.enableDDTracing,
+      )
     }
   }
 }
