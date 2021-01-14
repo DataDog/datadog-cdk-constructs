@@ -2,6 +2,7 @@ import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import "@aws-cdk/assert/jest";
 import { Datadog } from "../lib/index";
+import { siteURLEnvVar, logForwardingEnvVar } from "../lib/environment";
 import {
   JS_HANDLER_WITH_LAYERS,
   DD_HANDLER_ENV_VAR,
@@ -17,7 +18,7 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     new Datadog(stack, "Datadog", {
@@ -33,6 +34,8 @@ describe("applyLayers", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [siteURLEnvVar]: "datadoghq.com",
+          [logForwardingEnvVar]: "true",
         },
       },
     });
@@ -46,7 +49,7 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     new Datadog(stack, "Datadog", {
@@ -62,6 +65,8 @@ describe("applyLayers", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [siteURLEnvVar]: "datadoghq.com",
+          [logForwardingEnvVar]: "true",
         },
       },
     });
@@ -76,17 +81,17 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello2 = new lambda.Function(stack, "HelloHandler2", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
 
@@ -104,6 +109,8 @@ describe("applyLayers", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [siteURLEnvVar]: "datadoghq.com",
+          [logForwardingEnvVar]: "true",
         },
       },
     });

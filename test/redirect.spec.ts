@@ -19,7 +19,7 @@ describe("redirectHandlers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     redirectHandlers([hello], true);
@@ -37,7 +37,7 @@ describe("redirectHandlers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     redirectHandlers([hello], false);
@@ -55,7 +55,7 @@ describe("redirectHandlers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     redirectHandlers([hello], true);

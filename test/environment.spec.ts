@@ -71,7 +71,7 @@ describe("siteURLEnvVar", () => {
         });
         const hello2 = new lambda.Function(stack, "HelloHandler2", {
             runtime: lambda.Runtime.NODEJS_12_X,
-            code: lambda.Code.inline("test"),
+            code: lambda.Code.fromInline("test"),
             handler: "hello.handler",
           });
         new Datadog(stack, "Datadog", {
