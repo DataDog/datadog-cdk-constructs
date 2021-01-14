@@ -9,8 +9,14 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 export const apiKeyEnvVar = "DD_API_KEY";
 export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
-export const siteURLEnvVar = "DD_SITE"
-export const logForwardingEnvVar = "DD_FLUSH_TO_LOG"
+export const siteURLEnvVar = "DD_SITE";
+export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
+export const logLevelEnvVar = "DD_LOG_LEVEL";
+export const defaultEnvVar = {
+    "DD_SITE":"datadoghq.com",
+    "DD_FLUSH_TO_LOG":"true",
+    "DD_LOG_LEVEL":"info"
+};
 
 export function applyEnvVariables(
     lambdas: lambda.Function[],
@@ -18,21 +24,23 @@ export function applyEnvVariables(
     site: string,
     apiKey: string | undefined,
     apiKMSKey: string | undefined,
+    logLevel: string,
   ) {
     const errors: string[] = []
     lambdas.forEach((l) => {
-        l.addEnvironment(logForwardingEnvVar, flushMetricstoLogs.toString())
-        l.addEnvironment(siteURLEnvVar, site)
+        l.addEnvironment(logForwardingEnvVar, flushMetricstoLogs.toString());
+        l.addEnvironment(siteURLEnvVar, site);
+        l.addEnvironment(logLevelEnvVar, logLevel.toLowerCase());
 
         if (apiKey != undefined && apiKMSKey != undefined) {
           errors.push("The parameters apiKey and apiKMSKey are mutually exclusive. Please note this is only necessary if flushMetricstoLogs is set to false")
-        }
+        };
         if (apiKey != undefined && apiKMSKey === undefined) {
             l.addEnvironment(apiKeyEnvVar, apiKey)
-        }
+        };
         if (apiKey === undefined && apiKMSKey != undefined) {
-            l.addEnvironment(apiKeyKMSEnvVar, apiKMSKey)
-        }
+            l.addEnvironment(apiKeyKMSEnvVar, apiKMSKey);
+        };
       }
-    )
-}
+    );
+};

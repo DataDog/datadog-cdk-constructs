@@ -20,6 +20,7 @@ export interface DatadogProps {
   site?: string;
   apiKey?: string | undefined;
   apiKMSKey?: string | undefined;
+  logLevel?: string;
 }
 
 export class Datadog extends cdk.Construct {
@@ -37,6 +38,12 @@ export class Datadog extends cdk.Construct {
     }
     if (props.site != "datadoghq.com" && props.site != "datadoghq.eu") {
       throw new Error('Site URL must be either datadoghq.com or datadoghq.eu')
+    }
+    if (props.logLevel === undefined) {
+      props.logLevel = "info"
+    }
+    if (props.logLevel != "debug" && props.logLevel != "info") {
+      throw new Error('Log level must be either info or debug')
     }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
@@ -57,6 +64,7 @@ export class Datadog extends cdk.Construct {
         props.site,
         props.apiKey,
         props.apiKMSKey,
+        props.logLevel
         )
     }
   }
