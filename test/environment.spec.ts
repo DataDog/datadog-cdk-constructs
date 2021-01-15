@@ -20,6 +20,7 @@ describe("applyEnvVariables", () => {
         });
         new Datadog(stack, "Datadog", {
             lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn"
           });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
@@ -46,6 +47,7 @@ describe("siteURLEnvVar", () => {
         });
         new Datadog(stack, "Datadog", {
           lambdaFunctions: [hello],
+          forwarderARN: "forwarder-arn",
           site: "datadoghq.eu"
         });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -74,6 +76,7 @@ describe("siteURLEnvVar", () => {
         });
         new Datadog(stack, "Datadog", {
           lambdaFunctions: [hello],
+          forwarderARN: "forwarder-arn"
         });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
@@ -106,6 +109,7 @@ describe("siteURLEnvVar", () => {
           });
         new Datadog(stack, "Datadog", {
           lambdaFunctions: [hello1, hello2],
+          forwarderARN: "forwarder-arn"
         });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
@@ -155,6 +159,7 @@ describe("logForwardingEnvVar", () => {
         });
         new Datadog(stack, "Datadog", {
             lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn",
             flushMetricsToLogs: false
           });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -183,6 +188,7 @@ describe("logForwardingEnvVar", () => {
         });
         new Datadog(stack, "Datadog", {
             lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn"
           });
           expect(stack).toHaveResource("AWS::Lambda::Function", {
             Environment: {
@@ -233,6 +239,7 @@ describe("logLevelEnvVar", () => {
         });
         new Datadog(stack, "Datadog", {
             lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn",
             logLevel: "debug"
           });
           expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -259,13 +266,9 @@ describe("logLevelEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        const hello2 = new lambda.Function(stack, "HelloHandler2", {
-            runtime: lambda.Runtime.NODEJS_12_X,
-            code: lambda.Code.fromInline("test"),
-            handler: "hello.handler",
-          });
         new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello, hello2]
+            lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn"
           });
           expect(stack).toHaveResource("AWS::Lambda::Function", {
             Environment: {
@@ -342,7 +345,8 @@ describe("enableDDTracingEnvVar", () => {
           handler: "hello.handler",
         });
         new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello]
+            lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn"
           });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
@@ -355,5 +359,23 @@ describe("enableDDTracingEnvVar", () => {
             }
           },
         });
+    });
+    it("throws error if Datadog Tracing is enabled but forwarder is not defined", () => {
+        const app = new cdk.App();
+        const stack = new cdk.Stack(app, "stack", {
+          env: {
+            region: "us-west-2",
+          },
+        });
+        const hello = new lambda.Function(stack, "HelloHandler", {
+          runtime: lambda.Runtime.NODEJS_10_X,
+          code: lambda.Code.fromInline("test"),
+          handler: "hello.handler",
+        });
+        expect(() => {
+            new Datadog(stack, "Datadog", {
+                lambdaFunctions: [hello],
+              });
+        }).toThrowError("A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false");
     });
 });

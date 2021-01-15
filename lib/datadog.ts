@@ -53,6 +53,9 @@ export class Datadog extends cdk.Construct {
     if (props.enableDDTracing != true && props.enableDDTracing != false) {
       throw new Error('Invalid value. Please either enable Datadog Tracing (set this to true) or disable Datadog Tracing (set this to false)')
     }
+    if ((props.enableDDTracing === true || props.enableDDTracing === undefined) && props.forwarderARN === undefined) {
+      throw new Error('A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false')
+    }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
       applyLayers(
