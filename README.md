@@ -60,7 +60,7 @@ The CDK construct takes in a list of lambda functions and installs the Datadog L
 [6]: https://github.com/DataDog/datadog-lambda-js/releases
 [7]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-subscriptionfilter.html
 
-# Opening Issues
+## Opening Issues
 
 If you encounter a bug with this package, we want to hear about it. Before opening a new issue, search the existing issues to avoid duplicates.
 
