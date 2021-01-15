@@ -59,3 +59,25 @@ The CDK construct takes in a list of lambda functions and installs the Datadog L
 [5]: https://github.com/DataDog/datadog-lambda-python/releases
 [6]: https://github.com/DataDog/datadog-lambda-js/releases
 [7]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-subscriptionfilter.html
+
+# Opening Issues
+
+If you encounter a bug with this package, we want to hear about it. Before opening a new issue, search the existing issues to avoid duplicates.
+
+When opening an issue, include the Datadog CDK Construct version, Node version, and stack trace if available. In addition, include the steps to reproduce when appropriate.
+
+You can also open an issue for a feature request.
+
+## Contributing
+
+If you find an issue with this package and have a fix, please feel free to open a pull request following the [procedures](https://github.com/DataDog/dd-cdk-constructs/blob/main/CONTRIBUTING.md).
+
+## Community
+
+For product feedback and questions, join the `#serverless` channel in the [Datadog community on Slack](https://chat.datadoghq.com/).
+
+## License
+
+Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
+
+This product includes software developed at Datadog (https://www.datadoghq.com/). Copyright 2021 Datadog, Inc.
