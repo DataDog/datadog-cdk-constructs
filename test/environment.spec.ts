@@ -2,7 +2,7 @@ import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import "@aws-cdk/assert/jest";
 import { Datadog } from "../lib/index";
-import { siteURLEnvVar, logForwardingEnvVar, defaultEnvVar, logLevelEnvVar, enableDDTracingEnvVar } from "../lib/environment";
+import { siteURLEnvVar, logForwardingEnvVar, defaultEnvVar, logLevelEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/environment";
 import { DD_HANDLER_ENV_VAR } from "../lib/redirect";
 
 describe("applyEnvVariables", () => {
@@ -57,7 +57,8 @@ describe("siteURLEnvVar", () => {
               [logForwardingEnvVar]: "true",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
               [logLevelEnvVar]: "info",
-              [enableDDTracingEnvVar]: "true"
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
             },
           },
         });
@@ -85,7 +86,8 @@ describe("siteURLEnvVar", () => {
               [logForwardingEnvVar]: "true",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
               [logLevelEnvVar]: "info",
-              [enableDDTracingEnvVar]: "true"
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
             },
           },
         });
@@ -118,7 +120,8 @@ describe("siteURLEnvVar", () => {
               [logForwardingEnvVar]: "true",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
               [logLevelEnvVar]: "info",
-              [enableDDTracingEnvVar]: "true"
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
             },
           },
         });
@@ -169,7 +172,8 @@ describe("logForwardingEnvVar", () => {
               [logForwardingEnvVar]: "false",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
               [logLevelEnvVar]: "info",
-              [enableDDTracingEnvVar]: "true"
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
             },
           },
         });
@@ -197,7 +201,8 @@ describe("logForwardingEnvVar", () => {
                 [logForwardingEnvVar]: "true",
                 [DD_HANDLER_ENV_VAR]: "hello.handler",
                 [logLevelEnvVar]: "info",
-                [enableDDTracingEnvVar]: "true"
+                [enableDDTracingEnvVar]: "true",
+                [injectLogContextEnvVar]: "true"
               },
             },
         });
@@ -249,7 +254,8 @@ describe("logLevelEnvVar", () => {
                 [siteURLEnvVar]: "datadoghq.com",
                 [logForwardingEnvVar]: "true",
                 [DD_HANDLER_ENV_VAR]: "hello.handler",
-                [enableDDTracingEnvVar]: "true"
+                [enableDDTracingEnvVar]: "true",
+                [injectLogContextEnvVar]: "true"
               },
             },
         });
@@ -277,7 +283,8 @@ describe("logLevelEnvVar", () => {
                 [siteURLEnvVar]: "datadoghq.com",
                 [logForwardingEnvVar]: "true",
                 [DD_HANDLER_ENV_VAR]: "hello.handler",
-                [enableDDTracingEnvVar]: "true"
+                [enableDDTracingEnvVar]: "true",
+                [injectLogContextEnvVar]: "true"
               },
             },
         });
@@ -327,7 +334,8 @@ describe("enableDDTracingEnvVar", () => {
               [logLevelEnvVar]: "info",
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
-              [enableDDTracingEnvVar]: "false"
+              [enableDDTracingEnvVar]: "false",
+              [injectLogContextEnvVar]: "true"
             }
           },
         });
@@ -355,7 +363,8 @@ describe("enableDDTracingEnvVar", () => {
               [logLevelEnvVar]: "info",
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
-              [enableDDTracingEnvVar]: "true"
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
             }
           },
         });
@@ -377,5 +386,67 @@ describe("enableDDTracingEnvVar", () => {
                 lambdaFunctions: [hello],
               });
         }).toThrowError("A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false");
+    });
+});
+
+describe("injectLogContextEnvVar", () => {
+    it("disables log injection when set to false", () => {
+        const app = new cdk.App();
+        const stack = new cdk.Stack(app, "stack", {
+          env: {
+            region: "us-west-2",
+          },
+        });
+        const hello = new lambda.Function(stack, "HelloHandler", {
+          runtime: lambda.Runtime.NODEJS_10_X,
+          code: lambda.Code.fromInline("test"),
+          handler: "hello.handler",
+        });
+        new Datadog(stack, "Datadog", {
+            lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn",
+            injectLogContext: false
+          });
+        expect(stack).toHaveResource("AWS::Lambda::Function", {
+          Environment: {
+            Variables: {
+              [DD_HANDLER_ENV_VAR]: "hello.handler",
+              [logLevelEnvVar]: "info",
+              [siteURLEnvVar]: "datadoghq.com",
+              [logForwardingEnvVar]: "true",
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "false"
+            }
+          },
+        });
+    });
+    it("enables log injection by default if value is undefined", () => {
+        const app = new cdk.App();
+        const stack = new cdk.Stack(app, "stack", {
+          env: {
+            region: "us-west-2",
+          },
+        });
+        const hello = new lambda.Function(stack, "HelloHandler", {
+          runtime: lambda.Runtime.NODEJS_10_X,
+          code: lambda.Code.fromInline("test"),
+          handler: "hello.handler",
+        });
+        new Datadog(stack, "Datadog", {
+            lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn"
+          });
+        expect(stack).toHaveResource("AWS::Lambda::Function", {
+          Environment: {
+            Variables: {
+              [DD_HANDLER_ENV_VAR]: "hello.handler",
+              [logLevelEnvVar]: "info",
+              [siteURLEnvVar]: "datadoghq.com",
+              [logForwardingEnvVar]: "true",
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
+            }
+          },
+        });
     });
 });

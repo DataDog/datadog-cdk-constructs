@@ -23,6 +23,7 @@ export interface DatadogProps {
   logLevel?: string;
   enableXrayTracing?: boolean;
   enableDDTracing?: boolean;
+  injectLogContext?: boolean;
 }
 
 export class Datadog extends cdk.Construct {
@@ -56,6 +57,9 @@ export class Datadog extends cdk.Construct {
     if ((props.enableDDTracing === true || props.enableDDTracing === undefined) && props.forwarderARN === undefined) {
       throw new Error('A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false')
     }
+    if (props.injectLogContext === undefined) {
+      props.injectLogContext = true;
+    }
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
       applyLayers(
@@ -77,6 +81,7 @@ export class Datadog extends cdk.Construct {
         props.apiKMSKey,
         props.logLevel,
         props.enableDDTracing,
+        props.injectLogContext
       )
     }
   }
