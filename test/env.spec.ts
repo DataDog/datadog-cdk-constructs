@@ -143,7 +143,7 @@ describe("siteURLEnvVar", () => {
                 lambdaFunctions: [hello],
                 site: "123.com"
               });
-        }).toThrowError(/Invalid site URL. Must be either datadoghq.com or datadoghq.eu/);
+        }).toThrowError(/Invalid site URL. Must be either datadoghq.com or datadoghq.eu./);
     });
 });
 
@@ -207,26 +207,6 @@ describe("logForwardingEnvVar", () => {
             },
         });
     });
-    // it("throws error if invalid log forwarding value", () => {
-    //     const app = new cdk.App();
-    //     const stack = new cdk.Stack(app, "stack", {
-    //       env: {
-    //         region: "us-west-2",
-    //       },
-    //     });
-    //     const hello = new lambda.Function(stack, "HelloHandler", {
-    //       runtime: lambda.Runtime.NODEJS_10_X,
-    //       code: lambda.Code.fromInline("test"),
-    //       handler: "hello.handler",
-    //     });
-    //     expect(() => {
-    //         new Datadog(stack, "Datadog", {
-    //             lambdaFunctions: [hello],
-    //             flushMetricsToLogs:
-    //           });
-    //     }).toThrowError(/Log forwarding can only be either true or false/);
-    // });
-
 });
 
 describe("logLevelEnvVar", () => {
@@ -306,7 +286,7 @@ describe("logLevelEnvVar", () => {
                 lambdaFunctions: [hello],
                 logLevel: "high"
               });
-        }).toThrowError(/Invalid log level. Must be either info or debug/);
+        }).toThrowError(/Invalid log level. Must be either info or debug./);
     });
 });
 
@@ -385,7 +365,7 @@ describe("enableDDTracingEnvVar", () => {
             new Datadog(stack, "Datadog", {
                 lambdaFunctions: [hello],
               });
-        }).toThrowError("A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false");
+        }).toThrowError("A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false.");
     });
 });
 

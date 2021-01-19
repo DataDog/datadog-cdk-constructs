@@ -7,6 +7,7 @@
  */
 
 import * as lambda from "@aws-cdk/aws-lambda";
+
 export const apiKeyEnvVar = "DD_API_KEY";
 export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
 export const siteURLEnvVar = "DD_SITE";
@@ -14,12 +15,14 @@ export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
 export const logLevelEnvVar = "DD_LOG_LEVEL";
 export const enableDDTracingEnvVar = "DD_TRACE_ENABLED";
 export const injectLogContextEnvVar = "DD_LOG_INJECTION";
+
 export const defaultEnvVar = {
-    "DD_SITE": "datadoghq.com",
-    "DD_FLUSH_TO_LOG": "true",
-    "DD_LOG_LEVEL": "info",
-    "DD_TRACE_ENABLED": "true",
-    "DD_LOG_INJECTION": "true"
+  addLayers: true,
+  site: "datadoghq.com",
+  flushMetricstoLogs: true,
+  logLevel: "info",
+  enableDDTracing: true,
+  injectLogContext: true
 };
 
 export function applyEnvVariables(
