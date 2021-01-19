@@ -9,11 +9,12 @@ We love pull requests. Here's a quick guide.
     ```
 2. Install the repositories dependencies, `yarn install`.
 3. Make your changes.
-4. Ensure the unit tests pass:
+4. Test your changes using CDK commands such as `cdk synth`, `cdk diff`, and `cdk deploy`
+5. Ensure the unit tests pass:
     ```bash
     yarn test
     ```
-1. Push to your fork and [submit a pull request][pr].
+6. Push to your fork and [submit a pull request][pr].
 
 [pr]: https://github.com/your-username/datadog-cdk-constructs/compare/DataDog:main...main
 
