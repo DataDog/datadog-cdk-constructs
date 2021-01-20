@@ -11,7 +11,6 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { applyLayers, redirectHandlers, addForwarder } from "./index";
 
 export interface DatadogProps {
-  lambdaFunctions: lambda.Function[];
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   addLayers?: boolean;
@@ -20,23 +19,30 @@ export interface DatadogProps {
 
 export class Datadog extends cdk.Construct {
   /** allows accessing the counter function */
+  scope: cdk.Construct;
+  props: DatadogProps;
   constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
     super(scope, id);
-    if (props.addLayers === undefined) {
-      props.addLayers = true;
+    this.scope = scope;
+    this.props = props;
+  }
+
+  public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
+    if (this.props.addLayers === undefined) {
+      this.props.addLayers = true;
     }
-    if (props != undefined && props.lambdaFunctions.length > 0) {
-      const region = `${props.lambdaFunctions[0].env.region}`;
+    if (this.props != undefined && lambdaFunctions.length > 0) {
+      const region = `${lambdaFunctions[0].env.region}`;
       applyLayers(
-        scope,
+        this.scope,
         region,
-        props.lambdaFunctions,
-        props.pythonLayerVersion,
-        props.nodeLayerVersion,
+        lambdaFunctions,
+        this.props.pythonLayerVersion,
+        this.props.nodeLayerVersion,
       );
-      redirectHandlers(props.lambdaFunctions, props.addLayers);
-      if (props.forwarderARN != undefined) {
-        addForwarder(scope, props.lambdaFunctions, props.forwarderARN);
+      redirectHandlers(lambdaFunctions, this.props.addLayers);
+      if (this.props.forwarderARN != undefined) {
+        addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
       }
     }
   }
