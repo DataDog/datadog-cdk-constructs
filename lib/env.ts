@@ -19,7 +19,7 @@ export const injectLogContextEnvVar = "DD_LOG_INJECTION";
 export const defaultEnvVar = {
   addLayers: true,
   site: "datadoghq.com",
-  flushMetricstoLogs: true,
+  flushMetricsToLogs: true,
   logLevel: "info",
   enableDDTracing: true,
   injectLogContext: true
@@ -27,31 +27,25 @@ export const defaultEnvVar = {
 
 export function applyEnvVariables(
     lambdas: lambda.Function[],
-    flushMetricstoLogs: boolean,
+    flushMetricsToLogs: boolean,
     site: string,
     apiKey: string | undefined,
     apiKMSKey: string | undefined,
     logLevel: string,
     enableDDTracing: boolean,
     injectLogContext: boolean
-  ) {
-    const errors: string[] = []
-    lambdas.forEach((l) => {
-        l.addEnvironment(logForwardingEnvVar, flushMetricstoLogs.toString().toLowerCase());
-        l.addEnvironment(siteURLEnvVar, site.toLowerCase());
-        l.addEnvironment(logLevelEnvVar, logLevel.toLowerCase());
-        l.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
-        l.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
-
-        if (apiKey != undefined && apiKMSKey != undefined) {
-          errors.push("The parameters apiKey and apiKMSKey are mutually exclusive. Please note this is only necessary if flushMetricstoLogs is set to false")
-        };
-        if (apiKey != undefined && apiKMSKey === undefined) {
-            l.addEnvironment(apiKeyEnvVar, apiKey)
-        };
-        if (apiKey === undefined && apiKMSKey != undefined) {
-            l.addEnvironment(apiKeyKMSEnvVar, apiKMSKey);
-        };
-      }
-    );
+) {
+  lambdas.forEach((l) => {
+    if (flushMetricsToLogs === false && apiKey != undefined) {
+      l.addEnvironment(apiKeyEnvVar, apiKey.toString());
+    }
+    if (flushMetricsToLogs === false && apiKMSKey != undefined) {
+      l.addEnvironment(apiKeyKMSEnvVar, apiKMSKey.toString());
+    }
+    l.addEnvironment(logForwardingEnvVar, flushMetricsToLogs.toString().toLowerCase());
+    l.addEnvironment(siteURLEnvVar, site.toLowerCase());
+    l.addEnvironment(logLevelEnvVar, logLevel.toLowerCase());
+    l.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
+    l.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
+  });
 };

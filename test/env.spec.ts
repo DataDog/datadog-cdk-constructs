@@ -1,8 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import "@aws-cdk/assert/jest";
-import { Datadog } from "../lib/index";
-import { siteURLEnvVar, logForwardingEnvVar, defaultEnvVar, logLevelEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/environment";
+import { Datadog, apiKeyEnvVar, apiKeyKMSEnvVar, siteURLEnvVar, logForwardingEnvVar, defaultEnvVar, logLevelEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/index";
 import { DD_HANDLER_ENV_VAR } from "../lib/redirect";
 
 describe("applyEnvVariables", () => {
@@ -26,7 +25,11 @@ describe("applyEnvVariables", () => {
           Environment: {
             Variables: {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              ...defaultEnvVar
+              [siteURLEnvVar]: defaultEnvVar.site,
+              [logForwardingEnvVar]: defaultEnvVar.flushMetricsToLogs.toString(),
+              [logLevelEnvVar]: defaultEnvVar.logLevel,
+              [enableDDTracingEnvVar]: defaultEnvVar.enableDDTracing.toString(),
+              [injectLogContextEnvVar]: defaultEnvVar.injectLogContext.toString()
             }
           },
         });
@@ -163,7 +166,8 @@ describe("logForwardingEnvVar", () => {
         new Datadog(stack, "Datadog", {
             lambdaFunctions: [hello],
             forwarderARN: "forwarder-arn",
-            flushMetricsToLogs: false
+            apiKey: "1234",
+            flushMetricsToLogs: false,
           });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
@@ -173,7 +177,8 @@ describe("logForwardingEnvVar", () => {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
               [logLevelEnvVar]: "info",
               [enableDDTracingEnvVar]: "true",
-              [injectLogContextEnvVar]: "true"
+              [injectLogContextEnvVar]: "true",
+              [apiKeyEnvVar]: "1234"
             },
           },
         });
@@ -429,4 +434,176 @@ describe("injectLogContextEnvVar", () => {
           },
         });
     });
+});
+
+describe("apiKeyEnvVar", () => {
+  it("sets a DD_API_KEY environment variable when flushMetricsToLogs is false", () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-west-2",
+        },
+      });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromInline("test"),
+        handler: "hello.handler",
+      });
+      new Datadog(stack, "Datadog", {
+          lambdaFunctions: [hello],
+          forwarderARN: "forwarder-arn",
+          flushMetricsToLogs: false,
+          apiKey: "1234"
+        });
+      expect(stack).toHaveResource("AWS::Lambda::Function", {
+        Environment: {
+          Variables: {
+            [DD_HANDLER_ENV_VAR]: "hello.handler",
+            [logLevelEnvVar]: "info",
+            [siteURLEnvVar]: "datadoghq.com",
+            [logForwardingEnvVar]: "false",
+            [enableDDTracingEnvVar]: "true",
+            [injectLogContextEnvVar]: "true",
+            [apiKeyEnvVar]: "1234"
+          }
+        },
+      });
+  });
+  it("does not set a DD_API_KEY environment variable when flushMetricsToLogs is true", () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-west-2",
+        },
+      });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromInline("test"),
+        handler: "hello.handler",
+      });
+      new Datadog(stack, "Datadog", {
+          lambdaFunctions: [hello],
+          forwarderARN: "forwarder-arn",
+          apiKey: "1234"
+        });
+      expect(stack).toHaveResource("AWS::Lambda::Function", {
+        Environment: {
+          Variables: {
+            [DD_HANDLER_ENV_VAR]: "hello.handler",
+            [logLevelEnvVar]: "info",
+            [siteURLEnvVar]: "datadoghq.com",
+            [logForwardingEnvVar]: "true",
+            [enableDDTracingEnvVar]: "true",
+            [injectLogContextEnvVar]: "true"
+          }
+        },
+      });
+  });
+  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are defined", () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-west-2",
+        },
+      });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromInline("test"),
+        handler: "hello.handler",
+      });
+      expect(() => {
+          new Datadog(stack, "Datadog", {
+              lambdaFunctions: [hello],
+              forwarderARN: "forwarder-arn",
+              flushMetricsToLogs: false,
+              apiKey: "1234",
+              apiKMSKey: "5678"
+            });
+      }).toThrowError("The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.");
+  });
+  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    expect(() => {
+        new Datadog(stack, "Datadog", {
+            lambdaFunctions: [hello],
+            forwarderARN: "forwarder-arn",
+            flushMetricsToLogs: false,
+          });
+    }).toThrowError("The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.");
+  });
+});
+
+describe("apiKMSKeyEnvVar", () => {
+  it("sets an DD_KMS_API_KEY environment variable when flushMetricsToLogs is false", () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-west-2",
+        },
+      });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromInline("test"),
+        handler: "hello.handler",
+      });
+      new Datadog(stack, "Datadog", {
+          lambdaFunctions: [hello],
+          forwarderARN: "forwarder-arn",
+          flushMetricsToLogs: false,
+          apiKMSKey: "5678"
+        });
+      expect(stack).toHaveResource("AWS::Lambda::Function", {
+        Environment: {
+          Variables: {
+            [DD_HANDLER_ENV_VAR]: "hello.handler",
+            [logLevelEnvVar]: "info",
+            [siteURLEnvVar]: "datadoghq.com",
+            [logForwardingEnvVar]: "false",
+            [enableDDTracingEnvVar]: "true",
+            [injectLogContextEnvVar]: "true",
+            [apiKeyKMSEnvVar]: "5678"
+          }
+        },
+      });
+  });
+  it("does not set DD_KMS_API_KEY environment variable when flushMetricsToLogs is true", () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-west-2",
+        },
+      });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromInline("test"),
+        handler: "hello.handler",
+      });
+      new Datadog(stack, "Datadog", {
+          lambdaFunctions: [hello],
+          forwarderARN: "forwarder-arn",
+          apiKMSKey: "5678"
+        });
+      expect(stack).toHaveResource("AWS::Lambda::Function", {
+        Environment: {
+          Variables: {
+            [DD_HANDLER_ENV_VAR]: "hello.handler",
+            [logLevelEnvVar]: "info",
+            [siteURLEnvVar]: "datadoghq.com",
+            [logForwardingEnvVar]: "true",
+            [enableDDTracingEnvVar]: "true",
+            [injectLogContextEnvVar]: "true"
+          }
+        },
+      });
+  });
 });
