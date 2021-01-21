@@ -24,6 +24,12 @@ export interface DatadogProps {
   injectLogContext?: boolean;
 }
 
+const site_list: string[] = [
+  "datadoghq.com",
+  "datadoghq.eu",
+  "us3.datadoghq.com",
+  "ddog-gov.com"
+]
 
 export class Datadog extends cdk.Construct {
   /** allows accessing the counter function */
@@ -35,12 +41,19 @@ export class Datadog extends cdk.Construct {
     if (props.flushMetricsToLogs === undefined) {
       props.flushMetricsToLogs = defaultEnvVar.flushMetricsToLogs;
     }
+    if (props.flushMetricsToLogs === false && props.site === undefined) {
+      throw new Error('A site is required if flushMetricsToLogs is set to false.');
+    }
     if (props.site === undefined) {
       props.site = defaultEnvVar.site;
     }
-    if (props.site != "datadoghq.com" && props.site != "datadoghq.eu") {
-      throw new Error('Invalid site URL. Must be either datadoghq.com or datadoghq.eu.')
+    if (!(site_list.includes(props.site))) {
+      throw new Error('Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.')
     }
+    if ((props.apiKey != undefined && props.apiKMSKey != undefined && props.flushMetricsToLogs === false) ||
+    (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false)) {
+      throw new Error('The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.')
+    };
     if (props.enableDDTracing === undefined) {
       props.enableDDTracing = defaultEnvVar.enableDDTracing;
     }
@@ -50,10 +63,6 @@ export class Datadog extends cdk.Construct {
     if (props.injectLogContext === undefined) {
       props.injectLogContext = defaultEnvVar.injectLogContext;
     }
-    if ((props.apiKey != undefined && props.apiKMSKey != undefined && props.flushMetricsToLogs === false) ||
-    (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false)) {
-      throw new Error('The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.')
-    };
     if (props != undefined && props.lambdaFunctions.length > 0) {
       const region = `${props.lambdaFunctions[0].env.region}`;
       applyLayers(

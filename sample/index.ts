@@ -38,10 +38,12 @@ export class ExampleStack extends cdk.Stack {
       lambdaFunctions: [hello, hello1, hello2],
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderARN:"arn:aws:lambda:us-east-1:601427279990:function:anthony-lam-dd-forwarder",
-      flushMetricsToLogs: true,
-      apiKMSKey: "5678",
-      apiKey: "1234"
+      // forwarderARN:"arn:aws:lambda:us-east-1:601427279990:function:anthony-lam-dd-forwarder",
+      enableDDTracing: false,
+      flushMetricsToLogs: false,
+      // apiKMSKey: "5678",
+      apiKey: "1234",
+      site: "us3.datadoghq.com"
     });
   }
 }

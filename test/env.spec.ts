@@ -92,39 +92,6 @@ describe("siteURLEnvVar", () => {
           },
         });
     });
-    it("applies URL parameter for multiple lambdas", () => {
-        const app = new cdk.App();
-        const stack = new cdk.Stack(app, "stack", {
-          env: {
-            region: "us-west-2",
-          },
-        });
-        const hello1 = new lambda.Function(stack, "HelloHandler", {
-          runtime: lambda.Runtime.NODEJS_10_X,
-          code: lambda.Code.fromInline("test"),
-          handler: "hello.handler",
-        });
-        const hello2 = new lambda.Function(stack, "HelloHandler2", {
-            runtime: lambda.Runtime.NODEJS_12_X,
-            code: lambda.Code.fromInline("test"),
-            handler: "hello.handler",
-          });
-        new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello1, hello2],
-          forwarderARN: "forwarder-arn"
-        });
-        expect(stack).toHaveResource("AWS::Lambda::Function", {
-          Environment: {
-            Variables: {
-              [siteURLEnvVar]: "datadoghq.com",
-              [logForwardingEnvVar]: "true",
-              [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [enableDDTracingEnvVar]: "true",
-              [injectLogContextEnvVar]: "true"
-            },
-          },
-        });
-    });
     it("throws error if invalid site", () => {
         const app = new cdk.App();
         const stack = new cdk.Stack(app, "stack", {
@@ -142,8 +109,30 @@ describe("siteURLEnvVar", () => {
                 lambdaFunctions: [hello],
                 site: "123.com"
               });
-        }).toThrowError(/Invalid site URL. Must be either datadoghq.com or datadoghq.eu./);
+        }).toThrowError(/Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com./);
     });
+    it("throws error if flushMetricsToLogs is false and site parameter is not defined ", () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-west-2",
+        },
+      });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromInline("test"),
+        handler: "hello.handler",
+      });
+      expect(() => {
+          new Datadog(stack, "Datadog", {
+              lambdaFunctions: [hello],
+              flushMetricsToLogs: false,
+              apiKey: "1234"
+            });
+      }).toThrowError(/A site is required if flushMetricsToLogs is set to false./);
+  });
+
+
 });
 
 describe("logForwardingEnvVar", () => {
@@ -164,6 +153,7 @@ describe("logForwardingEnvVar", () => {
             forwarderARN: "forwarder-arn",
             apiKey: "1234",
             flushMetricsToLogs: false,
+            site: "datadoghq.com"
           });
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
@@ -362,6 +352,7 @@ describe("apiKeyEnvVar", () => {
           lambdaFunctions: [hello],
           forwarderARN: "forwarder-arn",
           flushMetricsToLogs: false,
+          site: "datadoghq.com",
           apiKey: "1234"
         });
       expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -423,6 +414,7 @@ describe("apiKeyEnvVar", () => {
               lambdaFunctions: [hello],
               forwarderARN: "forwarder-arn",
               flushMetricsToLogs: false,
+              site: "datadoghq.com",
               apiKey: "1234",
               apiKMSKey: "5678"
             });
@@ -445,6 +437,7 @@ describe("apiKeyEnvVar", () => {
             lambdaFunctions: [hello],
             forwarderARN: "forwarder-arn",
             flushMetricsToLogs: false,
+            site: "datadoghq.com"
           });
     }).toThrowError("The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.");
   });
@@ -467,6 +460,7 @@ describe("apiKMSKeyEnvVar", () => {
           lambdaFunctions: [hello],
           forwarderARN: "forwarder-arn",
           flushMetricsToLogs: false,
+          site: "datadoghq.com",
           apiKMSKey: "5678"
         });
       expect(stack).toHaveResource("AWS::Lambda::Function", {
