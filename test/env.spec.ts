@@ -17,10 +17,10 @@ describe("applyEnvVariables", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
             forwarderARN: "forwarder-arn"
-          });
+        });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -47,11 +47,11 @@ describe("siteURLEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
           forwarderARN: "forwarder-arn",
           site: "datadoghq.eu"
         });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -76,10 +76,10 @@ describe("siteURLEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
           forwarderARN: "forwarder-arn"
         });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -105,10 +105,10 @@ describe("siteURLEnvVar", () => {
           handler: "hello.handler",
         });
         expect(() => {
-            new Datadog(stack, "Datadog", {
-                lambdaFunctions: [hello],
+            const DatadogCDK = new Datadog(stack, "Datadog", {
                 site: "123.com"
               });
+              DatadogCDK.addLambdaFunctions([hello])
         }).toThrowError(/Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com./);
     });
     it("throws error if flushMetricsToLogs is false and site parameter is not defined ", () => {
@@ -124,11 +124,11 @@ describe("siteURLEnvVar", () => {
         handler: "hello.handler",
       });
       expect(() => {
-          new Datadog(stack, "Datadog", {
-              lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
               flushMetricsToLogs: false,
               apiKey: "1234"
             });
+            DatadogCDK.addLambdaFunctions([hello])
       }).toThrowError(/A site is required if flushMetricsToLogs is set to false./);
   });
 
@@ -148,13 +148,13 @@ describe("logForwardingEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
             forwarderARN: "forwarder-arn",
             apiKey: "1234",
             flushMetricsToLogs: false,
             site: "datadoghq.com"
-          });
+        });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -180,20 +180,20 @@ describe("logForwardingEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
-            forwarderARN: "forwarder-arn"
-          });
-          expect(stack).toHaveResource("AWS::Lambda::Function", {
-            Environment: {
-              Variables: {
-                [siteURLEnvVar]: "datadoghq.com",
-                [logForwardingEnvVar]: "true",
-                [DD_HANDLER_ENV_VAR]: "hello.handler",
-                [enableDDTracingEnvVar]: "true",
-                [injectLogContextEnvVar]: "true"
-              },
+        const DatadogCDK = new Datadog(stack, "Datadog", {
+          forwarderARN: "forwarder-arn"
+        });
+        DatadogCDK.addLambdaFunctions([hello])
+        expect(stack).toHaveResource("AWS::Lambda::Function", {
+          Environment: {
+            Variables: {
+              [siteURLEnvVar]: "datadoghq.com",
+              [logForwardingEnvVar]: "true",
+              [DD_HANDLER_ENV_VAR]: "hello.handler",
+              [enableDDTracingEnvVar]: "true",
+              [injectLogContextEnvVar]: "true"
             },
+          },
         });
     });
 });
@@ -211,10 +211,10 @@ describe("enableDDTracingEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
             enableDDTracing: false
-          });
+        });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -239,10 +239,10 @@ describe("enableDDTracingEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
             forwarderARN: "forwarder-arn"
-          });
+        });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -268,9 +268,9 @@ describe("enableDDTracingEnvVar", () => {
           handler: "hello.handler",
         });
         expect(() => {
-            new Datadog(stack, "Datadog", {
-                lambdaFunctions: [hello],
+          const DatadogCDK = new Datadog(stack, "Datadog", {
               });
+              DatadogCDK.addLambdaFunctions([hello])
         }).toThrowError("A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false.");
     });
 });
@@ -288,11 +288,11 @@ describe("injectLogContextEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
             forwarderARN: "forwarder-arn",
             injectLogContext: false
-          });
+        });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -317,10 +317,10 @@ describe("injectLogContextEnvVar", () => {
           code: lambda.Code.fromInline("test"),
           handler: "hello.handler",
         });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
             forwarderARN: "forwarder-arn"
-          });
+        });
+        DatadogCDK.addLambdaFunctions([hello])
         expect(stack).toHaveResource("AWS::Lambda::Function", {
           Environment: {
             Variables: {
@@ -348,13 +348,13 @@ describe("apiKeyEnvVar", () => {
         code: lambda.Code.fromInline("test"),
         handler: "hello.handler",
       });
-      new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello],
+      const DatadogCDK = new Datadog(stack, "Datadog", {
           forwarderARN: "forwarder-arn",
           flushMetricsToLogs: false,
           site: "datadoghq.com",
           apiKey: "1234"
-        });
+      });
+      DatadogCDK.addLambdaFunctions([hello])
       expect(stack).toHaveResource("AWS::Lambda::Function", {
         Environment: {
           Variables: {
@@ -380,11 +380,11 @@ describe("apiKeyEnvVar", () => {
         code: lambda.Code.fromInline("test"),
         handler: "hello.handler",
       });
-      new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello],
+      const DatadogCDK = new Datadog(stack, "Datadog", {
           forwarderARN: "forwarder-arn",
           apiKey: "1234"
-        });
+      });
+      DatadogCDK.addLambdaFunctions([hello])
       expect(stack).toHaveResource("AWS::Lambda::Function", {
         Environment: {
           Variables: {
@@ -410,14 +410,14 @@ describe("apiKeyEnvVar", () => {
         handler: "hello.handler",
       });
       expect(() => {
-          new Datadog(stack, "Datadog", {
-              lambdaFunctions: [hello],
+        const DatadogCDK = new Datadog(stack, "Datadog", {
               forwarderARN: "forwarder-arn",
               flushMetricsToLogs: false,
               site: "datadoghq.com",
               apiKey: "1234",
               apiKMSKey: "5678"
             });
+            DatadogCDK.addLambdaFunctions([hello])
       }).toThrowError("The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.");
   });
   it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
@@ -433,12 +433,12 @@ describe("apiKeyEnvVar", () => {
       handler: "hello.handler",
     });
     expect(() => {
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
+      const DatadogCDK = new Datadog(stack, "Datadog", {
             forwarderARN: "forwarder-arn",
             flushMetricsToLogs: false,
             site: "datadoghq.com"
           });
+          DatadogCDK.addLambdaFunctions([hello])
     }).toThrowError("The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.");
   });
 });
@@ -456,13 +456,13 @@ describe("apiKMSKeyEnvVar", () => {
         code: lambda.Code.fromInline("test"),
         handler: "hello.handler",
       });
-      new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello],
+      const DatadogCDK = new Datadog(stack, "Datadog", {
           forwarderARN: "forwarder-arn",
           flushMetricsToLogs: false,
           site: "datadoghq.com",
           apiKMSKey: "5678"
-        });
+      });
+      DatadogCDK.addLambdaFunctions([hello])
       expect(stack).toHaveResource("AWS::Lambda::Function", {
         Environment: {
           Variables: {
@@ -488,11 +488,11 @@ describe("apiKMSKeyEnvVar", () => {
         code: lambda.Code.fromInline("test"),
         handler: "hello.handler",
       });
-      new Datadog(stack, "Datadog", {
-          lambdaFunctions: [hello],
+      const DatadogCDK = new Datadog(stack, "Datadog", {
           forwarderARN: "forwarder-arn",
           apiKMSKey: "5678"
-        });
+      });
+      DatadogCDK.addLambdaFunctions([hello])
       expect(stack).toHaveResource("AWS::Lambda::Function", {
         Environment: {
           Variables: {

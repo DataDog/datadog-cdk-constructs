@@ -21,12 +21,12 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    new Datadog(stack, "Datadog", {
-      lambdaFunctions: [hello],
+    const DatadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
+    DatadogCDK.addLambdaFunctions([hello])
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
@@ -54,12 +54,12 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    new Datadog(stack, "Datadog", {
-      lambdaFunctions: [hello],
+    const DatadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
+    DatadogCDK.addLambdaFunctions([hello])
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
@@ -99,12 +99,12 @@ describe("applyLayers", () => {
       handler: "hello.handler",
     });
 
-    new Datadog(stack, "Datadog", {
-      lambdaFunctions: [hello, hello1, hello2],
+    const DatadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
+    DatadogCDK.addLambdaFunctions([hello, hello1, hello2]);
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
