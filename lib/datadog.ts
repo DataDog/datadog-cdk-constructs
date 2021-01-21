@@ -20,7 +20,6 @@ export interface DatadogProps {
   site?: string;
   apiKey?: string;
   apiKMSKey?: string;
-  logLevel?: string;
   enableDDTracing?: boolean;
   injectLogContext?: boolean;
 }
@@ -41,12 +40,6 @@ export class Datadog extends cdk.Construct {
     }
     if (props.site != "datadoghq.com" && props.site != "datadoghq.eu") {
       throw new Error('Invalid site URL. Must be either datadoghq.com or datadoghq.eu.')
-    }
-    if (props.logLevel === undefined) {
-      props.logLevel = defaultEnvVar.logLevel;
-    }
-    if (props.logLevel != "debug" && props.logLevel != "info") {
-      throw new Error('Invalid log level. Must be either info or debug.')
     }
     if (props.enableDDTracing === undefined) {
       props.enableDDTracing = defaultEnvVar.enableDDTracing;
@@ -80,7 +73,6 @@ export class Datadog extends cdk.Construct {
         props.site,
         props.apiKey,
         props.apiKMSKey,
-        props.logLevel,
         props.enableDDTracing,
         props.injectLogContext
       )

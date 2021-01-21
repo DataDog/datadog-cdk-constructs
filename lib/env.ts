@@ -12,7 +12,6 @@ export const apiKeyEnvVar = "DD_API_KEY";
 export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
 export const siteURLEnvVar = "DD_SITE";
 export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
-export const logLevelEnvVar = "DD_LOG_LEVEL";
 export const enableDDTracingEnvVar = "DD_TRACE_ENABLED";
 export const injectLogContextEnvVar = "DD_LOG_INJECTION";
 
@@ -20,7 +19,6 @@ export const defaultEnvVar = {
   addLayers: true,
   site: "datadoghq.com",
   flushMetricsToLogs: true,
-  logLevel: "info",
   enableDDTracing: true,
   injectLogContext: true
 };
@@ -31,7 +29,6 @@ export function applyEnvVariables(
     site: string,
     apiKey: string | undefined,
     apiKMSKey: string | undefined,
-    logLevel: string,
     enableDDTracing: boolean,
     injectLogContext: boolean
 ) {
@@ -44,7 +41,6 @@ export function applyEnvVariables(
     }
     l.addEnvironment(logForwardingEnvVar, flushMetricsToLogs.toString().toLowerCase());
     l.addEnvironment(siteURLEnvVar, site.toLowerCase());
-    l.addEnvironment(logLevelEnvVar, logLevel.toLowerCase());
     l.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
     l.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
   });

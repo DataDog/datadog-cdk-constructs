@@ -1,7 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import "@aws-cdk/assert/jest";
-import { Datadog, apiKeyEnvVar, apiKeyKMSEnvVar, siteURLEnvVar, logForwardingEnvVar, defaultEnvVar, logLevelEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/index";
+import { Datadog, apiKeyEnvVar, apiKeyKMSEnvVar, siteURLEnvVar, logForwardingEnvVar, defaultEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/index";
 import { DD_HANDLER_ENV_VAR } from "../lib/redirect";
 
 describe("applyEnvVariables", () => {
@@ -27,7 +27,6 @@ describe("applyEnvVariables", () => {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
               [siteURLEnvVar]: defaultEnvVar.site,
               [logForwardingEnvVar]: defaultEnvVar.flushMetricsToLogs.toString(),
-              [logLevelEnvVar]: defaultEnvVar.logLevel,
               [enableDDTracingEnvVar]: defaultEnvVar.enableDDTracing.toString(),
               [injectLogContextEnvVar]: defaultEnvVar.injectLogContext.toString()
             }
@@ -59,7 +58,6 @@ describe("siteURLEnvVar", () => {
               [siteURLEnvVar]: "datadoghq.eu",
               [logForwardingEnvVar]: "true",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [enableDDTracingEnvVar]: "true",
               [injectLogContextEnvVar]: "true"
             },
@@ -88,7 +86,6 @@ describe("siteURLEnvVar", () => {
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [enableDDTracingEnvVar]: "true",
               [injectLogContextEnvVar]: "true"
             },
@@ -122,7 +119,6 @@ describe("siteURLEnvVar", () => {
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [enableDDTracingEnvVar]: "true",
               [injectLogContextEnvVar]: "true"
             },
@@ -175,7 +171,6 @@ describe("logForwardingEnvVar", () => {
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "false",
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [enableDDTracingEnvVar]: "true",
               [injectLogContextEnvVar]: "true",
               [apiKeyEnvVar]: "1234"
@@ -205,93 +200,11 @@ describe("logForwardingEnvVar", () => {
                 [siteURLEnvVar]: "datadoghq.com",
                 [logForwardingEnvVar]: "true",
                 [DD_HANDLER_ENV_VAR]: "hello.handler",
-                [logLevelEnvVar]: "info",
                 [enableDDTracingEnvVar]: "true",
                 [injectLogContextEnvVar]: "true"
               },
             },
         });
-    });
-});
-
-describe("logLevelEnvVar", () => {
-    it("sets log level to debug correctly", () => {
-        const app = new cdk.App();
-        const stack = new cdk.Stack(app, "stack", {
-          env: {
-            region: "us-west-2",
-          },
-        });
-        const hello = new lambda.Function(stack, "HelloHandler", {
-          runtime: lambda.Runtime.NODEJS_10_X,
-          code: lambda.Code.fromInline("test"),
-          handler: "hello.handler",
-        });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
-            forwarderARN: "forwarder-arn",
-            logLevel: "debug"
-          });
-          expect(stack).toHaveResource("AWS::Lambda::Function", {
-            Environment: {
-              Variables: {
-                [logLevelEnvVar]: "debug",
-                [siteURLEnvVar]: "datadoghq.com",
-                [logForwardingEnvVar]: "true",
-                [DD_HANDLER_ENV_VAR]: "hello.handler",
-                [enableDDTracingEnvVar]: "true",
-                [injectLogContextEnvVar]: "true"
-              },
-            },
-        });
-    });
-    it("applies default log level value if undefined", () => {
-        const app = new cdk.App();
-        const stack = new cdk.Stack(app, "stack", {
-          env: {
-            region: "us-west-2",
-          },
-        });
-        const hello = new lambda.Function(stack, "HelloHandler", {
-          runtime: lambda.Runtime.NODEJS_10_X,
-          code: lambda.Code.fromInline("test"),
-          handler: "hello.handler",
-        });
-        new Datadog(stack, "Datadog", {
-            lambdaFunctions: [hello],
-            forwarderARN: "forwarder-arn"
-          });
-          expect(stack).toHaveResource("AWS::Lambda::Function", {
-            Environment: {
-              Variables: {
-                [logLevelEnvVar]: "info",
-                [siteURLEnvVar]: "datadoghq.com",
-                [logForwardingEnvVar]: "true",
-                [DD_HANDLER_ENV_VAR]: "hello.handler",
-                [enableDDTracingEnvVar]: "true",
-                [injectLogContextEnvVar]: "true"
-              },
-            },
-        });
-    });
-    it("throws error if invalid log level", () => {
-        const app = new cdk.App();
-        const stack = new cdk.Stack(app, "stack", {
-          env: {
-            region: "us-west-2",
-          },
-        });
-        const hello = new lambda.Function(stack, "HelloHandler", {
-          runtime: lambda.Runtime.NODEJS_10_X,
-          code: lambda.Code.fromInline("test"),
-          handler: "hello.handler",
-        });
-        expect(() => {
-            new Datadog(stack, "Datadog", {
-                lambdaFunctions: [hello],
-                logLevel: "high"
-              });
-        }).toThrowError(/Invalid log level. Must be either info or debug./);
     });
 });
 
@@ -316,7 +229,6 @@ describe("enableDDTracingEnvVar", () => {
           Environment: {
             Variables: {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
               [enableDDTracingEnvVar]: "false",
@@ -345,7 +257,6 @@ describe("enableDDTracingEnvVar", () => {
           Environment: {
             Variables: {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
               [enableDDTracingEnvVar]: "true",
@@ -396,7 +307,6 @@ describe("injectLogContextEnvVar", () => {
           Environment: {
             Variables: {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
               [enableDDTracingEnvVar]: "true",
@@ -425,7 +335,6 @@ describe("injectLogContextEnvVar", () => {
           Environment: {
             Variables: {
               [DD_HANDLER_ENV_VAR]: "hello.handler",
-              [logLevelEnvVar]: "info",
               [siteURLEnvVar]: "datadoghq.com",
               [logForwardingEnvVar]: "true",
               [enableDDTracingEnvVar]: "true",
@@ -459,7 +368,6 @@ describe("apiKeyEnvVar", () => {
         Environment: {
           Variables: {
             [DD_HANDLER_ENV_VAR]: "hello.handler",
-            [logLevelEnvVar]: "info",
             [siteURLEnvVar]: "datadoghq.com",
             [logForwardingEnvVar]: "false",
             [enableDDTracingEnvVar]: "true",
@@ -490,7 +398,6 @@ describe("apiKeyEnvVar", () => {
         Environment: {
           Variables: {
             [DD_HANDLER_ENV_VAR]: "hello.handler",
-            [logLevelEnvVar]: "info",
             [siteURLEnvVar]: "datadoghq.com",
             [logForwardingEnvVar]: "true",
             [enableDDTracingEnvVar]: "true",
@@ -566,7 +473,6 @@ describe("apiKMSKeyEnvVar", () => {
         Environment: {
           Variables: {
             [DD_HANDLER_ENV_VAR]: "hello.handler",
-            [logLevelEnvVar]: "info",
             [siteURLEnvVar]: "datadoghq.com",
             [logForwardingEnvVar]: "false",
             [enableDDTracingEnvVar]: "true",
@@ -597,7 +503,6 @@ describe("apiKMSKeyEnvVar", () => {
         Environment: {
           Variables: {
             [DD_HANDLER_ENV_VAR]: "hello.handler",
-            [logLevelEnvVar]: "info",
             [siteURLEnvVar]: "datadoghq.com",
             [logForwardingEnvVar]: "true",
             [enableDDTracingEnvVar]: "true",

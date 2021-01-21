@@ -31,6 +31,7 @@ export class ExampleStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello_py.handler",
+      tracing: lambda.Tracing.ACTIVE
     });
 
     new Datadog(this, "Datadog", {
@@ -38,7 +39,9 @@ export class ExampleStack extends cdk.Stack {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN:"arn:aws:lambda:us-east-1:601427279990:function:anthony-lam-dd-forwarder",
-      logLevel: "debug"
+      flushMetricsToLogs: true,
+      apiKMSKey: "5678",
+      apiKey: "1234"
     });
   }
 }
