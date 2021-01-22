@@ -11,7 +11,6 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 
 export interface DatadogProps {
-  // lambdaFunctions: lambda.Function[];
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   addLayers?: boolean;
