@@ -89,7 +89,27 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 
 The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Node.js][2] and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
+## Opening Issues
 
+If you encounter a bug with this package, we want to hear about it. Before opening a new issue, search the existing issues to avoid duplicates.
+
+When opening an issue, include the Datadog CDK Construct version, Node version, and stack trace if available. In addition, include the steps to reproduce when appropriate.
+
+You can also open an issue for a feature request.
+
+## Contributing
+
+If you find an issue with this package and have a fix, please feel free to open a pull request following the [procedures](https://github.com/DataDog/datadog-cdk-constructs/blob/main/CONTRIBUTING.md).
+
+## Community
+
+For product feedback and questions, join the `#serverless` channel in the [Datadog community on Slack](https://chat.datadoghq.com/).
+
+## License
+
+Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
+
+This product includes software developed at Datadog (https://www.datadoghq.com/). Copyright 2021 Datadog, Inc.
 
 [1]: https://github.com/DataDog/datadog-lambda-layer-python
 [2]: https://github.com/DataDog/datadog-lambda-layer-js
