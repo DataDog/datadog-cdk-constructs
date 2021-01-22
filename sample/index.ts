@@ -34,7 +34,7 @@ export class ExampleStack extends cdk.Stack {
       tracing: lambda.Tracing.ACTIVE
     });
 
-    const datadog = new Datadog(this, "Datadog", {
+    const DatadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "<replace with forwarder ARN>",
@@ -43,7 +43,7 @@ export class ExampleStack extends cdk.Stack {
       apiKey: "1234",
       site: "us3.datadoghq.com"
     });
-    datadog.addLambdaFunctions([hello, hello1, hello2])
+    DatadogCDK.addLambdaFunctions([hello, hello1, hello2]);
   }
 }
 

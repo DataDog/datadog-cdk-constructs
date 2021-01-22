@@ -26,7 +26,7 @@ describe("applyLayers", () => {
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello])
+    DatadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
@@ -59,7 +59,7 @@ describe("applyLayers", () => {
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello])
+    DatadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
