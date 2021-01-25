@@ -1,8 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
 import "@aws-cdk/assert/jest";
-import { Datadog } from "../lib/index";
-import { siteURLEnvVar, logForwardingEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/environment";
+import { Datadog, logForwardingEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/index";
 import {
   JS_HANDLER_WITH_LAYERS,
   DD_HANDLER_ENV_VAR,
@@ -34,7 +33,6 @@ describe("applyLayers", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [siteURLEnvVar]: "datadoghq.com",
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
           [injectLogContextEnvVar]: "true"
@@ -67,7 +65,6 @@ describe("applyLayers", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [siteURLEnvVar]: "datadoghq.com",
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
           [injectLogContextEnvVar]: "true"
@@ -113,7 +110,6 @@ describe("applyLayers", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [siteURLEnvVar]: "datadoghq.com",
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
           [injectLogContextEnvVar]: "true"

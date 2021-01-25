@@ -24,13 +24,6 @@ export interface DatadogProps {
   injectLogContext?: boolean;
 }
 
-export const site_list: string[] = [
-  "datadoghq.com",
-  "datadoghq.eu",
-  "us3.datadoghq.com",
-  "ddog-gov.com",
-]
-
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
   props: DatadogProps;
