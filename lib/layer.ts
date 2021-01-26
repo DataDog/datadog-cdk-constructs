@@ -49,8 +49,8 @@ export function applyLayers(
   // TODO: check region availability
   const errors: string[] = [];
   let layerValue = 0;
-  lambdas.forEach((l) => {
-    const runtime: string = l.runtime.name;
+  lambdas.forEach((lam) => {
+    const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       return;
@@ -61,7 +61,7 @@ export function applyLayers(
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(
-          getMissingLayerVersionErrorMsg(l.node.id, "Python", "python"),
+          getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"),
         );
         return;
       }
@@ -71,7 +71,7 @@ export function applyLayers(
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
         errors.push(
-          getMissingLayerVersionErrorMsg(l.node.id, "Node.js", "node"),
+          getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"),
         );
         return;
       }
@@ -89,7 +89,7 @@ export function applyLayers(
         layerValue += 1;
       }
       //TODO: check if layer extracted generated error or is undefined
-      l.addLayers(layer);
+      lam.addLayers(layer);
     }
   });
   return errors;

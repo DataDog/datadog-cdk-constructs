@@ -76,27 +76,6 @@ describe("siteURLEnvVar", () => {
       },
     });
   });
-  it("throws error if invalid site", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    expect(() => {
-      const DatadogCDK = new Datadog(stack, "Datadog", {
-        site: "123.com",
-      });
-      DatadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      /Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com./
-    );
-  });
 });
 
 describe("logForwardingEnvVar", () => {

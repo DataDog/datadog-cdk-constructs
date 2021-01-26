@@ -23,8 +23,8 @@ export function applyEnvVariables(
     enableDDTracing: boolean,
     injectLogContext: boolean,
 ) {
-  lambdas.forEach((l) => {
-    l.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
-    l.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
+  lambdas.forEach((lam) => {
+    lam.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
+    lam.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
   });
 }

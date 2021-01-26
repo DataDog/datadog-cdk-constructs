@@ -25,11 +25,11 @@ export function redirectHandlers(
   lambdas: lambda.Function[],
   addLayers: boolean,
 ) {
-  lambdas.forEach((l) => {
-    const cfnFunction = l.node.defaultChild as lambda.CfnFunction;
+  lambdas.forEach((lam) => {
+    const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
     const originalHandler = cfnFunction.handler;
-    l.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
-    const handler = getDDHandler(l, addLayers);
+    lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
+    const handler = getDDHandler(lam, addLayers);
     if (handler === undefined) {
       return;
     }
@@ -37,8 +37,8 @@ export function redirectHandlers(
   });
 }
 
-function getDDHandler(l: lambda.Function, addLayers: boolean) {
-  const runtime: string = l.runtime.name;
+function getDDHandler(lam: lambda.Function, addLayers: boolean) {
+  const runtime: string = lam.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
   if (
     lambdaRuntime === undefined ||

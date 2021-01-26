@@ -51,9 +51,7 @@ export class Transport {
     }
 
     if (!site_list.includes(this.site.toLowerCase())) {
-      throw new Error(
-        "Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com."
-      );
+      console.log("Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.")
     }
 
     if (
@@ -74,16 +72,16 @@ export class Transport {
   }
 
   setEnvVars(lambdas: lambda.Function[]) {
-    lambdas.forEach((l) => {
-      l.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
+    lambdas.forEach((lam) => {
+      lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
-        l.addEnvironment(siteURLEnvVar, this.site);
+        lam.addEnvironment(siteURLEnvVar, this.site);
       }
       if (this.apiKey !== undefined && this.flushMetricsToLogs === false) {
-        l.addEnvironment(apiKeyEnvVar, this.apiKey);
+        lam.addEnvironment(apiKeyEnvVar, this.apiKey);
       }
       if (this.apiKMSKey !== undefined && this.flushMetricsToLogs === false) {
-        l.addEnvironment(apiKeyKMSEnvVar, this.apiKMSKey);
+        lam.addEnvironment(apiKeyKMSEnvVar, this.apiKMSKey);
       }
     });
   }

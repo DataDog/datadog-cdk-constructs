@@ -27,12 +27,12 @@ export interface DatadogProps {
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
   props: DatadogProps;
-  xport: Transport;
+  transport: Transport;
   constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
     super(scope, id);
     this.scope = scope;
     this.props = props;
-    this.xport = new Transport(this.props.flushMetricsToLogs, this.props.site, this.props.apiKey, this.props.apiKMSKey)
+    this.transport = new Transport(this.props.flushMetricsToLogs, this.props.site, this.props.apiKey, this.props.apiKMSKey)
   }
 
   public addLambdaFunctions(lambdaFunctions: lambda.Function[]){
@@ -41,9 +41,6 @@ export class Datadog extends cdk.Construct {
     }
     if (this.props.enableDDTracing === undefined) {
       this.props.enableDDTracing = defaultEnvVar.enableDDTracing;
-    }
-    if ((this.props.enableDDTracing === true || this.props.enableDDTracing === undefined) && this.props.forwarderARN === undefined) {
-      throw new Error('A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false.')
     }
     if (this.props.injectLogContext === undefined) {
       this.props.injectLogContext = defaultEnvVar.injectLogContext;
@@ -67,7 +64,7 @@ export class Datadog extends cdk.Construct {
         this.props.injectLogContext
       )
 
-      this.xport.setEnvVars(lambdaFunctions);
+      this.transport.setEnvVars(lambdaFunctions);
     }
   }
 }

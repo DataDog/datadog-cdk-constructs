@@ -96,25 +96,6 @@ describe("enableDDTracingEnvVar", () => {
       },
     });
   });
-  it("throws error if Datadog Tracing is enabled but forwarder is not defined", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    expect(() => {
-      const DatadogCDK = new Datadog(stack, "Datadog", {});
-      DatadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      "A forwarderARN of the Datadog forwarder lambda function is required for Datadog Tracing (enabled by default). This can be disabled by setting enableDDTracing: false."
-    );
-  });
 });
 
 describe("injectLogContextEnvVar", () => {
