@@ -31,14 +31,17 @@ export class ExampleStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello_py.handler",
+      tracing: lambda.Tracing.ACTIVE
     });
 
     const DatadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      addLayers: true,
-      forwarderARN:
-        "arn:aws:lambda:us-east-1:172597598159:function:datadog-forwarder-prod-org-11287",
+      forwarderARN:"<forwarder_ARN",
+      enableDDTracing: true,
+      flushMetricsToLogs: true,
+      apiKey: "1234",
+      site: "us3.datadoghq.com"
     });
     DatadogCDK.addLambdaFunctions([hello, hello1, hello2]);
   }

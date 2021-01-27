@@ -21,7 +21,7 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const errors = applyLayers(
@@ -48,12 +48,12 @@ describe("applyLayers", () => {
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello2 = new lambda.Function(stack, "HelloHandler2", {
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const errors = applyLayers(
@@ -116,7 +116,7 @@ describe("applyLayers", () => {
     });
     const hello2 = new lambda.Function(stack, "PythonHandler", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const errors = applyLayers(stack, stack.region, [hello1, hello2]);
@@ -146,7 +146,7 @@ describe("isGovCloud", () => {
     const nodeLambda = new lambda.Function(stack, "PythonHandler", {
       //note: not working for python 3.8
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.inline("test"),
+      code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const errors = applyLayers(
