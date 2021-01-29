@@ -6,24 +6,24 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from '@aws-cdk/aws-lambda';
 
-export const apiKeyEnvVar = "DD_API_KEY";
-export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
-export const siteURLEnvVar = "DD_SITE";
-export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
+export const apiKeyEnvVar = 'DD_API_KEY';
+export const apiKeyKMSEnvVar = 'DD_KMS_API_KEY';
+export const siteURLEnvVar = 'DD_SITE';
+export const logForwardingEnvVar = 'DD_FLUSH_TO_LOG';
 
 export const transportDefaults = {
-  site: "datadoghq.com",
+  site: 'datadoghq.com',
   flushMetricsToLogs: true,
   enableDDTracing: true,
 };
 
-export const site_list: string[] = [
-  "datadoghq.com",
-  "datadoghq.eu",
-  "us3.datadoghq.com",
-  "ddog-gov.com",
+export const site_list: Array<string> = [
+  'datadoghq.com',
+  'datadoghq.eu',
+  'us3.datadoghq.com',
+  'ddog-gov.com',
 ];
 
 export class Transport {
@@ -36,7 +36,7 @@ export class Transport {
     flushMetricsToLogs?: boolean,
     site?: string,
     apiKey?: string,
-    apiKMSKey?: string
+    apiKMSKey?: string,
   ) {
     if (flushMetricsToLogs === undefined) {
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
@@ -51,7 +51,7 @@ export class Transport {
     }
 
     if (!site_list.includes(this.site.toLowerCase())) {
-      console.log("Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.")
+      console.log('Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.');
     }
 
     if (
@@ -63,7 +63,7 @@ export class Transport {
         this.flushMetricsToLogs === false)
     ) {
       throw new Error(
-        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false."
+        'The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.',
       );
     } else {
       this.apiKey = apiKey;
@@ -71,7 +71,7 @@ export class Transport {
     }
   }
 
-  setEnvVars(lambdas: lambda.Function[]) {
+  applyEnvVars(lambdas: lambda.Function[]) {
     lambdas.forEach((lam) => {
       lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {

@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
-import { Transport } from "./transport";
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as cdk from '@aws-cdk/core';
+import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from './index';
+import { Transport } from './transport';
 
-export interface DatadogProps {
+export interface IDatadogProps {
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   addLayers?: boolean;
@@ -26,16 +26,16 @@ export interface DatadogProps {
 
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
-  props: DatadogProps;
+  props: IDatadogProps;
   transport: Transport;
-  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+  constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
     super(scope, id);
     this.scope = scope;
     this.props = props;
-    this.transport = new Transport(this.props.flushMetricsToLogs, this.props.site, this.props.apiKey, this.props.apiKMSKey)
+    this.transport = new Transport(this.props.flushMetricsToLogs, this.props.site, this.props.apiKey, this.props.apiKMSKey);
   }
 
-  public addLambdaFunctions(lambdaFunctions: lambda.Function[]){
+  public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
     if (this.props.addLayers === undefined) {
       this.props.addLayers = defaultEnvVar.addLayers;
     }
@@ -61,10 +61,10 @@ export class Datadog extends cdk.Construct {
       applyEnvVariables(
         lambdaFunctions,
         this.props.enableDDTracing,
-        this.props.injectLogContext
-      )
+        this.props.injectLogContext,
+      );
 
-      this.transport.setEnvVars(lambdaFunctions);
+      this.transport.applyEnvVars(lambdaFunctions);
     }
   }
 }

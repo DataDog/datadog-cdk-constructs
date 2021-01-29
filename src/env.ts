@@ -6,11 +6,10 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from '@aws-cdk/aws-lambda';
 
-
-export const enableDDTracingEnvVar = "DD_TRACE_ENABLED";
-export const injectLogContextEnvVar = "DD_LOG_INJECTION";
+export const enableDDTracingEnvVar = 'DD_TRACE_ENABLED';
+export const injectLogContextEnvVar = 'DD_LOG_INJECTION';
 
 export const defaultEnvVar = {
   addLayers: true,
@@ -19,9 +18,9 @@ export const defaultEnvVar = {
 };
 
 export function applyEnvVariables(
-    lambdas: lambda.Function[],
-    enableDDTracing: boolean,
-    injectLogContext: boolean,
+  lambdas: lambda.Function[],
+  enableDDTracing: boolean,
+  injectLogContext: boolean,
 ) {
   lambdas.forEach((lam) => {
     lam.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());

@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { FilterPattern } from "@aws-cdk/aws-logs";
-import * as crypto from "crypto";
-import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
-const SubscriptionFilterPrefix = "DatadogSubscriptionFilter";
+import * as crypto from 'crypto';
+import * as lambda from '@aws-cdk/aws-lambda';
+import { FilterPattern } from '@aws-cdk/aws-logs';
+import { LambdaDestination } from '@aws-cdk/aws-logs-destinations';
+import * as cdk from '@aws-cdk/core';
+const SubscriptionFilterPrefix = 'DatadogSubscriptionFilter';
 export function addForwarder(
   scope: cdk.Construct,
   lambdaFunctions: lambda.Function[],
@@ -19,15 +19,15 @@ export function addForwarder(
 ) {
   const forwarder = lambda.Function.fromFunctionArn(
     scope,
-    "forwarder",
+    'forwarder',
     forwarderARN,
   );
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
     const subscriptionFilterValue: string = crypto
-      .createHash("sha256")
+      .createHash('sha256')
       .update(lam.functionArn)
-      .digest("hex");
+      .digest('hex');
     const subscriptionFilterValueLength = subscriptionFilterValue.length;
     lam.logGroup.addSubscriptionFilter(
       SubscriptionFilterPrefix +
