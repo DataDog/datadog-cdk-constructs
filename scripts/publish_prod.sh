@@ -14,7 +14,7 @@ if [ $BRANCH != "main" ]; then
 fi
 
 #Read the current version
-CURRENT_VERSION=$(node -pe "require('../package.json').version")
+CURRENT_VERSION=$(node -pe "require('./package.json').version")
 
 #Read the desired version
 if [ -z "$1" ]; then
@@ -45,6 +45,7 @@ yarn build
 yarn publish --new-version "$VERSION"
 
 echo 'Pushing updates to github'
-git push origin master
+git push origin main
+git tag "v${VERSION}"
 git push origin "refs/tags/v$VERSION"
-echo 'Please add new release notes in GitHub'
+echo 'Please add release notes in GitHub'
