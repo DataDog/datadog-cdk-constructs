@@ -48,4 +48,4 @@ echo 'Pushing updates to github'
 git push origin main
 git tag "v${VERSION}"
 git push origin "refs/tags/v$VERSION"
-echo 'Please add new release notes in GitHub'
+echo 'Please add release notes in GitHub'
