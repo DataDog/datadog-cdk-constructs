@@ -13,6 +13,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "lint": "eslint 'lib/*.ts{,x}'",
+    "format": "prettier --write lib/**",
+    "check-formatting": "prettier --check lib/**",
     "cdk": "cdk"
   },
   "devDependencies": {
