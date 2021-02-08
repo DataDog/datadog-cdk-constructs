@@ -3,6 +3,7 @@
     "alwaysStrict": true,
     "charset": "utf8",
     "declaration": true,
+    "outDir": "./dist",
     "experimentalDecorators": true,
     "inlineSourceMap": true,
     "inlineSources": true,

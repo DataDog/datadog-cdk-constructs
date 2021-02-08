@@ -3,6 +3,7 @@
 !sample/lambda/hello.js
 *.d.ts
 node_modules
+dist
 yarn-error.log
 
 # CDK asset staging directory

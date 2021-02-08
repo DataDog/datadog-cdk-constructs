@@ -2,6 +2,7 @@
   "name": "datadog-cdk-constructs",
   "version": "0.1.0",
   "description": "CDK Construct library to automatically instrument python and node functions with datadog tracing",
+  "main": "dist/lib/index.js",
   "repository": "github.com/DataDog/datadog-cdk-constructs",
   "author": "Datadog",
   "license": "Apache-2.0",
@@ -13,6 +14,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "lint": "eslint 'lib/*.ts{,x}'",
+    "format": "prettier --write lib/**",
+    "check-formatting": "prettier --check lib/**",
     "cdk": "cdk"
   },
   "devDependencies": {

@@ -13,21 +13,6 @@ if [ $BRANCH != "master" ]; then
     exit 1
 fi
 
-if [ -z "$AWS_ACCESS_KEY_ID" ]; then
-    echo 'AWS_ACCESS_KEY_ID not set. Are you using aws-vault?'
-    exit 1
-fi
-
-if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-    echo 'AWS_SECRET_ACCESS_KEY not set. Are you using aws-vault?'
-    exit 1
-fi
-
-if [ -z "$AWS_SESSION_TOKEN" ]; then
-    echo 'AWS_SESSION_TOKEN not set. Are you using aws-vault?'
-    exit 1
-fi
-
 #Read the current version
 CURRENT_VERSION=$(node -pe "require('../package.json').version")
 
@@ -62,3 +47,4 @@ yarn publish --new-version "$VERSION"
 echo 'Pushing updates to github'
 git push origin master
 git push origin "refs/tags/v$VERSION"
+echo 'Please add new release notes in GitHub'
