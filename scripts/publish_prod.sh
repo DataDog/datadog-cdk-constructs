@@ -8,13 +8,13 @@
 set -e
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ $BRANCH != "master" ]; then
-    echo "Not on master, aborting"
+if [ $BRANCH != "main" ]; then
+    echo "Not on main, aborting"
     exit 1
 fi
 
 #Read the current version
-CURRENT_VERSION=$(node -pe "require('../package.json').version")
+CURRENT_VERSION=$(node -pe "require('./package.json').version")
 
 #Read the desired version
 if [ -z "$1" ]; then
