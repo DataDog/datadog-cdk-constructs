@@ -12,8 +12,11 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Managing subscriptions from the Datadog Forwarder to your Lambda function log groups.
 
 ## Installation
-```yarn add --dev datadog-cdk-constructs```
-
+```
+yarn add --dev datadog-cdk-constructs
+# or
+npm install datadog-cdk-constructs --save-dev
+```
 ## Usage
 
 ### AWS CDK
