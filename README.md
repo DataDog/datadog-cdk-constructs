@@ -1,4 +1,7 @@
 # Datadog CDK Constructs
+[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue)](https://www.npmjs.com/package/datadog-cdk-constructs)
+[![Slack](https://chat.datadoghq.com/badge.svg?bg=632CA6)](https://chat.datadoghq.com/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
 Use this Datadog CDK Construct Library to deploy serverless applications using AWS CDK .
 
@@ -9,20 +12,22 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Managing subscriptions from the Datadog Forwarder to your Lambda function log groups.
 
 ## Installation
-
-Download the code and import datadog-cdk-constructs/lib/index.ts.
-
+```
+yarn add --dev datadog-cdk-constructs
+# or
+npm install datadog-cdk-constructs --save-dev
+```
 ## Usage
 
 ### AWS CDK
 
-import datadog-cdk-constructs/lib/index.ts.
+import datadog-cdk-constructs.
 
 **Typescript**
 
 ```typescript
 import * as cdk from "@aws-cdk/core";
-import { Datadog } from "datadog-cdk-constructs/lib/index";
+import { Datadog } from "datadog-cdk-constructs";
 
 class CdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -88,6 +93,12 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 ## How it works
 
 The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Node.js][2] and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
+
+## Resources to learn about CDK
+
+* [CDK TypeScript Workshop](https://cdkworkshop.com/20-typescript.html)
+* [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
+* [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
 
 ## Opening Issues
 
