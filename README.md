@@ -21,13 +21,13 @@ npm install datadog-cdk-constructs --save-dev
 
 ### AWS CDK
 
-import datadog-cdk-constructs/lib/index.ts.
+import datadog-cdk-constructs/dist/lib/index.js.
 
 **Typescript**
 
 ```typescript
 import * as cdk from "@aws-cdk/core";
-import { Datadog } from "datadog-cdk-constructs/lib/index";
+import { Datadog } from "datadog-cdk-constructs/dist/lib/index.js";
 
 class CdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
