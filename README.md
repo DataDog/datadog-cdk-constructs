@@ -96,9 +96,6 @@ The Datadog CDK construct takes in a list of lambda functions and installs the D
 
 ## Resources to learn about CDK
 
-CDK is to CloudFormation Macro what programming languages is to assembly. Constructs are building blocks of CDK and Construct libraries represent arrangement of AWS resources. 
-More on CDK:
-
 * [CDK TypeScript Workshop](https://cdkworkshop.com/20-typescript.html)
 * [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
 * [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
