@@ -21,13 +21,13 @@ npm install datadog-cdk-constructs --save-dev
 
 ### AWS CDK
 
-import datadog-cdk-constructs/dist/lib/index.js.
+import datadog-cdk-constructs.
 
 **Typescript**
 
 ```typescript
 import * as cdk from "@aws-cdk/core";
-import { Datadog } from "datadog-cdk-constructs/dist/lib/index.js";
+import { Datadog } from "datadog-cdk-constructs";
 
 class CdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -93,6 +93,15 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 ## How it works
 
 The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Node.js][2] and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
+
+## Resources to learn about CDK
+
+CDK is to CloudFormation Macro what programming languages is to assembly. Constructs are building blocks of CDK and Construct libraries represent arrangement of AWS resources. 
+More on CDK:
+
+* [CDK TypeScript Workshop](https://cdkworkshop.com/20-typescript.html)
+* [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
+* [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
 
 ## Opening Issues
 

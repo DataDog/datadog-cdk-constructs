@@ -47,4 +47,4 @@ yarn publish --new-version "$VERSION"
 echo 'Pushing updates to github'
 git push origin main
 git push origin "refs/tags/v$VERSION"
-echo 'Please add release notes in GitHub'
+echo 'Please add release notes in GitHub!'
