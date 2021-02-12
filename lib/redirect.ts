@@ -27,7 +27,7 @@ export function redirectHandlers(
 ) {
   lambdas.forEach((lam) => {
     const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
-    const originalHandler = cfnFunction.handler;
+    const originalHandler = cfnFunction.handler as string;
     lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
     const handler = getDDHandler(lam, addLayers);
     if (handler === undefined) {
