@@ -30,6 +30,12 @@
     "tslint": "^6.1.3",
     "typescript": "^3.9.7"
   },
+  "dependencies": {
+    "@aws-cdk/aws-lambda": "^1.71.0",
+    "@aws-cdk/aws-logs": "^1.71.0",
+    "@aws-cdk/aws-logs-destinations": "^1.71.0",
+    "@aws-cdk/core": "^1.71.0"
+  },
   "peerDependencies": {
     "@aws-cdk/aws-lambda": "^1.71.0",
     "@aws-cdk/aws-logs": "^1.71.0",
