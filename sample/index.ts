@@ -49,4 +49,5 @@ export class ExampleStack extends cdk.Stack {
 
 const app = new cdk.App();
 const stack = new ExampleStack(app, "ExampleStack");
+console.log("Stack name: "+stack.stackName);
 app.synth();
