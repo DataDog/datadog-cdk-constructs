@@ -19,12 +19,7 @@ export const transportDefaults = {
   enableDDTracing: true,
 };
 
-export const siteList: string[] = [
-  "datadoghq.com",
-  "datadoghq.eu",
-  "us3.datadoghq.com",
-  "ddog-gov.com",
-];
+export const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
 
 export class Transport {
   flushMetricsToLogs: boolean;
@@ -32,12 +27,7 @@ export class Transport {
   apiKey?: string;
   apiKMSKey?: string;
 
-  constructor(
-    flushMetricsToLogs?: boolean,
-    site?: string,
-    apiKey?: string,
-    apiKMSKey?: string,
-  ) {
+  constructor(flushMetricsToLogs?: boolean, site?: string, apiKey?: string, apiKMSKey?: string) {
     if (flushMetricsToLogs === undefined) {
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
     } else {
@@ -57,12 +47,8 @@ export class Transport {
     }
 
     if (
-      (apiKey !== undefined &&
-        apiKMSKey !== undefined &&
-        this.flushMetricsToLogs === false) ||
-      (apiKey === undefined &&
-        apiKMSKey === undefined &&
-        this.flushMetricsToLogs === false)
+      (apiKey !== undefined && apiKMSKey !== undefined && this.flushMetricsToLogs === false) ||
+      (apiKey === undefined && apiKMSKey === undefined && this.flushMetricsToLogs === false)
     ) {
       throw new Error(
         "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
@@ -75,10 +61,7 @@ export class Transport {
 
   setEnvVars(lambdas: lambda.Function[]) {
     lambdas.forEach((lam) => {
-      lam.addEnvironment(
-        logForwardingEnvVar,
-        this.flushMetricsToLogs.toString(),
-      );
+      lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
         lam.addEnvironment(siteURLEnvVar, this.site);
       }
