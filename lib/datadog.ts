@@ -42,7 +42,7 @@ export class Datadog extends cdk.Construct {
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
-      this.props.apiKMSKey,
+      this.props.apiKMSKey
     );
   }
 
@@ -63,7 +63,7 @@ export class Datadog extends cdk.Construct {
         region,
         lambdaFunctions,
         this.props.pythonLayerVersion,
-        this.props.nodeLayerVersion,
+        this.props.nodeLayerVersion
       );
       redirectHandlers(lambdaFunctions, this.props.addLayers);
       if (this.props.forwarderARN != undefined) {
@@ -72,7 +72,7 @@ export class Datadog extends cdk.Construct {
       applyEnvVariables(
         lambdaFunctions,
         this.props.enableDDTracing,
-        this.props.injectLogContext,
+        this.props.injectLogContext
       );
 
       this.transport.setEnvVars(lambdaFunctions);

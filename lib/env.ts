@@ -20,16 +20,16 @@ export const defaultEnvVar = {
 export function applyEnvVariables(
   lambdas: lambda.Function[],
   enableDDTracing: boolean,
-  injectLogContext: boolean,
+  injectLogContext: boolean
 ) {
   lambdas.forEach((lam) => {
     lam.addEnvironment(
       enableDDTracingEnvVar,
-      enableDDTracing.toString().toLowerCase(),
+      enableDDTracing.toString().toLowerCase()
     );
     lam.addEnvironment(
       injectLogContextEnvVar,
-      injectLogContext.toString().toLowerCase(),
+      injectLogContext.toString().toLowerCase()
     );
   });
 }

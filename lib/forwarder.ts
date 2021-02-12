@@ -15,12 +15,12 @@ const SubscriptionFilterPrefix = "DatadogSubscriptionFilter";
 export function addForwarder(
   scope: cdk.Construct,
   lambdaFunctions: lambda.Function[],
-  forwarderARN: string,
+  forwarderARN: string
 ) {
   const forwarder = lambda.Function.fromFunctionArn(
     scope,
     "forwarder",
-    forwarderARN,
+    forwarderARN
   );
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
@@ -33,12 +33,12 @@ export function addForwarder(
       SubscriptionFilterPrefix +
         subscriptionFilterValue.substring(
           subscriptionFilterValueLength - 8,
-          subscriptionFilterValueLength,
+          subscriptionFilterValueLength
         ),
       {
         destination: forwarderDestination,
         filterPattern: FilterPattern.allEvents(),
-      },
+      }
     );
   });
 }
