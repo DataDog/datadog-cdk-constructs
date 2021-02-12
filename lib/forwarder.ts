@@ -11,16 +11,16 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern } from "@aws-cdk/aws-logs";
 import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
-const SubscriptionFilterPrefix = "DatadogSubscriptionFilter";
+const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 export function addForwarder(
   scope: cdk.Construct,
   lambdaFunctions: lambda.Function[],
-  forwarderARN: string
+  forwarderARN: string,
 ) {
   const forwarder = lambda.Function.fromFunctionArn(
     scope,
     "forwarder",
-    forwarderARN
+    forwarderARN,
   );
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
@@ -30,15 +30,15 @@ export function addForwarder(
       .digest("hex");
     const subscriptionFilterValueLength = subscriptionFilterValue.length;
     lam.logGroup.addSubscriptionFilter(
-      SubscriptionFilterPrefix +
+      SUBSCRIPTION_FILTER_PREFIX +
         subscriptionFilterValue.substring(
           subscriptionFilterValueLength - 8,
-          subscriptionFilterValueLength
+          subscriptionFilterValueLength,
         ),
       {
         destination: forwarderDestination,
         filterPattern: FilterPattern.allEvents(),
-      }
+      },
     );
   });
 }

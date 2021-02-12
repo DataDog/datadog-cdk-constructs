@@ -29,7 +29,7 @@ describe("applyLayers", () => {
       stack.region,
       [hello],
       pythonLayerVersion,
-      nodeLayerVersion
+      nodeLayerVersion,
     );
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
@@ -61,7 +61,7 @@ describe("applyLayers", () => {
       stack.region,
       [hello1, hello2],
       pythonLayerVersion,
-      nodeLayerVersion
+      nodeLayerVersion,
     );
 
     expect(errors.length).toEqual(0);
@@ -94,7 +94,7 @@ describe("applyLayers", () => {
       stack.region,
       [hello],
       pythonLayerVersion,
-      nodeLayerVersion
+      nodeLayerVersion,
     );
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: ABSENT,
@@ -144,7 +144,7 @@ describe("isGovCloud", () => {
       handler: "hello.handler",
     });
     const nodeLambda = new lambda.Function(stack, "PythonHandler", {
-      //note: not working for python 3.8
+      // note: not working for python 3.8
       runtime: lambda.Runtime.PYTHON_3_6,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
@@ -154,7 +154,7 @@ describe("isGovCloud", () => {
       stack.region,
       [pythonLambda, nodeLambda],
       pythonLayerVersion,
-      nodeLayerVersion
+      nodeLayerVersion,
     );
 
     expect(errors.length).toEqual(0);

@@ -20,12 +20,12 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
@@ -35,7 +35,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true"
+          [injectLogContextEnvVar]: "true",
         },
       },
     });
@@ -52,12 +52,12 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
@@ -67,7 +67,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true"
+          [injectLogContextEnvVar]: "true",
         },
       },
     });
@@ -96,12 +96,12 @@ describe("applyLayers", () => {
       handler: "hello.handler",
     });
 
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello, hello1, hello2]);
+    datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
@@ -112,7 +112,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true"
+          [injectLogContextEnvVar]: "true",
         },
       },
     });

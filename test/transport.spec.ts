@@ -25,13 +25,13 @@ describe("siteURLEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       site: "datadoghq.eu",
       flushMetricsToLogs: false,
       apiKey: "1234",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -57,12 +57,12 @@ describe("siteURLEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       flushMetricsToLogs: false,
       apiKey: "1234",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -91,13 +91,13 @@ describe("logForwardingEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       apiKey: "1234",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -123,10 +123,10 @@ describe("logForwardingEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -153,13 +153,13 @@ describe("apiKeyEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKey: "1234",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -185,11 +185,11 @@ describe("apiKeyEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       apiKey: "1234",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -214,16 +214,16 @@ describe("apiKeyEnvVar", () => {
       handler: "hello.handler",
     });
     expect(() => {
-      const DatadogCDK = new Datadog(stack, "Datadog", {
+      const datadogCDK = new Datadog(stack, "Datadog", {
         forwarderARN: "forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
         apiKey: "1234",
         apiKMSKey: "5678",
       });
-      DatadogCDK.addLambdaFunctions([hello]);
+      datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
-      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false."
+      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
     );
   });
   it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
@@ -239,14 +239,14 @@ describe("apiKeyEnvVar", () => {
       handler: "hello.handler",
     });
     expect(() => {
-      const DatadogCDK = new Datadog(stack, "Datadog", {
+      const datadogCDK = new Datadog(stack, "Datadog", {
         forwarderARN: "forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
       });
-      DatadogCDK.addLambdaFunctions([hello]);
+      datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
-      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false."
+      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
     );
   });
 });
@@ -264,13 +264,13 @@ describe("apiKMSKeyEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKMSKey: "5678",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -296,11 +296,11 @@ describe("apiKMSKeyEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       apiKMSKey: "5678",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {

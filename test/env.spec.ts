@@ -24,10 +24,10 @@ describe("applyEnvVariables", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -54,10 +54,10 @@ describe("enableDDTracingEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       enableDDTracing: false,
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -81,10 +81,10 @@ describe("enableDDTracingEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -111,11 +111,11 @@ describe("injectLogContextEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       injectLogContext: false,
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -139,10 +139,10 @@ describe("injectLogContextEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const DatadogCDK = new Datadog(stack, "Datadog", {
+    const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
     });
-    DatadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
