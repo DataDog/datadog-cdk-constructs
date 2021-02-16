@@ -10,10 +10,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Node 12.7
+      - name: Set up Node 14
         uses: actions/setup-node@v1
         with:
-          node-version: 12.7
+          node-version: 14
       
       - name: Cache Node modules
         id: cache-node-modules
@@ -37,7 +37,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        node-version: [10.17, 12.7]
+        node-version: [10,12,14]
 
     steps:
       - name: Checkout
@@ -64,6 +64,3 @@ jobs:
 
       - name: Run tests
         run: yarn test
-
-      - name: Upload code coverage report
-        run: bash <(curl -s https://codecov.io/bash)
