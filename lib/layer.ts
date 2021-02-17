@@ -16,7 +16,7 @@ export enum RuntimeType {
   PYTHON,
   UNSUPPORTED,
 }
-const LayerPrefix = "DatadogLayer";
+const layerPrefix = "DatadogLayer";
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs10.x": RuntimeType.NODE,
   "nodejs12.x": RuntimeType.NODE,
@@ -60,9 +60,7 @@ export function applyLayers(
 
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
-        errors.push(
-          getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"),
-        );
+        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
       layerARN = getLayerARN(region, pythonLayerVersion, runtime);
@@ -70,9 +68,7 @@ export function applyLayers(
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
-        errors.push(
-          getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"),
-        );
+        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
       layerARN = getLayerARN(region, nodeLayerVersion, runtime);
@@ -80,15 +76,11 @@ export function applyLayers(
     if (layerARN !== undefined) {
       let layer = layers.get(layerARN);
       if (layer === undefined) {
-        layer = lambda.LayerVersion.fromLayerVersionArn(
-          scope,
-          LayerPrefix + layerValue,
-          layerARN,
-        );
+        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerPrefix + layerValue, layerARN);
         layers.set(layerARN, layer); // could have token in key string
         layerValue += 1;
       }
-      //TODO: check if layer extracted generated error or is undefined
+      // TODO: check if layer extracted generated error or is undefined
       lam.addLayers(layer);
     }
   });
@@ -97,7 +89,7 @@ export function applyLayers(
 
 export function getLayerARN(region: string, version: number, runtime: string) {
   const layerName = runtimeToLayerName[runtime];
-  //TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
+  // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
 
   // if this is a GovCloud region, use the GovCloud lambda layer
@@ -107,11 +99,7 @@ export function getLayerARN(region: string, version: number, runtime: string) {
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-export function getMissingLayerVersionErrorMsg(
-  functionKey: string,
-  formalRuntime: string,
-  paramRuntime: string,
-) {
+export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
   return (
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
     `Please add the '${paramRuntime}LayerVersion' parameter for the Datadog serverless macro.`

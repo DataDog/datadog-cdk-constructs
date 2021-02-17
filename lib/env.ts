@@ -17,19 +17,9 @@ export const defaultEnvVar = {
   injectLogContext: true,
 };
 
-export function applyEnvVariables(
-  lambdas: lambda.Function[],
-  enableDDTracing: boolean,
-  injectLogContext: boolean,
-) {
+export function applyEnvVariables(lambdas: lambda.Function[], enableDDTracing: boolean, injectLogContext: boolean) {
   lambdas.forEach((lam) => {
-    lam.addEnvironment(
-      enableDDTracingEnvVar,
-      enableDDTracing.toString().toLowerCase(),
-    );
-    lam.addEnvironment(
-      injectLogContextEnvVar,
-      injectLogContext.toString().toLowerCase(),
-    );
+    lam.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
+    lam.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
   });
 }

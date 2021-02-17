@@ -14,7 +14,7 @@ export class ExampleStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    //user's lambda function
+    // user's lambda function
     const hello = new lambda.Function(this, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromAsset("lambda"),
@@ -31,22 +31,23 @@ export class ExampleStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello_py.handler",
-      tracing: lambda.Tracing.ACTIVE
+      tracing: lambda.Tracing.ACTIVE,
     });
 
-    const DatadogCDK = new Datadog(this, "Datadog", {
+    const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderARN:"<forwarder_ARN",
       enableDDTracing: true,
       flushMetricsToLogs: true,
       apiKey: "1234",
-      site: "us3.datadoghq.com"
+      site: "us3.datadoghq.com",
     });
-    DatadogCDK.addLambdaFunctions([hello, hello1, hello2]);
+    datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
   }
 }
 
 const app = new cdk.App();
-new ExampleStack(app, "ExampleStack");
+const stack = new ExampleStack(app, "ExampleStack");
+console.log("Stack name: "+stack.stackName);
 app.synth();

@@ -19,12 +19,7 @@ export const transportDefaults = {
   enableDDTracing: true,
 };
 
-export const site_list: string[] = [
-  "datadoghq.com",
-  "datadoghq.eu",
-  "us3.datadoghq.com",
-  "ddog-gov.com",
-];
+export const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
 
 export class Transport {
   flushMetricsToLogs: boolean;
@@ -32,12 +27,7 @@ export class Transport {
   apiKey?: string;
   apiKMSKey?: string;
 
-  constructor(
-    flushMetricsToLogs?: boolean,
-    site?: string,
-    apiKey?: string,
-    apiKMSKey?: string,
-  ) {
+  constructor(flushMetricsToLogs?: boolean, site?: string, apiKey?: string, apiKMSKey?: string) {
     if (flushMetricsToLogs === undefined) {
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
     } else {
@@ -50,19 +40,15 @@ export class Transport {
       this.site = site;
     }
 
-    if (!site_list.includes(this.site.toLowerCase())) {
+    if (!siteList.includes(this.site.toLowerCase())) {
       console.log(
         "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
       );
     }
 
     if (
-      (apiKey != undefined &&
-        apiKMSKey != undefined &&
-        this.flushMetricsToLogs === false) ||
-      (apiKey === undefined &&
-        apiKMSKey === undefined &&
-        this.flushMetricsToLogs === false)
+      (apiKey !== undefined && apiKMSKey !== undefined && this.flushMetricsToLogs === false) ||
+      (apiKey === undefined && apiKMSKey === undefined && this.flushMetricsToLogs === false)
     ) {
       throw new Error(
         "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
@@ -75,10 +61,7 @@ export class Transport {
 
   setEnvVars(lambdas: lambda.Function[]) {
     lambdas.forEach((lam) => {
-      lam.addEnvironment(
-        logForwardingEnvVar,
-        this.flushMetricsToLogs.toString(),
-      );
+      lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
         lam.addEnvironment(siteURLEnvVar, this.site);
       }

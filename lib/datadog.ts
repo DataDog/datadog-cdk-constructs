@@ -8,13 +8,7 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
-import {
-  applyLayers,
-  redirectHandlers,
-  addForwarder,
-  applyEnvVariables,
-  defaultEnvVar,
-} from "./index";
+import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
 
 export interface DatadogProps {
@@ -56,24 +50,14 @@ export class Datadog extends cdk.Construct {
     if (this.props.injectLogContext === undefined) {
       this.props.injectLogContext = defaultEnvVar.injectLogContext;
     }
-    if (this.props != undefined && lambdaFunctions.length > 0) {
+    if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
-      applyLayers(
-        this.scope,
-        region,
-        lambdaFunctions,
-        this.props.pythonLayerVersion,
-        this.props.nodeLayerVersion,
-      );
+      applyLayers(this.scope, region, lambdaFunctions, this.props.pythonLayerVersion, this.props.nodeLayerVersion);
       redirectHandlers(lambdaFunctions, this.props.addLayers);
-      if (this.props.forwarderARN != undefined) {
+      if (this.props.forwarderARN !== undefined) {
         addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
       }
-      applyEnvVariables(
-        lambdaFunctions,
-        this.props.enableDDTracing,
-        this.props.injectLogContext,
-      );
+      applyEnvVariables(lambdaFunctions, this.props.enableDDTracing, this.props.injectLogContext);
 
       this.transport.setEnvVars(lambdaFunctions);
     }
