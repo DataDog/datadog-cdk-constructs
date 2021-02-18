@@ -13,6 +13,9 @@ import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderARN: string) {
+  if (scope.node.tryFindChild("forwarder")) {
+    return;
+  }
   const forwarder = lambda.Function.fromFunctionArn(scope, "forwarder", forwarderARN);
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
