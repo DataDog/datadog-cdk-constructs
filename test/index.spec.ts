@@ -1,5 +1,6 @@
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as crypto from "crypto";
 import "@aws-cdk/assert/jest";
 import { addForwarder } from "../lib/forwarder";
 import { Datadog, logForwardingEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../lib/index";
@@ -8,25 +9,109 @@ import {
   DD_HANDLER_ENV_VAR,
   PYTHON_HANDLER,
 } from "../lib/redirect";
+const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
+
+function createSubscriptionFilterName(lambdaFunctionArn:string,forwarderArn:string){
+  const subscriptionFilterValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).update(forwarderArn).digest("hex");
+    const subscriptionFilterValueLength = subscriptionFilterValue.length;
+    const subscriptionFilterName = SUBSCRIPTION_FILTER_PREFIX + subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength);
+    return subscriptionFilterName;
+}
 describe("addForwarder", () => {
-  it("bypasses any attempts to make a second `forwarder` construct",() => {
+  it("Subscribes two seperate forwarder's to the same lambda via seperate addForwarder function calls",() => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
         region: "sa-east-1",
       },
     });
-    const pythonLambda = new lambda.Function(stack, "NodeHandler", {
+    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    addForwarder(stack, [pythonLambda], "forwarder-arn");
-    addForwarder(stack, [pythonLambda], "forwarder-arn");
+    addForwarder(stack, [nodeLambda], "forwarder-arn");
+    addForwarder(stack, [nodeLambda], "forwarder-arn2");
+
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "forwarder-arn2",
+      FilterPattern: "",
+    });
+  });
+  it("Subscribes the same forwarder to two different lambda functions via seperate addForwarder function calls",() => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const pythonLambda = new lambda.Function(stack, "PythonHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    addForwarder(stack, [nodeLambda], "forwarder-arn");
+    addForwarder(stack, [pythonLambda], "forwarder-arn");
+    const nodeLambdaLogGroupSubscriptionFilterName = createSubscriptionFilterName(nodeLambda.functionArn,"forwarder-arn")
+    const pythonLambdaLogGroupSubscriptionFilterName = createSubscriptionFilterName(pythonLambda.functionArn,"forwarder-arn")
+    expect(nodeLambda.logGroup.node.tryFindChild(nodeLambdaLogGroupSubscriptionFilterName)).not.toBeUndefined();
+    expect(pythonLambda.logGroup.node.tryFindChild(pythonLambdaLogGroupSubscriptionFilterName)).not.toBeUndefined();
+  });
+  it("Subscribes two different forwarders to two different lambda functions via seperate addForwarder function calls",() => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const pythonLambda = new lambda.Function(stack, "PythonHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    addForwarder(stack, [nodeLambda], "forwarder-arn");
+    addForwarder(stack, [pythonLambda], "forwarder-arn2");
+    const nodeLambdaLogGroupSubscriptionFilterName = createSubscriptionFilterName(nodeLambda.functionArn,"forwarder-arn")
+    const pythonLambdaLogGroupSubscriptionFilterName = createSubscriptionFilterName(pythonLambda.functionArn,"forwarder-arn2")
+    expect(nodeLambda.logGroup.node.tryFindChild(nodeLambdaLogGroupSubscriptionFilterName)).not.toBeUndefined();
+    expect(pythonLambda.logGroup.node.tryFindChild(pythonLambdaLogGroupSubscriptionFilterName)).not.toBeUndefined();
+  });
+  it("Subscribes the same forwarder to two different lambda functions via one addForwarder function call",() => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const pythonLambda = new lambda.Function(stack, "PythonHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    addForwarder(stack, [nodeLambda, pythonLambda], "forwarder-arn");
+    const nodeLambdaLogGroupSubscriptionFilterName = createSubscriptionFilterName(nodeLambda.functionArn,"forwarder-arn")
+    const pythonLambdaLogGroupSubscriptionFilterName = createSubscriptionFilterName(pythonLambda.functionArn,"forwarder-arn")
+    expect(nodeLambda.logGroup.node.tryFindChild(nodeLambdaLogGroupSubscriptionFilterName)).not.toBeUndefined();
+    expect(pythonLambda.logGroup.node.tryFindChild(pythonLambdaLogGroupSubscriptionFilterName)).not.toBeUndefined();
   });
 });
 describe("applyLayers", () => {

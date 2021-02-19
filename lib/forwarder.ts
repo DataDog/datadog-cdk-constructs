@@ -13,21 +13,27 @@ import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderARN: string) {
-  if (scope.node.tryFindChild("forwarder")) {
-    return;
+  const forwarderConstructID = "forwarder" + crypto.createHash("sha256").update(forwarderARN).digest("hex");
+  let forwarder;
+  if (scope.node.tryFindChild(forwarderConstructID)) {
+    forwarder = scope.node.tryFindChild(forwarderConstructID) as lambda.IFunction;
+  } else {
+    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructID, forwarderARN);
   }
-  const forwarder = lambda.Function.fromFunctionArn(scope, "forwarder", forwarderARN);
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
-    const subscriptionFilterValue: string = crypto.createHash("sha256").update(lam.functionArn).digest("hex");
+    const subscriptionFilterValue: string = crypto
+      .createHash("sha256")
+      .update(lam.functionArn)
+      .update(forwarderARN)
+      .digest("hex");
     const subscriptionFilterValueLength = subscriptionFilterValue.length;
-    lam.logGroup.addSubscriptionFilter(
+    const subscriptionFilterName =
       SUBSCRIPTION_FILTER_PREFIX +
-        subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength),
-      {
-        destination: forwarderDestination,
-        filterPattern: FilterPattern.allEvents(),
-      },
-    );
+      subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength);
+    lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
+      destination: forwarderDestination,
+      filterPattern: FilterPattern.allEvents(),
+    });
   });
 }
