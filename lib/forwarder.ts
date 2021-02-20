@@ -12,25 +12,35 @@ import { FilterPattern } from "@aws-cdk/aws-logs";
 import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
-export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderARN: string) {
-  const forwarderConstructID = "forwarder" + crypto.createHash("sha256").update(forwarderARN).digest("hex");
+
+function generateForwaderConstrucId(forwarderArn: string) {
+  return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
+}
+function generateSubscriptionFilterName(functionArn: string, forwarderArn: string) {
+  const subscriptionFilterValue: string = crypto
+    .createHash("sha256")
+    .update(functionArn)
+    .update(forwarderArn)
+    .digest("hex");
+  const subscriptionFilterValueLength = subscriptionFilterValue.length;
+  const subscriptionFilterName =
+    SUBSCRIPTION_FILTER_PREFIX +
+    subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength);
+
+  return subscriptionFilterName;
+}
+
+export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
+  const forwarderConstructID = generateForwaderConstrucId(forwarderArn);
   let forwarder;
   if (scope.node.tryFindChild(forwarderConstructID)) {
     forwarder = scope.node.tryFindChild(forwarderConstructID) as lambda.IFunction;
   } else {
-    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructID, forwarderARN);
+    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructID, forwarderArn);
   }
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
-    const subscriptionFilterValue: string = crypto
-      .createHash("sha256")
-      .update(lam.functionArn)
-      .update(forwarderARN)
-      .digest("hex");
-    const subscriptionFilterValueLength = subscriptionFilterValue.length;
-    const subscriptionFilterName =
-      SUBSCRIPTION_FILTER_PREFIX +
-      subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength);
+    const subscriptionFilterName = generateSubscriptionFilterName(lam.functionArn, forwarderArn);
     lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
       destination: forwarderDestination,
       filterPattern: FilterPattern.allEvents(),
