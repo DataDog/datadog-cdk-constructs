@@ -56,14 +56,14 @@ export function applyLayers(
       return;
     }
 
-    let layerARN;
+    let layerArn;
 
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
-      layerARN = getLayerARN(region, pythonLayerVersion, runtime);
+      layerArn = getLayerARN(region, pythonLayerVersion, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
@@ -71,14 +71,14 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
-      layerARN = getLayerARN(region, nodeLayerVersion, runtime);
+      layerArn = getLayerARN(region, nodeLayerVersion, runtime);
     }
-    if (layerARN !== undefined) {
-      let layer = layers.get(layerARN);
+    if (layerArn !== undefined) {
+      let layer = layers.get(layerArn);
       if (layer === undefined) {
         const layerId = generateLayerId(lam.functionArn, runtime);
-        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerARN);
-        layers.set(layerARN, layer); // could have token in key string
+        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
+        layers.set(layerArn, layer); // could have token in key string
       }
       // TODO: check if layer extracted generated error or is undefined
       lam.addLayers(layer);
