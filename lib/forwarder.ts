@@ -12,19 +12,38 @@ import { FilterPattern } from "@aws-cdk/aws-logs";
 import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
-export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderARN: string) {
-  const forwarder = lambda.Function.fromFunctionArn(scope, "forwarder", forwarderARN);
+
+function generateForwaderConstructId(forwarderArn: string) {
+  return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
+}
+function generateSubscriptionFilterName(functionArn: string, forwarderArn: string) {
+  const subscriptionFilterValue: string = crypto
+    .createHash("sha256")
+    .update(functionArn)
+    .update(forwarderArn)
+    .digest("hex");
+  const subscriptionFilterValueLength = subscriptionFilterValue.length;
+  const subscriptionFilterName =
+    SUBSCRIPTION_FILTER_PREFIX +
+    subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength);
+
+  return subscriptionFilterName;
+}
+
+export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
+  const forwarderConstructId = generateForwaderConstructId(forwarderArn);
+  let forwarder;
+  if (scope.node.tryFindChild(forwarderConstructId)) {
+    forwarder = scope.node.tryFindChild(forwarderConstructId) as lambda.IFunction;
+  } else {
+    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructId, forwarderArn);
+  }
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
-    const subscriptionFilterValue: string = crypto.createHash("sha256").update(lam.functionArn).digest("hex");
-    const subscriptionFilterValueLength = subscriptionFilterValue.length;
-    lam.logGroup.addSubscriptionFilter(
-      SUBSCRIPTION_FILTER_PREFIX +
-        subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength),
-      {
-        destination: forwarderDestination,
-        filterPattern: FilterPattern.allEvents(),
-      },
-    );
+    const subscriptionFilterName = generateSubscriptionFilterName(lam.functionArn, forwarderArn);
+    lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
+      destination: forwarderDestination,
+      filterPattern: FilterPattern.allEvents(),
+    });
   });
 }

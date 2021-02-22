@@ -8,6 +8,7 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as crypto from "crypto";
 export const DD_ACCOUNT_ID = "464622532012";
 export const DD_GOV_ACCOUNT_ID = "002406178527";
 
@@ -48,7 +49,6 @@ export function applyLayers(
 ) {
   // TODO: check region availability
   const errors: string[] = [];
-  let layerValue = 0;
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
@@ -56,14 +56,14 @@ export function applyLayers(
       return;
     }
 
-    let layerARN;
+    let layerArn;
 
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
-      layerARN = getLayerARN(region, pythonLayerVersion, runtime);
+      layerArn = getLayerARN(region, pythonLayerVersion, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
@@ -71,14 +71,14 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
-      layerARN = getLayerARN(region, nodeLayerVersion, runtime);
+      layerArn = getLayerARN(region, nodeLayerVersion, runtime);
     }
-    if (layerARN !== undefined) {
-      let layer = layers.get(layerARN);
+    if (layerArn !== undefined) {
+      let layer = layers.get(layerArn);
       if (layer === undefined) {
-        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerPrefix + layerValue, layerARN);
-        layers.set(layerARN, layer); // could have token in key string
-        layerValue += 1;
+        const layerId = generateLayerId(lam.functionArn, runtime);
+        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
+        layers.set(layerArn, layer); // could have token in key string
       }
       // TODO: check if layer extracted generated error or is undefined
       lam.addLayers(layer);
@@ -104,4 +104,9 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
     `Please add the '${paramRuntime}LayerVersion' parameter for the Datadog serverless macro.`
   );
+}
+
+function generateLayerId(lambdaFunctionArn: string, runtime: string) {
+  const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+  return layerPrefix + "-" + runtime + "-" + layerValue;
 }
