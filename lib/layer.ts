@@ -76,8 +76,8 @@ export function applyLayers(
     if (layerARN !== undefined) {
       let layer = layers.get(layerARN);
       if (layer === undefined) {
-        const layerID = generateLayerID(lam.functionArn, runtime);
-        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerID, layerARN);
+        const layerId = generateLayerId(lam.functionArn, runtime);
+        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerARN);
         layers.set(layerARN, layer); // could have token in key string
       }
       // TODO: check if layer extracted generated error or is undefined
@@ -106,7 +106,7 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
   );
 }
 
-function generateLayerID(lambdaFunctionArn: string, runtime: string) {
+function generateLayerId(lambdaFunctionArn: string, runtime: string) {
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return layerPrefix + "-" + runtime + "-" + layerValue;
 }
