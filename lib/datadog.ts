@@ -14,6 +14,7 @@ import { Transport } from "./transport";
 export interface DatadogProps {
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
+  extensionLayerVersion?: number; //currently the extension only goes up to v5, I may need to note that some where in documentation
   addLayers?: boolean;
   forwarderARN?: string;
   flushMetricsToLogs?: boolean;
@@ -52,7 +53,7 @@ export class Datadog extends cdk.Construct {
     }
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
-      applyLayers(this.scope, region, lambdaFunctions, this.props.pythonLayerVersion, this.props.nodeLayerVersion);
+      applyLayers(this.scope, region, lambdaFunctions, this.props.pythonLayerVersion, this.props.nodeLayerVersion, this.props.extensionLayerVersion);
       redirectHandlers(lambdaFunctions, this.props.addLayers);
       if (this.props.forwarderARN !== undefined) {
         addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
