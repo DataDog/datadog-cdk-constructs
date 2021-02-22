@@ -18,49 +18,7 @@ function createSubscriptionFilterName(lambdaFunctionArn:string,forwarderArn:stri
     return subscriptionFilterName;
 }
 describe("addForwarder", () => {
-  it("Subscribes two seperate forwarder's to the same lambda via seperate addLambdaFunctions function calls",() => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromAsset("test"),
-      handler: "hello.handler",
-    });
-    const datadogCdk = new Datadog(stack, "Datadog", {
-      nodeLayerVersion: 40,
-      pythonLayerVersion: 28,
-      addLayers: true,
-      forwarderARN: "forwarder-arn",
-      enableDDTracing: true,
-      flushMetricsToLogs: true,
-      site: "datadoghq.com",
-    });
-    datadogCdk.addLambdaFunctions([nodeLambda]);
-    const datadogCdk2 = new Datadog(stack, "Datadog2", {
-      nodeLayerVersion: 40,
-      pythonLayerVersion: 28,
-      addLayers: true,
-      forwarderARN: "forwarder-arn2",
-      enableDDTracing: true,
-      flushMetricsToLogs: true,
-      site: "datadoghq.com",
-    });
-    datadogCdk2.addLambdaFunctions([nodeLambda]);
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
-      FilterPattern: "",
-    });
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn2",
-      FilterPattern: "",
-    });
-  });
-
-  it("Subscribes the same forwarder to two different lambda functions via seperate addLambdaFunctions function calls",() => {
+  it("Subscribes the same forwarder to two different lambda functions via separate addLambdaFunctions function calls",() => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -149,7 +107,7 @@ describe("addForwarder", () => {
     expect(throwsError).toBe(true);
   });
 
-  it("Subscribes two different forwarders to two different lambda functions via seperate addForwarder function calls",() => {
+  it("Subscribes two different forwarders to two different lambda functions via separate addForwarder function calls",() => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {

@@ -13,7 +13,7 @@ import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
-function generateForwaderConstrucId(forwarderArn: string) {
+function generateForwaderConstructId(forwarderArn: string) {
   return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
 }
 function generateSubscriptionFilterName(functionArn: string, forwarderArn: string) {
@@ -31,12 +31,12 @@ function generateSubscriptionFilterName(functionArn: string, forwarderArn: strin
 }
 
 export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
-  const forwarderConstructID = generateForwaderConstrucId(forwarderArn);
+  const forwarderConstructId = generateForwaderConstructId(forwarderArn);
   let forwarder;
-  if (scope.node.tryFindChild(forwarderConstructID)) {
-    forwarder = scope.node.tryFindChild(forwarderConstructID) as lambda.IFunction;
+  if (scope.node.tryFindChild(forwarderConstructId)) {
+    forwarder = scope.node.tryFindChild(forwarderConstructId) as lambda.IFunction;
   } else {
-    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructID, forwarderArn);
+    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructId, forwarderArn);
   }
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {

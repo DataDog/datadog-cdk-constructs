@@ -60,7 +60,6 @@ export function applyLayers(
 
     let lambdaLayerArn;
     let extensionLayerArn;
-
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
@@ -141,3 +140,4 @@ function generateExtensionLayerId(lambdaFunctionArn: string, runtime: string) {
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return extensionLayerPrefix + "-" + runtime + "-" + layerValue;
 }
+
