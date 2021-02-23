@@ -66,6 +66,7 @@ export function applyLayers(
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
@@ -74,34 +75,39 @@ export function applyLayers(
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (extensionLayerVersion !== undefined) {
       extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion);
-    }
-
-    if (lambdaLayerArn !== undefined) {
-      let lambdaLayer = layers.get(lambdaLayerArn);
-      if (lambdaLayer === undefined) {
-        const layerId = generateLambdaLayerId(lam.functionArn, runtime);
-        lambdaLayer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, lambdaLayerArn);
-        layers.set(lambdaLayerArn, lambdaLayer); // could have token in key string
-      }
-      // TODO: check if lambdaLayer extracted generated error or is undefined
-      lam.addLayers(lambdaLayer);
-    }
-
-    if (extensionLayerArn !== undefined) {
-      let extensionLayer = layers.get(extensionLayerArn);
-      if (extensionLayer === undefined) {
-        const layerId = generateExtensionLayerId(lam.functionArn, runtime);
-        extensionLayer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, extensionLayerArn);
-        layers.set(extensionLayerArn, extensionLayer);
-      }
-      lam.addLayers(extensionLayer);
+      addLayer(extensionLayerArn, true, scope, lam, runtime);
     }
   });
   return errors;
+}
+
+function addLayer(
+  layerArn: string,
+  isExtensionLayer: boolean,
+  scope: cdk.Construct,
+  lam: lambda.Function,
+  runtime: string,
+) {
+  let layerId;
+  if (isExtensionLayer) {
+    layerId = generateExtensionLayerId(lam.functionArn, runtime);
+  } else {
+    layerId = generateLambdaLayerId(lam.functionArn, runtime);
+  }
+
+  if (layerArn !== undefined) {
+    let lambdaLayer = layers.get(layerArn);
+    if (lambdaLayer === undefined) {
+      lambdaLayer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
+      layers.set(layerArn, lambdaLayer);
+    }
+    lam.addLayers(lambdaLayer);
+  }
 }
 
 export function getLambdaLayerArn(region: string, version: number, runtime: string) {
@@ -140,4 +146,3 @@ function generateExtensionLayerId(lambdaFunctionArn: string, runtime: string) {
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return extensionLayerPrefix + "-" + runtime + "-" + layerValue;
 }
-

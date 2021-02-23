@@ -35,7 +35,6 @@ class CdkStack extends cdk.Stack {
     const datadog = new Datadog(this, "Datadog", {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
-      extensionLayerVersion: <LAYER_VERSION>,
       addLayers: <BOOLEAN>,
       forwarderARN: "<FORWARDER_ARN>",
       flushMetricsToLogs: <BOOLEAN>,
@@ -59,8 +58,7 @@ To further configure your Datadog construct, use the following custom parameters
 | `addLayers`          | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.         |
 | `pythonLayerVersion` | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and `addLayers` is true. Find the latest version number from [https://github.com/DataDog/datadog-lambda-python/releases][5]. |
 | `nodeLayerVersion`   | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is true. Find the latest version number from [https://github.com/DataDog/datadog-lambda-js/releases][6].   |
-TODO: FIX THE EXTENSION LAYER BELOW
-| `extensionLayerVersion`   | Version of the Datadog Lambda Extension layer to install, such as 5. This is optional in public preview. Find the latest version number from [https://github.com/DataDog/datadog-lambda-js/releases][6].   |
+| `extensionLayerVersion`   | Version of the Datadog Lambda Extension layer to install, such as 5. The Datadog Lambda Extension layer is in public preview. Learn more about the lambda extension here [https://docs.datadoghq.com/serverless/datadog_lambda_library/extension][12].   |
 | `forwarderARN`         | When set, the plugin will automatically subscribe the functions' log groups to the Datadog Forwarder.  |
 | `flushMetricsToLogs` | Send custom metrics using Cloudwatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to `true`. If you disable this parameter, it's required to set the parameters `site` and `apiKey` (or `apiKMSKey` if encrypted). |
 | `site`               | Set which Datadog site to send data, only needed when flushMetricsToLogs is `false`. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`. The default is `datadoghq.com`. |
@@ -136,3 +134,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [9]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-lambda.Tracing.html
 [10]: https://docs.aws.amazon.com/cdk/latest/guide/tagging.html
 [11]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.Tags.html
+[12]: https://docs.datadoghq.com/serverless/datadog_lambda_library/extension/
