@@ -78,7 +78,7 @@ describe("siteURLEnvVar", () => {
       },
     });
   });
-  
+
   it("applies default site URL parameter if undefined and extensionLayerVersion is set", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -107,7 +107,7 @@ describe("siteURLEnvVar", () => {
           [injectLogContextEnvVar]: "true",
         },
       },
-    });  
+    });
   });
 
   it("applies site URL parameter correctly when extensionLayerVersion is set", () => {
@@ -139,7 +139,7 @@ describe("siteURLEnvVar", () => {
           [injectLogContextEnvVar]: "true",
         },
       },
-    });  
+    });
   });
 });
 
@@ -269,7 +269,7 @@ describe("apiKeyEnvVar", () => {
       },
     });
   });
-  
+
   it("throws error if flushMetricsToLogs is false and both API key and KMS API key are defined", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -354,7 +354,7 @@ describe("apiKMSKeyEnvVar", () => {
       },
     });
   });
-  
+
   it("adds DD_KMS_API_KEY environment variable when flushMetricsToLogs is true", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {

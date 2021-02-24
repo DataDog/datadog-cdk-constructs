@@ -19,7 +19,6 @@ export const transportDefaults = {
   enableDDTracing: true,
 };
 
-
 export class Transport {
   flushMetricsToLogs: boolean;
   site: string;
