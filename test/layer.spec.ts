@@ -1,11 +1,14 @@
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as crypto from "crypto";
 import {
   applyLayers,
   DD_ACCOUNT_ID,
   DD_GOV_ACCOUNT_ID,
   getMissingLayerVersionErrorMsg,
+  generateLambdaLayerId,
+  generateExtensionLayerId,
 } from "../lib/layer";
 import { Datadog } from "../lib/index"
 import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
@@ -41,7 +44,7 @@ describe("applyLayers", () => {
     expect(errors.length).toEqual(0);
   });
 
-  it("adds an extension layer along with a node layer ", () => {
+  it("adds an extension layer along with a node layer while using a apiKey", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -56,6 +59,7 @@ describe("applyLayers", () => {
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
       addLayers: true,
       enableDDTracing: false,
       flushMetricsToLogs: true,
@@ -70,7 +74,7 @@ describe("applyLayers", () => {
     });
   });
 
-  it("adds an extension layer along with a python layer ", () => {
+  it("adds an extension layer along with a python layer while using a apiKMSKey", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -85,6 +89,7 @@ describe("applyLayers", () => {
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKMSKey: "1234",
       addLayers: true,
       enableDDTracing: false,
       flushMetricsToLogs: true,
@@ -97,6 +102,107 @@ describe("applyLayers", () => {
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
       ],
     });
+  });
+
+  it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKMSKey` is set", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    let threwError: boolean = false;
+    let thrownError: Error | undefined;
+    try{
+      new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        addLayers: true,
+        enableDDTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+      });
+    }catch(e){
+      threwError = true;
+      thrownError = e;
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
+
+  });
+
+  it("throws an error when the `extensionLayerVersion` and `forwarderArn` are set", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    let threwError: boolean = false;
+    let thrownError: Error | undefined;
+    try{
+      new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        forwarderARN: "forwarder",
+        apiKey: "1234",
+        addLayers: true,
+        enableDDTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+      });
+    }catch(e){
+      threwError = true;
+      thrownError = e;
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
+
+  });
+
+  it("throws an error when the `extensionLayerVersion` is set while `site` is undefined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    let threwError: boolean = false;
+    let thrownError: Error | undefined;
+    try{
+      new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        addLayers: true,
+        enableDDTracing: false,
+        flushMetricsToLogs: false,
+      });
+    }catch(e){
+      threwError = true;
+      thrownError = e;
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `site` must also be set.");
+    
   });
 
   it("works with multiple lambda functions", () => {
@@ -245,6 +351,7 @@ describe("isGovCloud", () => {
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
       addLayers: true,
       enableDDTracing: false,
       flushMetricsToLogs: true,
@@ -259,7 +366,7 @@ describe("isGovCloud", () => {
     });
   });
 
-  it("adds an extension layer along with a python layer ", () => {
+  it("adds a GovCloud extension layer along with a GovCloud python layer ", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -274,6 +381,7 @@ describe("isGovCloud", () => {
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
       addLayers: true,
       enableDDTracing: false,
       flushMetricsToLogs: true,
@@ -289,3 +397,36 @@ describe("isGovCloud", () => {
   });
 
 });
+
+describe("generateLambdaLayerId", () => {
+  it("generates a lambda ID consisting of the prefix, runtime, and hash value delimited by hyphens", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const lambdaFunctionArn = "functionArn";
+    const runtime: string = hello.runtime.name;
+    const LambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn,runtime);
+    const LambdaLayerIdParts: string[] = LambdaLayerId.split("-");
+    expect(LambdaLayerIdParts[0]).toEqual("DatadogLayer");
+    expect(LambdaLayerIdParts[1]).toEqual("nodejs10.x");
+    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(LambdaLayerIdParts[2]);
+  });
+});
+
+describe("generateExtensionLayerId", () => {
+  it("generates an extension ID consisting of the prefix and hash value delimited by hyphens", () => {
+    const lambdaFunctionArn = "functionArn";
+    const LambdaLayerId: string = generateExtensionLayerId(lambdaFunctionArn);
+    const LambdaLayerIdParts: string[] = LambdaLayerId.split("-");
+    expect(LambdaLayerIdParts[0]).toEqual("DatadogExtension");
+    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(LambdaLayerIdParts[1]);
+  });
+})

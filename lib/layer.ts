@@ -95,7 +95,7 @@ function addLayer(
 ) {
   let layerId;
   if (isExtensionLayer) {
-    layerId = generateExtensionLayerId(lam.functionArn, runtime);
+    layerId = generateExtensionLayerId(lam.functionArn);
   } else {
     layerId = generateLambdaLayerId(lam.functionArn, runtime);
   }
@@ -137,12 +137,12 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
   );
 }
 
-function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
+export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return layerPrefix + "-" + runtime + "-" + layerValue;
 }
 
-function generateExtensionLayerId(lambdaFunctionArn: string, runtime: string) {
+export function generateExtensionLayerId(lambdaFunctionArn: string) {
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
-  return extensionLayerPrefix + "-" + runtime + "-" + layerValue;
+  return extensionLayerPrefix + "-" + layerValue;
 }
