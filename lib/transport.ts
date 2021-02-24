@@ -40,7 +40,7 @@ export class Transport {
     } else {
       this.flushMetricsToLogs = flushMetricsToLogs;
     }
-
+    // If the extension is used, metrics will be submitted via the extension.
     if (extensionLayerVersion !== undefined) {
       this.flushMetricsToLogs = false;
     }
@@ -56,13 +56,12 @@ export class Transport {
         "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
       );
     }
-
     if (
       (apiKey !== undefined && apiKMSKey !== undefined && this.flushMetricsToLogs === false) ||
       (apiKey === undefined && apiKMSKey === undefined && this.flushMetricsToLogs === false)
     ) {
       throw new Error(
-        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
+        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
       );
     } else {
       this.apiKey = apiKey;
@@ -76,10 +75,10 @@ export class Transport {
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
         lam.addEnvironment(siteURLEnvVar, this.site);
       }
-      if (this.apiKey !== undefined && this.flushMetricsToLogs === false) {
+      if (this.apiKey !== undefined) {
         lam.addEnvironment(apiKeyEnvVar, this.apiKey);
       }
-      if (this.apiKMSKey !== undefined && this.flushMetricsToLogs === false) {
+      if (this.apiKMSKey !== undefined) {
         lam.addEnvironment(apiKeyKMSEnvVar, this.apiKMSKey);
       }
     });

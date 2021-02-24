@@ -33,19 +33,7 @@ export class Datadog extends cdk.Construct {
     super(scope, id);
     this.scope = scope;
     this.props = props;
-
-    if (this.props.extensionLayerVersion !== undefined) {
-      if (this.props.forwarderARN !== undefined) {
-        throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
-      }
-      if (this.props.apiKey === undefined && this.props.apiKMSKey === undefined) {
-        throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
-      }
-      if (this.props.site === undefined) {
-        throw new Error("When `extensionLayer` is set, `site` must also be set.");
-      }
-    }
-
+    this.validateProps(this.props);
     this.transport = new Transport(
       this.props.flushMetricsToLogs,
       this.props.site,
@@ -83,5 +71,19 @@ export class Datadog extends cdk.Construct {
 
       this.transport.setEnvVars(lambdaFunctions);
     }
+  }
+
+  public validateProps(props: DatadogProps) {
+    if (props.extensionLayerVersion !== undefined) {
+      if (props.forwarderARN !== undefined) {
+        throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
+      }
+      if (props.apiKey === undefined && props.apiKMSKey === undefined) {
+        throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
+      }
+      if (props.site === undefined) {
+        throw new Error("When `extensionLayer` is set, `site` must also be set.");
+      }
+    } 
   }
 }

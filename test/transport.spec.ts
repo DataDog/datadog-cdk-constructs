@@ -173,7 +173,7 @@ describe("apiKeyEnvVar", () => {
       },
     });
   });
-  it("does not set a DD_API_KEY environment variable when flushMetricsToLogs is true", () => {
+  it("adds DD_API_KEY environment variable when flushMetricsToLogs is true", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -188,6 +188,7 @@ describe("apiKeyEnvVar", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderARN: "forwarder-arn",
       apiKey: "1234",
+      flushMetricsToLogs: true,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -197,6 +198,7 @@ describe("apiKeyEnvVar", () => {
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
           [injectLogContextEnvVar]: "true",
+          [apiKeyEnvVar]: "1234",
         },
       },
     });
@@ -223,7 +225,7 @@ describe("apiKeyEnvVar", () => {
       });
       datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
-      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
+      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
     );
   });
   it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
@@ -246,7 +248,7 @@ describe("apiKeyEnvVar", () => {
       });
       datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
-      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
+      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
     );
   });
 });
@@ -284,7 +286,7 @@ describe("apiKMSKeyEnvVar", () => {
       },
     });
   });
-  it("does not set DD_KMS_API_KEY environment variable when flushMetricsToLogs is true", () => {
+  it("adds DD_KMS_API_KEY environment variable when flushMetricsToLogs is true", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -308,6 +310,7 @@ describe("apiKMSKeyEnvVar", () => {
           [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
           [injectLogContextEnvVar]: "true",
+          [apiKeyKMSEnvVar]: "5678",
         },
       },
     });
