@@ -19,7 +19,6 @@ export const transportDefaults = {
   enableDDTracing: true,
 };
 
-export const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
 
 export class Transport {
   flushMetricsToLogs: boolean;
@@ -51,22 +50,8 @@ export class Transport {
       this.site = site;
     }
 
-    if (!siteList.includes(this.site.toLowerCase())) {
-      console.log(
-        "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
-      );
-    }
-    if (
-      (apiKey !== undefined && apiKMSKey !== undefined && this.flushMetricsToLogs === false) ||
-      (apiKey === undefined && apiKMSKey === undefined && this.flushMetricsToLogs === false)
-    ) {
-      throw new Error(
-        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
-      );
-    } else {
-      this.apiKey = apiKey;
-      this.apiKMSKey = apiKMSKey;
-    }
+    this.apiKey = apiKey;
+    this.apiKMSKey = apiKMSKey;
   }
 
   setEnvVars(lambdas: lambda.Function[]) {

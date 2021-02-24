@@ -74,6 +74,8 @@ export class Datadog extends cdk.Construct {
   }
 
   public validateProps(props: DatadogProps) {
+    const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+
     if (props.extensionLayerVersion !== undefined) {
       if (props.forwarderARN !== undefined) {
         throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
@@ -81,9 +83,19 @@ export class Datadog extends cdk.Construct {
       if (props.apiKey === undefined && props.apiKMSKey === undefined) {
         throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
       }
-      if (props.site === undefined) {
-        throw new Error("When `extensionLayer` is set, `site` must also be set.");
-      }
-    } 
+    }
+    if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
+      console.log(
+        "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+      );
+    }
+    if (
+      (props.apiKey !== undefined && props.apiKMSKey !== undefined && props.flushMetricsToLogs === false) ||
+      (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false)
+    ) {
+      throw new Error(
+        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
+      );
+    }
   }
 }

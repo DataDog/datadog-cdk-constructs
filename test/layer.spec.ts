@@ -173,39 +173,6 @@ describe("applyLayers", () => {
 
   });
 
-  it("throws an error when the `extensionLayerVersion` is set while `site` is undefined", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-
-    let threwError: boolean = false;
-    let thrownError: Error | undefined;
-    try{
-      const datadogCdk = new Datadog(stack, "Datadog", {
-        nodeLayerVersion: NODE_LAYER_VERSION,
-        extensionLayerVersion: EXTENSION_LAYER_VERSION,
-        apiKey: "1234",
-        addLayers: true,
-        enableDDTracing: false,
-        flushMetricsToLogs: false,
-      });
-      datadogCdk.addLambdaFunctions([hello]);
-    }catch(e){
-      threwError = true;
-      thrownError = e;
-    }
-    expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `site` must also be set.");
-  });
-
   it("works with multiple lambda functions", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -401,24 +368,12 @@ describe("isGovCloud", () => {
 
 describe("generateLambdaLayerId", () => {
   it("generates a lambda ID consisting of the prefix, runtime, and hash value delimited by hyphens", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromAsset("test"),
-      handler: "hello.handler",
-    });
     const lambdaFunctionArn = "functionArn";
-    const runtime: string = hello.runtime.name;
+    const runtime: string = "python";
     const lambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn,runtime);
-    const lambdaLayerIdParts: string[] = lambdaLayerId.split("-");
-    expect(lambdaLayerIdParts[0]).toEqual("DatadogLayer");
-    expect(lambdaLayerIdParts[1]).toEqual("nodejs10.x");
-    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(lambdaLayerIdParts[2]);
+    const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+    expect(lambdaLayerId).toEqual(`DatadogLayer-python-${layerValue}`);
+
   });
 });
 
@@ -426,8 +381,7 @@ describe("generateExtensionLayerId", () => {
   it("generates an extension ID consisting of the prefix and hash value delimited by hyphens", () => {
     const lambdaFunctionArn = "functionArn";
     const lambdaLayerId: string = generateExtensionLayerId(lambdaFunctionArn);
-    const lambdaLayerIdParts: string[] = lambdaLayerId.split("-");
-    expect(lambdaLayerIdParts[0]).toEqual("DatadogExtension");
-    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(lambdaLayerIdParts[1]);
+    const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+    expect(lambdaLayerId).toEqual(`DatadogExtension-${layerValue}`);
   });
 })
