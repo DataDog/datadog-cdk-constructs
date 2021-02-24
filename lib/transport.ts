@@ -28,7 +28,13 @@ export class Transport {
   apiKMSKey?: string;
   extensionLayerVersion?: number;
 
-  constructor(flushMetricsToLogs?: boolean, site?: string, apiKey?: string, apiKMSKey?: string, extensionLayerVersion?: number) {
+  constructor(
+    flushMetricsToLogs?: boolean,
+    site?: string,
+    apiKey?: string,
+    apiKMSKey?: string,
+    extensionLayerVersion?: number,
+  ) {
     if (flushMetricsToLogs === undefined) {
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
     } else {

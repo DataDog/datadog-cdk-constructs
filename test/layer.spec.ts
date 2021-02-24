@@ -111,16 +111,15 @@ describe("applyLayers", () => {
         region: "sa-east-1",
       },
     });
-    new lambda.Function(stack, "HelloHandler", {
+    const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-
     let threwError: boolean = false;
     let thrownError: Error | undefined;
     try{
-      new Datadog(stack, "Datadog", {
+      const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
         addLayers: true,
@@ -128,6 +127,7 @@ describe("applyLayers", () => {
         flushMetricsToLogs: true,
         site: "datadoghq.com",
       });
+      datadogCdk.addLambdaFunctions([hello]);
     }catch(e){
       threwError = true;
       thrownError = e;
@@ -144,7 +144,7 @@ describe("applyLayers", () => {
         region: "sa-east-1",
       },
     });
-    new lambda.Function(stack, "HelloHandler", {
+    const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
@@ -153,7 +153,7 @@ describe("applyLayers", () => {
     let threwError: boolean = false;
     let thrownError: Error | undefined;
     try{
-      new Datadog(stack, "Datadog", {
+      const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
         forwarderARN: "forwarder",
@@ -163,6 +163,7 @@ describe("applyLayers", () => {
         flushMetricsToLogs: true,
         site: "datadoghq.com",
       });
+      datadogCdk.addLambdaFunctions([hello]);
     }catch(e){
       threwError = true;
       thrownError = e;
@@ -179,7 +180,7 @@ describe("applyLayers", () => {
         region: "sa-east-1",
       },
     });
-    new lambda.Function(stack, "HelloHandler", {
+    const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
@@ -188,7 +189,7 @@ describe("applyLayers", () => {
     let threwError: boolean = false;
     let thrownError: Error | undefined;
     try{
-      new Datadog(stack, "Datadog", {
+      const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
         apiKey: "1234",
@@ -196,13 +197,13 @@ describe("applyLayers", () => {
         enableDDTracing: false,
         flushMetricsToLogs: false,
       });
+      datadogCdk.addLambdaFunctions([hello]);
     }catch(e){
       threwError = true;
       thrownError = e;
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual("When `extensionLayer` is set, `site` must also be set.");
-    
   });
 
   it("works with multiple lambda functions", () => {
@@ -413,20 +414,20 @@ describe("generateLambdaLayerId", () => {
     });
     const lambdaFunctionArn = "functionArn";
     const runtime: string = hello.runtime.name;
-    const LambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn,runtime);
-    const LambdaLayerIdParts: string[] = LambdaLayerId.split("-");
-    expect(LambdaLayerIdParts[0]).toEqual("DatadogLayer");
-    expect(LambdaLayerIdParts[1]).toEqual("nodejs10.x");
-    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(LambdaLayerIdParts[2]);
+    const lambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn,runtime);
+    const lambdaLayerIdParts: string[] = lambdaLayerId.split("-");
+    expect(lambdaLayerIdParts[0]).toEqual("DatadogLayer");
+    expect(lambdaLayerIdParts[1]).toEqual("nodejs10.x");
+    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(lambdaLayerIdParts[2]);
   });
 });
 
 describe("generateExtensionLayerId", () => {
   it("generates an extension ID consisting of the prefix and hash value delimited by hyphens", () => {
     const lambdaFunctionArn = "functionArn";
-    const LambdaLayerId: string = generateExtensionLayerId(lambdaFunctionArn);
-    const LambdaLayerIdParts: string[] = LambdaLayerId.split("-");
-    expect(LambdaLayerIdParts[0]).toEqual("DatadogExtension");
-    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(LambdaLayerIdParts[1]);
+    const lambdaLayerId: string = generateExtensionLayerId(lambdaFunctionArn);
+    const lambdaLayerIdParts: string[] = lambdaLayerId.split("-");
+    expect(lambdaLayerIdParts[0]).toEqual("DatadogExtension");
+    expect(crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex")).toEqual(lambdaLayerIdParts[1]);
   });
 })

@@ -39,10 +39,10 @@ export class Datadog extends cdk.Construct {
         throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
       }
       if (this.props.apiKey === undefined && this.props.apiKMSKey === undefined) {
-        throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.")
+        throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
       }
       if (this.props.site === undefined) {
-        throw new Error("When `extensionLayer` is set, `site` must also be set.")
+        throw new Error("When `extensionLayer` is set, `site` must also be set.");
       }
     }
 
@@ -53,10 +53,7 @@ export class Datadog extends cdk.Construct {
       this.props.apiKMSKey,
       this.props.extensionLayerVersion,
     );
-
-
   }
-
 
   public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
     if (this.props.addLayers === undefined) {
