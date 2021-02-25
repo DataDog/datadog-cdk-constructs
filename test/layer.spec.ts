@@ -1,15 +1,20 @@
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as crypto from "crypto";
 import {
   applyLayers,
   DD_ACCOUNT_ID,
   DD_GOV_ACCOUNT_ID,
   getMissingLayerVersionErrorMsg,
+  generateLambdaLayerId,
+  generateExtensionLayerId,
 } from "../lib/layer";
+import { Datadog } from "../lib/index"
 import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
-const nodeLayerVersion = 1;
-const pythonLayerVersion = 2;
+const NODE_LAYER_VERSION = 1;
+const PYTHON_LAYER_VERSION = 2;
+const EXTENSION_LAYER_VERSION = 5;
 
 describe("applyLayers", () => {
   it("adds a layer", () => {
@@ -28,15 +33,75 @@ describe("applyLayers", () => {
       stack,
       stack.region,
       [hello],
-      pythonLayerVersion,
-      nodeLayerVersion,
+      PYTHON_LAYER_VERSION,
+      NODE_LAYER_VERSION,
     );
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${nodeLayerVersion}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
       ],
     });
     expect(errors.length).toEqual(0);
+  });
+
+  it("adds an extension layer along with a node layer while using an apiKey", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      addLayers: true,
+      enableDDTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
+  it("adds an extension layer along with a python layer while using an apiKMSKey", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKMSKey: "1234",
+      addLayers: true,
+      enableDDTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
   });
 
   it("works with multiple lambda functions", () => {
@@ -60,19 +125,19 @@ describe("applyLayers", () => {
       stack,
       stack.region,
       [hello1, hello2],
-      pythonLayerVersion,
-      nodeLayerVersion,
+      PYTHON_LAYER_VERSION,
+      NODE_LAYER_VERSION,
     );
 
     expect(errors.length).toEqual(0);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${nodeLayerVersion}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
       ],
     });
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:${nodeLayerVersion}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:${NODE_LAYER_VERSION}`,
       ],
     });
   });
@@ -93,8 +158,8 @@ describe("applyLayers", () => {
       stack,
       stack.region,
       [hello],
-      pythonLayerVersion,
-      nodeLayerVersion,
+      PYTHON_LAYER_VERSION,
+      NODE_LAYER_VERSION,
     );
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: ABSENT,
@@ -153,20 +218,101 @@ describe("isGovCloud", () => {
       stack,
       stack.region,
       [pythonLambda, nodeLambda],
-      pythonLayerVersion,
-      nodeLayerVersion,
+      PYTHON_LAYER_VERSION,
+      NODE_LAYER_VERSION,
     );
 
     expect(errors.length).toEqual(0);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python36:${pythonLayerVersion}`,
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python36:${PYTHON_LAYER_VERSION}`,
       ],
     });
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${nodeLayerVersion}`,
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
       ],
     });
   });
+
+  it("adds a GovCloud extension layer along with a GovCloud node layer ", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-gov-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      addLayers: true,
+      enableDDTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
+  it("adds a GovCloud extension layer along with a GovCloud python layer ", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-gov-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      addLayers: true,
+      enableDDTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
 });
+
+describe("generateLambdaLayerId", () => {
+  it("generates a lambda ID consisting of the prefix, runtime, and hash value delimited by hyphens", () => {
+    const lambdaFunctionArn = "functionArn";
+    const runtime: string = "python";
+    const lambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn,runtime);
+    const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+    expect(lambdaLayerId).toEqual(`DatadogLayer-python-${layerValue}`);
+
+  });
+});
+
+describe("generateExtensionLayerId", () => {
+  it("generates an extension ID consisting of the prefix and hash value delimited by hyphens", () => {
+    const lambdaFunctionArn = "functionArn";
+    const lambdaLayerId: string = generateExtensionLayerId(lambdaFunctionArn);
+    const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+    expect(lambdaLayerId).toEqual(`DatadogExtension-${layerValue}`);
+  });
+})

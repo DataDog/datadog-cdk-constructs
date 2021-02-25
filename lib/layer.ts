@@ -18,6 +18,7 @@ export enum RuntimeType {
   UNSUPPORTED,
 }
 const layerPrefix = "DatadogLayer";
+const extensionLayerPrefix = "DatadogExtension";
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs10.x": RuntimeType.NODE,
   "nodejs12.x": RuntimeType.NODE,
@@ -46,6 +47,7 @@ export function applyLayers(
   lambdas: lambda.Function[],
   pythonLayerVersion?: number,
   nodeLayerVersion?: number,
+  extensionLayerVersion?: number,
 ) {
   // TODO: check region availability
   const errors: string[] = [];
@@ -56,14 +58,15 @@ export function applyLayers(
       return;
     }
 
-    let layerArn;
-
+    let lambdaLayerArn;
+    let extensionLayerArn;
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
-      layerArn = getLayerARN(region, pythonLayerVersion, runtime);
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
@@ -71,23 +74,43 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
-      layerArn = getLayerARN(region, nodeLayerVersion, runtime);
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
-    if (layerArn !== undefined) {
-      let layer = layers.get(layerArn);
-      if (layer === undefined) {
-        const layerId = generateLayerId(lam.functionArn, runtime);
-        layer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
-        layers.set(layerArn, layer); // could have token in key string
-      }
-      // TODO: check if layer extracted generated error or is undefined
-      lam.addLayers(layer);
+
+    if (extensionLayerVersion !== undefined) {
+      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion);
+      addLayer(extensionLayerArn, true, scope, lam, runtime);
     }
   });
   return errors;
 }
 
-export function getLayerARN(region: string, version: number, runtime: string) {
+function addLayer(
+  layerArn: string,
+  isExtensionLayer: boolean,
+  scope: cdk.Construct,
+  lam: lambda.Function,
+  runtime: string,
+) {
+  let layerId;
+  if (isExtensionLayer) {
+    layerId = generateExtensionLayerId(lam.functionArn);
+  } else {
+    layerId = generateLambdaLayerId(lam.functionArn, runtime);
+  }
+
+  if (layerArn !== undefined) {
+    let lambdaLayer = layers.get(layerArn);
+    if (lambdaLayer === undefined) {
+      lambdaLayer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
+      layers.set(layerArn, lambdaLayer);
+    }
+    lam.addLayers(lambdaLayer);
+  }
+}
+
+export function getLambdaLayerArn(region: string, version: number, runtime: string) {
   const layerName = runtimeToLayerName[runtime];
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
@@ -99,6 +122,14 @@ export function getLayerARN(region: string, version: number, runtime: string) {
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
+export function getExtensionLayerArn(region: string, version: number) {
+  const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
+  if (isGovCloud) {
+    return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
+  }
+  return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
+}
+
 export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
   return (
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
@@ -106,7 +137,12 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
   );
 }
 
-function generateLayerId(lambdaFunctionArn: string, runtime: string) {
+export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return layerPrefix + "-" + runtime + "-" + layerValue;
+}
+
+export function generateExtensionLayerId(lambdaFunctionArn: string) {
+  const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+  return extensionLayerPrefix + "-" + layerValue;
 }

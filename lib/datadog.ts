@@ -14,6 +14,7 @@ import { Transport } from "./transport";
 export interface DatadogProps {
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
+  extensionLayerVersion?: number;
   addLayers?: boolean;
   forwarderARN?: string;
   flushMetricsToLogs?: boolean;
@@ -32,11 +33,13 @@ export class Datadog extends cdk.Construct {
     super(scope, id);
     this.scope = scope;
     this.props = props;
+    validateProps(this.props);
     this.transport = new Transport(
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
       this.props.apiKMSKey,
+      this.props.extensionLayerVersion,
     );
   }
 
@@ -52,7 +55,14 @@ export class Datadog extends cdk.Construct {
     }
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
-      applyLayers(this.scope, region, lambdaFunctions, this.props.pythonLayerVersion, this.props.nodeLayerVersion);
+      applyLayers(
+        this.scope,
+        region,
+        lambdaFunctions,
+        this.props.pythonLayerVersion,
+        this.props.nodeLayerVersion,
+        this.props.extensionLayerVersion,
+      );
       redirectHandlers(lambdaFunctions, this.props.addLayers);
       if (this.props.forwarderARN !== undefined) {
         addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
@@ -60,6 +70,32 @@ export class Datadog extends cdk.Construct {
       applyEnvVariables(lambdaFunctions, this.props.enableDDTracing, this.props.injectLogContext);
 
       this.transport.setEnvVars(lambdaFunctions);
+    }
+  }
+}
+
+function validateProps(props: DatadogProps) {
+  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+  if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
+    throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
+  }
+
+  if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
+    throw new Error(
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+    );
+  }
+
+  if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
+  }
+
+  if (props.extensionLayerVersion !== undefined) {
+    if (props.forwarderARN !== undefined) {
+      throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
+    }
+    if (props.apiKey === undefined && props.apiKMSKey === undefined) {
+      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
     }
   }
 }

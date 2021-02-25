@@ -19,19 +19,30 @@ export const transportDefaults = {
   enableDDTracing: true,
 };
 
-export const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
-
 export class Transport {
   flushMetricsToLogs: boolean;
   site: string;
   apiKey?: string;
   apiKMSKey?: string;
+  extensionLayerVersion?: number;
 
-  constructor(flushMetricsToLogs?: boolean, site?: string, apiKey?: string, apiKMSKey?: string) {
+  constructor(
+    flushMetricsToLogs?: boolean,
+    site?: string,
+    apiKey?: string,
+    apiKMSKey?: string,
+    extensionLayerVersion?: number,
+  ) {
     if (flushMetricsToLogs === undefined) {
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
     } else {
       this.flushMetricsToLogs = flushMetricsToLogs;
+    }
+
+    this.extensionLayerVersion = extensionLayerVersion;
+    // If the extension is used, metrics will be submitted via the extension.
+    if (this.extensionLayerVersion !== undefined) {
+      this.flushMetricsToLogs = false;
     }
 
     if (site === undefined) {
@@ -40,23 +51,8 @@ export class Transport {
       this.site = site;
     }
 
-    if (!siteList.includes(this.site.toLowerCase())) {
-      console.log(
-        "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
-      );
-    }
-
-    if (
-      (apiKey !== undefined && apiKMSKey !== undefined && this.flushMetricsToLogs === false) ||
-      (apiKey === undefined && apiKMSKey === undefined && this.flushMetricsToLogs === false)
-    ) {
-      throw new Error(
-        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both if flushMetricsToLogs is set to false.",
-      );
-    } else {
-      this.apiKey = apiKey;
-      this.apiKMSKey = apiKMSKey;
-    }
+    this.apiKey = apiKey;
+    this.apiKMSKey = apiKMSKey;
   }
 
   setEnvVars(lambdas: lambda.Function[]) {
@@ -65,10 +61,10 @@ export class Transport {
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
         lam.addEnvironment(siteURLEnvVar, this.site);
       }
-      if (this.apiKey !== undefined && this.flushMetricsToLogs === false) {
+      if (this.apiKey !== undefined) {
         lam.addEnvironment(apiKeyEnvVar, this.apiKey);
       }
-      if (this.apiKMSKey !== undefined && this.flushMetricsToLogs === false) {
+      if (this.apiKMSKey !== undefined) {
         lam.addEnvironment(apiKeyKMSEnvVar, this.apiKMSKey);
       }
     });
