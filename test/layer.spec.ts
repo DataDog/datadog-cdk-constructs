@@ -44,7 +44,7 @@ describe("applyLayers", () => {
     expect(errors.length).toEqual(0);
   });
 
-  it("adds an extension layer along with a node layer while using a apiKey", () => {
+  it("adds an extension layer along with a node layer while using an apiKey", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -74,7 +74,7 @@ describe("applyLayers", () => {
     });
   });
 
-  it("adds an extension layer along with a python layer while using a apiKMSKey", () => {
+  it("adds an extension layer along with a python layer while using an apiKMSKey", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {

@@ -67,7 +67,7 @@ describe("validateProps", () => {
 
   });
 
-  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
+  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are undefined", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {

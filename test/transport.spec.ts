@@ -141,6 +141,36 @@ describe("siteURLEnvVar", () => {
       },
     });
   });
+
+  it("does not apply site URL parameter when flushMetricsToLogs is true", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      forwarderARN: "forwarder",
+      flushMetricsToLogs: true,
+      site: "datadoghq.eu",
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [logForwardingEnvVar]: "true",
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [enableDDTracingEnvVar]: "true",
+          [injectLogContextEnvVar]: "true",
+        },
+      },
+    });
+  });
 });
 
 describe("logForwardingEnvVar", () => {
