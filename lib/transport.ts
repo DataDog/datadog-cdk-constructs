@@ -31,16 +31,11 @@ export class Transport {
     site?: string,
     apiKey?: string,
     apiKMSKey?: string,
-    extensionLayerVersion?: number,
   ) {
     if (flushMetricsToLogs === undefined) {
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
     } else {
       this.flushMetricsToLogs = flushMetricsToLogs;
-    }
-    // If the extension is used, metrics will be submitted via the extension.
-    if (extensionLayerVersion !== undefined) {
-      this.flushMetricsToLogs = false;
     }
 
     if (site === undefined) {

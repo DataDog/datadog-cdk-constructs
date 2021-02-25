@@ -176,7 +176,8 @@ describe("logForwardingEnvVar", () => {
       },
     });
   });
-  it("appies default log forwarding value if undefined", () => {
+
+  it("applies default log forwarding value if undefined", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -203,10 +204,42 @@ describe("logForwardingEnvVar", () => {
       },
     });
   });
+
+  it("overrides log forwarding value to false when extensionLayerVersion is set", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      flushMetricsToLogs: true,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [logForwardingEnvVar]: "false",
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [enableDDTracingEnvVar]: "true",
+          [injectLogContextEnvVar]: "true",
+          [siteURLEnvVar]: "datadoghq.com",
+          [apiKeyEnvVar]: "1234",
+        },
+      },
+    });
+  });
 });
 
 describe("apiKeyEnvVar", () => {
-  it("adds DD_API_KEY environment variable when flushMetricsToLogs is false", () => {
+  it("adds DD_API_KEY environment variable", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -239,38 +272,7 @@ describe("apiKeyEnvVar", () => {
     });
   });
 
-  it("adds DD_API_KEY environment variable when flushMetricsToLogs is true", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
-      apiKey: "1234",
-      flushMetricsToLogs: true,
-    });
-    datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Environment: {
-        Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [logForwardingEnvVar]: "true",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
-          [apiKeyEnvVar]: "1234",
-        },
-      },
-    });
-  });
-
-  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are defined", () => {
+  it("throws error if both API key and KMS API key are defined", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -292,7 +294,7 @@ describe("apiKeyEnvVar", () => {
       });
       datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
-      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
+      "Both `apiKey` and `apiKMSKey` cannot be set.",
     );
   });
 
@@ -316,13 +318,13 @@ describe("apiKeyEnvVar", () => {
       });
       datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
-      "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
+      "When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.",
     );
   });
 });
 
 describe("apiKMSKeyEnvVar", () => {
-  it("sets an DD_KMS_API_KEY environment variable when flushMetricsToLogs is false", () => {
+  it("adds DD_KMS_API_KEY environment variable", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -347,36 +349,6 @@ describe("apiKMSKeyEnvVar", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [siteURLEnvVar]: "datadoghq.com",
           [logForwardingEnvVar]: "false",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
-          [apiKeyKMSEnvVar]: "5678",
-        },
-      },
-    });
-  });
-
-  it("adds DD_KMS_API_KEY environment variable when flushMetricsToLogs is true", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
-      apiKMSKey: "5678",
-    });
-    datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Environment: {
-        Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [logForwardingEnvVar]: "true",
           [enableDDTracingEnvVar]: "true",
           [injectLogContextEnvVar]: "true",
           [apiKeyKMSEnvVar]: "5678",

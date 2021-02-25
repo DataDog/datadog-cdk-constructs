@@ -33,13 +33,12 @@ export class Datadog extends cdk.Construct {
     super(scope, id);
     this.scope = scope;
     this.props = props;
-    this.validateProps(this.props);
+    validateProps(this.props);
     this.transport = new Transport(
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
       this.props.apiKMSKey,
-      this.props.extensionLayerVersion,
     );
   }
 
@@ -72,30 +71,33 @@ export class Datadog extends cdk.Construct {
       this.transport.setEnvVars(lambdaFunctions);
     }
   }
+}
 
-  public validateProps(props: DatadogProps) {
-    const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+function validateProps(props: DatadogProps) {
+  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+  if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
+    throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
+  }
 
-    if (props.extensionLayerVersion !== undefined) {
-      if (props.forwarderARN !== undefined) {
-        throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
-      }
-      if (props.apiKey === undefined && props.apiKMSKey === undefined) {
-        throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
-      }
+  // If the extension is used, metrics will be submitted via the extension.
+  if (props.extensionLayerVersion !== undefined) {
+    props.flushMetricsToLogs = false;
+  }
+
+  if (props.extensionLayerVersion !== undefined) {
+    if (props.forwarderARN !== undefined) {
+      throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
     }
-    if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
-      console.log(
-        "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
-      );
+    if (props.apiKey === undefined && props.apiKMSKey === undefined) {
+      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
     }
-    if (
-      (props.apiKey !== undefined && props.apiKMSKey !== undefined && props.flushMetricsToLogs === false) ||
-      (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false)
-    ) {
-      throw new Error(
-        "The parameters apiKey and apiKMSKey are mutually exclusive. Please set one or the other but not both.",
-      );
-    }
+  }
+  if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
+    console.log(
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+    );
+  }
+  if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
   }
 }
