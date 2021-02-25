@@ -271,56 +271,6 @@ describe("apiKeyEnvVar", () => {
       },
     });
   });
-
-  it("throws error if both API key and KMS API key are defined", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    expect(() => {
-      const datadogCDK = new Datadog(stack, "Datadog", {
-        forwarderARN: "forwarder-arn",
-        flushMetricsToLogs: false,
-        site: "datadoghq.com",
-        apiKey: "1234",
-        apiKMSKey: "5678",
-      });
-      datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      "Both `apiKey` and `apiKMSKey` cannot be set.",
-    );
-  });
-
-  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    expect(() => {
-      const datadogCDK = new Datadog(stack, "Datadog", {
-        forwarderARN: "forwarder-arn",
-        flushMetricsToLogs: false,
-        site: "datadoghq.com",
-      });
-      datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      "When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.",
-    );
-  });
 });
 
 describe("apiKMSKeyEnvVar", () => {

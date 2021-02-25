@@ -39,6 +39,7 @@ export class Datadog extends cdk.Construct {
       this.props.site,
       this.props.apiKey,
       this.props.apiKMSKey,
+      this.props.extensionLayerVersion,
     );
   }
 
@@ -79,9 +80,19 @@ function validateProps(props: DatadogProps) {
     throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
   }
 
-  // If the extension is used, metrics will be submitted via the extension.
-  if (props.extensionLayerVersion !== undefined) {
-    props.flushMetricsToLogs = false;
+  if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
+    throw new Error(
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+    );
+  }
+
+  if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
+  }
+
+  // TODO: Refactor this error when Extension layer officially supports tracing.
+  if (props.enableDDTracing === true && props.forwarderARN === undefined) {
+    throw new Error("When `enableDDTracing` is true, it's required to set the `forwarderARN` parameter.");
   }
 
   if (props.extensionLayerVersion !== undefined) {
@@ -91,13 +102,5 @@ function validateProps(props: DatadogProps) {
     if (props.apiKey === undefined && props.apiKMSKey === undefined) {
       throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
     }
-  }
-  if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
-    console.log(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
-    );
-  }
-  if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
   }
 }

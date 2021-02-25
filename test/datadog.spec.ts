@@ -1,0 +1,184 @@
+import * as cdk from "@aws-cdk/core";
+import * as lambda from "@aws-cdk/aws-lambda";
+import "@aws-cdk/assert/jest";
+import {
+  Datadog,
+} from "../lib/index";
+const EXTENSION_LAYER_VERSION = 5;
+const NODE_LAYER_VERSION = 1;
+
+describe("validateProps", () => {
+  it("throws error if both API key and KMS API key are defined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    expect(() => {
+      const datadogCDK = new Datadog(stack, "Datadog", {
+        forwarderARN: "forwarder-arn",
+        flushMetricsToLogs: false,
+        site: "datadoghq.com",
+        apiKey: "1234",
+        apiKMSKey: "5678",
+      });
+      datadogCDK.addLambdaFunctions([hello]);
+    }).toThrowError(
+      "Both `apiKey` and `apiKMSKey` cannot be set.",
+    );
+  });
+
+  it("throws an error when the site is set to an invalid site URL", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError: boolean = false;
+    let thrownError: Error | undefined;
+    try{
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        enableDDTracing: false,
+        flushMetricsToLogs: false,
+        site: "dataDOGEhq.com",
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    }catch(e){
+      threwError = true;
+      thrownError = e;
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.");
+
+  });
+
+  it("throws error if flushMetricsToLogs is false and both API key and KMS API key are not defined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    expect(() => {
+      const datadogCDK = new Datadog(stack, "Datadog", {
+        forwarderARN: "forwarder-arn",
+        flushMetricsToLogs: false,
+        site: "datadoghq.com",
+      });
+      datadogCDK.addLambdaFunctions([hello]);
+    }).toThrowError(
+      "When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.",
+    );
+  });
+
+  // TODO: Refactor this test when Extension layer officially supports tracing.
+  it("throws error if enableDDTracing is true and forwarderARN is undefined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    expect(() => {
+      const datadogCDK = new Datadog(stack, "Datadog", {
+          enableDDTracing: true,
+      });
+      datadogCDK.addLambdaFunctions([hello]);
+    }).toThrowError(
+      "When `enableDDTracing` is true, it's required to set the `forwarderARN` parameter.",
+    );
+  });
+
+  it("throws an error when the extensionLayerVersion and forwarderArn are set", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    let threwError: boolean = false;
+    let thrownError: Error | undefined;
+    try{
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        forwarderARN: "forwarder",
+        apiKey: "1234",
+        addLayers: true,
+        enableDDTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    }catch(e){
+      threwError = true;
+      thrownError = e;
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
+  });
+
+  it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKMSKey` is set", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError: boolean = false;
+    let thrownError: Error | undefined;
+    try{
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        addLayers: true,
+        enableDDTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    }catch(e){
+      threwError = true;
+      thrownError = e;
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
+
+  });
+});
