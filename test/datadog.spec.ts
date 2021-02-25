@@ -91,29 +91,6 @@ describe("validateProps", () => {
     );
   });
 
-  // TODO: Refactor this test when Extension layer officially supports tracing.
-  it("throws error if enableDDTracing is true and forwarderARN is undefined", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    expect(() => {
-      const datadogCDK = new Datadog(stack, "Datadog", {
-          enableDDTracing: true,
-      });
-      datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      "When `enableDDTracing` is true, it's required to set the `forwarderARN` parameter.",
-    );
-  });
-
   it("throws an error when the extensionLayerVersion and forwarderArn are set", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {

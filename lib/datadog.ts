@@ -90,11 +90,6 @@ function validateProps(props: DatadogProps) {
     throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
   }
 
-  // TODO: Refactor this error when Extension layer officially supports tracing.
-  if (props.enableDDTracing === true && props.forwarderARN === undefined) {
-    throw new Error("When `enableDDTracing` is true, it's required to set the `forwarderARN` parameter.");
-  }
-
   if (props.extensionLayerVersion !== undefined) {
     if (props.forwarderARN !== undefined) {
       throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
