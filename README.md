@@ -64,7 +64,7 @@ To further configure your Datadog construct, use the following custom parameters
 | `site`               | Set which Datadog site to send data. This is only used when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`. The default is `datadoghq.com`. |
 | `apiKey`             | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8]. |
 | `apiKMSKey`          | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
-| `enableDDTracing`    | Enable Datadog tracing on your Lambda functions. Defaults to `true`. When enabled, it's required to set the `forwarderARN` parameter. |
+| `enableDDTracing`    | Enable Datadog tracing on your Lambda functions. Defaults to `true`.|
 | `injectLogContext`   | When set, the lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 
 ### AWS CDK Configurations
