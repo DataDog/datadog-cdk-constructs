@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { RuntimeType, runtimeLookup } from "./index";
-import * as lambda from "@aws-cdk/aws-lambda";
-export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
-export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
-export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
-export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
+import * as lambda from '@aws-cdk/aws-lambda';
+import { RuntimeType, runtimeLookup } from './index';
+export const DD_HANDLER_ENV_VAR = 'DD_LAMBDA_HANDLER';
+export const PYTHON_HANDLER = 'datadog_lambda.handler.handler';
+export const JS_HANDLER_WITH_LAYERS = '/opt/nodejs/node_modules/datadog-lambda-js/handler.handler';
+export const JS_HANDLER = 'node_modules/datadog-lambda-js/dist/handler.handler';
 
 /**
  * To avoid modifying code in the user's lambda handler, redirect the handler to a Datadog

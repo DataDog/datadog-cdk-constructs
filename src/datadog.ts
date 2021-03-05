@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
-import { Transport } from "./transport";
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as cdk from '@aws-cdk/core';
+import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from './index';
+import { Transport } from './transport';
 
-export interface DatadogProps {
+export interface IDatadogProps {
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   extensionLayerVersion?: number;
@@ -27,9 +27,9 @@ export interface DatadogProps {
 
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
-  props: DatadogProps;
+  props: IDatadogProps;
   transport: Transport;
-  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+  constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
     super(scope, id);
     this.scope = scope;
     this.props = props;
@@ -69,33 +69,33 @@ export class Datadog extends cdk.Construct {
       }
       applyEnvVariables(lambdaFunctions, this.props.enableDDTracing, this.props.injectLogContext);
 
-      this.transport.setEnvVars(lambdaFunctions);
+      this.transport.applyEnvVars(lambdaFunctions);
     }
   }
 }
 
-function validateProps(props: DatadogProps) {
-  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+function validateProps(props: IDatadogProps) {
+  const siteList: string[] = ['datadoghq.com', 'datadoghq.eu', 'us3.datadoghq.com', 'ddog-gov.com'];
   if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
-    throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
+    throw new Error('Both `apiKey` and `apiKMSKey` cannot be set.');
   }
 
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
     throw new Error(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+      'Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.',
     );
   }
 
   if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
+    throw new Error('When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.');
   }
 
   if (props.extensionLayerVersion !== undefined) {
     if (props.forwarderARN !== undefined) {
-      throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
+      throw new Error('`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.');
     }
     if (props.apiKey === undefined && props.apiKMSKey === undefined) {
-      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
+      throw new Error('When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.');
     }
   }
 }

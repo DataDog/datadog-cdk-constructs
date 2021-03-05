@@ -6,15 +6,15 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from '@aws-cdk/aws-lambda';
 
-export const apiKeyEnvVar = "DD_API_KEY";
-export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
-export const siteURLEnvVar = "DD_SITE";
-export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
+export const apiKeyEnvVar = 'DD_API_KEY';
+export const apiKeyKMSEnvVar = 'DD_KMS_API_KEY';
+export const siteURLEnvVar = 'DD_SITE';
+export const logForwardingEnvVar = 'DD_FLUSH_TO_LOG';
 
 export const transportDefaults = {
-  site: "datadoghq.com",
+  site: 'datadoghq.com',
   flushMetricsToLogs: true,
   enableDDTracing: true,
 };
@@ -55,7 +55,7 @@ export class Transport {
     this.apiKMSKey = apiKMSKey;
   }
 
-  setEnvVars(lambdas: lambda.Function[]) {
+  applyEnvVars(lambdas: lambda.Function[]) {
     lambdas.forEach((lam) => {
       lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
