@@ -6,22 +6,22 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as crypto from 'crypto';
-import * as lambda from '@aws-cdk/aws-lambda';
-import { FilterPattern } from '@aws-cdk/aws-logs';
-import { LambdaDestination } from '@aws-cdk/aws-logs-destinations';
-import * as cdk from '@aws-cdk/core';
-const SUBSCRIPTION_FILTER_PREFIX = 'DatadogSubscriptionFilter';
+import * as crypto from "crypto";
+import * as lambda from "@aws-cdk/aws-lambda";
+import { FilterPattern } from "@aws-cdk/aws-logs";
+import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
+import * as cdk from "@aws-cdk/core";
+const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
 function generateForwaderConstructId(forwarderArn: string) {
-  return 'forwarder' + crypto.createHash('sha256').update(forwarderArn).digest('hex');
+  return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
 }
 function generateSubscriptionFilterName(functionArn: string, forwarderArn: string) {
   const subscriptionFilterValue: string = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(functionArn)
     .update(forwarderArn)
-    .digest('hex');
+    .digest("hex");
   const subscriptionFilterValueLength = subscriptionFilterValue.length;
   const subscriptionFilterName =
     SUBSCRIPTION_FILTER_PREFIX +

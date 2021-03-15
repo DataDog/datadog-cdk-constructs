@@ -2,12 +2,12 @@
 /.eslintrc.json
 /.github
 /.idea
-/.mergify.yml
 /.projen
 /.projenrc.js
 /.versionrc.json
 /.vscode
 /coverage
+/scripts
 /src
 /test
 /test-reports/
@@ -20,3 +20,6 @@ junit.xml
 !/lib
 !/lib/**/*.d.ts
 !/lib/**/*.js
+!LICENSE
+!LICENSE-3rdparty.csv
+!NOTICE

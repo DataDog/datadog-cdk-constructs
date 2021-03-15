@@ -6,37 +6,37 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as crypto from 'crypto';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as cdk from '@aws-cdk/core';
-export const DD_ACCOUNT_ID = '464622532012';
-export const DD_GOV_ACCOUNT_ID = '002406178527';
+import * as crypto from "crypto";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
+export const DD_ACCOUNT_ID = "464622532012";
+export const DD_GOV_ACCOUNT_ID = "002406178527";
 
 export enum RuntimeType {
   NODE,
   PYTHON,
   UNSUPPORTED,
 }
-const layerPrefix = 'DatadogLayer';
-const extensionLayerPrefix = 'DatadogExtension';
+const layerPrefix = "DatadogLayer";
+const extensionLayerPrefix = "DatadogExtension";
 export const runtimeLookup: { [key: string]: RuntimeType } = {
-  'nodejs10.x': RuntimeType.NODE,
-  'nodejs12.x': RuntimeType.NODE,
-  'nodejs8.10': RuntimeType.NODE,
-  'python2.7': RuntimeType.PYTHON,
-  'python3.6': RuntimeType.PYTHON,
-  'python3.7': RuntimeType.PYTHON,
-  'python3.8': RuntimeType.PYTHON,
+  "nodejs10.x": RuntimeType.NODE,
+  "nodejs12.x": RuntimeType.NODE,
+  "nodejs8.10": RuntimeType.NODE,
+  "python2.7": RuntimeType.PYTHON,
+  "python3.6": RuntimeType.PYTHON,
+  "python3.7": RuntimeType.PYTHON,
+  "python3.8": RuntimeType.PYTHON,
 };
 
 const runtimeToLayerName: { [key: string]: string } = {
-  'nodejs8.10': 'Datadog-Node8-10',
-  'nodejs10.x': 'Datadog-Node10-x',
-  'nodejs12.x': 'Datadog-Node12-x',
-  'python2.7': 'Datadog-Python27',
-  'python3.6': 'Datadog-Python36',
-  'python3.7': 'Datadog-Python37',
-  'python3.8': 'Datadog-Python38',
+  "nodejs8.10": "Datadog-Node8-10",
+  "nodejs10.x": "Datadog-Node10-x",
+  "nodejs12.x": "Datadog-Node12-x",
+  "python2.7": "Datadog-Python27",
+  "python3.6": "Datadog-Python36",
+  "python3.7": "Datadog-Python37",
+  "python3.8": "Datadog-Python38",
 };
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
@@ -62,7 +62,7 @@ export function applyLayers(
     let extensionLayerArn;
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
-        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, 'Python', 'python'));
+        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime);
@@ -71,7 +71,7 @@ export function applyLayers(
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
-        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, 'Node.js', 'node'));
+        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime);
@@ -113,7 +113,7 @@ function addLayer(
 export function getLambdaLayerArn(region: string, version: number, runtime: string) {
   const layerName = runtimeToLayerName[runtime];
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
-  const isGovCloud = region === 'us-gov-east-1' || region === 'us-gov-west-1';
+  const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
 
   // if this is a GovCloud region, use the GovCloud lambda layer
   if (isGovCloud) {
@@ -123,7 +123,7 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
 }
 
 export function getExtensionLayerArn(region: string, version: number) {
-  const isGovCloud = region === 'us-gov-east-1' || region === 'us-gov-west-1';
+  const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
   if (isGovCloud) {
     return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
   }
@@ -138,11 +138,11 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
 }
 
 export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
-  const layerValue: string = crypto.createHash('sha256').update(lambdaFunctionArn).digest('hex');
-  return layerPrefix + '-' + runtime + '-' + layerValue;
+  const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+  return layerPrefix + "-" + runtime + "-" + layerValue;
 }
 
 export function generateExtensionLayerId(lambdaFunctionArn: string) {
-  const layerValue: string = crypto.createHash('sha256').update(lambdaFunctionArn).digest('hex');
-  return extensionLayerPrefix + '-' + layerValue;
+  const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
+  return extensionLayerPrefix + "-" + layerValue;
 }

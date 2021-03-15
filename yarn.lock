@@ -153,7 +153,7 @@
     "@aws-cdk/cx-api" "1.91.0"
     constructs "^3.2.0"
 
-"@aws-cdk/aws-lambda@1.91.0", "@aws-cdk/aws-lambda@^1.91.0":
+"@aws-cdk/aws-lambda@1.91.0", "@aws-cdk/aws-lambda@^1.71.0":
   version "1.91.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda/-/aws-lambda-1.91.0.tgz#d5a85a54a3370b183c6a39579f70693962be8380"
   integrity sha512-8wcrpdKi1XR7LmP3I5zfOSoKDa8eSV+zfugJATXGoawrhfLgMff28j/wuphqjbGZzmHGNyCWaCfQmusy9voZsw==
@@ -176,7 +176,7 @@
     "@aws-cdk/cx-api" "1.91.0"
     constructs "^3.2.0"
 
-"@aws-cdk/aws-logs-destinations@^1.91.0":
+"@aws-cdk/aws-logs-destinations@^1.71.0":
   version "1.91.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-logs-destinations/-/aws-logs-destinations-1.91.0.tgz#de2099e109eb27e1fb23347f49e4a05a564d7113"
   integrity sha512-qvpv4I4y49IdAV2hu7wVh2+r/yBd017olnDIURBj3E8stofUxZcKaTHGzO1kzvZvoQ/YJemyMz1943xIO1jF6g==
@@ -188,7 +188,7 @@
     "@aws-cdk/core" "1.91.0"
     constructs "^3.2.0"
 
-"@aws-cdk/aws-logs@1.91.0", "@aws-cdk/aws-logs@^1.91.0":
+"@aws-cdk/aws-logs@1.91.0", "@aws-cdk/aws-logs@^1.71.0":
   version "1.91.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-logs/-/aws-logs-1.91.0.tgz#076dc01a49c33095b97976aad7fb671bf6a67467"
   integrity sha512-D293Lb5E3VF03OKT123S+TNi5UFaj08ivsfRcFhbcAiMnNOoHJEClhU2dFiq/6nTYMfoSxvsqyvHBQrY3lUzNw==
@@ -274,7 +274,7 @@
     string-width "^4.2.0"
     table "^6.0.7"
 
-"@aws-cdk/core@1.91.0", "@aws-cdk/core@^1.91.0":
+"@aws-cdk/core@1.91.0", "@aws-cdk/core@^1.71.0":
   version "1.91.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/core/-/core-1.91.0.tgz#239758e3b60d1cced3f9b195e2ba40117890d5e5"
   integrity sha512-fdHsIgpKcWpWpYpmeDTldRcc2IKbjf4J9433kYxBZ/x4cSck8Wl0yP96XU5rHihQio+u51J1d9QIKyoRHZADVA==
@@ -824,7 +824,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@jsii/spec@^1.16.0", "@jsii/spec@^1.24.0":
+"@jsii/spec@^1.24.0":
   version "1.24.0"
   resolved "https://registry.yarnpkg.com/@jsii/spec/-/spec-1.24.0.tgz#59dd43af7bb65074b39bd457a98f4ab3cb385bd3"
   integrity sha512-Km0va0ZBlzWPOijsNlo7SwozYT6Ej9h01xXYtBmoHw2CLccofOEQLV2Ig3+ydhU+aTW5yLKJrVPsAjJoaaBAgA==
@@ -1376,7 +1376,7 @@ available-typed-arrays@^1.0.2:
   dependencies:
     array-filter "^1.0.0"
 
-aws-cdk@^1.91.0:
+aws-cdk@^1.71.0:
   version "1.91.0"
   resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-1.91.0.tgz#4aa6b2a2a664930cf50841ffb474ef46ca089e1c"
   integrity sha512-CkYR+INbzna9DeYqoiAaRcrfqvUubQw+cuCi41qk9tuVQIss85Bxx/7WJCtkoieqO9AaJLouiN8xTSLAFOL/zA==
@@ -2581,6 +2581,11 @@ escodegen@^1.14.1, escodegen@^1.8.1:
   optionalDependencies:
     source-map "~0.6.1"
 
+eslint-config-prettier@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.1.0.tgz#4ef1eaf97afe5176e6a75ddfb57c335121abc5a6"
+  integrity sha512-oKMhGv3ihGbCIimCAjqkdzx2Q+jthoqnXSP+d86M9tptwugycmTFdVR4IpLgq2c4SHifbwO90z2fQ8/Aio73yw==
+
 eslint-import-resolver-node@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.4.tgz#85ffa81942c25012d8231096ddf679c03042c717"
@@ -2626,6 +2631,13 @@ eslint-plugin-import@^2.22.1:
     read-pkg-up "^2.0.0"
     resolve "^1.17.0"
     tsconfig-paths "^3.9.0"
+
+eslint-plugin-prettier@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.3.1.tgz#7079cfa2497078905011e6f82e8dd8453d1371b7"
+  integrity sha512-Rq3jkcFY8RYeQLgk2cCwuc0P7SEFwDravPhsJZOQ5N4YI4DSg50NyqJ/9gdZHzQlHf8MvafSesbNJCcP/FF6pQ==
+  dependencies:
+    prettier-linter-helpers "^1.0.0"
 
 eslint-scope@^5.0.0, eslint-scope@^5.1.1:
   version "5.1.1"
@@ -2868,6 +2880,11 @@ fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
+
+fast-diff@^1.1.2:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
+  integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
 
 fast-glob@^3.1.1:
   version "3.2.5"
@@ -4341,16 +4358,6 @@ jsii-diff@^1.24.0:
     typescript "~3.9.9"
     yargs "^16.2.0"
 
-jsii-docgen@^1.8.65:
-  version "1.8.65"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-1.8.65.tgz#631d20b220418a6c653287b30c8d3cd07f9f0b02"
-  integrity sha512-KjXoRHvUqS92TbrOEs1673v6g+bF6/YRVLf8kV+KGY29/P7n/5B8zD35tlL8Zw1N/P5et/6udEPeUfANbBe11w==
-  dependencies:
-    "@jsii/spec" "^1.16.0"
-    fs-extra "^9.0.1"
-    jsii-reflect "^1.16.0"
-    yargs "^16.2.0"
-
 jsii-pacmak@^1.24.0:
   version "1.24.0"
   resolved "https://registry.yarnpkg.com/jsii-pacmak/-/jsii-pacmak-1.24.0.tgz#f16cb329ded0b2ce435846013910c811c6e29c34"
@@ -4369,7 +4376,7 @@ jsii-pacmak@^1.24.0:
     xmlbuilder "^15.1.1"
     yargs "^16.2.0"
 
-jsii-reflect@^1.16.0, jsii-reflect@^1.24.0:
+jsii-reflect@^1.24.0:
   version "1.24.0"
   resolved "https://registry.yarnpkg.com/jsii-reflect/-/jsii-reflect-1.24.0.tgz#61589ba10bc4bceeaeb68dd9e13acc22ac4b4e73"
   integrity sha512-LWWReRtLhmyUMRD5NOFDV+HJHP/ChHRa6alccSPU9vTL5tm9HtMW0oO2XaVj4a2YPujvQ+sH7APzndj60Qgzqw==
@@ -5417,6 +5424,13 @@ prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
+
+prettier-linter-helpers@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/prettier-linter-helpers/-/prettier-linter-helpers-1.0.0.tgz#d23d41fe1375646de2d0104d3454a3008802cf7b"
+  integrity sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==
+  dependencies:
+    fast-diff "^1.1.2"
 
 prettier@^2.2.1:
   version "2.2.1"

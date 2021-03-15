@@ -1,0 +1,42 @@
+Component,Origin,License,Copyright
+assets,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-applicationautoscaling,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-autoscaling-common,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-cloudwatch,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-codeguruprofiler,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-ec2,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-ecr-assets,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-ecr,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-efs,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-events,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-iam,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-kinesis,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-kms,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-lambda,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-logs-destinations,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-logs,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-s3-assets,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-s3,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-sqs,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-ssm,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+cloud-assembly-schema,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+core,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+cx-api,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+region-info,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+dockerignore,github.com/balena-io-modules/dockerignore,Apache-2.0,Copyright 2020 Balena Ltd. under the Apache 2.0 License included in this file. * Copyright 2018 Zeit Inc. under the MIT License included in this file.
+at-least-node,github.com/RyanZim/at-least-node,ISC,Copyright (c) 2020 Ryan Zimmerman <opensrc@ryanzim.com>
+balanced-match,github.com/juliangruber/balanced-match,MIT,Copyright (c) 2013 Julian Gruber &lt;julian@juliangruber.com&gt;
+brace-expansion,github.com/juliangruber/brace-expansion,MIT,Copyright (c) 2013 Julian Gruber <julian@juliangruber.com>
+concat-map,github.com/substack/node-concat-map,MIT,
+constructs,github.com/aws/constructs,Apache-2.0,Copyright License. Subject to the terms and conditions of
+datadog-cdk-constructs,github.com/DataDog/datadog-cdk-constructs,Apache-2.0,Copyright License. Subject to the terms and conditions of
+fs-extra,github.com/jprichardson/node-fs-extra,MIT,Copyright (c) 2011-2017 JP Richardson
+graceful-fs,github.com/isaacs/node-graceful-fs,ISC,"Copyright (c) Isaac Z. Schlueter, Ben Noordhuis, and Contributors"
+ignore,github.com/kaelzhang/node-ignore,MIT,"Copyright (c) 2013 Kael Zhang <i@kael.me>, contributors http://kael.me/"
+jsonfile,github.com/jprichardson/node-jsonfile,MIT,"Copyright (c) 2012-2015, JP Richardson <jprichardson@gmail.com>"
+jsonschema,github.com/tdegrunt/jsonschema,MIT,Copyright (C) 2012-2015 Tom de Grunt <tom@degrunt.nl>
+lru-cache,github.com/isaacs/node-lru-cache,ISC,Copyright (c) Isaac Z. Schlueter and Contributors
+minimatch,github.com/isaacs/minimatch,ISC,Copyright (c) Isaac Z. Schlueter and Contributors
+semver,github.com/npm/node-semver,ISC,Copyright (c) Isaac Z. Schlueter and Contributors
+universalify,github.com/RyanZim/universalify,MIT,"Copyright (c) 2017, Ryan Zimmerman <opensrc@ryanzim.com>"
+yallist,github.com/isaacs/yallist,ISC,Copyright (c) Isaac Z. Schlueter and Contributors

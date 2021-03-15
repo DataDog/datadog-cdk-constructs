@@ -6,10 +6,10 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as cdk from '@aws-cdk/core';
-import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from './index';
-import { Transport } from './transport';
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
+import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
+import { Transport } from "./transport";
 
 export interface IDatadogProps {
   pythonLayerVersion?: number;
@@ -75,27 +75,27 @@ export class Datadog extends cdk.Construct {
 }
 
 function validateProps(props: IDatadogProps) {
-  const siteList: string[] = ['datadoghq.com', 'datadoghq.eu', 'us3.datadoghq.com', 'ddog-gov.com'];
+  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
-    throw new Error('Both `apiKey` and `apiKMSKey` cannot be set.');
+    throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
   }
 
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
     throw new Error(
-      'Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.',
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
     );
   }
 
   if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error('When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.');
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
   }
 
   if (props.extensionLayerVersion !== undefined) {
     if (props.forwarderARN !== undefined) {
-      throw new Error('`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.');
+      throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
     }
     if (props.apiKey === undefined && props.apiKMSKey === undefined) {
-      throw new Error('When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.');
+      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
     }
   }
 }

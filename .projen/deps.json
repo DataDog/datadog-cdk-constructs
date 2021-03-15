@@ -2,39 +2,31 @@
   "dependencies": [
     {
       "name": "@aws-cdk/assert",
-      "type": "build"
-    },
-    {
-      "name": "@aws-cdk/assert",
       "version": "^1.71.0",
       "type": "build"
     },
     {
       "name": "@aws-cdk/aws-lambda",
-      "type": "build"
-    },
-    {
-      "name": "@aws-cdk/aws-logs",
+      "version": "^1.71.0",
       "type": "build"
     },
     {
       "name": "@aws-cdk/aws-logs-destinations",
+      "version": "^1.71.0",
+      "type": "build"
+    },
+    {
+      "name": "@aws-cdk/aws-logs",
+      "version": "^1.71.0",
       "type": "build"
     },
     {
       "name": "@aws-cdk/core",
+      "version": "^1.71.0",
       "type": "build"
     },
     {
       "name": "@types/jest",
-      "type": "build"
-    },
-    {
-      "name": "@types/jest",
-      "type": "build"
-    },
-    {
-      "name": "@types/node",
       "type": "build"
     },
     {
@@ -44,14 +36,6 @@
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "type": "build"
-    },
-    {
-      "name": "@typescript-eslint/eslint-plugin",
-      "type": "build"
-    },
-    {
-      "name": "@typescript-eslint/parser",
       "type": "build"
     },
     {
@@ -67,6 +51,10 @@
       "type": "build"
     },
     {
+      "name": "eslint-config-prettier",
+      "type": "build"
+    },
+    {
       "name": "eslint-import-resolver-node",
       "type": "build"
     },
@@ -79,7 +67,7 @@
       "type": "build"
     },
     {
-      "name": "jest",
+      "name": "eslint-plugin-prettier",
       "type": "build"
     },
     {
@@ -97,10 +85,6 @@
     },
     {
       "name": "jsii-diff",
-      "type": "build"
-    },
-    {
-      "name": "jsii-docgen",
       "type": "build"
     },
     {
@@ -130,10 +114,6 @@
       "type": "build"
     },
     {
-      "name": "ts-jest",
-      "type": "build"
-    },
-    {
       "name": "ts-node",
       "type": "build"
     },
@@ -142,23 +122,23 @@
       "type": "build"
     },
     {
-      "name": "typescript",
-      "type": "build"
-    },
-    {
       "name": "@aws-cdk/aws-lambda",
-      "type": "peer"
-    },
-    {
-      "name": "@aws-cdk/aws-logs",
+      "version": "^1.71.0",
       "type": "peer"
     },
     {
       "name": "@aws-cdk/aws-logs-destinations",
+      "version": "^1.71.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-logs",
+      "version": "^1.71.0",
       "type": "peer"
     },
     {
       "name": "@aws-cdk/core",
+      "version": "^1.71.0",
       "type": "peer"
     },
     {
