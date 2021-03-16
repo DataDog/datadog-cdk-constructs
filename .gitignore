@@ -22,6 +22,7 @@
 build/Release
 cdk.out/
 coverage
+default.integration.snapshot.spec.ts
 jspm_packages/
 junit.xml
 lerna-debug.log*

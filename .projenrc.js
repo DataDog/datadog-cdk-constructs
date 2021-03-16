@@ -28,6 +28,7 @@ const project = new AwsCdkConstructLibrary({
     "cdk.out/",
     ".parcel-cache",
     "test/__snapshots__",
+    'default.integration.snapshot.spec.ts'
   ],
   npmignore: ["!LICENSE", "!LICENSE-3rdparty.csv", "!NOTICE", "/scripts"],
   jestOptions: {
