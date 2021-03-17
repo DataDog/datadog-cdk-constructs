@@ -32,15 +32,6 @@ const project = new AwsCdkConstructLibrary({
     "default.integration.snapshot.spec.ts",
   ],
   npmignore: ["!LICENSE", "!LICENSE-3rdparty.csv", "!NOTICE", "/scripts"],
-  jestOptions: {
-    jestConfig: {
-      roots: ["<rootDir>/test"],
-      transform: {
-        "^.+\\.tsx?$": "ts-jest",
-      },
-      moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-    },
-  },
   scripts: {
     "check-formatting": "prettier --check src/**",
   },
@@ -84,4 +75,10 @@ const tsconfigEslint = project.tryFindObjectFile("tsconfig.eslint.json");
 tsconfigEslint.addOverride("compilerOptions.noImplicitReturns", false);
 const tsconfigJest = project.tryFindObjectFile("tsconfig.jest.json");
 tsconfigJest.addOverride("compilerOptions.noImplicitReturns", false);
+
+const scripts = project.tryFindObjectFile(".projen/tasks.json");
+scripts.addDeletionOverride("tasks.clobber");
+scripts.addDeletionOverride("tasks.test:update");
+scripts.addDeletionOverride("tasks.bump");
+scripts.addDeletionOverride("tasks.release");
 project.synth();
