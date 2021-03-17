@@ -42,7 +42,7 @@ describe("validateProps", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    let threwError: boolean = false;
+    let threwError = false;
     let thrownError: Error | undefined;
     try {
       const datadogCdk = new Datadog(stack, "Datadog", {
@@ -99,7 +99,7 @@ describe("validateProps", () => {
       handler: "hello.handler",
     });
 
-    let threwError: boolean = false;
+    let threwError = false;
     let thrownError: Error | undefined;
     try {
       const datadogCdk = new Datadog(stack, "Datadog", {
@@ -133,7 +133,7 @@ describe("validateProps", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    let threwError: boolean = false;
+    let threwError = false;
     let thrownError: Error | undefined;
     try {
       const datadogCdk = new Datadog(stack, "Datadog", {

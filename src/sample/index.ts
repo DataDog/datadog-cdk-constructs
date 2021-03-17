@@ -47,14 +47,7 @@ export class ExampleStack extends cdk.Stack {
   }
 }
 
-export class IntegTesting {
-  readonly stack: cdk.Stack[];
-  constructor() {
-    const app = new cdk.App();
-    const stack = new ExampleStack(app, "ExampleStack");
-
-    this.stack = [stack];
-    app.synth();
-  }
-}
-new IntegTesting();
+const app = new cdk.App();
+const stack = new ExampleStack(app, "ExampleStack");
+console.log("Stack name: " + stack.stackName);
+app.synth();

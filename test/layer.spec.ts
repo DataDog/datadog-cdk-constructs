@@ -273,7 +273,7 @@ describe("isGovCloud", () => {
 describe("generateLambdaLayerId", () => {
   it("generates a lambda ID consisting of the prefix, runtime, and hash value delimited by hyphens", () => {
     const lambdaFunctionArn = "functionArn";
-    const runtime: string = "python";
+    const runtime = "python";
     const lambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn, runtime);
     const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
     expect(lambdaLayerId).toEqual(`DatadogLayer-python-${layerValue}`);

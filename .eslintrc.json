@@ -6,8 +6,7 @@
   "root": true,
   "plugins": [
     "@typescript-eslint",
-    "import",
-    "prettier"
+    "import"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -16,8 +15,9 @@
     "project": "./tsconfig.eslint.json"
   },
   "extends": [
-    "plugin:import/typescript",
-    "prettier"
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:prettier/recommended"
   ],
   "settings": {
     "import/parsers": {
@@ -54,7 +54,13 @@
     ],
     "comma-dangle": [
       "error",
-      "always-multiline"
+      {
+        "imports": "ignore",
+        "exports": "ignore",
+        "arrays": "always-multiline",
+        "functions": "always-multiline",
+        "objects": "always-multiline"
+      }
     ],
     "comma-spacing": [
       "error",
@@ -210,14 +216,12 @@
         ]
       }
     ],
-    "prettier/prettier": [
-      "error",
-      {
-        "trailingComma": "all",
-        "printWidth": 120,
-        "arrowParens": "always"
-      }
-    ]
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-console": "off",
+    "no-empty": "off"
   },
   "overrides": [
     {

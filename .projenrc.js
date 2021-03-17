@@ -1,4 +1,5 @@
-const { AwsCdkConstructLibrary, ProjectType, NodePackageManager, github } = require("projen");
+/* eslint @typescript-eslint/no-var-requires: "off" */
+const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
 
 const project = new AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs",
@@ -18,7 +19,7 @@ const project = new AwsCdkConstructLibrary({
   cdkVersion: "1.71.0",
 
   cdkDependencies: ["@aws-cdk/aws-lambda", "@aws-cdk/aws-logs", "@aws-cdk/aws-logs-destinations", "@aws-cdk/core"],
-  devDeps: ["ts-node", "aws-cdk", "eslint-config-prettier", "eslint-plugin-prettier", "prettier"],
+  devDeps: ["ts-node", "aws-cdk", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",
     "!jest.config.js",
@@ -28,7 +29,7 @@ const project = new AwsCdkConstructLibrary({
     "cdk.out/",
     ".parcel-cache",
     "test/__snapshots__",
-    'default.integration.snapshot.spec.ts'
+    "default.integration.snapshot.spec.ts",
   ],
   npmignore: ["!LICENSE", "!LICENSE-3rdparty.csv", "!NOTICE", "/scripts"],
   jestOptions: {
@@ -53,18 +54,34 @@ const project = new AwsCdkConstructLibrary({
   docgen: false,
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
-eslintConfig.addOverride("plugins", ["@typescript-eslint", "import", "prettier"]);
-eslintConfig.addOverride("extends", ["plugin:import/typescript", "prettier"]);
+eslintConfig.addOverride("extends", [
+  "plugin:@typescript-eslint/recommended",
+  "prettier",
+  "plugin:prettier/recommended",
+]);
+
 eslintConfig.addOverride("rules", {
-  "prettier/prettier": [
+  "@typescript-eslint/no-explicit-any": "off",
+  "@typescript-eslint/no-empty-interface": "off",
+  "@typescript-eslint/explicit-module-boundary-types": "off",
+  "@typescript-eslint/no-unused-vars": "off",
+  "no-console": "off",
+  "no-empty": "off",
+  "comma-dangle": [
     "error",
     {
-      trailingComma: "all",
-      printWidth: 120,
-      arrowParens: "always",
+      imports: "ignore",
+      exports: "ignore",
+      arrays: "always-multiline",
+      functions: "always-multiline",
+      objects: "always-multiline",
     },
   ],
 });
 eslintConfig.addDeletionOverride("rules.quotes");
 
+const tsconfigEslint = project.tryFindObjectFile("tsconfig.eslint.json");
+tsconfigEslint.addOverride("compilerOptions.noImplicitReturns", false);
+const tsconfigJest = project.tryFindObjectFile("tsconfig.jest.json");
+tsconfigJest.addOverride("compilerOptions.noImplicitReturns", false);
 project.synth();
