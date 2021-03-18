@@ -56,6 +56,7 @@ eslintConfig.addOverride("rules", {
   "@typescript-eslint/no-empty-interface": "off",
   "@typescript-eslint/explicit-module-boundary-types": "off",
   "@typescript-eslint/no-unused-vars": "off",
+  "@typescript-eslint/explicit-function-return-type": "off",
   "no-console": "off",
   "no-empty": "off",
   "comma-dangle": [
@@ -71,14 +72,16 @@ eslintConfig.addOverride("rules", {
 });
 eslintConfig.addDeletionOverride("rules.quotes");
 
-const tsconfigEslint = project.tryFindObjectFile("tsconfig.eslint.json");
-tsconfigEslint.addOverride("compilerOptions.noImplicitReturns", false);
-const tsconfigJest = project.tryFindObjectFile("tsconfig.jest.json");
-tsconfigJest.addOverride("compilerOptions.noImplicitReturns", false);
-
-const scripts = project.tryFindObjectFile(".projen/tasks.json");
-scripts.addDeletionOverride("tasks.clobber");
-scripts.addDeletionOverride("tasks.test:update");
-scripts.addDeletionOverride("tasks.bump");
-scripts.addDeletionOverride("tasks.release");
+const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
+projenTasks.addDeletionOverride("tasks.clobber");
+projenTasks.addDeletionOverride("tasks.test:update");
+projenTasks.addDeletionOverride("tasks.bump");
+projenTasks.addDeletionOverride("tasks.release");
+projenTasks.addDeletionOverride("tasks.compat");
+const npmScripts = project.tryFindObjectFile("package.json");
+npmScripts.addDeletionOverride("scripts.clobber");
+npmScripts.addDeletionOverride("scripts.test:update");
+npmScripts.addDeletionOverride("scripts.bump");
+npmScripts.addDeletionOverride("scripts.release");
+npmScripts.addDeletionOverride("scripts.compat");
 project.synth();
