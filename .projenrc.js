@@ -78,10 +78,24 @@ projenTasks.addDeletionOverride("tasks.test:update");
 projenTasks.addDeletionOverride("tasks.bump");
 projenTasks.addDeletionOverride("tasks.release");
 projenTasks.addDeletionOverride("tasks.compat");
+projenTasks.addDeletionOverride("tasks.test:compile");
+projenTasks.addOverride("tasks.test.steps", [
+  {
+    exec: "rm -fr lib/",
+  },
+  {
+    exec: "jest --passWithNoTests --all",
+  },
+  {
+    spawn: "eslint",
+  },
+]);
 const npmScripts = project.tryFindObjectFile("package.json");
 npmScripts.addDeletionOverride("scripts.clobber");
 npmScripts.addDeletionOverride("scripts.test:update");
 npmScripts.addDeletionOverride("scripts.bump");
 npmScripts.addDeletionOverride("scripts.release");
 npmScripts.addDeletionOverride("scripts.compat");
+projenTasks.addDeletionOverride("scripts.test:compile");
+
 project.synth();
