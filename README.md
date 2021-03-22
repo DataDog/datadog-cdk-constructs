@@ -103,7 +103,7 @@ The Datadog CDK construct takes in a list of lambda functions and installs the D
 
 ## Using Projen
 
-This AWS CDK Construct Library uses Projen to maintain project configuration files such as the package.json, .gitignore, .npmignore, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
+This AWS CDK Construct Library uses Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
 
 
 ## Opening Issues

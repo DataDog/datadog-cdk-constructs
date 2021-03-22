@@ -3,7 +3,7 @@ const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("pro
 
 const project = new AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs",
-  description: "CDK Construct library to automatically instrument python and node functions with datadog tracing",
+  description: "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
   author: "Datadog",
   authorOrganization: true,
   entrypoint: "lib/index.js",
@@ -29,9 +29,18 @@ const project = new AwsCdkConstructLibrary({
     "cdk.out/",
     ".parcel-cache",
     "test/__snapshots__",
-    "default.integration.snapshot.spec.ts",
   ],
-  npmignore: ["!LICENSE", "!LICENSE-3rdparty.csv", "!NOTICE", "/scripts"],
+  npmignore: [
+    "!LICENSE",
+    "!LICENSE-3rdparty.csv",
+    "!NOTICE",
+    "/scripts",
+    ".prettierrc",
+    "cdk.out/*",
+    "yarn-error.log",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+  ],
   scripts: {
     "check-formatting": "prettier --check src/**",
   },
@@ -71,11 +80,13 @@ eslintConfig.addOverride("rules", {
   ],
 });
 eslintConfig.addDeletionOverride("rules.quotes");
-
+/*
+TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
+      project.removeScript("<scriptName>") calls once https://github.com/projen/projen/issues/631 is fixed.
+*/
 const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
 projenTasks.addDeletionOverride("tasks.clobber");
 projenTasks.addDeletionOverride("tasks.test:update");
-projenTasks.addDeletionOverride("tasks.bump");
 projenTasks.addDeletionOverride("tasks.release");
 projenTasks.addDeletionOverride("tasks.compat");
 projenTasks.addDeletionOverride("tasks.test:compile");
@@ -93,7 +104,6 @@ projenTasks.addOverride("tasks.test.steps", [
 const npmScripts = project.tryFindObjectFile("package.json");
 npmScripts.addDeletionOverride("scripts.clobber");
 npmScripts.addDeletionOverride("scripts.test:update");
-npmScripts.addDeletionOverride("scripts.bump");
 npmScripts.addDeletionOverride("scripts.release");
 npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");

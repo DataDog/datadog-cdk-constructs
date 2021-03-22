@@ -37,12 +37,12 @@ fi
 yarn login
 
 echo "Bumping the version number and committing the changes"
-yarn version --new-version "$VERSION"
+yarn bump
 
 echo 'Publishing to Node'
 yarn test
 yarn build
-yarn publish --new-version "$VERSION"
+yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$VERSION"
 
 echo 'Pushing updates to github'
 git push origin main

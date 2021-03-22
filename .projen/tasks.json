@@ -50,6 +50,17 @@
         }
       ]
     },
+    "bump": {
+      "name": "bump",
+      "category": "20.release",
+      "description": "Commits a bump to the package version based on conventional commits",
+      "steps": [
+        {
+          "exec": "standard-version"
+        }
+      ],
+      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
+    },
     "test:watch": {
       "name": "test:watch",
       "category": "10.test",

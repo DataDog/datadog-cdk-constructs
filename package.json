@@ -1,6 +1,6 @@
 {
   "name": "datadog-cdk-constructs",
-  "description": "CDK Construct library to automatically instrument python and node functions with datadog tracing",
+  "description": "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
   "repository": {
     "type": "git",
     "url": "git@github.com:DataDog/datadog-cdk-constructs.git"
@@ -13,6 +13,7 @@
     "test:compile": "npx projen test:compile",
     "test": "npx projen test",
     "build": "npx projen build",
+    "bump": "npx projen bump",
     "test:watch": "npx projen test:watch",
     "projen:upgrade": "npx projen projen:upgrade",
     "watch": "npx projen watch",
