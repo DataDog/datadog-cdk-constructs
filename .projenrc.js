@@ -88,6 +88,7 @@ const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
 projenTasks.addDeletionOverride("tasks.clobber");
 projenTasks.addDeletionOverride("tasks.test:update");
 projenTasks.addDeletionOverride("tasks.release");
+projenTasks.addDeletionOverride("tasks.bump");
 projenTasks.addDeletionOverride("tasks.compat");
 projenTasks.addDeletionOverride("tasks.test:compile");
 projenTasks.addOverride("tasks.test.steps", [
@@ -105,6 +106,7 @@ const npmScripts = project.tryFindObjectFile("package.json");
 npmScripts.addDeletionOverride("scripts.clobber");
 npmScripts.addDeletionOverride("scripts.test:update");
 npmScripts.addDeletionOverride("scripts.release");
+npmScripts.addDeletionOverride("scripts.bump");
 npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
 

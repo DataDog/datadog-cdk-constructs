@@ -13,7 +13,6 @@
     "test:compile": "npx projen test:compile",
     "test": "npx projen test",
     "build": "npx projen build",
-    "bump": "npx projen bump",
     "test:watch": "npx projen test:watch",
     "projen:upgrade": "npx projen projen:upgrade",
     "watch": "npx projen watch",
