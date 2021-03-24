@@ -44,7 +44,7 @@ else
     yarn standard-version --release-as $VERSION
 fi
 
-echo 'Publishing to Node'
+echo 'Publishing to npm'
 yarn test
 yarn build
 yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$VERSION"
