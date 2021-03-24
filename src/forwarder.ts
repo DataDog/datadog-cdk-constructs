@@ -6,11 +6,11 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as cdk from "@aws-cdk/core";
+import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern } from "@aws-cdk/aws-logs";
-import * as crypto from "crypto";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
+import * as cdk from "@aws-cdk/core";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
 function generateForwaderConstructId(forwarderArn: string) {

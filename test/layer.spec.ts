@@ -1,7 +1,9 @@
+import * as crypto from "crypto";
+import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
+import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as crypto from "crypto";
+import { Datadog } from "../src/index";
 import {
   applyLayers,
   DD_ACCOUNT_ID,
@@ -9,9 +11,7 @@ import {
   getMissingLayerVersionErrorMsg,
   generateLambdaLayerId,
   generateExtensionLayerId,
-} from "../lib/layer";
-import { Datadog } from "../lib/index"
-import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
+} from "../src/layer";
 const NODE_LAYER_VERSION = 1;
 const PYTHON_LAYER_VERSION = 2;
 const EXTENSION_LAYER_VERSION = 5;
@@ -29,17 +29,9 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const errors = applyLayers(
-      stack,
-      stack.region,
-      [hello],
-      PYTHON_LAYER_VERSION,
-      NODE_LAYER_VERSION,
-    );
+    const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
-      ],
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`],
     });
     expect(errors.length).toEqual(0);
   });
@@ -121,24 +113,14 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const errors = applyLayers(
-      stack,
-      stack.region,
-      [hello1, hello2],
-      PYTHON_LAYER_VERSION,
-      NODE_LAYER_VERSION,
-    );
+    const errors = applyLayers(stack, stack.region, [hello1, hello2], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
 
     expect(errors.length).toEqual(0);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
-      ],
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`],
     });
     expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:${NODE_LAYER_VERSION}`,
-      ],
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:${NODE_LAYER_VERSION}`],
     });
   });
 
@@ -154,13 +136,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const errors = applyLayers(
-      stack,
-      stack.region,
-      [hello],
-      PYTHON_LAYER_VERSION,
-      NODE_LAYER_VERSION,
-    );
+    const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Layers: ABSENT,
     });
@@ -229,9 +205,7 @@ describe("isGovCloud", () => {
       ],
     });
     expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
-      ],
+      Layers: [`arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`],
     });
   });
 
@@ -294,17 +268,15 @@ describe("isGovCloud", () => {
       ],
     });
   });
-
 });
 
 describe("generateLambdaLayerId", () => {
   it("generates a lambda ID consisting of the prefix, runtime, and hash value delimited by hyphens", () => {
     const lambdaFunctionArn = "functionArn";
-    const runtime: string = "python";
-    const lambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn,runtime);
+    const runtime = "python";
+    const lambdaLayerId: string = generateLambdaLayerId(lambdaFunctionArn, runtime);
     const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
     expect(lambdaLayerId).toEqual(`DatadogLayer-python-${layerValue}`);
-
   });
 });
 
@@ -315,4 +287,4 @@ describe("generateExtensionLayerId", () => {
     const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
     expect(lambdaLayerId).toEqual(`DatadogExtension-${layerValue}`);
   });
-})
+});

@@ -1,5 +1,5 @@
-import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
   Datadog,
@@ -8,8 +8,8 @@ import {
   transportDefaults,
   enableDDTracingEnvVar,
   injectLogContextEnvVar,
-} from "../lib/index";
-import { DD_HANDLER_ENV_VAR } from "../lib/redirect";
+} from "../src/index";
+import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 
 describe("applyEnvVariables", () => {
   it("applies default values correctly", () => {
@@ -81,8 +81,7 @@ describe("enableDDTracingEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
-    });
+    const datadogCDK = new Datadog(stack, "Datadog", {});
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {

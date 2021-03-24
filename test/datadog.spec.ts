@@ -1,9 +1,7 @@
-import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import {
-  Datadog,
-} from "../lib/index";
+import { Datadog } from "../src/index";
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
 
@@ -29,9 +27,7 @@ describe("validateProps", () => {
         apiKMSKey: "5678",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      "Both `apiKey` and `apiKMSKey` cannot be set.",
-    );
+    }).toThrowError("Both `apiKey` and `apiKMSKey` cannot be set.");
   });
 
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -46,9 +42,9 @@ describe("validateProps", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    let threwError: boolean = false;
+    let threwError = false;
     let thrownError: Error | undefined;
-    try{
+    try {
       const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
@@ -58,13 +54,14 @@ describe("validateProps", () => {
         site: "dataDOGEhq.com",
       });
       datadogCdk.addLambdaFunctions([hello]);
-    }catch(e){
+    } catch (e) {
       threwError = true;
       thrownError = e;
     }
     expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual("Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.");
-
+    expect(thrownError?.message).toEqual(
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+    );
   });
 
   it("throws error if flushMetricsToLogs is false and both API key and KMS API key are undefined", () => {
@@ -86,9 +83,7 @@ describe("validateProps", () => {
         site: "datadoghq.com",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(
-      "When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.",
-    );
+    }).toThrowError("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
   });
 
   it("throws an error when the extensionLayerVersion and forwarderArn are set", () => {
@@ -104,9 +99,9 @@ describe("validateProps", () => {
       handler: "hello.handler",
     });
 
-    let threwError: boolean = false;
+    let threwError = false;
     let thrownError: Error | undefined;
-    try{
+    try {
       const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
@@ -118,7 +113,7 @@ describe("validateProps", () => {
         site: "datadoghq.com",
       });
       datadogCdk.addLambdaFunctions([hello]);
-    }catch(e){
+    } catch (e) {
       threwError = true;
       thrownError = e;
     }
@@ -138,9 +133,9 @@ describe("validateProps", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    let threwError: boolean = false;
+    let threwError = false;
     let thrownError: Error | undefined;
-    try{
+    try {
       const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
@@ -150,12 +145,11 @@ describe("validateProps", () => {
         site: "datadoghq.com",
       });
       datadogCdk.addLambdaFunctions([hello]);
-    }catch(e){
+    } catch (e) {
       threwError = true;
       thrownError = e;
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
-
   });
 });

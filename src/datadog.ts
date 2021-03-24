@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
 
-export interface DatadogProps {
+export interface IDatadogProps {
   pythonLayerVersion?: number;
   nodeLayerVersion?: number;
   extensionLayerVersion?: number;
@@ -27,9 +27,9 @@ export interface DatadogProps {
 
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
-  props: DatadogProps;
+  props: IDatadogProps;
   transport: Transport;
-  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+  constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
     super(scope, id);
     this.scope = scope;
     this.props = props;
@@ -69,12 +69,12 @@ export class Datadog extends cdk.Construct {
       }
       applyEnvVariables(lambdaFunctions, this.props.enableDDTracing, this.props.injectLogContext);
 
-      this.transport.setEnvVars(lambdaFunctions);
+      this.transport.applyEnvVars(lambdaFunctions);
     }
   }
 }
 
-function validateProps(props: DatadogProps) {
+function validateProps(props: IDatadogProps) {
   const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
     throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");

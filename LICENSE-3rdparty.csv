@@ -5,6 +5,8 @@ aws-autoscaling-common,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subj
 aws-cloudwatch,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 aws-codeguruprofiler,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 aws-ec2,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-ecr-assets,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
+aws-ecr,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 aws-efs,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 aws-events,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 aws-iam,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
@@ -21,37 +23,20 @@ cloud-assembly-schema,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subje
 core,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 cx-api,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
 region-info,github.com/aws/aws-cdk,Apache-2.0,Copyright License. Subject to the terms and conditions of
-types,github.com/facebook/jest,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
-istanbul-lib-coverage,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation.
-istanbul-lib-report,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation. All rights reserved.
-istanbul-reports,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation.
-jest,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation.
-node,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation.
-yargs-parser,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation.
-yargs,github.com/DefinitelyTyped/DefinitelyTyped,MIT,Copyright (c) Microsoft Corporation.
-ansi-regex,github.com/chalk/ansi-regex,MIT,Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
-ansi-styles,github.com/chalk/ansi-styles,MIT,Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+dockerignore,github.com/balena-io-modules/dockerignore,Apache-2.0,Copyright 2020 Balena Ltd. under the Apache 2.0 License included in this file. * Copyright 2018 Zeit Inc. under the MIT License included in this file.
 at-least-node,github.com/RyanZim/at-least-node,ISC,Copyright (c) 2020 Ryan Zimmerman <opensrc@ryanzim.com>
 balanced-match,github.com/juliangruber/balanced-match,MIT,Copyright (c) 2013 Julian Gruber &lt;julian@juliangruber.com&gt;
 brace-expansion,github.com/juliangruber/brace-expansion,MIT,Copyright (c) 2013 Julian Gruber <julian@juliangruber.com>
-chalk,github.com/chalk/chalk,MIT,Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
-color-convert,github.com/Qix-/color-convert,MIT,Copyright (c) 2011-2016 Heather Arthur <fayearthur@gmail.com>
-color-name,github.com/colorjs/color-name,MIT,Copyright (c) 2015 Dmitry Ivanov
 concat-map,github.com/substack/node-concat-map,MIT,
 constructs,github.com/aws/constructs,Apache-2.0,Copyright License. Subject to the terms and conditions of
-crypto,github.com/npm/deprecate-holder,ISC,
-datadog-cdk-constructs,github.com/DataDog/datadog-cdk-constructs,Apache-2.0,"Copyright 2021 Datadog, Inc."
-diff-sequences,github.com/facebook/jest,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
+datadog-cdk-constructs,github.com/DataDog/datadog-cdk-constructs,Apache-2.0,Copyright License. Subject to the terms and conditions of
 fs-extra,github.com/jprichardson/node-fs-extra,MIT,Copyright (c) 2011-2017 JP Richardson
 graceful-fs,github.com/isaacs/node-graceful-fs,ISC,"Copyright (c) Isaac Z. Schlueter, Ben Noordhuis, and Contributors"
-has-flag,github.com/sindresorhus/has-flag,MIT,Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
-jest-diff,github.com/facebook/jest,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
-jest-get-type,github.com/facebook/jest,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
+ignore,github.com/kaelzhang/node-ignore,MIT,"Copyright (c) 2013 Kael Zhang <i@kael.me>, contributors http://kael.me/"
 jsonfile,github.com/jprichardson/node-jsonfile,MIT,"Copyright (c) 2012-2015, JP Richardson <jprichardson@gmail.com>"
 jsonschema,github.com/tdegrunt/jsonschema,MIT,Copyright (C) 2012-2015 Tom de Grunt <tom@degrunt.nl>
+lru-cache,github.com/isaacs/node-lru-cache,ISC,Copyright (c) Isaac Z. Schlueter and Contributors
 minimatch,github.com/isaacs/minimatch,ISC,Copyright (c) Isaac Z. Schlueter and Contributors
-pretty-format,github.com/facebook/jest,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
-react-is,github.com/facebook/react,MIT,"Copyright (c) Facebook, Inc. and its affiliates."
 semver,github.com/npm/node-semver,ISC,Copyright (c) Isaac Z. Schlueter and Contributors
-supports-color,github.com/chalk/supports-color,MIT,Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
 universalify,github.com/RyanZim/universalify,MIT,"Copyright (c) 2017, Ryan Zimmerman <opensrc@ryanzim.com>"
+yallist,github.com/isaacs/yallist,ISC,Copyright (c) Isaac Z. Schlueter and Contributors

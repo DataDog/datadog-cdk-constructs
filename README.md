@@ -101,6 +101,11 @@ The Datadog CDK construct takes in a list of lambda functions and installs the D
 * [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
 * [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
 
+## Using Projen
+
+This AWS CDK Construct Library uses Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
+
+
 ## Opening Issues
 
 If you encounter a bug with this package, we want to hear about it. Before opening a new issue, search the existing issues to avoid duplicates.
@@ -112,6 +117,11 @@ You can also open an issue for a feature request.
 ## Contributing
 
 If you find an issue with this package and have a fix, please feel free to open a pull request following the [procedures](https://github.com/DataDog/datadog-cdk-constructs/blob/main/CONTRIBUTING.md).
+
+## Testing
+
+If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing. First open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the src directory are compiled to Javascript in the lib directory. Navigate to `src/sample`, here you can edit `index.ts` to your liking and test your contributions manually. Run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`. 
+* Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
 
 ## Community
 
@@ -135,3 +145,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [10]: https://docs.aws.amazon.com/cdk/latest/guide/tagging.html
 [11]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.Tags.html
 [12]: https://docs.datadoghq.com/serverless/datadog_lambda_library/extension/
+[13]: https://github.com/projen/projen

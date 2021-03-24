@@ -37,12 +37,17 @@ fi
 yarn login
 
 echo "Bumping the version number and committing the changes"
-yarn version --new-version "$VERSION"
+if git log --oneline -1 | grep -q "chore(release):"; then
+    echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message, aborting"
+    exit 1
+else
+    yarn standard-version --release-as $VERSION
+fi
 
-echo 'Publishing to Node'
+echo 'Publishing to npm'
 yarn test
 yarn build
-yarn publish --new-version "$VERSION"
+yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$VERSION"
 
 echo 'Pushing updates to github'
 git push origin main

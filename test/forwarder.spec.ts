@@ -1,7 +1,7 @@
+import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { addForwarder } from "../lib/forwarder";
+import { addForwarder } from "../src/forwarder";
 
 describe("Forwarder", () => {
   it("applies the subscription filter correctly", () => {

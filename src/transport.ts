@@ -55,7 +55,7 @@ export class Transport {
     this.apiKMSKey = apiKMSKey;
   }
 
-  setEnvVars(lambdas: lambda.Function[]) {
+  applyEnvVars(lambdas: lambda.Function[]) {
     lambdas.forEach((lam) => {
       lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {

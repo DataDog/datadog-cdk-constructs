@@ -30,7 +30,7 @@ jobs:
         run: yarn check-formatting
 
       - name: Lint
-        run: yarn lint
+        run: yarn eslint
   
   test:
     runs-on: ubuntu-latest

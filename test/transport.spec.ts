@@ -1,5 +1,5 @@
-import * as cdk from "@aws-cdk/core";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
   Datadog,
@@ -9,8 +9,8 @@ import {
   logForwardingEnvVar,
   enableDDTracingEnvVar,
   injectLogContextEnvVar,
-} from "../lib/index";
-import { DD_HANDLER_ENV_VAR } from "../lib/redirect";
+} from "../src/index";
+import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 const EXTENSION_LAYER_VERSION = 5;
 
 describe("siteURLEnvVar", () => {
