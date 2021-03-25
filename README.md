@@ -120,7 +120,10 @@ If you find an issue with this package and have a fix, please feel free to open 
 
 ## Testing
 
-If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing. First open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the src directory are compiled to Javascript in the lib directory. Navigate to `src/sample`, here you can edit `index.ts` to your liking and test your contributions manually. Run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`. 
+If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing: 
+1. Open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory. 
+2. Navigate to `src/sample`, here you can edit `index.ts` to your liking and test your contributions manually. 
+3. At the root `datadog-cdk-constructs` directory and run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`. 
 * Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
 
 ## Community
