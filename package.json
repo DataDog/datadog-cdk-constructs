@@ -6,8 +6,6 @@
     "url": "git@github.com:DataDog/datadog-cdk-constructs.git"
   },
   "scripts": {
-    "projen": "npx projen",
-    "start": "npx projen start",
     "check-formatting": "npx projen check-formatting",
     "compile": "npx projen compile",
     "test:compile": "npx projen test:compile",
@@ -17,7 +15,9 @@
     "projen:upgrade": "npx projen projen:upgrade",
     "watch": "npx projen watch",
     "package": "npx projen package",
-    "eslint": "npx projen eslint"
+    "eslint": "npx projen eslint",
+    "projen": "npx projen",
+    "start": "npx projen start"
   },
   "author": {
     "name": "Datadog",
@@ -47,7 +47,7 @@
     "jsii-pacmak": "^1.24.0",
     "json-schema": "^0.3.0",
     "prettier": "^2.2.1",
-    "projen": "^0.16.36",
+    "projen": "^0.17.17",
     "standard-version": "^9",
     "ts-jest": "^26.5.3",
     "ts-node": "^9.1.1",
@@ -110,7 +110,12 @@
   "stability": "stable",
   "jsii": {
     "outdir": "dist",
-    "targets": {},
+    "targets": {
+      "python": {
+        "distName": "datadog-cdk-constructs",
+        "module": "datadog-cdk-constructs"
+      }
+    },
     "tsc": {
       "outDir": "lib",
       "rootDir": "src"
