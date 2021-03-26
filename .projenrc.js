@@ -2,12 +2,12 @@
 const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
 
 const project = new AwsCdkConstructLibrary({
-  name: "datadog-cdk-constructs",
-  description: "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
-  author: "Datadog",
+  name: "foobarAndrewTest1",
+  description: "test",
+  author: "test",
   authorOrganization: true,
   entrypoint: "lib/index.js",
-  repositoryUrl: "git@github.com:DataDog/datadog-cdk-constructs.git",
+  repositoryUrl: "https://github.com/zARODz11z/projen_jsii_test.git",
 
   projectType: ProjectType.LIB,
   packageManager: NodePackageManager.YARN,
@@ -19,8 +19,8 @@ const project = new AwsCdkConstructLibrary({
   cdkVersion: "1.71.0",
 
   publishToPypi: {
-    distName: "datadog-cdk-constructs",
-    module: "datadog-cdk-constructs",
+    distName: "foobarAndrewTest1",
+    module: "foobarAndrewTest1",
   },
 
   cdkDependencies: ["@aws-cdk/aws-lambda", "@aws-cdk/aws-logs", "@aws-cdk/aws-logs-destinations", "@aws-cdk/core"],
