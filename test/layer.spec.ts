@@ -26,8 +26,8 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -45,8 +45,8 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
@@ -75,8 +75,8 @@ describe("applyLayers", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.PYTHON_3_7,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
@@ -105,13 +105,13 @@ describe("applyLayers", () => {
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const hello2 = new lambda.Function(stack, "HelloHandler2", {
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
 
     const hello3 = new lambda.Function(stack, "HelloHandler3", {
@@ -120,14 +120,7 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
 
-    const errors = applyLayers(
-      stack,
-      stack.region,
-      [hello1, hello2, hello3],
-      PYTHON_LAYER_VERSION,
-      NODE_LAYER_VERSION,
-      NODE_LAYER_VERSION,
-    );
+    const errors = applyLayers(stack, stack.region, [hello1, hello2, hello3], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
 
     expect(errors.length).toEqual(0);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -174,8 +167,8 @@ describe("applyLayers", () => {
     });
     const hello2 = new lambda.Function(stack, "PythonHandler", {
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const errors = applyLayers(stack, stack.region, [hello1, hello2]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -204,8 +197,8 @@ describe("isGovCloud", () => {
     const nodeLambda = new lambda.Function(stack, "PythonHandler", {
       // note: not working for python 3.8
       runtime: lambda.Runtime.PYTHON_3_6,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const errors = applyLayers(
       stack,
@@ -235,8 +228,8 @@ describe("isGovCloud", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
@@ -265,8 +258,8 @@ describe("isGovCloud", () => {
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
       runtime: lambda.Runtime.PYTHON_3_7,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
     });
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
