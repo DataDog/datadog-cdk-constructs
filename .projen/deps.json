@@ -2,27 +2,27 @@
   "dependencies": [
     {
       "name": "@aws-cdk/assert",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "build"
     },
     {
       "name": "@aws-cdk/aws-lambda",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "build"
     },
     {
       "name": "@aws-cdk/aws-logs-destinations",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "build"
     },
     {
       "name": "@aws-cdk/aws-logs",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "build"
     },
     {
       "name": "@aws-cdk/core",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "build"
     },
     {
@@ -40,10 +40,6 @@
     },
     {
       "name": "@typescript-eslint/parser",
-      "type": "build"
-    },
-    {
-      "name": "aws-cdk",
       "type": "build"
     },
     {
@@ -101,7 +97,7 @@
     },
     {
       "name": "projen",
-      "version": "^0.16.36",
+      "version": "^0.16.42",
       "type": "build"
     },
     {
@@ -123,22 +119,22 @@
     },
     {
       "name": "@aws-cdk/aws-lambda",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "peer"
     },
     {
       "name": "@aws-cdk/aws-logs-destinations",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "peer"
     },
     {
       "name": "@aws-cdk/aws-logs",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "peer"
     },
     {
       "name": "@aws-cdk/core",
-      "version": "^1.71.0",
+      "version": "^1.95.1",
       "type": "peer"
     },
     {
