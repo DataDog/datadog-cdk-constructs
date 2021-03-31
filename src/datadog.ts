@@ -44,14 +44,17 @@ export class Datadog extends cdk.Construct {
   }
 
   public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
-    if (this.props.addLayers === undefined) {
-      this.props.addLayers = defaultEnvVar.addLayers;
+    let addLayers = this.props.addLayers;
+    let enableDDTracing = this.props.enableDDTracing;
+    let injectLogContext = this.props.injectLogContext;
+    if (addLayers === undefined) {
+      addLayers = defaultEnvVar.addLayers;
     }
-    if (this.props.enableDDTracing === undefined) {
-      this.props.enableDDTracing = defaultEnvVar.enableDDTracing;
+    if (enableDDTracing === undefined) {
+      enableDDTracing = defaultEnvVar.enableDDTracing;
     }
-    if (this.props.injectLogContext === undefined) {
-      this.props.injectLogContext = defaultEnvVar.injectLogContext;
+    if (injectLogContext === undefined) {
+      injectLogContext = defaultEnvVar.injectLogContext;
     }
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
@@ -63,11 +66,11 @@ export class Datadog extends cdk.Construct {
         this.props.nodeLayerVersion,
         this.props.extensionLayerVersion,
       );
-      redirectHandlers(lambdaFunctions, this.props.addLayers);
+      redirectHandlers(lambdaFunctions, addLayers);
       if (this.props.forwarderARN !== undefined) {
         addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
       }
-      applyEnvVariables(lambdaFunctions, this.props.enableDDTracing, this.props.injectLogContext);
+      applyEnvVariables(lambdaFunctions, enableDDTracing, injectLogContext);
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
