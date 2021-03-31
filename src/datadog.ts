@@ -11,25 +11,25 @@ import * as cdk from "@aws-cdk/core";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
 
-export interface IDatadogProps {
-  pythonLayerVersion?: number;
-  nodeLayerVersion?: number;
-  extensionLayerVersion?: number;
-  addLayers?: boolean;
-  forwarderARN?: string;
-  flushMetricsToLogs?: boolean;
-  site?: string;
-  apiKey?: string;
-  apiKMSKey?: string;
-  enableDDTracing?: boolean;
-  injectLogContext?: boolean;
+export interface DatadogProps {
+  readonly pythonLayerVersion?: number;
+  readonly nodeLayerVersion?: number;
+  readonly extensionLayerVersion?: number;
+  readonly addLayers?: boolean;
+  readonly forwarderARN?: string;
+  readonly flushMetricsToLogs?: boolean;
+  readonly site?: string;
+  readonly apiKey?: string;
+  readonly apiKMSKey?: string;
+  readonly enableDDTracing?: boolean;
+  readonly injectLogContext?: boolean;
 }
 
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
-  props: IDatadogProps;
+  props: DatadogProps;
   transport: Transport;
-  constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
+  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
     super(scope, id);
     this.scope = scope;
     this.props = props;
@@ -74,7 +74,7 @@ export class Datadog extends cdk.Construct {
   }
 }
 
-function validateProps(props: IDatadogProps) {
+function validateProps(props: DatadogProps) {
   const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
     throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");

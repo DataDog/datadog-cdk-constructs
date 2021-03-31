@@ -6,6 +6,8 @@
     "url": "https://github.com/zARODz11z/projen_jsii_test.git"
   },
   "scripts": {
+    "projen": "npx projen",
+    "start": "npx projen start",
     "check-formatting": "npx projen check-formatting",
     "compile": "npx projen compile",
     "test:compile": "npx projen test:compile",
@@ -15,9 +17,7 @@
     "projen:upgrade": "npx projen projen:upgrade",
     "watch": "npx projen watch",
     "package": "npx projen package",
-    "eslint": "npx projen eslint",
-    "projen": "npx projen",
-    "start": "npx projen start"
+    "eslint": "npx projen eslint"
   },
   "author": {
     "name": "test",
@@ -47,7 +47,7 @@
     "jsii-pacmak": "^1.24.0",
     "json-schema": "^0.3.0",
     "prettier": "^2.2.1",
-    "projen": "^0.17.17",
+    "projen": "^0.16.42",
     "standard-version": "^9",
     "ts-jest": "^26.5.3",
     "ts-node": "^9.1.1",
