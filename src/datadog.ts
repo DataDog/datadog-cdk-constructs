@@ -31,7 +31,6 @@ export class Datadog extends cdk.Construct {
   props: IDatadogProps;
   transport: Transport;
   constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
-    /* enable debug logs if debug env var is set */
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS == "true") log.setLevel("debug");
 
     super(scope, id);
