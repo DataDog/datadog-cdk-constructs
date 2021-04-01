@@ -92,6 +92,11 @@
       "type": "build"
     },
     {
+      "name": "loglevel",
+      "version": "^1.95.1",
+      "type": "build"
+    },
+    {
       "name": "prettier",
       "type": "build"
     },
@@ -140,6 +145,11 @@
     {
       "name": "constructs",
       "version": "^3.2.27",
+      "type": "peer"
+    },
+    {
+      "name": "loglevel",
+      "version": "^1.95.1",
       "type": "peer"
     }
   ],
