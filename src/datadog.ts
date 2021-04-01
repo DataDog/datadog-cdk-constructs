@@ -52,7 +52,7 @@ export class Datadog extends cdk.Construct {
       this.props.addLayers = defaultEnvVar.addLayers;
     }
     if (this.props.enableDDTracing === undefined) {
-      log.debug(`No value provided for enableDDTracing, defaulting to ${defaultEnvVar.addLayers}`);
+      log.debug(`No value provided for enableDDTracing, defaulting to ${defaultEnvVar.enableDDTracing}`);
       this.props.enableDDTracing = defaultEnvVar.enableDDTracing;
     }
     if (this.props.injectLogContext === undefined) {
