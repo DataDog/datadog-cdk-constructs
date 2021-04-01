@@ -21,8 +21,14 @@ const project = new AwsCdkConstructLibrary({
   releaseEveryCommit: false,
   cdkDependenciesAsDeps: false,
   cdkVersion: "1.95.1",
-
-  cdkDependencies: ["@aws-cdk/aws-lambda", "@aws-cdk/aws-logs", "@aws-cdk/aws-logs-destinations", "@aws-cdk/core", "loglevel"],
+  deps: ["loglevel"],
+  bundledDeps: ["loglevel"],
+  cdkDependencies: [
+    "@aws-cdk/aws-lambda",
+    "@aws-cdk/aws-logs",
+    "@aws-cdk/aws-logs-destinations",
+    "@aws-cdk/core"
+  ],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",

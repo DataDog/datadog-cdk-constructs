@@ -45,7 +45,6 @@
     "jsii-diff": "^1.26.0",
     "jsii-pacmak": "^1.26.0",
     "json-schema": "^0.3.0",
-    "loglevel": "^1.95.1",
     "prettier": "^2.2.1",
     "projen": "^0.16.42",
     "standard-version": "^9",
@@ -58,10 +57,14 @@
     "@aws-cdk/aws-logs": "^1.95.1",
     "@aws-cdk/aws-logs-destinations": "^1.95.1",
     "@aws-cdk/core": "^1.95.1",
-    "constructs": "^3.2.27",
-    "loglevel": "^1.95.1"
+    "constructs": "^3.2.27"
   },
-  "bundledDependencies": [],
+  "dependencies": {
+    "loglevel": "^1.7.1"
+  },
+  "bundledDependencies": [
+    "loglevel"
+  ],
   "keywords": [
     "cdk"
   ],
