@@ -10,6 +10,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
+import log from "loglevel";
 
 export interface IDatadogProps {
   pythonLayerVersion?: number;
@@ -30,6 +31,8 @@ export class Datadog extends cdk.Construct {
   props: IDatadogProps;
   transport: Transport;
   constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
+    if (process.env.DD_CONSTRUCT_DEBUG_LOGS == "true") log.setLevel("debug");
+
     super(scope, id);
     this.scope = scope;
     this.props = props;
@@ -45,16 +48,20 @@ export class Datadog extends cdk.Construct {
 
   public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
     if (this.props.addLayers === undefined) {
+      log.debug(`No value provided for addLayers, defaulting to ${defaultEnvVar.addLayers}`);
       this.props.addLayers = defaultEnvVar.addLayers;
     }
     if (this.props.enableDDTracing === undefined) {
+      log.debug(`No value provided for enableDDTracing, defaulting to ${defaultEnvVar.enableDDTracing}`);
       this.props.enableDDTracing = defaultEnvVar.enableDDTracing;
     }
     if (this.props.injectLogContext === undefined) {
+      log.debug(`No value provided for injectLogContext, defaulting to ${defaultEnvVar.injectLogContext}`);
       this.props.injectLogContext = defaultEnvVar.injectLogContext;
     }
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
+      log.debug(`Using region: ${region}`);
       applyLayers(
         this.scope,
         region,
@@ -65,7 +72,10 @@ export class Datadog extends cdk.Construct {
       );
       redirectHandlers(lambdaFunctions, this.props.addLayers);
       if (this.props.forwarderARN !== undefined) {
+        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderARN}`);
         addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
+      } else {
+        log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
       applyEnvVariables(lambdaFunctions, this.props.enableDDTracing, this.props.injectLogContext);
 
@@ -75,6 +85,7 @@ export class Datadog extends cdk.Construct {
 }
 
 function validateProps(props: IDatadogProps) {
+  log.debug("Validating props...");
   const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
     throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");

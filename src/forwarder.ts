@@ -11,9 +11,11 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern } from "@aws-cdk/aws-logs";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 import * as cdk from "@aws-cdk/core";
+import log from "loglevel";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
 function generateForwaderConstructId(forwarderArn: string) {
+  log.debug("Generating construct Id for Datadog Lambda Forwarder");
   return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
 }
 function generateSubscriptionFilterName(functionArn: string, forwarderArn: string) {
@@ -41,6 +43,7 @@ export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Funct
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
     const subscriptionFilterName = generateSubscriptionFilterName(lam.functionArn, forwarderArn);
+    log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
     lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
       destination: forwarderDestination,
       filterPattern: FilterPattern.allEvents(),

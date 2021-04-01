@@ -8,6 +8,7 @@
 
 import * as lambda from "@aws-cdk/aws-lambda";
 import { RuntimeType, runtimeLookup } from "./index";
+import log from "loglevel";
 export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
 export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
 export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
@@ -21,12 +22,14 @@ export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
  */
 
 export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
+  log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
     const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
     const originalHandler = cfnFunction.handler as string;
     lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
     const handler = getDDHandler(lam, addLayers);
     if (handler === undefined) {
+      log.debug("Unable to get Datadog handler");
       return;
     }
     cfnFunction.handler = handler;
@@ -37,6 +40,7 @@ function getDDHandler(lam: lambda.Function, addLayers: boolean) {
   const runtime: string = lam.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
   if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
+    log.debug("Unsupported/undefined Lambda runtime");
     return;
   }
   switch (lambdaRuntime) {

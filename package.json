@@ -59,7 +59,12 @@
     "@aws-cdk/core": "^1.95.1",
     "constructs": "^3.2.27"
   },
-  "bundledDependencies": [],
+  "dependencies": {
+    "loglevel": "^1.7.1"
+  },
+  "bundledDependencies": [
+    "loglevel"
+  ],
   "keywords": [
     "cdk"
   ],

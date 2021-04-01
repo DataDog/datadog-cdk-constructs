@@ -7,6 +7,7 @@
  */
 
 import * as lambda from "@aws-cdk/aws-lambda";
+import log from "loglevel";
 
 export const enableDDTracingEnvVar = "DD_TRACE_ENABLED";
 export const injectLogContextEnvVar = "DD_LOG_INJECTION";
@@ -18,6 +19,7 @@ export const defaultEnvVar = {
 };
 
 export function applyEnvVariables(lambdas: lambda.Function[], enableDDTracing: boolean, injectLogContext: boolean) {
+  log.debug(`Setting tracing environment variables...`);
   lambdas.forEach((lam) => {
     lam.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
     lam.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());

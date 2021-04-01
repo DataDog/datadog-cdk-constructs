@@ -1,5 +1,9 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
+const {
+  AwsCdkConstructLibrary,
+  ProjectType,
+  NodePackageManager
+} = require("projen");
 
 const project = new AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs",
@@ -17,8 +21,14 @@ const project = new AwsCdkConstructLibrary({
   releaseEveryCommit: false,
   cdkDependenciesAsDeps: false,
   cdkVersion: "1.95.1",
-
-  cdkDependencies: ["@aws-cdk/aws-lambda", "@aws-cdk/aws-logs", "@aws-cdk/aws-logs-destinations", "@aws-cdk/core"],
+  deps: ["loglevel"],
+  bundledDeps: ["loglevel"],
+  cdkDependencies: [
+    "@aws-cdk/aws-lambda",
+    "@aws-cdk/aws-logs",
+    "@aws-cdk/aws-logs-destinations",
+    "@aws-cdk/core"
+  ],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",
@@ -91,8 +101,7 @@ projenTasks.addDeletionOverride("tasks.release");
 projenTasks.addDeletionOverride("tasks.bump");
 projenTasks.addDeletionOverride("tasks.compat");
 projenTasks.addDeletionOverride("tasks.test:compile");
-projenTasks.addOverride("tasks.test.steps", [
-  {
+projenTasks.addOverride("tasks.test.steps", [{
     exec: "rm -fr lib/",
   },
   {
