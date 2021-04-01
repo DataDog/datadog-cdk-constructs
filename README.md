@@ -127,12 +127,12 @@ If you contribute to this package you can run the tests using `yarn test`. This 
 
 ### Debug Logs
 
-To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth`. 
+To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output). 
 
 Example: 
 
 ```
-DD_CONSTRUCT_DEBUG_LOGS=true cdk synth
+DD_CONSTRUCT_DEBUG_LOGS=true cdk synth --quiet
 ```
 
 ## Community
