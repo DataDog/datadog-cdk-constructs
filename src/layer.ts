@@ -9,6 +9,7 @@
 import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
+import log from "loglevel";
 export const DD_ACCOUNT_ID = "464622532012";
 export const DD_GOV_ACCOUNT_ID = "002406178527";
 
@@ -23,6 +24,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs10.x": RuntimeType.NODE,
   "nodejs12.x": RuntimeType.NODE,
   "nodejs8.10": RuntimeType.NODE,
+  "nodejs14.x": RuntimeType.NODE,
   "python2.7": RuntimeType.PYTHON,
   "python3.6": RuntimeType.PYTHON,
   "python3.7": RuntimeType.PYTHON,
@@ -33,6 +35,7 @@ const runtimeToLayerName: { [key: string]: string } = {
   "nodejs8.10": "Datadog-Node8-10",
   "nodejs10.x": "Datadog-Node10-x",
   "nodejs12.x": "Datadog-Node12-x",
+  "nodejs14.x": "Datadog-Node14-x",
   "python2.7": "Datadog-Python27",
   "python3.6": "Datadog-Python36",
   "python3.7": "Datadog-Python37",
@@ -51,10 +54,12 @@ export function applyLayers(
 ) {
   // TODO: check region availability
   const errors: string[] = [];
+  log.debug("Applying layers to Lambda functions...");
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
+      log.debug(`Unsupported runtime: ${runtime}`);
       return;
     }
 
@@ -66,6 +71,7 @@ export function applyLayers(
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime);
+      log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
@@ -75,11 +81,13 @@ export function applyLayers(
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime);
+      log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (extensionLayerVersion !== undefined) {
       extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion);
+      log.debug(`Using extension layer: ${extensionLayerArn}`);
       addLayer(extensionLayerArn, true, scope, lam, runtime);
     }
   });
@@ -106,6 +114,7 @@ function addLayer(
       lambdaLayer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
       layers.set(layerArn, lambdaLayer);
     }
+    log.debug(`Adding layer ${lambdaLayer} to Lambda: ${lam.functionName}`);
     lam.addLayers(lambdaLayer);
   }
 }
@@ -117,6 +126,7 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
 
   // if this is a GovCloud region, use the GovCloud lambda layer
   if (isGovCloud) {
+    log.debug("GovCloud region detected, using the GovCloud lambda layer");
     return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
   }
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
@@ -125,6 +135,7 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
 export function getExtensionLayerArn(region: string, version: number) {
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
   if (isGovCloud) {
+    log.debug("GovCloud region detected, using the GovCloud extension layer");
     return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
   }
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
@@ -138,11 +149,13 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
 }
 
 export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
+  log.debug("Generating construct Id for Datadog Lambda layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return layerPrefix + "-" + runtime + "-" + layerValue;
 }
 
 export function generateExtensionLayerId(lambdaFunctionArn: string) {
+  log.debug("Generating construct Id for Datadog Extension layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return extensionLayerPrefix + "-" + layerValue;
 }

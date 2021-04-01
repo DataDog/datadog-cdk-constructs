@@ -16,15 +16,16 @@ const project = new AwsCdkConstructLibrary({
   defaultReleaseBranch: "main",
   releaseEveryCommit: false,
   cdkDependenciesAsDeps: false,
-  cdkVersion: "1.71.0",
 
   publishToPypi: {
     distName: "foobarAndrewTest1",
     module: "foobarAndrewTest1",
   },
-
+  cdkVersion: "1.95.1",
+  deps: ["loglevel"],
+  bundledDeps: ["loglevel"],
   cdkDependencies: ["@aws-cdk/aws-lambda", "@aws-cdk/aws-logs", "@aws-cdk/aws-logs-destinations", "@aws-cdk/core"],
-  devDeps: ["ts-node", "aws-cdk", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
+  devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",
     "!jest.config.js",

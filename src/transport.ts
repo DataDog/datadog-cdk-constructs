@@ -7,6 +7,7 @@
  */
 
 import * as lambda from "@aws-cdk/aws-lambda";
+import log from "loglevel";
 
 export const apiKeyEnvVar = "DD_API_KEY";
 export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
@@ -34,6 +35,7 @@ export class Transport {
     extensionLayerVersion?: number,
   ) {
     if (flushMetricsToLogs === undefined) {
+      log.debug(`No value provided for flushMetricsToLogs, defaulting to ${transportDefaults.flushMetricsToLogs}`);
       this.flushMetricsToLogs = transportDefaults.flushMetricsToLogs;
     } else {
       this.flushMetricsToLogs = flushMetricsToLogs;
@@ -42,10 +44,12 @@ export class Transport {
     this.extensionLayerVersion = extensionLayerVersion;
     // If the extension is used, metrics will be submitted via the extension.
     if (this.extensionLayerVersion !== undefined) {
+      log.debug(`Using extension version ${this.extensionLayerVersion}, metrics will be submitted via the extension`);
       this.flushMetricsToLogs = false;
     }
 
     if (site === undefined) {
+      log.debug(`No value provided for site, defaulting to ${transportDefaults.site}`);
       this.site = transportDefaults.site;
     } else {
       this.site = site;
@@ -56,6 +60,7 @@ export class Transport {
   }
 
   applyEnvVars(lambdas: lambda.Function[]) {
+    log.debug(`Setting Datadog transport environment variables...`);
     lambdas.forEach((lam) => {
       lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {

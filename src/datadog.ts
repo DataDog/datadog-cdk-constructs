@@ -8,6 +8,7 @@
 
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
+import log from "loglevel";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
 
@@ -30,6 +31,7 @@ export class Datadog extends cdk.Construct {
   props: DatadogProps;
   transport: Transport;
   constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+    if (process.env.DD_CONSTRUCT_DEBUG_LOGS == "true") log.setLevel("debug");
     super(scope, id);
     this.scope = scope;
     this.props = props;
@@ -48,16 +50,20 @@ export class Datadog extends cdk.Construct {
     let enableDDTracing = this.props.enableDDTracing;
     let injectLogContext = this.props.injectLogContext;
     if (addLayers === undefined) {
+      log.debug(`No value provided for addLayers, defaulting to ${defaultEnvVar.addLayers}`);
       addLayers = defaultEnvVar.addLayers;
     }
     if (enableDDTracing === undefined) {
+      log.debug(`No value provided for enableDDTracing, defaulting to ${defaultEnvVar.enableDDTracing}`);
       enableDDTracing = defaultEnvVar.enableDDTracing;
     }
     if (injectLogContext === undefined) {
+      log.debug(`No value provided for injectLogContext, defaulting to ${defaultEnvVar.injectLogContext}`);
       injectLogContext = defaultEnvVar.injectLogContext;
     }
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
+      log.debug(`Using region: ${region}`);
       applyLayers(
         this.scope,
         region,
@@ -68,7 +74,10 @@ export class Datadog extends cdk.Construct {
       );
       redirectHandlers(lambdaFunctions, addLayers);
       if (this.props.forwarderARN !== undefined) {
+        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderARN}`);
         addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
+      } else {
+        log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
       applyEnvVariables(lambdaFunctions, enableDDTracing, injectLogContext);
 
@@ -78,6 +87,7 @@ export class Datadog extends cdk.Construct {
 }
 
 function validateProps(props: DatadogProps) {
+  log.debug("Validating props...");
   const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
     throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
