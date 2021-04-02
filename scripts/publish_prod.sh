@@ -11,6 +11,9 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [ $BRANCH != "main" ]; then
     echo "Not on main, aborting"
     exit 1
+else
+    echo "Updating main"
+    git pull origin main
 fi
 
 #Read the current version
@@ -26,6 +29,15 @@ elif [[ ! $1 =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
 else
     VERSION=$1
 fi
+
+read -p "Do you have the PyPi and NPM login credentials for the Datadog account (y/n)?" CONT
+if [ "$CONT" != "y" ]; then
+    echo "Exiting"
+    exit 1
+fi
+
+echo "Removing folder 'dist' to clear previously built distributions"
+rm -rf dist;
 
 #Confirm to proceed
 read -p "About to bump the version from ${CURRENT_VERSION} to ${VERSION}, and publish. Continue (y/n)?" CONT
@@ -44,10 +56,13 @@ else
     yarn standard-version --release-as $VERSION
 fi
 
-echo 'Publishing to npm'
-yarn test
+echo "Publishing to npm"
 yarn build
 yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$VERSION"
+
+echo "Publishing to pypi"
+pip install --upgrade twine
+python3 -m twine upload --repository testpypi ./dist/python/*
 
 echo 'Pushing updates to github'
 git push origin main
