@@ -62,7 +62,7 @@ yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$
 
 echo "Publishing to pypi"
 pip install --upgrade twine
-python3 -m twine upload --repository testpypi ./dist/python/*
+python3 -m twine upload ./dist/python/*
 
 echo 'Pushing updates to github'
 git push origin main

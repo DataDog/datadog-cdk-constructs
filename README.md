@@ -51,9 +51,9 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 
 To further configure your Datadog construct, use the following custom parameters:
 
-*Note*: The Descriptions may use the NodeJS parameters however they also apply to the Python parameters. 
+*Note*: The Descriptions may use the NPM package parameters however they also apply to the PyPi package parameters. 
 
-| NodeJS Parameter        | Python Parameter          | Description                                                                                                                                                                                                                                                                                                                                          |
+| NPM package Parameter        | PyPi package Parameter          | Description                                                                                                                                                                                                                                                                                                                                          |
 |-------------------------|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `addLayers`             | `add_layers`              | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.                                                                                         |
 | `pythonLayerVersion`    | `python_layer_version`    | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and  `addLayers`  is true. Find the latest version number [here][5].                                                                           |
