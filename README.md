@@ -28,30 +28,23 @@ pip install datadog-cdk-constructs
 
 ### AWS CDK
 
-import datadog-cdk-constructs.
-
+Add this to your CDK stack:
 ```typescript
-import * as cdk from "@aws-cdk/core";
 import { Datadog } from "datadog-cdk-constructs";
 
-class CdkStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
-    const datadog = new Datadog(this, "Datadog", {
-      nodeLayerVersion: <LAYER_VERSION>,
-      pythonLayerVersion: <LAYER_VERSION>,
-      addLayers: <BOOLEAN>,
-      forwarderArn: "<FORWARDER_ARN>",
-      flushMetricsToLogs: <BOOLEAN>,
-      site: "<SITE>",
-      apiKey: "{Datadog_API_Key}",
-      apiKmsKey: "{Encrypted_Datadog_API_Key}",
-      enableDatadogTracing: <BOOLEAN>,
-      injectLogContext: <BOOLEAN>
-    });
-    datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
-  }
-}
+const datadog = new Datadog(this, "Datadog", {
+  nodeLayerVersion: <LAYER_VERSION>,
+  pythonLayerVersion: <LAYER_VERSION>,
+  addLayers: <BOOLEAN>,
+  forwarderArn: "<FORWARDER_ARN>",
+  flushMetricsToLogs: <BOOLEAN>,
+  site: "<SITE>",
+  apiKey: "{Datadog_API_Key}",
+  apiKmsKey: "{Encrypted_Datadog_API_Key}",
+  enableDatadogTracing: <BOOLEAN>,
+  injectLogContext: <BOOLEAN>
+});
+datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 ```
 
 ## Configuration
