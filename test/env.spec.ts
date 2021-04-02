@@ -25,7 +25,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -33,7 +33,7 @@ describe("applyEnvVariables", () => {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [logForwardingEnvVar]: transportDefaults.flushMetricsToLogs.toString(),
-          [enableDDTracingEnvVar]: defaultEnvVar.enableDDTracing.toString(),
+          [enableDDTracingEnvVar]: defaultEnvVar.enableDatadogTracing.toString(),
           [injectLogContextEnvVar]: defaultEnvVar.injectLogContext.toString(),
         },
       },
@@ -55,7 +55,7 @@ describe("enableDDTracingEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      enableDDTracing: false,
+      enableDatadogTracing: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -110,7 +110,7 @@ describe("injectLogContextEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
       injectLogContext: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -138,7 +138,7 @@ describe("injectLogContextEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {

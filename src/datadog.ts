@@ -17,12 +17,12 @@ export interface DatadogProps {
   readonly nodeLayerVersion?: number;
   readonly extensionLayerVersion?: number;
   readonly addLayers?: boolean;
-  readonly forwarderARN?: string;
+  readonly forwarderArn?: string;
   readonly flushMetricsToLogs?: boolean;
   readonly site?: string;
   readonly apiKey?: string;
-  readonly apiKMSKey?: string;
-  readonly enableDDTracing?: boolean;
+  readonly apiKmsKey?: string;
+  readonly enableDatadogTracing?: boolean;
   readonly injectLogContext?: boolean;
 }
 
@@ -40,22 +40,22 @@ export class Datadog extends cdk.Construct {
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
-      this.props.apiKMSKey,
+      this.props.apiKmsKey,
       this.props.extensionLayerVersion,
     );
   }
 
   public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
     let addLayers = this.props.addLayers;
-    let enableDDTracing = this.props.enableDDTracing;
+    let enableDatadogTracing = this.props.enableDatadogTracing;
     let injectLogContext = this.props.injectLogContext;
     if (addLayers === undefined) {
       log.debug(`No value provided for addLayers, defaulting to ${defaultEnvVar.addLayers}`);
       addLayers = defaultEnvVar.addLayers;
     }
-    if (enableDDTracing === undefined) {
-      log.debug(`No value provided for enableDDTracing, defaulting to ${defaultEnvVar.enableDDTracing}`);
-      enableDDTracing = defaultEnvVar.enableDDTracing;
+    if (enableDatadogTracing === undefined) {
+      log.debug(`No value provided for enableDatadogTracing, defaulting to ${defaultEnvVar.enableDatadogTracing}`);
+      enableDatadogTracing = defaultEnvVar.enableDatadogTracing;
     }
     if (injectLogContext === undefined) {
       log.debug(`No value provided for injectLogContext, defaulting to ${defaultEnvVar.injectLogContext}`);
@@ -73,13 +73,13 @@ export class Datadog extends cdk.Construct {
         this.props.extensionLayerVersion,
       );
       redirectHandlers(lambdaFunctions, addLayers);
-      if (this.props.forwarderARN !== undefined) {
-        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderARN}`);
-        addForwarder(this.scope, lambdaFunctions, this.props.forwarderARN);
+      if (this.props.forwarderArn !== undefined) {
+        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
+        addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
       } else {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
-      applyEnvVariables(lambdaFunctions, enableDDTracing, injectLogContext);
+      applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext);
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
@@ -89,8 +89,8 @@ export class Datadog extends cdk.Construct {
 function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
   const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
-  if (props.apiKey !== undefined && props.apiKMSKey !== undefined) {
-    throw new Error("Both `apiKey` and `apiKMSKey` cannot be set.");
+  if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
+    throw new Error("Both `apiKey` and `apiKmsKey` cannot be set.");
   }
 
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
@@ -99,16 +99,16 @@ function validateProps(props: DatadogProps) {
     );
   }
 
-  if (props.apiKey === undefined && props.apiKMSKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
+  if (props.apiKey === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
   }
 
   if (props.extensionLayerVersion !== undefined) {
-    if (props.forwarderARN !== undefined) {
+    if (props.forwarderArn !== undefined) {
       throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
     }
-    if (props.apiKey === undefined && props.apiKMSKey === undefined) {
-      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
+    if (props.apiKey === undefined && props.apiKmsKey === undefined) {
+      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
     }
   }
 }

@@ -19,7 +19,7 @@ yarn add --dev datadog-cdk-constructs
 npm install datadog-cdk-constructs --save-dev
 ```
 
-## Pip Package Installation:
+## PyPi Package Installation:
 ```
 pip install datadog-cdk-constructs
 ```
@@ -41,12 +41,12 @@ class CdkStack extends cdk.Stack {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
       addLayers: <BOOLEAN>,
-      forwarderARN: "<FORWARDER_ARN>",
+      forwarderArn: "<FORWARDER_ARN>",
       flushMetricsToLogs: <BOOLEAN>,
       site: "<SITE>",
       apiKey: "{Datadog_API_Key}",
-      apiKMSKey: "{Encrypted_Datadog_API_Key}",
-      enableDDTracing: <BOOLEAN>,
+      apiKmsKey: "{Encrypted_Datadog_API_Key}",
+      enableDatadogTracing: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
     datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
@@ -65,13 +65,13 @@ To further configure your Datadog construct, use the following custom parameters
 | `addLayers`             | `add_layers`              | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.                                                                                         |
 | `pythonLayerVersion`    | `python_layer_version`    | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and  `addLayers`  is true. Find the latest version number [here][5].                                                                           |
 | `nodeLayerVersion`      | `node_layer_version`      | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and  `addLayers`  is true. Find the latest version number from [here][6].                                                                             |
-| `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When  `extensionLayerVersion`  is set,  `apiKey`  (or  `apiKMSKey` ) needs to be set as well. While using  `extensionLayerVersion`  do not set  `forwarderARN` . The Datadog Lambda Extension layer is in public preview. Learn more about the Lambda extension  [here][12]. |
-| `forwarderARN`          | `forwarder_arn`           | When set, the plugin will automatically subscribe the Datadog Forwarder to the functions' log groups. Do not set  `forwarderARN`  when  `extensionLayerVersion`  is set.                                                                                                                                                                             |
-| `flushMetricsToLogs`    | `flush_metrics_to_logs`   | Send custom metrics using CloudWatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to  `true` . If you disable this parameter, it's required to set  `apiKey`  (or  `apiKMSKey` ).                                                                                                                                         |
+| `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When  `extensionLayerVersion`  is set,  `apiKey`  (or  `apiKmsKey` ) needs to be set as well. While using  `extensionLayerVersion`  do not set  `forwarderArn` . The Datadog Lambda Extension layer is in public preview. Learn more about the Lambda extension  [here][12]. |
+| `forwarderArn`          | `forwarder_arn`           | When set, the plugin will automatically subscribe the Datadog Forwarder to the functions' log groups. Do not set  `forwarderArn`  when  `extensionLayerVersion`  is set.                                                                                                                                                                             |
+| `flushMetricsToLogs`    | `flush_metrics_to_logs`   | Send custom metrics using CloudWatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to  `true` . If you disable this parameter, it's required to set  `apiKey`  (or  `apiKmsKey` ).                                                                                                                                         |
 | `site`                  | `site`                    | Set which Datadog site to send data. This is only used when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set. Possible values are  `datadoghq.com` ,  `datadoghq.eu` ,  `us3.datadoghq.com`  and  `ddog-gov.com` . The default is  `datadoghq.com` .                                                                          |
 | `apiKey`                | `api_key`                 | Datadog API Key, only needed when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set. For more information about getting a Datadog API key, see the [API key documentation][8].                                                                                                                                             |
-| `apiKMSKey`             | `api_kms_key`             | Datadog API Key encrypted using KMS. Use this parameter in place of  `apiKey`  when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set, and you are using KMS encryption.                                                                                                                                                       |
-| `enableDDTracing`       | `enable_dd_tracing`       | Enable Datadog tracing on your Lambda functions. Defaults to  `true` .                                                                                                                                                                                                                                                                               |
+| `apiKmsKey`             | `api_kms_key`             | Datadog API Key encrypted using KMS. Use this parameter in place of  `apiKey`  when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set, and you are using KMS encryption.                                                                                                                                                       |
+| `enableDatadogTracing`       | `enable_dd_tracing`       | Enable Datadog tracing on your Lambda functions. Defaults to  `true` .                                                                                                                                                                                                                                                                               |
 | `injectLogContext`      | `inject_log_context`      | When set, the lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to  `true` .                                                                                                                                                                                                                                    |
 
 ### AWS CDK Configurations

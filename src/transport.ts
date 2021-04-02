@@ -17,21 +17,21 @@ export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
 export const transportDefaults = {
   site: "datadoghq.com",
   flushMetricsToLogs: true,
-  enableDDTracing: true,
+  enableDatadogTracing: true,
 };
 
 export class Transport {
   flushMetricsToLogs: boolean;
   site: string;
   apiKey?: string;
-  apiKMSKey?: string;
+  apiKmsKey?: string;
   extensionLayerVersion?: number;
 
   constructor(
     flushMetricsToLogs?: boolean,
     site?: string,
     apiKey?: string,
-    apiKMSKey?: string,
+    apiKmsKey?: string,
     extensionLayerVersion?: number,
   ) {
     if (flushMetricsToLogs === undefined) {
@@ -56,7 +56,7 @@ export class Transport {
     }
 
     this.apiKey = apiKey;
-    this.apiKMSKey = apiKMSKey;
+    this.apiKmsKey = apiKmsKey;
   }
 
   applyEnvVars(lambdas: lambda.Function[]) {
@@ -69,8 +69,8 @@ export class Transport {
       if (this.apiKey !== undefined) {
         lam.addEnvironment(apiKeyEnvVar, this.apiKey);
       }
-      if (this.apiKMSKey !== undefined) {
-        lam.addEnvironment(apiKeyKMSEnvVar, this.apiKMSKey);
+      if (this.apiKmsKey !== undefined) {
+        lam.addEnvironment(apiKeyKMSEnvVar, this.apiKmsKey);
       }
     });
   }

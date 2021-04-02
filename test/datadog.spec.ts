@@ -20,14 +20,14 @@ describe("validateProps", () => {
     });
     expect(() => {
       const datadogCDK = new Datadog(stack, "Datadog", {
-        forwarderARN: "forwarder-arn",
+        forwarderArn: "forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
         apiKey: "1234",
-        apiKMSKey: "5678",
+        apiKmsKey: "5678",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError("Both `apiKey` and `apiKMSKey` cannot be set.");
+    }).toThrowError("Both `apiKey` and `apiKmsKey` cannot be set.");
   });
 
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -49,7 +49,7 @@ describe("validateProps", () => {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
         apiKey: "1234",
-        enableDDTracing: false,
+        enableDatadogTracing: false,
         flushMetricsToLogs: false,
         site: "dataDOGEhq.com",
       });
@@ -78,12 +78,12 @@ describe("validateProps", () => {
     });
     expect(() => {
       const datadogCDK = new Datadog(stack, "Datadog", {
-        forwarderARN: "forwarder-arn",
+        forwarderArn: "forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError("When `flushMetricsToLogs` is false, `apiKey` or `apiKMSKey` must also be set.");
+    }).toThrowError("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
   });
 
   it("throws an error when the extensionLayerVersion and forwarderArn are set", () => {
@@ -105,10 +105,10 @@ describe("validateProps", () => {
       const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
-        forwarderARN: "forwarder",
+        forwarderArn: "forwarder",
         apiKey: "1234",
         addLayers: true,
-        enableDDTracing: false,
+        enableDatadogTracing: false,
         flushMetricsToLogs: true,
         site: "datadoghq.com",
       });
@@ -121,7 +121,7 @@ describe("validateProps", () => {
     expect(thrownError?.message).toEqual("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
   });
 
-  it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKMSKey` is set", () => {
+  it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKmsKey` is set", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -140,7 +140,7 @@ describe("validateProps", () => {
         nodeLayerVersion: NODE_LAYER_VERSION,
         extensionLayerVersion: EXTENSION_LAYER_VERSION,
         addLayers: true,
-        enableDDTracing: false,
+        enableDatadogTracing: false,
         flushMetricsToLogs: true,
         site: "datadoghq.com",
       });
@@ -150,6 +150,6 @@ describe("validateProps", () => {
       thrownError = e;
     }
     expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKMSKey` must also be set.");
+    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
   });
 });

@@ -53,7 +53,7 @@ describe("applyLayers", () => {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
       addLayers: true,
-      enableDDTracing: false,
+      enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -66,7 +66,7 @@ describe("applyLayers", () => {
     });
   });
 
-  it("adds an extension layer along with a python layer while using an apiKMSKey", () => {
+  it("adds an extension layer along with a python layer while using an apiKmsKey", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -81,9 +81,9 @@ describe("applyLayers", () => {
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
-      apiKMSKey: "1234",
+      apiKmsKey: "1234",
       addLayers: true,
-      enableDDTracing: false,
+      enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -236,7 +236,7 @@ describe("isGovCloud", () => {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
       addLayers: true,
-      enableDDTracing: false,
+      enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -266,7 +266,7 @@ describe("isGovCloud", () => {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
       addLayers: true,
-      enableDDTracing: false,
+      enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
