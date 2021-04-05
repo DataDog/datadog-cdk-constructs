@@ -18,8 +18,8 @@ const project = new AwsCdkConstructLibrary({
   cdkDependenciesAsDeps: false,
 
   publishToPypi: {
-    distName: "datadog-cdk-constructs",
-    module: "datadog-cdk-constructs",
+    distName: "datadog_cdk_constructs",
+    module: "datadog_cdk_constructs",
   },
   cdkVersion: "1.95.1",
   deps: ["loglevel"],

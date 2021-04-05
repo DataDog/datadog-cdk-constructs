@@ -21,7 +21,7 @@ npm install datadog-cdk-constructs --save-dev
 
 ## PyPi Package Installation:
 ```
-pip install datadog-cdk-constructs
+pip install datadog_cdk_constructs
 ```
 
 ## Usage

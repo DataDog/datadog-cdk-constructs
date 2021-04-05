@@ -116,8 +116,8 @@
     "outdir": "dist",
     "targets": {
       "python": {
-        "distName": "datadog-cdk-constructs",
-        "module": "datadog-cdk-constructs"
+        "distName": "datadog_cdk_constructs",
+        "module": "datadog_cdk_constructs"
       }
     },
     "tsc": {
