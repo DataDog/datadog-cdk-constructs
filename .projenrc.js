@@ -7,7 +7,7 @@ const project = new AwsCdkConstructLibrary({
   author: "Datadog",
   authorOrganization: true,
   entrypoint: "lib/index.js",
-  repositoryUrl: "git@github.com:DataDog/datadog-cdk-constructs.git",
+  repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
   projectType: ProjectType.LIB,
   packageManager: NodePackageManager.YARN,
@@ -18,7 +18,7 @@ const project = new AwsCdkConstructLibrary({
   cdkDependenciesAsDeps: false,
 
   publishToPypi: {
-    distName: "datadog_cdk_constructs",
+    distName: "datadog-cdk-constructs",
     module: "datadog_cdk_constructs",
   },
   cdkVersion: "1.95.1",
