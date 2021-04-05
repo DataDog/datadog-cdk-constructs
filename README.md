@@ -28,7 +28,10 @@ pip install datadog_cdk_constructs
 
 ### AWS CDK
 
+*If you are new to AWS CDK then check out this [workshop][14].*
+
 Add this to your CDK stack:
+
 ```typescript
 import { Datadog } from "datadog-cdk-constructs";
 
@@ -158,3 +161,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [11]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.Tags.html
 [12]: https://docs.datadoghq.com/serverless/datadog_lambda_library/extension/
 [13]: https://github.com/projen/projen
+[14]: https://cdkworkshop.com/15-prerequisites.html
