@@ -30,7 +30,7 @@ else
     VERSION=$1
 fi
 
-read -p "Do you have the PyPi and NPM login credentials for the Datadog account (y/n)?" CONT
+read -p "Do you have the PyPI and npm login credentials for the Datadog account (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
@@ -60,7 +60,7 @@ echo "Publishing to npm"
 yarn build
 yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$VERSION"
 
-echo "Publishing to pypi"
+echo "Publishing to PyPI"
 pip install --upgrade twine
 python3 -m twine upload ./dist/python/*
 

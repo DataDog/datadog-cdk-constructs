@@ -12,14 +12,14 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda function log groups.
 
-## Npm Package Installation:
+## npm Package Installation:
 ```
 yarn add --dev datadog-cdk-constructs
 # or
 npm install datadog-cdk-constructs --save-dev
 ```
 
-## PyPi Package Installation:
+## PyPI Package Installation:
 ```
 pip install datadog_cdk_constructs
 ```
@@ -54,9 +54,9 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 
 To further configure your Datadog construct, use the following custom parameters:
 
-*Note*: The Descriptions may use the NPM package parameters however they also apply to the PyPi package parameters. 
+*Note*: The Descriptions may use the npm package parameters however they also apply to the PyPI package parameters. 
 
-| NPM package Parameter        | PyPi package Parameter          | Description                                                                                                                                                                                                                                                                                                                                          |
+| npm package parameter        | PyPI package parameter          | Description                                                                                                                                                                                                                                                                                                                                          |
 |-------------------------|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `addLayers`             | `add_layers`              | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.                                                                                         |
 | `pythonLayerVersion`    | `python_layer_version`    | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and  `addLayers`  is true. Find the latest version number [here][5].                                                                           |
