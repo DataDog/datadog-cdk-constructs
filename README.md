@@ -24,6 +24,9 @@ npm install datadog-cdk-constructs --save-dev
 pip install datadog-cdk-constructs
 ```
 
+### Note: 
+Pay attention to the output from your package manager as the `datadog-cdk-constructs` have peer dependencies.
+
 ## Usage
 
 ### AWS CDK
