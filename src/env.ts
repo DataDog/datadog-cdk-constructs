@@ -14,14 +14,18 @@ export const injectLogContextEnvVar = "DD_LOG_INJECTION";
 
 export const defaultEnvVar = {
   addLayers: true,
-  enableDDTracing: true,
+  enableDatadogTracing: true,
   injectLogContext: true,
 };
 
-export function applyEnvVariables(lambdas: lambda.Function[], enableDDTracing: boolean, injectLogContext: boolean) {
+export function applyEnvVariables(
+  lambdas: lambda.Function[],
+  enableDatadogTracing: boolean,
+  injectLogContext: boolean,
+) {
   log.debug(`Setting tracing environment variables...`);
   lambdas.forEach((lam) => {
-    lam.addEnvironment(enableDDTracingEnvVar, enableDDTracing.toString().toLowerCase());
+    lam.addEnvironment(enableDDTracingEnvVar, enableDatadogTracing.toString().toLowerCase());
     lam.addEnvironment(injectLogContextEnvVar, injectLogContext.toString().toLowerCase());
   });
 }

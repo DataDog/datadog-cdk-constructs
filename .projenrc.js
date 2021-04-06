@@ -1,9 +1,5 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const {
-  AwsCdkConstructLibrary,
-  ProjectType,
-  NodePackageManager
-} = require("projen");
+const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
 
 const project = new AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs",
@@ -11,7 +7,7 @@ const project = new AwsCdkConstructLibrary({
   author: "Datadog",
   authorOrganization: true,
   entrypoint: "lib/index.js",
-  repositoryUrl: "git@github.com:DataDog/datadog-cdk-constructs.git",
+  repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
   projectType: ProjectType.LIB,
   packageManager: NodePackageManager.YARN,
@@ -20,15 +16,15 @@ const project = new AwsCdkConstructLibrary({
   defaultReleaseBranch: "main",
   releaseEveryCommit: false,
   cdkDependenciesAsDeps: false,
+
+  publishToPypi: {
+    distName: "datadog-cdk-constructs",
+    module: "datadog_cdk_constructs",
+  },
   cdkVersion: "1.95.1",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
-  cdkDependencies: [
-    "@aws-cdk/aws-lambda",
-    "@aws-cdk/aws-logs",
-    "@aws-cdk/aws-logs-destinations",
-    "@aws-cdk/core"
-  ],
+  cdkDependencies: ["@aws-cdk/aws-lambda", "@aws-cdk/aws-logs", "@aws-cdk/aws-logs-destinations", "@aws-cdk/core"],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",
@@ -101,7 +97,8 @@ projenTasks.addDeletionOverride("tasks.release");
 projenTasks.addDeletionOverride("tasks.bump");
 projenTasks.addDeletionOverride("tasks.compat");
 projenTasks.addDeletionOverride("tasks.test:compile");
-projenTasks.addOverride("tasks.test.steps", [{
+projenTasks.addOverride("tasks.test.steps", [
+  {
     exec: "rm -fr lib/",
   },
   {

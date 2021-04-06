@@ -3,7 +3,7 @@
   "description": "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
   "repository": {
     "type": "git",
-    "url": "git@github.com:DataDog/datadog-cdk-constructs.git"
+    "url": "https://github.com/DataDog/datadog-cdk-constructs"
   },
   "scripts": {
     "projen": "npx projen",
@@ -114,7 +114,12 @@
   "stability": "stable",
   "jsii": {
     "outdir": "dist",
-    "targets": {},
+    "targets": {
+      "python": {
+        "distName": "datadog-cdk-constructs",
+        "module": "datadog_cdk_constructs"
+      }
+    },
     "tsc": {
       "outDir": "lib",
       "rootDir": "src"

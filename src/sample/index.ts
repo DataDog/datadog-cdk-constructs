@@ -37,8 +37,8 @@ export class ExampleStack extends cdk.Stack {
     const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderARN: "<forwarder_ARN>",
-      enableDDTracing: true,
+      forwarderArn: "<forwarder_ARN>",
+      enableDatadogTracing: true,
       flushMetricsToLogs: true,
       apiKey: "1234",
       site: "datadoghq.com",

@@ -41,8 +41,8 @@ describe("addForwarder", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderARN: "forwarder-arn",
-      enableDDTracing: true,
+      forwarderArn: "forwarder-arn",
+      enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -106,8 +106,8 @@ describe("addForwarder", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderARN: "forwarder-arn",
-      enableDDTracing: true,
+      forwarderArn: "forwarder-arn",
+      enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -142,8 +142,8 @@ describe("addForwarder", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderARN: "forwarder-arn",
-      enableDDTracing: true,
+      forwarderArn: "forwarder-arn",
+      enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -151,8 +151,8 @@ describe("addForwarder", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderARN: "forwarder-arn2",
-      enableDDTracing: true,
+      forwarderArn: "forwarder-arn2",
+      enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -186,7 +186,7 @@ describe("applyLayers", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -218,7 +218,7 @@ describe("applyLayers", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -262,7 +262,7 @@ describe("applyLayers", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");

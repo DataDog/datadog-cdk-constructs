@@ -27,7 +27,7 @@ describe("siteURLEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
       site: "datadoghq.eu",
       flushMetricsToLogs: false,
       apiKey: "1234",
@@ -60,7 +60,7 @@ describe("siteURLEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
       flushMetricsToLogs: false,
       apiKey: "1234",
     });
@@ -155,7 +155,7 @@ describe("siteURLEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder",
+      forwarderArn: "forwarder",
       flushMetricsToLogs: true,
       site: "datadoghq.eu",
     });
@@ -187,7 +187,7 @@ describe("logForwardingEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
       apiKey: "1234",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
@@ -220,7 +220,7 @@ describe("logForwardingEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -282,7 +282,7 @@ describe("apiKeyEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKey: "1234",
@@ -317,10 +317,10 @@ describe("apiKMSKeyEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderARN: "forwarder-arn",
+      forwarderArn: "forwarder-arn",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
-      apiKMSKey: "5678",
+      apiKmsKey: "5678",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
