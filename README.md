@@ -25,7 +25,7 @@ pip install datadog-cdk-constructs
 ```
 
 ### Note: 
-Pay attention to the output from your package manager as the `datadog-cdk-constructs` have peer dependencies.
+Pay attention to the output from your package manager as the `Datadog CDK Construct Library` has peer dependencies.
 
 ## Usage
 
