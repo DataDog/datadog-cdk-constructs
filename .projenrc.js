@@ -35,6 +35,7 @@ const project = new AwsCdkConstructLibrary({
     "cdk.out/",
     ".parcel-cache",
     "test/__snapshots__",
+    ".DS_Store",
   ],
   npmignore: [
     "!LICENSE",

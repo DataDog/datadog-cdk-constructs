@@ -8,6 +8,7 @@
 *.seed
 *.tgz
 *.tsbuildinfo
+.DS_Store
 .cache
 .cdk.staging
 .eslintcache
