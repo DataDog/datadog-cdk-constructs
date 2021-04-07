@@ -1,6 +1,7 @@
 # Datadog CDK Constructs
 
 [![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue)](https://www.npmjs.com/package/datadog-cdk-constructs)
+[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs?color=blue)](https://pypi.org/project/datadog-cdk-constructs/)
 [![Slack](https://chat.datadoghq.com/badge.svg?bg=632CA6)](https://chat.datadoghq.com/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
@@ -70,7 +71,7 @@ To further configure your Datadog construct, use the following custom parameters
 | `site`                  | `site`                    | Set which Datadog site to send data. This is only used when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set. Possible values are  `datadoghq.com` ,  `datadoghq.eu` ,  `us3.datadoghq.com`  and  `ddog-gov.com` . The default is  `datadoghq.com` .                                                                          |
 | `apiKey`                | `api_key`                 | Datadog API Key, only needed when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set. For more information about getting a Datadog API key, see the [API key documentation][8].                                                                                                                                             |
 | `apiKmsKey`             | `api_kms_key`             | Datadog API Key encrypted using KMS. Use this parameter in place of  `apiKey`  when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set, and you are using KMS encryption.                                                                                                                                                       |
-| `enableDatadogTracing`       | `enable_dd_tracing`       | Enable Datadog tracing on your Lambda functions. Defaults to  `true` .                                                                                                                                                                                                                                                                               |
+| `enableDatadogTracing`       | `enable_datadog_tracing`       | Enable Datadog tracing on your Lambda functions. Defaults to  `true` .                                                                                                                                                                                                                                                                               |
 | `injectLogContext`      | `inject_log_context`      | When set, the lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to  `true` .                                                                                                                                                                                                                                    |
 
 ### AWS CDK Configurations
