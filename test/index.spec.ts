@@ -187,7 +187,7 @@ describe("addForwarder", () => {
     const [differentStackSubscription] = findDatadogSubscriptionFilters(differentStack);
 
     expect(initialStackSubscription.id).toEqual(identicalStackSubscription.id);
-    expect(initialStackSubscription).not.toEqual(differentStackSubscription.id);
+    expect(initialStackSubscription.id).not.toEqual(differentStackSubscription.id);
   });
 });
 describe("applyLayers", () => {
