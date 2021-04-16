@@ -18,10 +18,10 @@ function generateForwaderConstructId(forwarderArn: string) {
   log.debug("Generating construct Id for Datadog Lambda Forwarder");
   return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
 }
-function generateSubscriptionFilterName(functionArn: string, forwarderArn: string) {
+function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: string) {
   const subscriptionFilterValue: string = crypto
     .createHash("sha256")
-    .update(functionArn)
+    .update(functionUniqueId)
     .update(forwarderArn)
     .digest("hex");
   const subscriptionFilterValueLength = subscriptionFilterValue.length;
@@ -42,7 +42,7 @@ export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Funct
   }
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
-    const subscriptionFilterName = generateSubscriptionFilterName(lam.functionArn, forwarderArn);
+    const subscriptionFilterName = generateSubscriptionFilterName(cdk.Names.uniqueId(lam), forwarderArn);
     log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
     lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
       destination: forwarderDestination,
