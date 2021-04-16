@@ -159,6 +159,35 @@ describe("addForwarder", () => {
     expect(pythonLambda.logGroup.node.tryFindChild(subscriptionFilters[1].id)).not.toBeUndefined();
     expect(subscriptionFilters[0].destinationArn).not.toEqual(subscriptionFilters[1].destinationArn);
   });
+
+  it("Produces stable log subscription resource ids", () => {
+    const createStack = (functionId: string) => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-gov-east-1",
+        },
+      });
+      const pythonLambda = new lambda.Function(stack, functionId, {
+        runtime: lambda.Runtime.PYTHON_3_7,
+        code: lambda.Code.fromAsset("test"),
+        handler: "hello.handler",
+      });
+      addForwarder(stack, [pythonLambda], "forwarder-arn");
+
+      return stack;
+    };
+
+    const initialStack = createStack("PythonHandler");
+    const identicalStack = createStack("PythonHandler");
+    const differentStack = createStack("OtherHandler");
+
+    const [initialStackSubscription] = findDatadogSubscriptionFilters(initialStack);
+    const [identicalStackSubscription] = findDatadogSubscriptionFilters(identicalStack);
+    const [differentStackSubscription] = findDatadogSubscriptionFilters(differentStack);
+
+    expect(initialStackSubscription.id).toEqual(identicalStackSubscription.id);
+    expect(initialStackSubscription).not.toEqual(differentStackSubscription.id);
   });
 });
 describe("applyLayers", () => {
