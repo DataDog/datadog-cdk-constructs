@@ -15,4 +15,3 @@ export class LambdaDestination implements logs.ILogSubscriptionDestination {
     return { arn: this.fn.functionArn };
   }
 }
-
