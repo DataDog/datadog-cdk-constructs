@@ -9,10 +9,10 @@
 import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern } from "@aws-cdk/aws-logs";
-// Change back to 'import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";'
-// once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
+// Change back to 'import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";'
+// once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
 import { LambdaDestination } from "./lambdaDestination";
 const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
