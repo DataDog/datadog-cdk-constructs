@@ -110,4 +110,45 @@ describe("Forwarder", () => {
     expect(initialStackSubscription.id).toEqual(identicalStackSubscription.id);
     expect(initialStackSubscription.id).not.toEqual(differentStackSubscription.id);
   });
+
+  it("Produces different log subscription resource ids when the forwarder changes", () => {
+    const createStack = (forwarderArn: string) => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, "stack", {
+        env: {
+          region: "us-gov-east-1",
+        },
+      });
+      const pythonLambda = new lambda.Function(stack, "PythonHandler", {
+        runtime: lambda.Runtime.PYTHON_3_7,
+        code: lambda.Code.fromAsset("test"),
+        handler: "hello.handler",
+      });
+      const nodeLambda = new lambda.Function(stack, "NodeHandler", {
+        runtime: lambda.Runtime.NODEJS_10_X,
+        code: lambda.Code.fromAsset("test"),
+        handler: "hello.handler",
+      });
+      addForwarder(stack, [pythonLambda, nodeLambda], forwarderArn);
+
+      return stack;
+    };
+
+    const stackOne = createStack("forwarder-arn");
+    const stackTwo = createStack("forwarder-arn-2");
+
+    const stackOneSubscriptions = findDatadogSubscriptionFilters(stackOne);
+    const stackTwoSubscriptions = findDatadogSubscriptionFilters(stackTwo);
+
+    expect(stackOneSubscriptions).toHaveLength(2);
+    expect(stackOneSubscriptions[0].id).not.toEqual(stackOneSubscriptions[1].id);
+    expect(stackTwoSubscriptions[0].destinationArn).toEqual(stackTwoSubscriptions[1].destinationArn);
+
+    expect(stackTwoSubscriptions).toHaveLength(2);
+    expect(stackTwoSubscriptions[0].id).not.toEqual(stackTwoSubscriptions[1].id);
+    expect(stackTwoSubscriptions[0].destinationArn).toEqual(stackTwoSubscriptions[1].destinationArn);
+
+    expect(stackOneSubscriptions[0].destinationArn).not.toEqual(stackTwoSubscriptions[0].destinationArn);
+    expect(stackOneSubscriptions[0].id).not.toEqual(stackTwoSubscriptions[0].id);
+  });
 });
