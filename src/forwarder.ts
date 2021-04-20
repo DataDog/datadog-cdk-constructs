@@ -9,10 +9,12 @@
 import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern } from "@aws-cdk/aws-logs";
-import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
+// Change back to 'import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";'
+// once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
+import { LambdaDestination } from "./lambdaDestination";
 
 function generateForwaderConstructId(forwarderArn: string) {
   log.debug("Generating construct Id for Datadog Lambda Forwarder");
