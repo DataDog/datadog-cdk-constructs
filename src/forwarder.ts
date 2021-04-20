@@ -12,7 +12,7 @@ import { FilterPattern } from "@aws-cdk/aws-logs";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
-const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
+export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
 function generateForwaderConstructId(forwarderArn: string) {
   log.debug("Generating construct Id for Datadog Lambda Forwarder");
