@@ -35,11 +35,11 @@ describe("addLambdaFunctions", () => {
     datadogCdk.addLambdaFunctions([nodeLambda]);
     datadogCdk.addLambdaFunctions([pythonLambda]);
 
-    const [nodeLambdaSubscriptionFilter] = findDatadogSubscriptionFilters(nodeLambda);
-    const [pythonLambdaSubscriptionFilter] = findDatadogSubscriptionFilters(pythonLambda);
-    expect(nodeLambdaSubscriptionFilter).toBeDefined();
-    expect(pythonLambdaSubscriptionFilter).toBeDefined();
-    expect(nodeLambdaSubscriptionFilter.destinationArn).toEqual(pythonLambdaSubscriptionFilter.destinationArn);
+    const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
+    const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
+    expect(nodeLambdaSubscriptionFilters).toHaveLength(1);
+    expect(pythonLambdaSubscriptionFilters).toHaveLength(1);
+    expect(nodeLambdaSubscriptionFilters[0].destinationArn).toEqual(pythonLambdaSubscriptionFilters[0].destinationArn);
   });
 
   it("Throws an error when a customer redundantly calls the addLambdaFunctions function on the same lambda function(s) and forwarder", () => {

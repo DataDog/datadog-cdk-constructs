@@ -44,12 +44,11 @@ describe("Forwarder", () => {
 
     addForwarder(stack, [nodeLambda, pythonLambda], "forwarder-arn");
 
-    const [nodeLambdaSubscriptionFilter] = findDatadogSubscriptionFilters(nodeLambda);
-    const [pythonLambdaSubscriptionFilter] = findDatadogSubscriptionFilters(pythonLambda);
-
-    expect(nodeLambdaSubscriptionFilter).toBeDefined();
-    expect(pythonLambdaSubscriptionFilter).toBeDefined();
-    expect(nodeLambdaSubscriptionFilter.destinationArn).toEqual(pythonLambdaSubscriptionFilter.destinationArn);
+    const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
+    const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
+    expect(nodeLambdaSubscriptionFilters).toHaveLength(1);
+    expect(pythonLambdaSubscriptionFilters).toHaveLength(1);
+    expect(nodeLambdaSubscriptionFilters[0].destinationArn).toEqual(pythonLambdaSubscriptionFilters[0].destinationArn);
   });
 
   it("Subscribes two different forwarders to two different lambda functions via separate addForwarder function calls", () => {
@@ -73,11 +72,13 @@ describe("Forwarder", () => {
     addForwarder(stack, [nodeLambda], "forwarder-arn");
     addForwarder(stack, [pythonLambda], "forwarder-arn-2");
 
-    const [nodeLambdaSubscriptionFilter] = findDatadogSubscriptionFilters(nodeLambda);
-    const [pythonLambdaSubscriptionFilter] = findDatadogSubscriptionFilters(pythonLambda);
-    expect(nodeLambdaSubscriptionFilter).toBeDefined();
-    expect(pythonLambdaSubscriptionFilter).toBeDefined();
-    expect(nodeLambdaSubscriptionFilter.destinationArn).not.toEqual(pythonLambdaSubscriptionFilter.destinationArn);
+    const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
+    const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
+    expect(nodeLambdaSubscriptionFilters).toHaveLength(1);
+    expect(pythonLambdaSubscriptionFilters).toHaveLength(1);
+    expect(nodeLambdaSubscriptionFilters[0].destinationArn).not.toEqual(
+      pythonLambdaSubscriptionFilters[0].destinationArn,
+    );
   });
 
   it("Produces stable log subscription resource ids", () => {
