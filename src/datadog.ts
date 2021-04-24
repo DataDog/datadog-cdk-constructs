@@ -11,7 +11,7 @@ import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
-const version = require("../version.json");
+const versionJson = require("../version.json");
 
 export interface DatadogProps {
   readonly pythonLayerVersion?: number;
@@ -96,9 +96,11 @@ export class Datadog extends cdk.Construct {
  * Tags the function(s) with DD Cdk version
  */
 export function addCdkTag(lambdaFunctions: lambda.Function[]) {
-  log.debug(`Adding CDK Version ${version}`);
+  log.debug(`Adding CDK Version ${versionJson.version}`);
   lambdaFunctions.forEach((functionName) => {
-    cdk.Tags.of(functionName).add(TagKeys.Cdk, `v${version}`, { includeResourceTypes: ["AWS::Lambda::Function"] });
+    cdk.Tags.of(functionName).add(TagKeys.Cdk, `v${versionJson.version}`, {
+      includeResourceTypes: ["AWS::Lambda::Function"],
+    });
   });
 }
 

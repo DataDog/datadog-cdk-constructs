@@ -2,6 +2,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import { Datadog, addCdkTag } from "../src/index";
+const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
 
@@ -178,7 +179,7 @@ describe("addCdkTag", () => {
       Tags: [
         {
           Key: "dd_cdk_construct",
-          Value: "v[object Object]",
+          Value: `v${versionJson.version}`,
         },
       ],
     });
@@ -187,7 +188,7 @@ describe("addCdkTag", () => {
       Tags: [
         {
           Key: "dd_cdk_construct",
-          Value: "v[object Object]",
+          Value: `v${versionJson.version}`,
         },
       ],
     });
