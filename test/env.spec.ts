@@ -152,4 +152,32 @@ describe("injectLogContextEnvVar", () => {
       },
     });
   });
+  it("sets the correct environment variable for logs injection", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      forwarderArn: "forwarder-arn",
+      injectLogContext: false,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [logForwardingEnvVar]: "true",
+          [enableDDTracingEnvVar]: "true",
+          ["DD_LOGS_INJECTION"]: "false",
+        },
+      },
+    });
+  });
 });
