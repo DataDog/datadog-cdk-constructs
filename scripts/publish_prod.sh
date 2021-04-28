@@ -30,6 +30,22 @@ else
     VERSION=$1
 fi
 
+if ! [ -x "$(command -v yarn)" ]; then
+  echo 'Error: yarn is not installed.'
+  exit 1
+fi
+if ! [ -x "$(command -v pip)" ]; then
+  echo 'Error: pip is not installed.'
+  exit 1
+fi
+if ! [ -x "$(command -v python3)" ]; then
+  echo 'Error: python3 is not installed.'
+  exit 1
+fi
+
+# Make sure dependencies are installed before proceeding
+yarn
+
 read -p "Do you have the PyPI and npm login credentials for the Datadog account (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
