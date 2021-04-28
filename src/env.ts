@@ -10,7 +10,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
 
 export const enableDDTracingEnvVar = "DD_TRACE_ENABLED";
-export const injectLogContextEnvVar = "DD_LOG_INJECTION";
+export const injectLogContextEnvVar = "DD_LOGS_INJECTION";
 
 export const defaultEnvVar = {
   addLayers: true,

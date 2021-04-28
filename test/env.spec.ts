@@ -39,6 +39,33 @@ describe("applyEnvVariables", () => {
       },
     });
   });
+  it("gives all environment variables the correct names", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      forwarderArn: "forwarder-arn",
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
+          ["DD_TRACE_ENABLED"]: defaultEnvVar.enableDatadogTracing.toString(),
+          ["DD_LOGS_INJECTION"]: defaultEnvVar.injectLogContext.toString(),
+        },
+      },
+    });
+  });
 });
 
 describe("enableDDTracingEnvVar", () => {
