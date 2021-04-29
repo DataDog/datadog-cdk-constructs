@@ -57,12 +57,10 @@ rm -rf dist;
 
 #Confirm to proceed
 read -p "About to bump the version from ${CURRENT_VERSION} to ${VERSION}, and publish. Continue (y/n)?" CONT
-if ["$CONT" != "y"]; then
+if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
 fi
-
-yarn login
 
 echo "Bumping the version number and committing the changes"
 if git log --oneline -1 | grep -q "chore(release):"; then
@@ -72,9 +70,32 @@ else
     yarn standard-version --release-as $VERSION
 fi
 
-echo "Publishing to npm"
+echo "Building artifacts"
 yarn build
-yarn publish ./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz --new-version "$VERSION"
+#Make sure artifacts were created before publishing
+JS_TARBALL=./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz
+if [ ! -f $JS_TARBALL ]; then
+    echo "'${JS_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
+    exit 1
+fi
+
+PY_WHEEL=./dist/python/datadog_cdk_constructs-$VERSION-py3-none-any.whl
+if [ ! -f $PY_WHEEL ]; then
+    echo "'${PY_WHEEL}' not found. Run 'yarn build' and ensure this file is created."
+    exit 1
+fi
+
+PY_TARBALL=./dist/python/datadog-cdk-constructs-$VERSION.tar.gz
+if [ ! -f $PY_TARBALL ]; then
+    echo "'${PY_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
+    exit 1
+fi
+
+yarn logout
+yarn login
+
+echo "Publishing to npm"
+yarn publish $JS_TARBALL --new-version "$VERSION"
 
 echo "Publishing to PyPI"
 pip install --upgrade twine
