@@ -64,7 +64,7 @@ fi
 
 echo "Bumping the version number and committing the changes"
 if git log --oneline -1 | grep -q "chore(release):"; then
-    echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message, aborting"
+    echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message, this means if the script prematurely ended previously without publishing you may need to 'git reset --HARD' to a previous commit before trying again, aborting"
     exit 1
 else
     yarn standard-version --release-as $VERSION
