@@ -11,6 +11,7 @@ import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
 import { Transport } from "./transport";
+const versionJson = require("../version.json");
 
 export interface DatadogProps {
   readonly pythonLayerVersion?: number;
@@ -24,6 +25,10 @@ export interface DatadogProps {
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
   readonly injectLogContext?: boolean;
+}
+
+enum TagKeys {
+  Cdk = "dd_cdk_construct",
 }
 
 export class Datadog extends cdk.Construct {
@@ -79,11 +84,24 @@ export class Datadog extends cdk.Construct {
       } else {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
+      addCdkTag(lambdaFunctions);
       applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext);
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
   }
+}
+
+/**
+ * Tags the function(s) with DD Cdk version
+ */
+export function addCdkTag(lambdaFunctions: lambda.Function[]) {
+  log.debug(`Adding CDK Version ${versionJson.version}`);
+  lambdaFunctions.forEach((functionName) => {
+    cdk.Tags.of(functionName).add(TagKeys.Cdk, `v${versionJson.version}`, {
+      includeResourceTypes: ["AWS::Lambda::Function"],
+    });
+  });
 }
 
 function validateProps(props: DatadogProps) {

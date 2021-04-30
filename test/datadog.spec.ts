@@ -1,7 +1,8 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { Datadog } from "../src/index";
+import { Datadog, addCdkTag } from "../src/index";
+const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
 
@@ -151,5 +152,45 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+  });
+});
+
+describe("addCdkTag", () => {
+  it("adds the dd_cdk_construct tag to all lambda function", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello1 = new lambda.Function(stack, "HelloHandler1", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const hello2 = new lambda.Function(stack, "HelloHandler2", {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    addCdkTag([hello1, hello2]);
+    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+      Runtime: "nodejs10.x",
+      Tags: [
+        {
+          Key: "dd_cdk_construct",
+          Value: `v${versionJson.version}`,
+        },
+      ],
+    });
+    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+      Runtime: "python3.8",
+      Tags: [
+        {
+          Key: "dd_cdk_construct",
+          Value: `v${versionJson.version}`,
+        },
+      ],
+    });
   });
 });
