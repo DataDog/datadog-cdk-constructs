@@ -73,7 +73,7 @@ describe("addLambdaFunctions", () => {
     expect(throwsError).toBe(true);
   });
 
-  it("Adds forwarder subscriptions to regular and nested CDK stacks", () => {
+  it("Adds forwarder log group subscriptions to regular and nested CDK stacks", () => {
     const app = new cdk.App();
     const RootStack = new cdk.Stack(app, "RootStack");
     const NestedStack = new cdk.NestedStack(RootStack, "NestedStack");
