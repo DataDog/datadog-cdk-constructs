@@ -93,6 +93,57 @@ const lambda_function = new lambda.Function(this, "HelloHandler", {
 });
 ```
 
+### Nested Stacks
+
+Re-add the Datadog CDK Construct to each stack you wish to instrument with Datadog. For example below we initialize the Datadog CDK Construct and call `addLambdaFunctions()` in the `RootStack` and the `NestedStack`.
+
+```typescript
+import { Datadog } from "datadog-cdk-constructs";
+import * as cdk from "@aws-cdk/core";
+
+class RootStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const datadog = new Datadog(this, "Datadog", {
+      nodeLayerVersion: <LAYER_VERSION>,
+      pythonLayerVersion: <LAYER_VERSION>,
+      addLayers: <BOOLEAN>,
+      forwarderArn: "<FORWARDER_ARN>",
+      flushMetricsToLogs: <BOOLEAN>,
+      site: "<SITE>",
+      apiKey: "{Datadog_API_Key}",
+      apiKmsKey: "{Encrypted_Datadog_API_Key}",
+      enableDatadogTracing: <BOOLEAN>,
+      injectLogContext: <BOOLEAN>
+    });
+    datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
+
+  }
+}
+
+class NestedStack extends cdk.NestedStack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.NestedStackProps) {
+    super(scope, id, props);
+
+    const datadog = new Datadog(this, "Datadog", {
+      nodeLayerVersion: <LAYER_VERSION>,
+      pythonLayerVersion: <LAYER_VERSION>,
+      addLayers: <BOOLEAN>,
+      forwarderArn: "<FORWARDER_ARN>",
+      flushMetricsToLogs: <BOOLEAN>,
+      site: "<SITE>",
+      apiKey: "{Datadog_API_Key}",
+      apiKmsKey: "{Encrypted_Datadog_API_Key}",
+      enableDatadogTracing: <BOOLEAN>,
+      injectLogContext: <BOOLEAN>
+    });
+    datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
+
+  }
+}
+```
+
 ### Tags
 
 Add tags to your constructs. We recommend setting an `env` and `service` tag to tie Datadog telemetry together. For more information see [official AWS documentation][10] and [CDK documentation][11].
