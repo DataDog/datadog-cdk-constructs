@@ -101,7 +101,7 @@ describe("addLambdaFunctions", () => {
     });
   });
 
-  it("Adds DD Lambda Extension when using nested CDK stack", () => {
+  it("Adds DD Lambda Extension when using a nested CDK stack", () => {
     const app = new cdk.App();
     const RootStack = new cdk.Stack(app, "RootStack", {
       env: {
