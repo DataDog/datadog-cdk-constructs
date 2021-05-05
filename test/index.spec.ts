@@ -73,33 +73,16 @@ describe("addLambdaFunctions", () => {
     expect(throwsError).toBe(true);
   });
 
-  it("Adds forwarder log group subscriptions to regular and nested CDK stacks", () => {
+  it("Adds a log group subscription to a lambda in a nested CDK stack", () => {
     const app = new cdk.App();
     const RootStack = new cdk.Stack(app, "RootStack");
     const NestedStack = new cdk.NestedStack(RootStack, "NestedStack");
-
-    const RootStackLambda = new lambda.Function(RootStack, "RootStackLambda", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromAsset("test"),
-      handler: "hello.handler",
-    });
 
     const NestedStackLambda = new lambda.Function(NestedStack, "NestedStackLambda", {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const RootStackDatadogCdk = new Datadog(RootStack, "RootStackDatadogCdk", {
-      nodeLayerVersion: 20,
-      pythonLayerVersion: 28,
-      addLayers: true,
-      forwarderArn: "forwarder-arn",
-      enableDatadogTracing: true,
-      flushMetricsToLogs: true,
-      site: "datadoghq.com",
-    });
-    RootStackDatadogCdk.addLambdaFunctions([RootStackLambda]);
-
     const NestedStackDatadogCdk = new Datadog(NestedStack, "NestedStackDatadogCdk", {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
@@ -111,10 +94,6 @@ describe("addLambdaFunctions", () => {
     });
     NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
 
-    expect(RootStack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
-      FilterPattern: "",
-    });
     expect(NestedStack).toHaveResource("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
