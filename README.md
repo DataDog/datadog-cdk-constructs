@@ -95,7 +95,7 @@ const lambda_function = new lambda.Function(this, "HelloHandler", {
 
 ### Nested Stacks
 
-Re-add the Datadog CDK Construct to each stack you wish to instrument with Datadog. For example below we initialize the Datadog CDK Construct and call `addLambdaFunctions()` in the `RootStack` and the `NestedStack`.
+Re-add the Datadog CDK Construct to each stack you wish to instrument with Datadog. For example below we initialize the Datadog CDK Construct and call `addLambdaFunctions()` in the `RootStack` and `NestedStack`.
 
 ```typescript
 import { Datadog } from "datadog-cdk-constructs";
