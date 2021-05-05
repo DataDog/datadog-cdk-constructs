@@ -102,7 +102,7 @@ import { Datadog } from "datadog-cdk-constructs";
 import * as cdk from "@aws-cdk/core";
 
 class RootStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const datadog = new Datadog(this, "Datadog", {
