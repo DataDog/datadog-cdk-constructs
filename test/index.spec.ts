@@ -2,6 +2,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import { Datadog, logForwardingEnvVar, enableDDTracingEnvVar, injectLogContextEnvVar } from "../src/index";
+import { DD_ACCOUNT_ID } from "../src/layer";
 import { JS_HANDLER_WITH_LAYERS, DD_HANDLER_ENV_VAR, PYTHON_HANDLER } from "../src/redirect";
 import { findDatadogSubscriptionFilters } from "./test-utils";
 
@@ -71,6 +72,67 @@ describe("addLambdaFunctions", () => {
       throwsError = true;
     }
     expect(throwsError).toBe(true);
+  });
+
+  it("Adds a log group subscription to a lambda in a nested CDK stack", () => {
+    const app = new cdk.App();
+    const RootStack = new cdk.Stack(app, "RootStack");
+    const NestedStack = new cdk.NestedStack(RootStack, "NestedStack");
+
+    const NestedStackLambda = new lambda.Function(NestedStack, "NestedStackLambda", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const NestedStackDatadogCdk = new Datadog(NestedStack, "NestedStackDatadogCdk", {
+      nodeLayerVersion: 20,
+      pythonLayerVersion: 28,
+      addLayers: true,
+      forwarderArn: "forwarder-arn",
+      enableDatadogTracing: true,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
+
+    expect(NestedStack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "forwarder-arn",
+      FilterPattern: "",
+    });
+  });
+
+  it("Adds DD Lambda Extension when using a nested CDK stack", () => {
+    const app = new cdk.App();
+    const RootStack = new cdk.Stack(app, "RootStack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const NestedStack = new cdk.NestedStack(RootStack, "NestedStack");
+
+    const NestedStackLambda = new lambda.Function(NestedStack, "NestedStackLambda", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const NestedStackDatadogCdk = new Datadog(NestedStack, "NestedStackDatadogCdk", {
+      nodeLayerVersion: 20,
+      pythonLayerVersion: 28,
+      addLayers: true,
+      extensionLayerVersion: 6,
+      apiKey: "1234",
+      enableDatadogTracing: true,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
+
+    expect(NestedStack).toHaveResource("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:20`,
+        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
+      ],
+    });
   });
 });
 
