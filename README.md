@@ -104,7 +104,8 @@ import * as cdk from "@aws-cdk/core";
 class RootStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
+    new NestedStack(this, "NestedStack");
+    
     const datadog = new Datadog(this, "Datadog", {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
