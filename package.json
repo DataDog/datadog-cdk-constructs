@@ -1,5 +1,5 @@
 {
-  "name": "datadog-cdk-constructs",
+  "name": "datadoge-cdk-constructs",
   "description": "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
   "repository": {
     "type": "git",

@@ -26,6 +26,12 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install
 
+      - name: Synthesize project files
+        run: npx projen
+        
+      - name: Anti-tamper check
+        run: git diff --exit-code
+
       - name: Check formatting
         run: yarn check-formatting
 
