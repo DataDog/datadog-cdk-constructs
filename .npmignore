@@ -5,6 +5,7 @@
 /.idea
 /.projen
 /.projenrc.js
+/.versionrc.json
 /.vscode
 /coverage
 /scripts
@@ -19,7 +20,6 @@ CONTRIBUTING.md
 cdk.out/*
 dist
 junit.xml
-tsconfig.tsbuildinfo
 yarn-error.log
 !.jsii
 !/lib
