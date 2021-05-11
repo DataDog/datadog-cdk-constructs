@@ -1,7 +1,10 @@
+import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
+import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { addForwarder } from "../src/forwarder";
+
+import { addForwarder, addForwarderToLogGroup } from "../src/forwarder";
 import { findDatadogSubscriptionFilters } from "./test-utils";
 
 describe("Forwarder", () => {
@@ -150,5 +153,98 @@ describe("Forwarder", () => {
 
     expect(stackOneSubscriptions[0].destinationArn).not.toEqual(stackTwoSubscriptions[0].destinationArn);
     expect(stackOneSubscriptions[0].id).not.toEqual(stackTwoSubscriptions[0].id);
+  });
+
+  it("Subscribes the forwarder to a log group via the addForwarderToLogGroup functioñ", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const pythonLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const restLogGroup = new LogGroup(stack, "restLogGroup");
+    new LambdaRestApi(stack, "rest-test", {
+      handler: pythonLambda,
+      deployOptions: {
+        accessLogDestination: new LogGroupLogDestination(restLogGroup),
+      },
+    });
+    addForwarderToLogGroup(stack, [restLogGroup], "forwarder-arn");
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "forwarder-arn",
+      FilterPattern: "",
+    });
+  });
+  it("Subscribes the forwarder to multiple log groups via the addForwarderToLogGroup function", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const nodeLogGroup = new LogGroup(stack, "NodeLogGroup");
+    new LambdaRestApi(stack, "node-lambda", {
+      handler: nodeLambda,
+      deployOptions: {
+        accessLogDestination: new LogGroupLogDestination(nodeLogGroup),
+      },
+    });
+    const pythonLambda = new lambda.Function(stack, "PythonHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const pythonLogGroup = new LogGroup(stack, "PythonLogGroup");
+    new LambdaRestApi(stack, "python-lambda", {
+      handler: pythonLambda,
+      deployOptions: {
+        accessLogDestination: new LogGroupLogDestination(pythonLogGroup),
+      },
+    });
+
+    addForwarderToLogGroup(stack, [nodeLogGroup, pythonLogGroup], "forwarder-arn");
+    const stackSubcriptions = findDatadogSubscriptionFilters(stack);
+
+    expect(stackSubcriptions).toHaveLength(2);
+  });
+  it("Subscribes to two separate log groups when addForwarder and addForwarderToLogGroup functions are called", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const pythonLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const restLogGroup = new LogGroup(stack, "restLogGroup");
+    new LambdaRestApi(stack, "rest-test", {
+      handler: pythonLambda,
+      deployOptions: {
+        accessLogDestination: new LogGroupLogDestination(restLogGroup),
+      },
+    });
+    addForwarder(stack, [pythonLambda], "forwarder-arn");
+    addForwarderToLogGroup(stack, [restLogGroup], "forwarder-arn-rest");
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "forwarder-arn",
+      FilterPattern: "",
+    });
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "forwarder-arn-rest",
+      FilterPattern: "",
+    });
   });
 });

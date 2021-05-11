@@ -7,9 +7,17 @@
  */
 
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as logs from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
-import { applyLayers, redirectHandlers, addForwarder, applyEnvVariables, defaultEnvVar } from "./index";
+import {
+  applyLayers,
+  redirectHandlers,
+  addForwarder,
+  addForwarderToLogGroup,
+  applyEnvVariables,
+  defaultEnvVar,
+} from "./index";
 import { Transport } from "./transport";
 const versionJson = require("../version.json");
 
@@ -78,9 +86,14 @@ export class Datadog extends cdk.Construct {
         this.props.extensionLayerVersion,
       );
       redirectHandlers(lambdaFunctions, addLayers);
+
       if (this.props.forwarderArn !== undefined) {
-        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
-        addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
+        if (this.props.extensionLayerVersion !== undefined) {
+          log.debug(`Skipping adding subscriptions to the lambda functions since the extension is enabled`);
+        } else {
+          log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
+          addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
+        }
       } else {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
@@ -88,6 +101,14 @@ export class Datadog extends cdk.Construct {
       applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext);
 
       this.transport.applyEnvVars(lambdaFunctions);
+    }
+  }
+
+  public addForwarderToLogGroups(logGroups: logs.LogGroup[]) {
+    if (this.props.forwarderArn !== undefined) {
+      addForwarderToLogGroup(this.scope, logGroups, this.props.forwarderArn);
+    } else {
+      log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
     }
   }
 }
@@ -120,11 +141,7 @@ function validateProps(props: DatadogProps) {
   if (props.apiKey === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
     throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
   }
-
   if (props.extensionLayerVersion !== undefined) {
-    if (props.forwarderArn !== undefined) {
-      throw new Error("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
-    }
     if (props.apiKey === undefined && props.apiKmsKey === undefined) {
       throw new Error("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
     }

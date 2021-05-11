@@ -8,7 +8,7 @@
 
 import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
-import { FilterPattern } from "@aws-cdk/aws-logs";
+import { FilterPattern, LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
@@ -34,19 +34,34 @@ function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: 
   return subscriptionFilterName;
 }
 
-export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
+function getForwarder(scope: cdk.Construct, forwarderArn: string) {
   const forwarderConstructId = generateForwaderConstructId(forwarderArn);
-  let forwarder;
   if (scope.node.tryFindChild(forwarderConstructId)) {
-    forwarder = scope.node.tryFindChild(forwarderConstructId) as lambda.IFunction;
+    return scope.node.tryFindChild(forwarderConstructId) as lambda.IFunction;
   } else {
-    forwarder = lambda.Function.fromFunctionArn(scope, forwarderConstructId, forwarderArn);
+    return lambda.Function.fromFunctionArn(scope, forwarderConstructId, forwarderArn);
   }
+}
+
+export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
+  const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
     const subscriptionFilterName = generateSubscriptionFilterName(cdk.Names.uniqueId(lam), forwarderArn);
     log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
     lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
+      destination: forwarderDestination,
+      filterPattern: FilterPattern.allEvents(),
+    });
+  });
+}
+
+export function addForwarderToLogGroup(scope: cdk.Construct, logGroups: LogGroup[], forwarderArn: string) {
+  const forwarder = getForwarder(scope, forwarderArn);
+  const forwarderDestination = new LambdaDestination(forwarder);
+  logGroups.forEach((group) => {
+    const subscriptionFilterName = generateSubscriptionFilterName(cdk.Names.uniqueId(group), forwarderArn);
+    group.addSubscriptionFilter(subscriptionFilterName, {
       destination: forwarderDestination,
       filterPattern: FilterPattern.allEvents(),
     });
