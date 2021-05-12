@@ -2,7 +2,7 @@
 const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
 
 const project = new AwsCdkConstructLibrary({
-  name: "datadoge-cdk-constructs",
+  name: "datadog-cdk-constructs",
   description: "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
   author: "Datadog",
   authorOrganization: true,
