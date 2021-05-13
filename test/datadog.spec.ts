@@ -1,4 +1,5 @@
 import * as lambda from "@aws-cdk/aws-lambda";
+import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import { Datadog, addCdkTag } from "../src/index";
@@ -87,41 +88,6 @@ describe("validateProps", () => {
     }).toThrowError("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
   });
 
-  it("throws an error when the extensionLayerVersion and forwarderArn are set", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-
-    let threwError = false;
-    let thrownError: Error | undefined;
-    try {
-      const datadogCdk = new Datadog(stack, "Datadog", {
-        nodeLayerVersion: NODE_LAYER_VERSION,
-        extensionLayerVersion: EXTENSION_LAYER_VERSION,
-        forwarderArn: "forwarder",
-        apiKey: "1234",
-        addLayers: true,
-        enableDatadogTracing: false,
-        flushMetricsToLogs: true,
-        site: "datadoghq.com",
-      });
-      datadogCdk.addLambdaFunctions([hello]);
-    } catch (e) {
-      threwError = true;
-      thrownError = e;
-    }
-    expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual("`extensionLayerVersion` and `forwarderArn` cannot be set at the same time.");
-  });
-
   it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKmsKey` is set", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -192,5 +158,58 @@ describe("addCdkTag", () => {
         },
       ],
     });
+  });
+  it("Does not call the addForwarder function when the extension is enabled", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello1 = new lambda.Function(stack, "HelloHandler1", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      forwarderArn: "forwarder-arn",
+      apiKey: "1234",
+    });
+
+    datadogCdk.addLambdaFunctions([hello1]);
+    expect(stack).not.toHaveResource("AWS::Logs::SubscriptionFilter");
+  });
+
+  it("Does call the addForwarderToNonLambdaLogGrpoups function when the extension is enabled", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+
+    const helloLogGroup = new LogGroup(stack, "helloLogGroup");
+
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      forwarderArn: "forwarder-arn",
+      apiKey: "1234",
+    });
+
+    datadogCdk.addForwarderToNonLambdaLogGroups([helloLogGroup]);
+
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
   });
 });

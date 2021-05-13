@@ -6,6 +6,11 @@
       "type": "build"
     },
     {
+      "name": "@aws-cdk/aws-apigateway",
+      "version": "^1.95.1",
+      "type": "build"
+    },
+    {
       "name": "@aws-cdk/aws-lambda",
       "version": "^1.95.1",
       "type": "build"
@@ -120,6 +125,11 @@
     {
       "name": "loglevel",
       "type": "bundled"
+    },
+    {
+      "name": "@aws-cdk/aws-apigateway",
+      "version": "^1.95.1",
+      "type": "peer"
     },
     {
       "name": "@aws-cdk/aws-lambda",
