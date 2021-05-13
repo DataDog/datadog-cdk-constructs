@@ -55,7 +55,7 @@ const datadog = new Datadog(this, "Datadog", {
   injectLogContext: <BOOLEAN>
 });
 datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
-datadog.addForwarderToLogGroups([<LOG_GROUPS>])
+datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
 ## Configuration
