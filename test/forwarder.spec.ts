@@ -155,7 +155,7 @@ describe("Forwarder", () => {
     expect(stackOneSubscriptions[0].id).not.toEqual(stackTwoSubscriptions[0].id);
   });
 
-  it("Subscribes the forwarder to a log group via the addForwarderToLogGroups functioñ", () => {
+  it("Subscribes the forwarder to a log group via the addForwarderToLogGroups function", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {

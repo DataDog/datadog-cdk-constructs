@@ -40,7 +40,7 @@ export class ExampleStack extends cdk.Stack {
 
     const restLogGroup1 = new LogGroup(this, "restLogGroup1");
     new LambdaRestApi(this, "rest-test1", {
-      handler: hello,
+      handler: hello1,
       deployOptions: {
         accessLogDestination: new LogGroupLogDestination(restLogGroup1),
       },
@@ -55,7 +55,7 @@ export class ExampleStack extends cdk.Stack {
 
     const restLogGroup2 = new LogGroup(this, "restLogGroup2");
     new LambdaRestApi(this, "rest-test2", {
-      handler: hello,
+      handler: hello2,
       deployOptions: {
         accessLogDestination: new LogGroupLogDestination(restLogGroup2),
       },
@@ -64,7 +64,7 @@ export class ExampleStack extends cdk.Stack {
     const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderArn: "arn:aws:lambda:sa-east-1:601427279990:function:datadog-forwarder-staging-org-2",
+      forwarderArn: "<forwarder_ARN>",
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       apiKey: "1234",
@@ -76,7 +76,7 @@ export class ExampleStack extends cdk.Stack {
 }
 
 const app = new cdk.App();
-const env = { account: "601427279990", region: "sa-east-1" };
-const stack = new ExampleStack(app, "storms-test-stack", { env: env });
+const env = { account: "<AWS_ACCOUNT>", region: "sa-east-1" };
+const stack = new ExampleStack(app, "ExampleDatadogStack", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();

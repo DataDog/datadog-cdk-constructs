@@ -187,7 +187,7 @@ describe("addCdkTag", () => {
     expect(stack).not.toHaveResource("AWS::Logs::SubscriptionFilter");
   });
 
-  it("Does call the addForwarderToLogs function when the extension is enabled", () => {
+  it("Does call the addForwarderToNonLambdaLogGrpoups function when the extension is enabled", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
