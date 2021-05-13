@@ -14,7 +14,7 @@ import {
   applyLayers,
   redirectHandlers,
   addForwarder,
-  addForwarderToLogGroup,
+  addForwarderToLogGroups,
   applyEnvVariables,
   defaultEnvVar,
 } from "./index";
@@ -89,7 +89,7 @@ export class Datadog extends cdk.Construct {
 
       if (this.props.forwarderArn !== undefined) {
         if (this.props.extensionLayerVersion !== undefined) {
-          log.debug(`Skipping adding subscriptions to the lambda functions since the extension is enabled`);
+          log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
         } else {
           log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
           addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
@@ -104,11 +104,11 @@ export class Datadog extends cdk.Construct {
     }
   }
 
-  public addForwarderToLogGroups(logGroups: logs.LogGroup[]) {
+  public addForwarderToNonLambdaLogGroups(logGroups: logs.LogGroup[]) {
     if (this.props.forwarderArn !== undefined) {
-      addForwarderToLogGroup(this.scope, logGroups, this.props.forwarderArn);
+      addForwarderToLogGroups(this.scope, logGroups, this.props.forwarderArn);
     } else {
-      log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
+      log.debug("Forwarder ARN not provided, no non lambda log group subscriptions will be added");
     }
   }
 }

@@ -14,6 +14,7 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
 ## npm Package Installation:
+
 ```
 yarn add --dev datadog-cdk-constructs
 # or
@@ -21,18 +22,20 @@ npm install datadog-cdk-constructs --save-dev
 ```
 
 ## PyPI Package Installation:
+
 ```
 pip install datadog-cdk-constructs
 ```
 
-### Note: 
+### Note:
+
 Pay attention to the output from your package manager as the `Datadog CDK Construct Library` has peer dependencies.
 
 ## Usage
 
 ### AWS CDK
 
-*If you are new to AWS CDK then check out this [workshop][14].*
+_If you are new to AWS CDK then check out this [workshop][14]._
 
 Add this to your CDK stack:
 
@@ -59,21 +62,21 @@ datadog.addForwarderToLogGroups([<LOG_GROUPS>])
 
 To further configure your Datadog construct, use the following custom parameters:
 
-*Note*: The Descriptions may use the npm package parameters however they also apply to the PyPI package parameters. 
+_Note_: The Descriptions may use the npm package parameters however they also apply to the PyPI package parameters.
 
-| npm package parameter        | PyPI package parameter          | Description                                                                                                                                                                                                                                                                                                                                          |
-|-------------------------|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `addLayers`             | `add_layers`              | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.                                                                                         |
-| `pythonLayerVersion`    | `python_layer_version`    | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and  `addLayers`  is true. Find the latest version number [here][5].                                                                           |
-| `nodeLayerVersion`      | `node_layer_version`      | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and  `addLayers`  is true. Find the latest version number from [here][6].                                                                             |
-| `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When  `extensionLayerVersion`  is set,  `apiKey`  (or  `apiKmsKey` ) needs to be set as well. When enabled, lambda function log groups will not be subscribed by the forwarder. The Datadog Lambda Extension layer is in public preview. Learn more about the Lambda extension  [here][12]. |
-| `forwarderArn`          | `forwarder_arn`           | When set, the plugin will automatically subscribe the Datadog Forwarder to the functions' log groups. Do not set  `forwarderArn`  when  `extensionLayerVersion`  is set.                                                                                                                                                                             |
-| `flushMetricsToLogs`    | `flush_metrics_to_logs`   | Send custom metrics using CloudWatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to  `true` . If you disable this parameter, it's required to set  `apiKey`  (or  `apiKmsKey` ).                                                                                                                                         |
-| `site`                  | `site`                    | Set which Datadog site to send data. This is only used when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set. Possible values are  `datadoghq.com` ,  `datadoghq.eu` ,  `us3.datadoghq.com`  and  `ddog-gov.com` . The default is  `datadoghq.com` .                                                                          |
-| `apiKey`                | `api_key`                 | Datadog API Key, only needed when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set. For more information about getting a Datadog API key, see the [API key documentation][8].                                                                                                                                             |
-| `apiKmsKey`             | `api_kms_key`             | Datadog API Key encrypted using KMS. Use this parameter in place of  `apiKey`  when  `flushMetricsToLogs`  is  `false`  or  `extensionLayerVersion`  is set, and you are using KMS encryption.                                                                                                                                                       |
-| `enableDatadogTracing`       | `enable_datadog_tracing`       | Enable Datadog tracing on your Lambda functions. Defaults to  `true` .                                                                                                                                                                                                                                                                               |
-| `injectLogContext`      | `inject_log_context`      | When set, the lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to  `true` .                                                                                                                                                                                                                                    |
+| npm package parameter   | PyPI package parameter    | Description                                                                                                                                                                                                                                                                                                                                                |
+| ----------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `addLayers`             | `add_layers`              | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages.                                                                                               |
+| `pythonLayerVersion`    | `python_layer_version`    | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and `addLayers` is true. Find the latest version number [here][5].                                                                                                                                                 |
+| `nodeLayerVersion`      | `node_layer_version`      | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is true. Find the latest version number from [here][6].                                                                                                                                          |
+| `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When `extensionLayerVersion` is set, `apiKey` (or `apiKmsKey` ) needs to be set as well. When enabled, lambda function log groups will not be subscribed by the forwarder. The Datadog Lambda Extension layer is in public preview. Learn more about the Lambda extension [here][12]. |
+| `forwarderArn`          | `forwarder_arn`           | When set, the plugin will automatically subscribe the Datadog Forwarder to the functions' log groups. Do not set `forwarderArn` when `extensionLayerVersion` is set.                                                                                                                                                                                       |
+| `flushMetricsToLogs`    | `flush_metrics_to_logs`   | Send custom metrics using CloudWatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to `true` . If you disable this parameter, it's required to set `apiKey` (or `apiKmsKey` ).                                                                                                                                                   |
+| `site`                  | `site`                    | Set which Datadog site to send data. This is only used when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. Possible values are `datadoghq.com` , `datadoghq.eu` , `us3.datadoghq.com` and `ddog-gov.com` . The default is `datadoghq.com` .                                                                                            |
+| `apiKey`                | `api_key`                 | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8].                                                                                                                                                             |
+| `apiKmsKey`             | `api_kms_key`             | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption.                                                                                                                                                                     |
+| `enableDatadogTracing`  | `enable_datadog_tracing`  | Enable Datadog tracing on your Lambda functions. Defaults to `true` .                                                                                                                                                                                                                                                                                      |
+| `injectLogContext`      | `inject_log_context`      | When set, the lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true` .                                                                                                                                                                                                                                           |
 
 ### AWS CDK Configurations
 
@@ -106,7 +109,7 @@ class RootStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     new NestedStack(this, "NestedStack");
-    
+
     const datadog = new Datadog(this, "Datadog", {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
@@ -152,9 +155,9 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 
 ## How it works
 
-The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Node.js][2] and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required). 
+The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Node.js][2] and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
-WHile Lambda function based log groups are handled by the `addForwarder` function automatically, the construct has an additional function `addForwarderToLogGroups` which will subscribe the forwarder to any additional log groups of your choosing. 
+WHile Lambda function based log groups are handled by the `addLambdaFunctions` function automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which will subscribe the forwarder to any additional log groups of your choosing.
 
 ## Resources to learn about CDK
 
@@ -180,19 +183,21 @@ If you find an issue with this package and have a fix, please feel free to open 
 
 ## Testing
 
-If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing: 
-1. Open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory. 
-2. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually. 
+If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing:
+
+1. Open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
+2. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
 3. At the root `datadog-cdk-constructs` directory run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
 - Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
 
 ### Debug Logs
 
-To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output). 
+To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output).
 
-Example: 
-*Ensure you are at root `datadog-cdk-constructs` directory*
+Example:
+_Ensure you are at root `datadog-cdk-constructs` directory_
+
 ```
 DD_CONSTRUCT_DEBUG_LOGS=true npx cdk --app lib/sample/index.js synth --quiet
 ```

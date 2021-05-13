@@ -208,7 +208,7 @@ describe("addCdkTag", () => {
       apiKey: "1234",
     });
 
-    datadogCdk.addForwarderToLogGroups([helloLogGroup]);
+    datadogCdk.addForwarderToNonLambdaLogGroups([helloLogGroup]);
 
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
   });

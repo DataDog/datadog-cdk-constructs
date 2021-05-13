@@ -4,7 +4,7 @@ import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 
-import { addForwarder, addForwarderToLogGroup } from "../src/forwarder";
+import { addForwarder, addForwarderToLogGroups } from "../src/forwarder";
 import { findDatadogSubscriptionFilters } from "./test-utils";
 
 describe("Forwarder", () => {
@@ -155,7 +155,7 @@ describe("Forwarder", () => {
     expect(stackOneSubscriptions[0].id).not.toEqual(stackTwoSubscriptions[0].id);
   });
 
-  it("Subscribes the forwarder to a log group via the addForwarderToLogGroup functioñ", () => {
+  it("Subscribes the forwarder to a log group via the addForwarderToLogGroups functioñ", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -174,13 +174,13 @@ describe("Forwarder", () => {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
-    addForwarderToLogGroup(stack, [restLogGroup], "forwarder-arn");
+    addForwarderToLogGroups(stack, [restLogGroup], "forwarder-arn");
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
   });
-  it("Subscribes the forwarder to multiple log groups via the addForwarderToLogGroup function", () => {
+  it("Subscribes the forwarder to multiple log groups via the addForwarderToLogGroups function", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -212,12 +212,12 @@ describe("Forwarder", () => {
       },
     });
 
-    addForwarderToLogGroup(stack, [nodeLogGroup, pythonLogGroup], "forwarder-arn");
+    addForwarderToLogGroups(stack, [nodeLogGroup, pythonLogGroup], "forwarder-arn");
     const stackSubcriptions = findDatadogSubscriptionFilters(stack);
 
     expect(stackSubcriptions).toHaveLength(2);
   });
-  it("Subscribes to two separate log groups when addForwarder and addForwarderToLogGroup functions are called", () => {
+  it("Subscribes to two separate log groups when addForwarder and addForwarderToLogGroups functions are called", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -237,7 +237,7 @@ describe("Forwarder", () => {
       },
     });
     addForwarder(stack, [pythonLambda], "forwarder-arn");
-    addForwarderToLogGroup(stack, [restLogGroup], "forwarder-arn-rest");
+    addForwarderToLogGroups(stack, [restLogGroup], "forwarder-arn-rest");
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",

@@ -71,7 +71,7 @@ export class ExampleStack extends cdk.Stack {
       site: "datadoghq.com",
     });
     datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
-    datadogCDK.addForwarderToLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
+    datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
   }
 }
 

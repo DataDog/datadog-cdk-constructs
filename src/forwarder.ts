@@ -56,7 +56,7 @@ export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Funct
   });
 }
 
-export function addForwarderToLogGroup(scope: cdk.Construct, logGroups: LogGroup[], forwarderArn: string) {
+export function addForwarderToLogGroups(scope: cdk.Construct, logGroups: LogGroup[], forwarderArn: string) {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);
   logGroups.forEach((group) => {
