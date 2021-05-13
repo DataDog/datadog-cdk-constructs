@@ -157,11 +157,8 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 
 The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Node.js][2] and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
-<<<<<<< HEAD
-WHile Lambda function based log groups are handled by the `addLambdaFunctions` function automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which will subscribe the forwarder to any additional log groups of your choosing.
-=======
-While Lambda function based log groups are handled by the `addForwarder` function automatically, the construct has an additional function `addForwarderToLogGroups` which will subscribe the forwarder to any additional log groups of your choosing. 
->>>>>>> d5b9c0adecc1d3b165da3880fa517c5d6b4e63ca
+While Lambda function based log groups are handled by the `addLambdaFunctions` method automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which will subscribe the forwarder to any additional log groups of your choosing. 
+
 
 ## Resources to learn about CDK
 
