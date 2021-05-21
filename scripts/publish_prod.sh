@@ -38,6 +38,7 @@ if ! [ -x "$(command -v pip)" ]; then
   echo 'Error: pip is not installed.'
   exit 1
 fi
+pip install --upgrade twine
 if ! [ -x "$(command -v python3)" ]; then
   echo 'Error: python3 is not installed.'
   exit 1
@@ -103,7 +104,6 @@ echo "Publishing to npm"
 yarn publish $JS_TARBALL --new-version "$VERSION"
 
 echo "Publishing to PyPI"
-pip install --upgrade twine
 python3 -m twine upload ./dist/python/*
 
 echo 'Pushing updates to github'
