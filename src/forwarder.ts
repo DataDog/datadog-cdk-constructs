@@ -8,7 +8,7 @@
 
 import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
-import { FilterPattern, LogGroup } from "@aws-cdk/aws-logs";
+import { FilterPattern, ILogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
@@ -56,11 +56,11 @@ export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Funct
   });
 }
 
-export function addForwarderToLogGroups(scope: cdk.Construct, logGroups: LogGroup[], forwarderArn: string) {
+export function addForwarderToLogGroups(scope: cdk.Construct, logGroups: ILogGroup[], forwarderArn: string) {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);
   logGroups.forEach((group) => {
-    const subscriptionFilterName = generateSubscriptionFilterName(cdk.Names.uniqueId(group), forwarderArn);
+    const subscriptionFilterName = generateSubscriptionFilterName(cdk.Names.nodeUniqueId(group.node), forwarderArn);
     group.addSubscriptionFilter(subscriptionFilterName, {
       destination: forwarderDestination,
       filterPattern: FilterPattern.allEvents(),

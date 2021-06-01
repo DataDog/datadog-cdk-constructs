@@ -104,7 +104,7 @@ export class Datadog extends cdk.Construct {
     }
   }
 
-  public addForwarderToNonLambdaLogGroups(logGroups: logs.LogGroup[]) {
+  public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
     if (this.props.forwarderArn !== undefined) {
       addForwarderToLogGroups(this.scope, logGroups, this.props.forwarderArn);
     } else {
