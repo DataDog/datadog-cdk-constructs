@@ -16,7 +16,7 @@ export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 // once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
 import { LambdaDestination } from "./lambdaDestination";
 
-function generateForwaderConstructId(forwarderArn: string) {
+function generateForwarderConstructId(forwarderArn: string) {
   log.debug("Generating construct Id for Datadog Lambda Forwarder");
   return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
 }
@@ -35,7 +35,7 @@ function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: 
 }
 
 function getForwarder(scope: cdk.Construct, forwarderArn: string) {
-  const forwarderConstructId = generateForwaderConstructId(forwarderArn);
+  const forwarderConstructId = generateForwarderConstructId(forwarderArn);
   if (scope.node.tryFindChild(forwarderConstructId)) {
     return scope.node.tryFindChild(forwarderConstructId) as lambda.IFunction;
   } else {
