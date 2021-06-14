@@ -180,6 +180,20 @@ describe("Forwarder", () => {
       FilterPattern: "",
     });
   });
+  it("Subscribes the forwarder to an imported log group via the addForwarderToLogGroups function", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const logGroup = LogGroup.fromLogGroupName(stack, "LogGroup", "logGroupName");
+    addForwarderToLogGroups(stack, [logGroup], "forwarder-arn");
+    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "forwarder-arn",
+      FilterPattern: "",
+    });
+  });
   it("Subscribes the forwarder to multiple log groups via the addForwarderToLogGroups function", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
