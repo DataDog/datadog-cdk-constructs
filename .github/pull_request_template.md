@@ -31,4 +31,3 @@
 - [ ] This PR impacts documentation, and it has been updated (or a ticket has been logged)
 - [ ] This PR's changes are covered by the automated tests
 - [ ] This PR collects user input/sensitive content into Datadog
-- [ ] This PR passes the integration tests (ask a Datadog member to run the tests)
