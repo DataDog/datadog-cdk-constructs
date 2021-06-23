@@ -6,9 +6,9 @@ import {
   apiKeyEnvVar,
   apiKeyKMSEnvVar,
   siteURLEnvVar,
-  logForwardingEnvVar,
-  enableDDTracingEnvVar,
-  injectLogContextEnvVar,
+  FLUSH_METRICS_TO_LOGS_ENV_VAR,
+  ENABLE_DD_TRACING_ENV_VAR,
+  INJECT_LOG_CONTEXT_ENV_VAR,
 } from "../src/index";
 import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 const EXTENSION_LAYER_VERSION = 5;
@@ -37,11 +37,11 @@ describe("siteURLEnvVar", () => {
       Environment: {
         Variables: {
           [siteURLEnvVar]: "datadoghq.eu",
-          [logForwardingEnvVar]: "false",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [apiKeyEnvVar]: "1234",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
@@ -68,12 +68,12 @@ describe("siteURLEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [logForwardingEnvVar]: "false",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [siteURLEnvVar]: "datadoghq.com",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [apiKeyEnvVar]: "1234",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
@@ -99,12 +99,12 @@ describe("siteURLEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [logForwardingEnvVar]: "false",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [siteURLEnvVar]: "datadoghq.com",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [apiKeyEnvVar]: "1234",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
@@ -131,12 +131,12 @@ describe("siteURLEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [logForwardingEnvVar]: "false",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [siteURLEnvVar]: "datadoghq.eu",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [apiKeyEnvVar]: "1234",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
@@ -163,17 +163,17 @@ describe("siteURLEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [logForwardingEnvVar]: "true",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
   });
 });
 
-describe("logForwardingEnvVar", () => {
+describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
   it("applies log forwarding parameter correctly", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -197,10 +197,10 @@ describe("logForwardingEnvVar", () => {
       Environment: {
         Variables: {
           [siteURLEnvVar]: "datadoghq.com",
-          [logForwardingEnvVar]: "false",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [apiKeyEnvVar]: "1234",
         },
       },
@@ -226,10 +226,10 @@ describe("logForwardingEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [logForwardingEnvVar]: "true",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
@@ -256,10 +256,10 @@ describe("logForwardingEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [logForwardingEnvVar]: "false",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [siteURLEnvVar]: "datadoghq.com",
           [apiKeyEnvVar]: "1234",
         },
@@ -293,9 +293,9 @@ describe("apiKeyEnvVar", () => {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [siteURLEnvVar]: "datadoghq.com",
-          [logForwardingEnvVar]: "false",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [apiKeyEnvVar]: "1234",
         },
       },
@@ -328,9 +328,9 @@ describe("apiKMSKeyEnvVar", () => {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [siteURLEnvVar]: "datadoghq.com",
-          [logForwardingEnvVar]: "false",
-          [enableDDTracingEnvVar]: "true",
-          [injectLogContextEnvVar]: "true",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [apiKeyKMSEnvVar]: "5678",
         },
       },

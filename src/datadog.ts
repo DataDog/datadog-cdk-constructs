@@ -15,8 +15,7 @@ import {
   redirectHandlers,
   addForwarder,
   addForwarderToLogGroups,
-  applyEnvVariables,
-  defaultEnvVar,
+  applyEnvVariables
 } from "./index";
 import { Transport } from "./transport";
 const versionJson = require("../version.json");
@@ -33,11 +32,18 @@ export interface DatadogProps {
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
   readonly injectLogContext?: boolean;
+  readonly logLevel?: string;
 }
 
 enum TagKeys {
   Cdk = "dd_cdk_construct",
 }
+
+export const defaultProps = {
+  addLayers: true,
+  enableDatadogTracing: true,
+  injectLogContext: true,
+};
 
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
@@ -62,18 +68,24 @@ export class Datadog extends cdk.Construct {
     let addLayers = this.props.addLayers;
     let enableDatadogTracing = this.props.enableDatadogTracing;
     let injectLogContext = this.props.injectLogContext;
+    let logLevel = this.props.logLevel;
+
     if (addLayers === undefined) {
-      log.debug(`No value provided for addLayers, defaulting to ${defaultEnvVar.addLayers}`);
-      addLayers = defaultEnvVar.addLayers;
+      log.debug(`No value provided for addLayers, defaulting to ${defaultProps.addLayers}`);
+      addLayers = defaultProps.addLayers;
     }
     if (enableDatadogTracing === undefined) {
-      log.debug(`No value provided for enableDatadogTracing, defaulting to ${defaultEnvVar.enableDatadogTracing}`);
-      enableDatadogTracing = defaultEnvVar.enableDatadogTracing;
+      log.debug(`No value provided for enableDatadogTracing, defaulting to ${defaultProps.enableDatadogTracing}`);
+      enableDatadogTracing = defaultProps.enableDatadogTracing;
     }
     if (injectLogContext === undefined) {
-      log.debug(`No value provided for injectLogContext, defaulting to ${defaultEnvVar.injectLogContext}`);
-      injectLogContext = defaultEnvVar.injectLogContext;
+      log.debug(`No value provided for injectLogContext, defaulting to ${defaultProps.injectLogContext}`);
+      injectLogContext = defaultProps.injectLogContext;
     }
+    if (logLevel === undefined) {
+      log.debug(`No value provided for logLevel`);
+    }
+
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
       log.debug(`Using region: ${region}`);
@@ -97,9 +109,10 @@ export class Datadog extends cdk.Construct {
       } else {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
-      addCdkTag(lambdaFunctions);
-      applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext);
 
+      addCdkConstructVersionTag(lambdaFunctions);
+      
+      applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext, logLevel);
       this.transport.applyEnvVars(lambdaFunctions);
     }
   }
@@ -113,11 +126,8 @@ export class Datadog extends cdk.Construct {
   }
 }
 
-/**
- * Tags the function(s) with DD Cdk version
- */
-export function addCdkTag(lambdaFunctions: lambda.Function[]) {
-  log.debug(`Adding CDK Version ${versionJson.version}`);
+export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
+  log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
   lambdaFunctions.forEach((functionName) => {
     cdk.Tags.of(functionName).add(TagKeys.Cdk, `v${versionJson.version}`, {
       includeResourceTypes: ["AWS::Lambda::Function"],

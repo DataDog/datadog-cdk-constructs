@@ -12,7 +12,7 @@ import log from "loglevel";
 export const apiKeyEnvVar = "DD_API_KEY";
 export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
 export const siteURLEnvVar = "DD_SITE";
-export const logForwardingEnvVar = "DD_FLUSH_TO_LOG";
+export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
 
 export const transportDefaults = {
   site: "datadoghq.com",
@@ -62,7 +62,7 @@ export class Transport {
   applyEnvVars(lambdas: lambda.Function[]) {
     log.debug(`Setting Datadog transport environment variables...`);
     lambdas.forEach((lam) => {
-      lam.addEnvironment(logForwardingEnvVar, this.flushMetricsToLogs.toString());
+      lam.addEnvironment(FLUSH_METRICS_TO_LOGS_ENV_VAR, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
         lam.addEnvironment(siteURLEnvVar, this.site);
       }
