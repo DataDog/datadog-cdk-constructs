@@ -56,6 +56,7 @@ const project = new AwsCdkConstructLibrary({
   ],
   scripts: {
     "check-formatting": "prettier --check src/**",
+    "format": "prettier --write src/**",
   },
   pullRequestTemplate: false,
   dependabot: false,

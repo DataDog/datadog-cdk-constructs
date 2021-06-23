@@ -37,11 +37,12 @@ tsconfig.json
 yarn-debug.log*
 yarn-error.log*
 !/.eslintrc.json
+!/.gitattributes
+!/.github/workflows/upgrade-dependencies.yml
 !/.npmignore
 !/.projen/deps.json
 !/.projen/tasks.json
 !/.projenrc.js
-!/.versionrc.json
 !/LICENSE
 !/package.json
 !/src
@@ -50,4 +51,3 @@ yarn-error.log*
 !/tsconfig.jest.json
 !jest.config.js
 !src/sample
-!version.json

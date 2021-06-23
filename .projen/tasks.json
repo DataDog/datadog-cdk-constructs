@@ -8,6 +8,14 @@
         }
       ]
     },
+    "format": {
+      "name": "format",
+      "steps": [
+        {
+          "exec": "prettier --write src/**"
+        }
+      ]
+    },
     "compile": {
       "name": "compile",
       "category": "00.build",
@@ -40,6 +48,9 @@
       "description": "Full release build (test+compile)",
       "steps": [
         {
+          "exec": "npx projen"
+        },
+        {
           "spawn": "test"
         },
         {
@@ -60,16 +71,53 @@
         }
       ]
     },
-    "projen:upgrade": {
-      "name": "projen:upgrade",
-      "category": "30.maintain",
-      "description": "upgrades projen to the latest version",
+    "upgrade-dependencies": {
+      "name": "upgrade-dependencies",
+      "description": "upgrade dependencies",
+      "env": {
+        "CI": "0"
+      },
       "steps": [
         {
-          "exec": "yarn upgrade -L projen"
+          "exec": "npm-check-updates --upgrade --target=minor --reject='projen'"
         },
         {
-          "exec": "CI=\"\" yarn projen"
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade @aws-cdk/assert @aws-cdk/aws-apigateway @aws-cdk/aws-lambda @aws-cdk/aws-logs-destinations @aws-cdk/aws-logs @aws-cdk/core @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier jest jest-junit jsii jsii-diff jsii-pacmak json-schema npm-check-updates prettier ts-jest ts-node typescript loglevel @aws-cdk/aws-apigateway @aws-cdk/aws-lambda @aws-cdk/aws-logs-destinations @aws-cdk/aws-logs @aws-cdk/core constructs loglevel"
+        },
+        {
+          "exec": "npx projen"
+        }
+      ]
+    },
+    "upgrade-projen": {
+      "name": "upgrade-projen",
+      "description": "upgrade projen",
+      "env": {
+        "CI": "0"
+      },
+      "steps": [
+        {
+          "exec": "npm-check-updates --upgrade --target=minor --filter='projen'"
+        },
+        {
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade projen"
+        },
+        {
+          "exec": "npx projen"
+        }
+      ]
+    },
+    "default": {
+      "name": "default",
+      "steps": [
+        {
+          "exec": "node .projenrc.js"
         }
       ]
     },
