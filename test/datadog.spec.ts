@@ -2,7 +2,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { Datadog, addCdkConstructVersionTag } from "../src/index";
+import { Datadog, addCdkTag } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
@@ -121,7 +121,7 @@ describe("validateProps", () => {
   });
 });
 
-describe("addCdkConstructVersionTag", () => {
+describe("addCdkTag", () => {
   it("adds the dd_cdk_construct tag to all lambda function", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -139,7 +139,7 @@ describe("addCdkConstructVersionTag", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    addCdkConstructVersionTag([hello1, hello2]);
+    addCdkTag([hello1, hello2]);
     expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
       Runtime: "nodejs10.x",
       Tags: [

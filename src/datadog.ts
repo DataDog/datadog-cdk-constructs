@@ -10,7 +10,13 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as logs from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
-import { applyLayers, redirectHandlers, addForwarder, addForwarderToLogGroups, applyEnvVariables } from "./index";
+import {
+  applyLayers,
+  redirectHandlers,
+  addForwarder,
+  addForwarderToLogGroups,
+  applyEnvVariables
+} from "./index";
 import { Transport } from "./transport";
 const versionJson = require("../version.json");
 
@@ -105,7 +111,7 @@ export class Datadog extends cdk.Construct {
       }
 
       addCdkConstructVersionTag(lambdaFunctions);
-
+      
       applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext, logLevel);
       this.transport.applyEnvVars(lambdaFunctions);
     }
