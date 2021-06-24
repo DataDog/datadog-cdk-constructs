@@ -36,13 +36,13 @@ describe("applyEnvVariables", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: transportDefaults.flushMetricsToLogs.toString(),
           [ENABLE_DD_TRACING_ENV_VAR]: defaultProps.enableDatadogTracing.toString(),
           [INJECT_LOG_CONTEXT_ENV_VAR]: defaultProps.injectLogContext.toString(),
-          [LOG_LEVEL_ENV_VAR]: undefined,
         },
       },
     });
   });
 
   it("gives all environment variables the correct names", () => {
+    const EXAMPLE_LOG_LEVEL = "debug";
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -56,6 +56,7 @@ describe("applyEnvVariables", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "forwarder-arn",
+      logLevel: EXAMPLE_LOG_LEVEL,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -65,7 +66,7 @@ describe("applyEnvVariables", () => {
           ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
           ["DD_TRACE_ENABLED"]: defaultProps.enableDatadogTracing.toString(),
           ["DD_LOGS_INJECTION"]: defaultProps.injectLogContext.toString(),
-          ["DD_LOG_LEVEL"]: undefined,
+          ["DD_LOG_LEVEL"]: EXAMPLE_LOG_LEVEL,
         },
       },
     });
