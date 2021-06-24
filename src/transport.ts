@@ -9,9 +9,9 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
 
-export const apiKeyEnvVar = "DD_API_KEY";
-export const apiKeyKMSEnvVar = "DD_KMS_API_KEY";
-export const siteURLEnvVar = "DD_SITE";
+export const API_KEY_ENV_VAR = "DD_API_KEY";
+export const KMS_API_KEY_ENV_VAR = "DD_KMS_API_KEY";
+export const SITE_URL_ENV_VAR = "DD_SITE";
 export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
 
 export const transportDefaults = {
@@ -64,13 +64,13 @@ export class Transport {
     lambdas.forEach((lam) => {
       lam.addEnvironment(FLUSH_METRICS_TO_LOGS_ENV_VAR, this.flushMetricsToLogs.toString());
       if (this.site !== undefined && this.flushMetricsToLogs === false) {
-        lam.addEnvironment(siteURLEnvVar, this.site);
+        lam.addEnvironment(SITE_URL_ENV_VAR, this.site);
       }
       if (this.apiKey !== undefined) {
-        lam.addEnvironment(apiKeyEnvVar, this.apiKey);
+        lam.addEnvironment(API_KEY_ENV_VAR, this.apiKey);
       }
       if (this.apiKmsKey !== undefined) {
-        lam.addEnvironment(apiKeyKMSEnvVar, this.apiKmsKey);
+        lam.addEnvironment(KMS_API_KEY_ENV_VAR, this.apiKmsKey);
       }
     });
   }

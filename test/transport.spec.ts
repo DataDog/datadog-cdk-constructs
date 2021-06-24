@@ -3,9 +3,9 @@ import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
   Datadog,
-  apiKeyEnvVar,
-  apiKeyKMSEnvVar,
-  siteURLEnvVar,
+  API_KEY_ENV_VAR,
+  KMS_API_KEY_ENV_VAR,
+  SITE_URL_ENV_VAR,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
   ENABLE_DD_TRACING_ENV_VAR,
   INJECT_LOG_CONTEXT_ENV_VAR,
@@ -13,7 +13,7 @@ import {
 import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 const EXTENSION_LAYER_VERSION = 5;
 
-describe("siteURLEnvVar", () => {
+describe("SITE_URL_ENV_VAR", () => {
   it("applies site URL parameter correctly when flushMetricsToLogs is false", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -36,10 +36,10 @@ describe("siteURLEnvVar", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [siteURLEnvVar]: "datadoghq.eu",
+          [SITE_URL_ENV_VAR]: "datadoghq.eu",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [apiKeyEnvVar]: "1234",
+          [API_KEY_ENV_VAR]: "1234",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
@@ -69,9 +69,9 @@ describe("siteURLEnvVar", () => {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
-          [siteURLEnvVar]: "datadoghq.com",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [apiKeyEnvVar]: "1234",
+          [API_KEY_ENV_VAR]: "1234",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
@@ -100,9 +100,9 @@ describe("siteURLEnvVar", () => {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
-          [siteURLEnvVar]: "datadoghq.com",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [apiKeyEnvVar]: "1234",
+          [API_KEY_ENV_VAR]: "1234",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
@@ -132,9 +132,9 @@ describe("siteURLEnvVar", () => {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
-          [siteURLEnvVar]: "datadoghq.eu",
+          [SITE_URL_ENV_VAR]: "datadoghq.eu",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [apiKeyEnvVar]: "1234",
+          [API_KEY_ENV_VAR]: "1234",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
@@ -196,12 +196,12 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [siteURLEnvVar]: "datadoghq.com",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
-          [apiKeyEnvVar]: "1234",
+          [API_KEY_ENV_VAR]: "1234",
         },
       },
     });
@@ -260,15 +260,15 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
-          [siteURLEnvVar]: "datadoghq.com",
-          [apiKeyEnvVar]: "1234",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [API_KEY_ENV_VAR]: "1234",
         },
       },
     });
   });
 });
 
-describe("apiKeyEnvVar", () => {
+describe("API_KEY_ENV_VAR", () => {
   it("adds DD_API_KEY environment variable", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
@@ -292,11 +292,11 @@ describe("apiKeyEnvVar", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [siteURLEnvVar]: "datadoghq.com",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
-          [apiKeyEnvVar]: "1234",
+          [API_KEY_ENV_VAR]: "1234",
         },
       },
     });
@@ -327,11 +327,11 @@ describe("apiKMSKeyEnvVar", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [siteURLEnvVar]: "datadoghq.com",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
-          [apiKeyKMSEnvVar]: "5678",
+          [KMS_API_KEY_ENV_VAR]: "5678",
         },
       },
     });
