@@ -9,6 +9,7 @@ import {
   INJECT_LOG_CONTEXT_ENV_VAR,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
   LOG_LEVEL_ENV_VAR,
+  ENABLE_DD_LOGS_ENV_VAR,
 } from "../src/index";
 import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 
@@ -35,6 +36,7 @@ describe("applyEnvVariables", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: transportDefaults.flushMetricsToLogs.toString(),
           [ENABLE_DD_TRACING_ENV_VAR]: defaultProps.enableDatadogTracing.toString(),
+          [ENABLE_DD_LOGS_ENV_VAR]: defaultProps.enableDatadogLogs.toString(),
           [INJECT_LOG_CONTEXT_ENV_VAR]: defaultProps.injectLogContext.toString(),
         },
       },
@@ -65,6 +67,7 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
           ["DD_TRACE_ENABLED"]: defaultProps.enableDatadogTracing.toString(),
+          ["DD_SERVERLESS_LOGS_ENABLED"]: defaultProps.enableDatadogLogs.toString(),
           ["DD_LOGS_INJECTION"]: defaultProps.injectLogContext.toString(),
           ["DD_LOG_LEVEL"]: EXAMPLE_LOG_LEVEL,
         },
@@ -97,6 +100,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
       },
     });
@@ -123,6 +127,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
       },
     });
@@ -155,6 +160,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
       },
     });
@@ -183,6 +189,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
       },
     });
@@ -216,6 +223,65 @@ describe("LOG_LEVEL_ENV_VAR", () => {
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [LOG_LEVEL_ENV_VAR]: "debug",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+});
+
+describe("ENABLE_DD_LOGS_ENV_VAR", () => {
+  it("disables Datadog logs when set to false", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      enableDatadogLogs: false,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "false",
+        },
+      },
+    });
+  });
+
+  it("enables Datadog logs by default if value is undefined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {});
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
       },
     });

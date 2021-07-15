@@ -52,6 +52,7 @@ const datadog = new Datadog(this, "Datadog", {
   apiKey: "{Datadog_API_Key}",
   apiKmsKey: "{Encrypted_Datadog_API_Key}",
   enableDatadogTracing: <BOOLEAN>,
+  enableDatadogLogs: <BOOLEAN>,
   injectLogContext: <BOOLEAN>,
   logLevel: <STRING>,
 });
@@ -77,6 +78,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `apiKey` | `api_key` | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8]. |
 | `apiKmsKey` | `api_kms_key` | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
+| `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
 
@@ -118,6 +120,7 @@ class RootStack extends cdk.Stack {
       apiKey: "{Datadog_API_Key}",
       apiKmsKey: "{Encrypted_Datadog_API_Key}",
       enableDatadogTracing: <BOOLEAN>,
+      enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
     datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
@@ -139,6 +142,7 @@ class NestedStack extends cdk.NestedStack {
       apiKey: "{Datadog_API_Key}",
       apiKmsKey: "{Encrypted_Datadog_API_Key}",
       enableDatadogTracing: <BOOLEAN>,
+      enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
     datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
