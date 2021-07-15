@@ -78,7 +78,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `apiKey` | `api_key` | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8]. |
 | `apiKmsKey` | `api_kms_key` | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
-| `enableDatadogLogs` | `enable_datadog_logs` | Enable Datadog logs on your Lambda functions. Defaults to `true`. |
+| `enableDatadogLogs` | `enable_datadog_logs` | Enable Datadog logs on your Lambda functions. Note: This applies only to integrations using the Datadog Extension. This setting has no effect when used in conjunction with the Log Forwarder. Defaults to `true`. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
 
