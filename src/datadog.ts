@@ -27,6 +27,7 @@ export interface DatadogProps {
   readonly enableDatadogTracing?: boolean;
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
+  readonly enableDatadogLogs?: boolean;
 }
 
 enum TagKeys {
@@ -37,6 +38,7 @@ export const defaultProps = {
   addLayers: true,
   enableDatadogTracing: true,
   injectLogContext: true,
+  enableDatadogLogs: true,
 };
 
 export class Datadog extends cdk.Construct {
@@ -62,7 +64,8 @@ export class Datadog extends cdk.Construct {
     let addLayers = this.props.addLayers;
     let enableDatadogTracing = this.props.enableDatadogTracing;
     let injectLogContext = this.props.injectLogContext;
-    let logLevel = this.props.logLevel;
+    const logLevel = this.props.logLevel;
+    let enableDatadogLogs = this.props.enableDatadogLogs;
 
     if (addLayers === undefined) {
       log.debug(`No value provided for addLayers, defaulting to ${defaultProps.addLayers}`);
@@ -78,6 +81,10 @@ export class Datadog extends cdk.Construct {
     }
     if (logLevel === undefined) {
       log.debug(`No value provided for logLevel`);
+    }
+    if (enableDatadogLogs === undefined) {
+      log.debug(`No value provided for enableDatadogLogs, defaulting to ${defaultProps.enableDatadogLogs}`);
+      enableDatadogLogs = defaultProps.enableDatadogLogs;
     }
 
     if (this.props !== undefined && lambdaFunctions.length > 0) {
@@ -106,7 +113,7 @@ export class Datadog extends cdk.Construct {
 
       addCdkConstructVersionTag(lambdaFunctions);
 
-      applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext, logLevel);
+      applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext, enableDatadogLogs, logLevel);
       this.transport.applyEnvVars(lambdaFunctions);
     }
   }

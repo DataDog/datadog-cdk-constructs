@@ -1,7 +1,13 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { Datadog, FLUSH_METRICS_TO_LOGS_ENV_VAR, ENABLE_DD_TRACING_ENV_VAR, INJECT_LOG_CONTEXT_ENV_VAR } from "../src/index";
+import {
+  Datadog,
+  FLUSH_METRICS_TO_LOGS_ENV_VAR,
+  ENABLE_DD_TRACING_ENV_VAR,
+  INJECT_LOG_CONTEXT_ENV_VAR,
+  ENABLE_DD_LOGS_ENV_VAR,
+} from "../src/index";
 import { DD_ACCOUNT_ID } from "../src/layer";
 import { JS_HANDLER_WITH_LAYERS, DD_HANDLER_ENV_VAR, PYTHON_HANDLER } from "../src/redirect";
 import { findDatadogSubscriptionFilters } from "./test-utils";
@@ -30,6 +36,7 @@ describe("addLambdaFunctions", () => {
       addLayers: true,
       forwarderArn: "forwarder-arn",
       enableDatadogTracing: true,
+      enableDatadogLogs: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -61,6 +68,7 @@ describe("addLambdaFunctions", () => {
       addLayers: true,
       forwarderArn: "forwarder-arn",
       enableDatadogTracing: true,
+      enableDatadogLogs: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -90,6 +98,7 @@ describe("addLambdaFunctions", () => {
       addLayers: true,
       forwarderArn: "forwarder-arn",
       enableDatadogTracing: true,
+      enableDatadogLogs: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -122,6 +131,7 @@ describe("addLambdaFunctions", () => {
       extensionLayerVersion: 6,
       apiKey: "1234",
       enableDatadogTracing: true,
+      enableDatadogLogs: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
@@ -164,6 +174,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
@@ -196,6 +207,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
@@ -241,6 +253,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
