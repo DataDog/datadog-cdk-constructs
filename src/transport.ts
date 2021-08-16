@@ -11,6 +11,7 @@ import log from "loglevel";
 
 export const API_KEY_ENV_VAR = "DD_API_KEY";
 export const KMS_API_KEY_ENV_VAR = "DD_KMS_API_KEY";
+export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
 export const SITE_URL_ENV_VAR = "DD_SITE";
 export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
 
@@ -25,6 +26,7 @@ export class Transport {
   site: string;
   apiKey?: string;
   apiKmsKey?: string;
+  apiKeySecretArn?: string;
   extensionLayerVersion?: number;
 
   constructor(
@@ -32,6 +34,7 @@ export class Transport {
     site?: string,
     apiKey?: string,
     apiKmsKey?: string,
+    apiKeySecretArn?: string,
     extensionLayerVersion?: number,
   ) {
     if (flushMetricsToLogs === undefined) {
@@ -57,6 +60,7 @@ export class Transport {
 
     this.apiKey = apiKey;
     this.apiKmsKey = apiKmsKey;
+    this.apiKeySecretArn = apiKeySecretArn;
   }
 
   applyEnvVars(lambdas: lambda.Function[]) {
@@ -71,6 +75,9 @@ export class Transport {
       }
       if (this.apiKmsKey !== undefined) {
         lam.addEnvironment(KMS_API_KEY_ENV_VAR, this.apiKmsKey);
+      }
+      if (this.apiKeySecretArn !== undefined) {
+        lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
       }
     });
   }

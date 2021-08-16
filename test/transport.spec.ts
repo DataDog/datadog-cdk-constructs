@@ -5,6 +5,7 @@ import {
   Datadog,
   API_KEY_ENV_VAR,
   KMS_API_KEY_ENV_VAR,
+  API_KEY_SECRET_ARN_ENV_VAR,
   SITE_URL_ENV_VAR,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
   ENABLE_DD_TRACING_ENV_VAR,
@@ -343,6 +344,42 @@ describe("apiKMSKeyEnvVar", () => {
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [KMS_API_KEY_ENV_VAR]: "5678",
+        },
+      },
+    });
+  });
+});
+
+describe("apiKeySecretArnEnvVar", () => {
+  it("adds DD_API_KEY_SECRET_ARN environment variable", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      forwarderArn: "forwarder-arn",
+      flushMetricsToLogs: false,
+      site: "datadoghq.com",
+      apiKeySecretArn: "91011",
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [API_KEY_SECRET_ARN_ENV_VAR]: "91011",
         },
       },
     });

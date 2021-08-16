@@ -24,6 +24,7 @@ export interface DatadogProps {
   readonly site?: string;
   readonly apiKey?: string;
   readonly apiKmsKey?: string;
+  readonly apiKeySecretArn?: string;
   readonly enableDatadogTracing?: boolean;
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
@@ -56,6 +57,7 @@ export class Datadog extends cdk.Construct {
       this.props.site,
       this.props.apiKey,
       this.props.apiKmsKey,
+      this.props.apiKeySecretArn,
       this.props.extensionLayerVersion,
     );
   }
@@ -139,8 +141,9 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
 function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
   const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
-  if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
-    throw new Error("Both `apiKey` and `apiKmsKey` cannot be set.");
+  // const apiKeyDefinitions: string[] = [props.apiKey, props.apiKmsKey, props.apiKeySecretArn]
+  if ([props.apiKey, props.apiKmsKey, props.apiKeySecretArn].filter((e) => e !== undefined).length > 1) {
+    throw new Error("Only one of `apiKey`, `apiKmsKey`, and `apiKeySecretArn` can be set.");
   }
 
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
@@ -149,12 +152,19 @@ function validateProps(props: DatadogProps) {
     );
   }
 
-  if (props.apiKey === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
+  if (
+    props.apiKey === undefined &&
+    props.apiKmsKey === undefined &&
+    props.apiKeySecretArn === undefined &&
+    props.flushMetricsToLogs === false
+  ) {
+    throw new Error(
+      "When `flushMetricsToLogs` is false, `apiKey`, `apiKmsKey`, or `apiKeySecretArn` must also be set.",
+    );
   }
   if (props.extensionLayerVersion !== undefined) {
-    if (props.apiKey === undefined && props.apiKmsKey === undefined) {
-      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+    if (props.apiKey === undefined && props.apiKmsKey === undefined && props.apiKeySecretArn === undefined) {
+      throw new Error("When `extensionLayer` is set, `apiKey`, `apiKmsKey`, or `apiKeySecretArn` must also be set.");
     }
   }
 }

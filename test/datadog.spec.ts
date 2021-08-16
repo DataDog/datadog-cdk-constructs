@@ -29,7 +29,7 @@ describe("validateProps", () => {
         apiKmsKey: "5678",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError("Both `apiKey` and `apiKmsKey` cannot be set.");
+    }).toThrowError("Only one of `apiKey`, `apiKmsKey`, and `apiKeySecretArn` can be set.");
   });
 
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -85,7 +85,9 @@ describe("validateProps", () => {
         site: "datadoghq.com",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
+    }).toThrowError(
+      "When `flushMetricsToLogs` is false, `apiKey`, `apiKmsKey`, or `apiKeySecretArn` must also be set.",
+    );
   });
 
   it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKmsKey` is set", () => {
@@ -117,7 +119,9 @@ describe("validateProps", () => {
       thrownError = e;
     }
     expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+    expect(thrownError?.message).toEqual(
+      "When `extensionLayer` is set, `apiKey`, `apiKmsKey`, or `apiKeySecretArn` must also be set.",
+    );
   });
 });
 

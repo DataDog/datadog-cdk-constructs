@@ -51,6 +51,7 @@ const datadog = new Datadog(this, "Datadog", {
   site: "<SITE>",
   apiKey: "{Datadog_API_Key}",
   apiKmsKey: "{Encrypted_Datadog_API_Key}",
+  apiKeySecretArn: "{Secret_ARN_For_Datadog_API_Key}",
   enableDatadogTracing: <BOOLEAN>,
   enableDatadogLogs: <BOOLEAN>,
   injectLogContext: <BOOLEAN>,
@@ -71,12 +72,13 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `addLayers` | `add_layers` | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages. |
 | `pythonLayerVersion` | `python_layer_version` | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and `addLayers` is true. Find the latest version number [here][5]. |
 | `nodeLayerVersion` | `node_layer_version` | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is true. Find the latest version number from [here][6]. |
-| `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When `extensionLayerVersion` is set, `apiKey` (or `apiKmsKey` ) needs to be set as well. When enabled, lambda function log groups will not be subscribed by the forwarder. Learn more about the Lambda extension [here][12]. |
+| `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When `extensionLayerVersion` is set, `apiKey` (or `apiKmsKey` or `apiKeySecretArn` ) needs to be set as well. When enabled, lambda function log groups will not be subscribed by the forwarder. Learn more about the Lambda extension [here][12]. |
 | `forwarderArn` | `forwarder_arn` | When set, the plugin will automatically subscribe the Datadog Forwarder to the functions' log groups. Do not set `forwarderArn` when `extensionLayerVersion` is set. |
-| `flushMetricsToLogs` | `flush_metrics_to_logs` | Send custom metrics using CloudWatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to `true` . If you disable this parameter, it's required to set `apiKey` (or `apiKmsKey` ). |
+| `flushMetricsToLogs` | `flush_metrics_to_logs` | Send custom metrics using CloudWatch logs with the Datadog Forwarder Lambda function (recommended). Defaults to `true` . If you disable this parameter, it's required to set `apiKey` (or `apiKmsKey` or `apiKeySecretArn` ). |
 | `site` | `site` | Set which Datadog site to send data. This is only used when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. Possible values are `datadoghq.com` , `datadoghq.eu` , `us3.datadoghq.com` and `ddog-gov.com`. The default is `datadoghq.com`. |
 | `apiKey` | `api_key` | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8]. |
 | `apiKmsKey` | `api_kms_key` | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
+| `apiKeySecretArn` | `api_key_secret_arn` | Datadog API Key stored in secrets manager. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using secret manager for storing the api key. |
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
 | `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
@@ -119,6 +121,7 @@ class RootStack extends cdk.Stack {
       site: "<SITE>",
       apiKey: "{Datadog_API_Key}",
       apiKmsKey: "{Encrypted_Datadog_API_Key}",
+      apiKeySecretArn: "{Secret_ARN_For_Datadog_API_Key}",
       enableDatadogTracing: <BOOLEAN>,
       enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
@@ -141,6 +144,7 @@ class NestedStack extends cdk.NestedStack {
       site: "<SITE>",
       apiKey: "{Datadog_API_Key}",
       apiKmsKey: "{Encrypted_Datadog_API_Key}",
+      apiKeySecretArn: "{Secret_ARN_For_Datadog_API_Key}",
       enableDatadogTracing: <BOOLEAN>,
       enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
