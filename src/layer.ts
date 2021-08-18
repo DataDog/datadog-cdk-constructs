@@ -23,16 +23,15 @@ const extensionLayerPrefix = "DatadogExtension";
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs10.x": RuntimeType.NODE,
   "nodejs12.x": RuntimeType.NODE,
-  "nodejs8.10": RuntimeType.NODE,
   "nodejs14.x": RuntimeType.NODE,
   "python2.7": RuntimeType.PYTHON,
   "python3.6": RuntimeType.PYTHON,
   "python3.7": RuntimeType.PYTHON,
   "python3.8": RuntimeType.PYTHON,
+  "python3.9": RuntimeType.PYTHON,
 };
 
 const runtimeToLayerName: { [key: string]: string } = {
-  "nodejs8.10": "Datadog-Node8-10",
   "nodejs10.x": "Datadog-Node10-x",
   "nodejs12.x": "Datadog-Node12-x",
   "nodejs14.x": "Datadog-Node14-x",
@@ -40,6 +39,7 @@ const runtimeToLayerName: { [key: string]: string } = {
   "python3.6": "Datadog-Python36",
   "python3.7": "Datadog-Python37",
   "python3.8": "Datadog-Python38",
+  "python3.9": "Datadog-Python39",
 };
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
