@@ -37,6 +37,7 @@ jobs:
           fi
 
       - name: Check formatting
+        run: prettier --version
         run: yarn check-formatting
 
       - name: Lint
