@@ -1,4 +1,5 @@
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambdaNodeJS from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
@@ -143,6 +144,43 @@ describe("addLambdaFunctions", () => {
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
       ],
     });
+  });
+
+  it("adds aws-lambda-nodejs NodejsFunctions along with aws-lambda Functions", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello1 = new lambda.Function(stack, "HelloHandler1", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const hello2 = new lambdaNodeJS.NodejsFunction(stack, "HelloNodeJsHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      entry: "./test/lambda/example-lambda.ts",
+      handler: "handler",
+    });
+
+    let threwError = false;
+    try {
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: 20,
+        pythonLayerVersion: 28,
+        addLayers: true,
+        enableDatadogTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+        forwarderArn: "forwarder-arn",
+        apiKey: "1234",
+      });
+      datadogCdk.addLambdaFunctions([hello1, hello2]);
+    } catch (e) {
+      threwError = true;
+    }
+    expect(threwError).toBe(false);
   });
 });
 
