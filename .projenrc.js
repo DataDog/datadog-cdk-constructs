@@ -21,11 +21,12 @@ const project = new AwsCdkConstructLibrary({
     distName: "datadog-cdk-constructs",
     module: "datadog_cdk_constructs",
   },
-  cdkVersion: "1.95.1",
+  cdkVersion: "1.121.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   cdkDependencies: [
     "@aws-cdk/aws-lambda",
+    "@aws-cdk/aws-lambda-nodejs",
     "@aws-cdk/aws-logs",
     "@aws-cdk/aws-logs-destinations",
     "@aws-cdk/core",

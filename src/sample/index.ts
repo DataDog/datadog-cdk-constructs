@@ -8,6 +8,7 @@
 
 import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambdaNodeJS from "@aws-cdk/aws-lambda-nodejs";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import { Datadog } from "../index";
@@ -18,15 +19,21 @@ export class ExampleStack extends cdk.Stack {
 
     // user's lambda function
     const hello = new lambda.Function(this, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset("./src/sample/lambda"),
-      handler: "hello.handler",
+      handler: "hello.handler"
+    });
+
+    const helloNodeJS = new lambdaNodeJS.NodejsFunction(this, "NodeJSHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      entry: "./src/sample/lambda_nodejs/hello_node.js",
+      handler: "handler"
     });
 
     // set up rest api and log group
     const restLogGroup = new LogGroup(this, "restLogGroup");
     new LambdaRestApi(this, "rest-test", {
-      handler: hello,
+      handler: helloNodeJS,
       deployOptions: {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
@@ -62,15 +69,15 @@ export class ExampleStack extends cdk.Stack {
     });
 
     const datadogCDK = new Datadog(this, "Datadog", {
-      nodeLayerVersion: 39,
-      pythonLayerVersion: 24,
+      nodeLayerVersion: 62,
+      extensionLayerVersion: 10,
       forwarderArn: "<forwarder_ARN>",
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       apiKey: "1234",
       site: "datadoghq.com",
     });
-    datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
+    datadogCDK.addLambdaFunctions([hello, helloNodeJS, hello1, hello2]);
     datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
   }
 }

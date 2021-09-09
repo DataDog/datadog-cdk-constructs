@@ -27,6 +27,7 @@
     "@aws-cdk/assert": "^1.95.1",
     "@aws-cdk/aws-apigateway": "^1.95.1",
     "@aws-cdk/aws-lambda": "^1.95.1",
+    "@aws-cdk/aws-lambda-nodejs": "^1.95.1",
     "@aws-cdk/aws-logs": "^1.95.1",
     "@aws-cdk/aws-logs-destinations": "^1.95.1",
     "@aws-cdk/core": "^1.95.1",
@@ -56,6 +57,7 @@
   "peerDependencies": {
     "@aws-cdk/aws-apigateway": "^1.95.1",
     "@aws-cdk/aws-lambda": "^1.95.1",
+    "@aws-cdk/aws-lambda-nodejs": "^1.95.1",
     "@aws-cdk/aws-logs": "^1.95.1",
     "@aws-cdk/aws-logs-destinations": "^1.95.1",
     "@aws-cdk/core": "^1.95.1",
