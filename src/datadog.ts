@@ -61,19 +61,7 @@ export class Datadog extends cdk.Construct {
     );
   }
 
-  public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
-    if (this.props !== undefined && lambdaFunctions.length > 0) {
-      this.handleLambdaConstruct(lambdaFunctions);
-    }
-  }
-
-  public addLambdaNodejsFunctions(lambdaNodejsFunctions: lambdaNodejs.NodejsFunction[]) {
-    if (this.props !== undefined && lambdaNodejsFunctions.length > 0) {
-      this.handleLambdaConstruct(lambdaNodejsFunctions);
-    }
-  }
-
-  private handleDatadogConstructProps() {
+  public addLambdaFunctions(lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction)[]) {
     let addLayers = this.props.addLayers;
     let enableDatadogTracing = this.props.enableDatadogTracing;
     let injectLogContext = this.props.injectLogContext;
@@ -99,41 +87,36 @@ export class Datadog extends cdk.Construct {
       log.debug(`No value provided for enableDatadogLogs, defaulting to ${defaultProps.enableDatadogLogs}`);
       enableDatadogLogs = defaultProps.enableDatadogLogs;
     }
-    return { addLayers, enableDatadogTracing, injectLogContext, logLevel, enableDatadogLogs };
-  }
 
-  private handleLambdaConstruct(lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction)[]) {
-    const datadogConstructProps = this.handleDatadogConstructProps();
-    const { addLayers, enableDatadogTracing, injectLogContext, enableDatadogLogs } = datadogConstructProps;
-    const logLevel = datadogConstructProps.logLevel;
-    const region = `${lambdaFunctions[0].env.region}`;
+    if (this.props !== undefined && lambdaFunctions.length > 0) {
+      const region = `${lambdaFunctions[0].env.region}`;
+      log.debug(`Using region: ${region}`);
+      applyLayers(
+        this.scope,
+        region,
+        lambdaFunctions,
+        this.props.pythonLayerVersion,
+        this.props.nodeLayerVersion,
+        this.props.extensionLayerVersion,
+      );
+      redirectHandlers(lambdaFunctions, addLayers);
 
-    log.debug(`Using region: ${region}`);
-    applyLayers(
-      this.scope,
-      region,
-      lambdaFunctions,
-      this.props.pythonLayerVersion,
-      this.props.nodeLayerVersion,
-      this.props.extensionLayerVersion,
-    );
-    redirectHandlers(lambdaFunctions, addLayers);
-
-    if (this.props.forwarderArn !== undefined) {
-      if (this.props.extensionLayerVersion !== undefined) {
-        log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
+      if (this.props.forwarderArn !== undefined) {
+        if (this.props.extensionLayerVersion !== undefined) {
+          log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
+        } else {
+          log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
+          addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
+        }
       } else {
-        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
-        addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
+        log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
-    } else {
-      log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
+
+      addCdkConstructVersionTag(lambdaFunctions);
+
+      applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext, enableDatadogLogs, logLevel);
+      this.transport.applyEnvVars(lambdaFunctions);
     }
-
-    addCdkConstructVersionTag(lambdaFunctions);
-
-    applyEnvVariables(lambdaFunctions, enableDatadogTracing, injectLogContext, enableDatadogLogs, logLevel);
-    this.transport.applyEnvVars(lambdaFunctions);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {

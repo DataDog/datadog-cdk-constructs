@@ -171,7 +171,7 @@ describe("addLambdaFunctions", () => {
         forwarderArn: "forwarder-arn",
         apiKey: "1234",
       });
-      datadogCdk.addLambdaNodejsFunctions([helloNodejsFunction]);
+      datadogCdk.addLambdaFunctions([helloNodejsFunction]);
     } catch (e) {
       threwError = true;
     }

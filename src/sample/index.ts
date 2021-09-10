@@ -76,8 +76,7 @@ export class ExampleStack extends cdk.Stack {
       apiKey: "1234",
       site: "datadoghq.com",
     });
-    datadogCDK.addLambdaFunctions([lambdaFunction, lambdaFunction1, lambdaFunction2]);
-    datadogCDK.addLambdaNodejsFunctions([lambdaNodejsFunction]);
+    datadogCDK.addLambdaFunctions([lambdaFunction, lambdaNodejsFunction, lambdaFunction1, lambdaFunction2]);
     datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
   }
 }
