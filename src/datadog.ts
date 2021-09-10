@@ -7,6 +7,7 @@
  */
 
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambdaNodejs from "@aws-cdk/aws-lambda-nodejs";
 import * as logs from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
@@ -60,7 +61,7 @@ export class Datadog extends cdk.Construct {
     );
   }
 
-  public addLambdaFunctions(lambdaFunctions: lambda.Function[]) {
+  public addLambdaFunctions(lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction)[]) {
     let addLayers = this.props.addLayers;
     let enableDatadogTracing = this.props.enableDatadogTracing;
     let injectLogContext = this.props.injectLogContext;
