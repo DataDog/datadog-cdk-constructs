@@ -246,6 +246,16 @@
     "@aws-cdk/core" "1.122.0"
     constructs "^3.3.69"
 
+"@aws-cdk/aws-lambda-python@^1.121.0":
+  version "1.122.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python/-/aws-lambda-python-1.122.0.tgz#26b5cf8e1069faed70c65a75a8261e4ee6794ac7"
+  integrity sha512-CUKGKSkDgaXPeIHklNV8L6DOmjr8TvHDSxCtGCok6AwcnUHKk9OFj8dZGV463qbc8x/hd3709lHH8C38xcQ5VA==
+  dependencies:
+    "@aws-cdk/aws-ec2" "1.122.0"
+    "@aws-cdk/aws-lambda" "1.122.0"
+    "@aws-cdk/core" "1.122.0"
+    constructs "^3.3.69"
+
 "@aws-cdk/aws-lambda@1.122.0", "@aws-cdk/aws-lambda@^1.121.0":
   version "1.122.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda/-/aws-lambda-1.122.0.tgz#1a870272770f0454235bf394c063c556bbc13c4a"
