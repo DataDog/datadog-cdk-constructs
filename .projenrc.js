@@ -33,7 +33,7 @@ const project = new AwsCdkConstructLibrary({
     "@aws-cdk/core",
     "@aws-cdk/aws-apigateway",
   ],
-  devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
+  devDeps: ["esbuild", "ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",
     "!jest.config.js",
