@@ -38,7 +38,7 @@ if ! [ -x "$(command -v pip)" ]; then
   echo 'Error: pip is not installed.'
   exit 1
 fi
-pip install --upgrade twine
+pip3 install --upgrade twine
 if ! [ -x "$(command -v python3)" ]; then
   echo 'Error: python3 is not installed.'
   exit 1
