@@ -16,6 +16,11 @@
       "type": "build"
     },
     {
+      "name": "@aws-cdk/aws-lambda-python",
+      "version": "^1.121.0",
+      "type": "build"
+    },
+    {
       "name": "@aws-cdk/aws-lambda",
       "version": "^1.121.0",
       "type": "build"
@@ -138,6 +143,11 @@
     },
     {
       "name": "@aws-cdk/aws-lambda-nodejs",
+      "version": "^1.121.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-lambda-python",
       "version": "^1.121.0",
       "type": "peer"
     },

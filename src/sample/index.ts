@@ -9,6 +9,7 @@
 import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaNodejs from "@aws-cdk/aws-lambda-nodejs";
+import * as lambdaPython from "@aws-cdk/aws-lambda-python";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import { Datadog } from "../index";
@@ -26,6 +27,13 @@ export class ExampleStack extends cdk.Stack {
     const lambdaNodejsFunction = new lambdaNodejs.NodejsFunction(this, "NodeJSHandler", {
       runtime: lambda.Runtime.NODEJS_14_X,
       entry: "./src/sample/lambda_nodejs/hello_node.js",
+      handler: "handler",
+    });
+
+    const lambdaPythonFunction = new lambdaPython.PythonFunction(this, "PythonHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      entry: "./src/sample/lambda/",
+      index: "hello_py.py",
       handler: "handler",
     });
 
@@ -61,7 +69,7 @@ export class ExampleStack extends cdk.Stack {
 
     const restLogGroup2 = new LogGroup(this, "restLogGroup2");
     new LambdaRestApi(this, "rest-test2", {
-      handler: lambdaFunction2,
+      handler: lambdaPythonFunction,
       deployOptions: {
         accessLogDestination: new LogGroupLogDestination(restLogGroup2),
       },
@@ -69,6 +77,7 @@ export class ExampleStack extends cdk.Stack {
 
     const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 62,
+      pythonLayerVersion: 46,
       extensionLayerVersion: 10,
       forwarderArn: "<forwarder_ARN>",
       enableDatadogTracing: true,
@@ -76,7 +85,13 @@ export class ExampleStack extends cdk.Stack {
       apiKey: "1234",
       site: "datadoghq.com",
     });
-    datadogCDK.addLambdaFunctions([lambdaFunction, lambdaNodejsFunction, lambdaFunction1, lambdaFunction2]);
+    datadogCDK.addLambdaFunctions([
+      lambdaFunction,
+      lambdaNodejsFunction,
+      lambdaPythonFunction,
+      lambdaFunction1,
+      lambdaFunction2,
+    ]);
     datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
   }
 }

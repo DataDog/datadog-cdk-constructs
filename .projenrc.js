@@ -27,6 +27,7 @@ const project = new AwsCdkConstructLibrary({
   cdkDependencies: [
     "@aws-cdk/aws-lambda",
     "@aws-cdk/aws-lambda-nodejs",
+    "@aws-cdk/aws-lambda-python",
     "@aws-cdk/aws-logs",
     "@aws-cdk/aws-logs-destinations",
     "@aws-cdk/core",
