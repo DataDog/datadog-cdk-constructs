@@ -23,6 +23,8 @@
 build/Release
 cdk.out/
 coverage
+integration_tests/cdk.out
+integration_tests/testlib
 jspm_packages/
 junit.xml
 lerna-debug.log*
