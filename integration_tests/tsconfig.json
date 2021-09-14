@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "outDir": "testlib",
+    "rootDirs": ["lambda", "../src"],
+    "alwaysStrict": true,
+    "charset": "utf8",
+    "declaration": true,
+    "experimentalDecorators": true,
+    "incremental": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "lib": [
+      "es2018"
+    ],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "newLine": "lf",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "stripInternal": false,
+    "target": "ES2018",
+    "composite": false,
+    "tsBuildInfoFile": "testlib/tsconfig.tsbuildinfo"
+  },
+  "include": [
+    "lambda/**/*.ts",
+  ],
+  "exclude": [
+    "../node_modules"
+  ]
+}
+  
