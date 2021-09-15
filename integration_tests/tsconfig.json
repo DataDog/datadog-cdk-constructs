@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "testlib",
-    "rootDirs": ["lambda", "../src"],
+    "rootDirs": ["stacks", "../src"],
     "alwaysStrict": true,
     "charset": "utf8",
     "declaration": true,
@@ -32,7 +32,8 @@
     "tsBuildInfoFile": "testlib/tsconfig.tsbuildinfo"
   },
   "include": [
-    "lambda/**/*.ts",
+    "stacks/**/*.ts",
+    "../version.json"
   ],
   "exclude": [
     "../node_modules"
