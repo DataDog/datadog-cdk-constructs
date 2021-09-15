@@ -30,7 +30,7 @@ if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
     echo "Overwriting snapshots in this execution"
 fi
 
-# Login to ECR. This is required to pull a public Docker image for the PythonFunction construct
+# Login to ECR. This is a required step in order to pull a public Docker image for the PythonFunction construct
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
 yarn
