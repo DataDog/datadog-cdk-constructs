@@ -1,6 +1,6 @@
 {
   "Resources": {
-    "HelloHandlerServiceRole11EF7C63": {
+    "HelloHandlerServiceRoleXXXXXXXX": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -34,14 +34,14 @@
         "aws:cdk:path": "ExampleDatadogStack/HelloHandler/ServiceRole/Resource"
       }
     },
-    "HelloHandler2E4FBA4D": {
+    "HelloHandlerXXXXXXXX": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3Bucket2F3DAEBE"
+            "Ref": "AssetParametersXXXXXXXXXXXXX"
           },
-          "S3Key": "serverless/dd-sls-plugin-integration-test/dev/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX/dd-sls-plugin-integration-test.zip"
+          "S3Key": "serverless/dd-cdk-construct-integration-test/dev/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX/dd-cdk-construct-integration-test.zip"
             "Fn::Join": [
               "",
               [
@@ -52,7 +52,7 @@
                       "Fn::Split": [
                         "||",
                         {
-                          "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3VersionKeyFBB8A8E3"
+                          "Ref": "AssetParametersXXXXXXXXXXXXX"
                         }
                       ]
                     }
@@ -65,7 +65,7 @@
                       "Fn::Split": [
                         "||",
                         {
-                          "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3VersionKeyFBB8A8E3"
+                          "Ref": "AssetParametersXXXXXXXXXXXXX"
                         }
                       ]
                     }
@@ -77,7 +77,7 @@
         },
         "Role": {
           "Fn::GetAtt": [
-            "HelloHandlerServiceRole11EF7C63",
+            "HelloHandlerServiceRoleXXXXXXXX",
             "Arn"
           ]
         },
@@ -102,23 +102,23 @@
         "Tags": [
           {
             "Key": "dd_cdk_construct",
-            "Value": "v0.4.0"
+            "Value": "vX.XX.X"
           }
         ]
       },
       "DependsOn": [
-        "HelloHandlerServiceRole11EF7C63"
+        "HelloHandlerServiceRoleXXXXXXXX"
       ],
       "Metadata": {
         "aws:cdk:path": "ExampleDatadogStack/HelloHandler/Resource",
-        "aws:asset:path": "asset.61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f",
+        "aws:asset:path": "asset.XXXXXXXXXXXXX",
         "aws:asset:property": "Code"
       }
     },
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWNwQ6CMAyGn4V7KYIJZ4XEozH4BHVUMpAtWTc9LLy7DMLp+9u0319iWVV4yi70k1z1UxGVdYzx6UlNcBVhv8ZBmwFaa8S7oDy0b/MgRzN7dtCx2OAUp+2RF0i6+KH51VNubM+j4H3DLRjltTWgacbY2c/+uHIBOeeUGgW34nXGJqiJfUPCsNtwvT4cywLJjaMU37LGGstsFK1zF4zXM2O38w+SeVGG5AAAAA=="
+        "Analytics": "vX:XXXXXX:XXXXXX"
       },
       "Metadata": {
         "aws:cdk:path": "ExampleDatadogStack/CDKMetadata/Default"
@@ -126,17 +126,17 @@
     }
   },
   "Parameters": {
-    "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3Bucket2F3DAEBE": {
+    "AssetParametersXXXXXXXXXXXXX": {
       "Type": "String",
-      "Description": "S3 bucket for asset \"61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f\""
+      "Description": "S3 bucket for asset XXXXXXXXXXXXX"
     },
-    "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3VersionKeyFBB8A8E3": {
+    "AssetParametersXXXXXXXXXXXXX": {
       "Type": "String",
-      "Description": "S3 key for asset version \"61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f\""
+      "Description": "S3 key for asset XXXXXXXXXXXXX"
     },
-    "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fArtifactHash57E79C7B": {
+    "AssetParametersXXXXXXXXXXXXX": {
       "Type": "String",
-      "Description": "Artifact hash for asset \"61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f\""
+      "Description": "Artifact hash for asset XXXXXXXXXXXXX"
     }
   }
 }

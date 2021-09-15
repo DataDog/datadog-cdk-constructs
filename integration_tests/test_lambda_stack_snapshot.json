@@ -1,6 +1,6 @@
 {
   "Resources": {
-    "HelloHandlerServiceRole11EF7C63": {
+    "HelloHandlerServiceRoleXXXXXXXX": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -34,7 +34,7 @@
         "aws:cdk:path": "ExampleDatadogStack/HelloHandler/ServiceRole/Resource"
       }
     },
-    "HelloHandler2E4FBA4D": {
+    "HelloHandlerXXXXXXXX": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
@@ -42,7 +42,7 @@
         },
         "Role": {
           "Fn::GetAtt": [
-            "HelloHandlerServiceRole11EF7C63",
+            "HelloHandlerServiceRoleXXXXXXXX",
             "Arn"
           ]
         },
@@ -66,12 +66,12 @@
         "Tags": [
           {
             "Key": "dd_cdk_construct",
-            "Value": "v0.4.0"
+            "Value": "vX.XX.X"
           }
         ]
       },
       "DependsOn": [
-        "HelloHandlerServiceRole11EF7C63"
+        "HelloHandlerServiceRoleXXXXXXXX"
       ],
       "Metadata": {
         "aws:cdk:path": "ExampleDatadogStack/HelloHandler/Resource"
@@ -80,7 +80,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWLOQ6DMBAA30K/LDEFdSSkPMB5gbM2kgHvSj6SwvLfA0JUM8WMQjWO+Oie5pd6sttQSaLD+s6GNpiFU46FMmiXpERyMC98e4NzqrsJH2uwvgpT9sJncnsDbwJWLft1HmytAYt1uKbhqyacUHVr8r6PhbMPDvXFP7Ovm6uaAAAA"
+        "Analytics": "vX:XXXXXX:XXXXXX"
       },
       "Metadata": {
         "aws:cdk:path": "ExampleDatadogStack/CDKMetadata/Default"

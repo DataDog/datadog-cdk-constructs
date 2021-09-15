@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Usage - run commands from repo root:
-# To check if new changes to the plugin cause changes to any snapshots:
+# To check if new changes to the library cause changes to any snapshots:
 #   ./scripts/run_integration_tests.sh
 # To regenerate snapshots:
 #   UPDATE_SNAPSHOTS=true ./scripts/run_integration_tests.sh
@@ -45,7 +45,21 @@ for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     # Normalize LambdaVersion ID's
     perl -p -i -e 's/(LambdaVersion.*")/LambdaVersionXXXX"/g' ${RAW_CFN_TEMPLATE}
     # Normalize S3Key timestamps
-    perl -p -i -e 's/("S3Key".*)/"S3Key": "serverless\/dd-sls-plugin-integration-test\/dev\/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX\/dd-sls-plugin-integration-test.zip"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("S3Key".*)/"S3Key": "serverless\/dd-cdk-construct-integration-test\/dev\/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX\/dd-cdk-construct-integration-test.zip"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize dd_cdk_construct version tag value
+    perl -p -i -e 's/(v\d+.\d+.\d+)/vX.XX.X/g' ${RAW_CFN_TEMPLATE}
+    # Normalize Role names
+    perl -p -i -e 's/("HelloHandlerServiceRole.*")/"HelloHandlerServiceRoleXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+     # Normalize Handler names
+    perl -p -i -e 's/("HelloHandler(?!ServiceRole)(\d+|\w+)*")/"HelloHandlerXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize AssetParameters
+    perl -p -i -e 's/("AssetParameters.*")/"AssetParametersXXXXXXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize CDK Metadata Analytics
+    perl -p -i -e 's/("Analytics": "v.*")/"Analytics": "vX:XXXXXX:XXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize S3 Bucket for asset
+    perl -p -i -e 's/(for asset .*")/for asset XXXXXXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize Metadata aws:asset:path
+    perl -p -i -e 's/("asset\..*")/"asset.XXXXXXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
     # Normalize Datadog Layer Arn versions
     perl -p -i -e 's/(arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-(Python27|Python36|Python37|Python38|Python39|Node10-x|Node12-x|Node14-x|Extension):\d+)/arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-\2:XXX/g' ${RAW_CFN_TEMPLATE}
     # Normalize API Gateway timestamps
