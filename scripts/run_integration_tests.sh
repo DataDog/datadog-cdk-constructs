@@ -12,12 +12,9 @@ set -e
 # as well as creating a name for the snapshots that will be compared in your test. Add those snapshot names to the TEST_SNAPSHOTS and CORRECT_SNAPSHOTS arrays.
 # Note: Each yml config, test, and correct snapshot file should be at the same index in their own array. e.g. All the files for the forwarder test are at index 0.
 #       In order for this script to work correctly these arrays should have the same amount of elements.
-# LAMBDA_CONFIGS=("lambda-stack.js" "lambda-nodejs-function-stack.js")
-# TEST_SNAPSHOTS=("test_lambda_stack_snapshot.json" "test_lambda_nodejs_function_stack_snapshot.json")
-# CORRECT_SNAPSHOTS=("correct_lambda_stack_snapshot.json" "correct_lambda_nodejs_function_stack_snapshot.json")
-LAMBDA_CONFIGS=("lambda-nodejs-function-stack.js")
-TEST_SNAPSHOTS=("test_lambda_nodejs_function_stack_snapshot.json")
-CORRECT_SNAPSHOTS=("correct_lambda_nodejs_function_stack_snapshot.json")
+LAMBDA_CONFIGS=("lambda-stack.js" "lambda-nodejs-function-stack.js")
+TEST_SNAPSHOTS=("test_lambda_stack_snapshot.json" "test_lambda_nodejs_function_stack_snapshot.json")
+CORRECT_SNAPSHOTS=("correct_lambda_stack_snapshot.json" "correct_lambda_nodejs_function_stack_snapshot.json")
 
 script_path=${BASH_SOURCE[0]}
 scripts_dir=$(dirname $script_path)
@@ -32,6 +29,12 @@ integration_tests_dir="$repo_dir/integration_tests/"
 if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
     echo "Overwriting snapshots in this execution"
 fi
+
+# Login to ECR. This is required to pull a public Docker image for the PythonFunction construct
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+yarn
+yarn build
 
 cd $integration_tests_dir
 RAW_CFN_TEMPLATE="cdk.out/ExampleDatadogStack.template.json"

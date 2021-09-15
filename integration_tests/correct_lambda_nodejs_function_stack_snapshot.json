@@ -1,142 +1,142 @@
 {
-    "Resources": {
-        "NodeJSHandlerServiceRoleB3CB9DD7": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-                "AssumeRolePolicyDocument": {
-                    "Statement": [
-                        {
-                            "Action": "sts:AssumeRole",
-                            "Effect": "Allow",
-                            "Principal": {
-                                "Service": "lambda.amazonaws.com"
-                            }
-                        }
-                    ],
-                    "Version": "2012-10-17"
-                },
-                "ManagedPolicyArns": [
-                    {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "arn:",
-                                {
-                                    "Ref": "AWS::Partition"
-                                },
-                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-                            ]
-                        ]
-                    }
-                ]
-            },
-            "Metadata": {
-                "aws:cdk:path": "ExampleDatadogStack/NodeJSHandler/ServiceRole/Resource"
+  "Resources": {
+    "HelloHandlerServiceRole11EF7C63": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
             }
+          ],
+          "Version": "2012-10-17"
         },
-        "NodeJSHandler58A724F6": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-                "Code": {
-                    "S3Bucket": {
-                        "Ref": "AssetParametersaaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097S3Bucket84BB294D"
-                    },
-                    "S3Key": {
-                        "Fn::Join": [
-                            "",
-                            [
-                                {
-                                    "Fn::Select": [
-                                        0,
-                                        {
-                                            "Fn::Split": [
-                                                "||",
-                                                {
-                                                    "Ref": "AssetParametersaaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097S3VersionKey9A037B7C"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "Fn::Select": [
-                                        1,
-                                        {
-                                            "Fn::Split": [
-                                                "||",
-                                                {
-                                                    "Ref": "AssetParametersaaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097S3VersionKey9A037B7C"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
-                        ]
-                    }
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
                 },
-                "Role": {
-                    "Fn::GetAtt": [
-                        "NodeJSHandlerServiceRoleB3CB9DD7",
-                        "Arn"
-                    ]
-                },
-                "Environment": {
-                    "Variables": {
-                        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-                        "DD_LAMBDA_HANDLER": "index.handler",
-                        "DD_TRACE_ENABLED": "true",
-                        "DD_LOGS_INJECTION": "true",
-                        "DD_SERVERLESS_LOGS_ENABLED": "true",
-                        "DD_FLUSH_TO_LOG": "false",
-                        "DD_SITE": "datadoghq.com",
-                        "DD_API_KEY": "1234"
-                    }
-                },
-                "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
-                "Layers": [
-                    "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:62",
-                    "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:10"
-                ],
-                "Runtime": "nodejs14.x",
-                "Tags": [
-                    {
-                        "Key": "dd_cdk_construct",
-                        "Value": "v0.4.0"
-                    }
-                ]
-            },
-            "DependsOn": [
-                "NodeJSHandlerServiceRoleB3CB9DD7"
-            ],
-            "Metadata": {
-                "aws:cdk:path": "ExampleDatadogStack/NodeJSHandler/Resource",
-                "aws:asset:path": "asset.aaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097",
-                "aws:asset:property": "Code"
-            }
-        },
-        "CDKMetadata": {
-            "Type": "AWS::CDK::Metadata",
-            "Properties": {
-                "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWNwQ6CMAyGn4V7KYIJZ4XEozH4BHVUMpAtWTc9LLy7DMLp+9u0319iWVV4yi70k1z1UxGVdYzx6UlNcBVhv8ZBmwFaa8S7oDy0b/MgRzN7dtCx2OAUp+2RF0i6+KH51VNubM+j4H3DLRjltTWgacbY2c/+uHIBOeeUGgW34nXGJqiJfUPCsNtwvT4cywLJjaMU37LGGstsFK1zF4zXM2O38w+SeVGG5AAAAA=="
-            },
-            "Metadata": {
-                "aws:cdk:path": "ExampleDatadogStack/CDKMetadata/Default"
-            }
-        }
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "ExampleDatadogStack/HelloHandler/ServiceRole/Resource"
+      }
     },
-    "Parameters": {
-        "AssetParametersaaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097S3Bucket84BB294D": {
-            "Type": "String",
-            "Description": "S3 bucket for asset \"aaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097\""
+    "HelloHandler2E4FBA4D": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3Bucket2F3DAEBE"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3VersionKeyFBB8A8E3"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3VersionKeyFBB8A8E3"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
         },
-        "AssetParametersaaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097S3VersionKey9A037B7C": {
-            "Type": "String",
-            "Description": "S3 key for asset version \"aaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097\""
+        "Role": {
+          "Fn::GetAtt": [
+            "HelloHandlerServiceRole11EF7C63",
+            "Arn"
+          ]
         },
-        "AssetParametersaaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097ArtifactHashE2C0165D": {
-            "Type": "String",
-            "Description": "Artifact hash for asset \"aaed06fce5cfee7cd6801657559741fd7793896e4b57b38236a88e3661f2a097\""
-        }
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "DD_LAMBDA_HANDLER": "index.handler",
+            "DD_TRACE_ENABLED": "true",
+            "DD_LOGS_INJECTION": "true",
+            "DD_SERVERLESS_LOGS_ENABLED": "true",
+            "DD_FLUSH_TO_LOG": "false",
+            "DD_SITE": "datadoghq.com",
+            "DD_API_KEY": "1234"
+          }
+        },
+        "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
+        "Layers": [
+          "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
+          "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
+        ],
+        "Runtime": "nodejs14.x",
+        "Tags": [
+          {
+            "Key": "dd_cdk_construct",
+            "Value": "v0.4.0"
+          }
+        ]
+      },
+      "DependsOn": [
+        "HelloHandlerServiceRole11EF7C63"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "ExampleDatadogStack/HelloHandler/Resource",
+        "aws:asset:path": "asset.61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f",
+        "aws:asset:property": "Code"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWNwQ6CMAyGn4V7KYIJZ4XEozH4BHVUMpAtWTc9LLy7DMLp+9u0319iWVV4yi70k1z1UxGVdYzx6UlNcBVhv8ZBmwFaa8S7oDy0b/MgRzN7dtCx2OAUp+2RF0i6+KH51VNubM+j4H3DLRjltTWgacbY2c/+uHIBOeeUGgW34nXGJqiJfUPCsNtwvT4cywLJjaMU37LGGstsFK1zF4zXM2O38w+SeVGG5AAAAA=="
+      },
+      "Metadata": {
+        "aws:cdk:path": "ExampleDatadogStack/CDKMetadata/Default"
+      }
     }
+  },
+  "Parameters": {
+    "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3Bucket2F3DAEBE": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f\""
+    },
+    "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3VersionKeyFBB8A8E3": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f\""
+    },
+    "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fArtifactHash57E79C7B": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7f\""
+    }
+  }
 }
