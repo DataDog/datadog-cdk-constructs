@@ -33,7 +33,8 @@
   },
   "include": [
     "stacks/**/*.ts",
-    "../version.json"
+    "../version.json",
+    "lambda/example-lambda.js"
   ],
   "exclude": [
     "../node_modules"
