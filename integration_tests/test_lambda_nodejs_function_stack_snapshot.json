@@ -41,7 +41,7 @@
           "S3Bucket": {
             "Ref": "AssetParameters61a2e8d5768d323ceebc38c16483364070ae365c8f1a44b53c41a68784f51b7fS3Bucket2F3DAEBE"
           },
-          "S3Key": {
+          "S3Key": "serverless/dd-sls-plugin-integration-test/dev/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX/dd-sls-plugin-integration-test.zip"
             "Fn::Join": [
               "",
               [

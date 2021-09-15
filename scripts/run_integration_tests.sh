@@ -8,11 +8,11 @@
 
 set -e
 
-# To add new tests create a new ts file in the 'integration_tests/lambda' directory, append it as a js file to the LAMBDA_CONFIGS array
+# To add new tests create a new ts file in the 'integration_tests/lambda' directory, append it as a js file to the STACK_CONFIGS array
 # as well as creating a name for the snapshots that will be compared in your test. Add those snapshot names to the TEST_SNAPSHOTS and CORRECT_SNAPSHOTS arrays.
 # Note: Each yml config, test, and correct snapshot file should be at the same index in their own array. e.g. All the files for the forwarder test are at index 0.
 #       In order for this script to work correctly these arrays should have the same amount of elements.
-LAMBDA_CONFIGS=("lambda-stack.js" "lambda-nodejs-function-stack.js")
+STACK_CONFIGS=("lambda-stack.js" "lambda-nodejs-function-stack.js")
 TEST_SNAPSHOTS=("test_lambda_stack_snapshot.json" "test_lambda_nodejs_function_stack_snapshot.json")
 CORRECT_SNAPSHOTS=("correct_lambda_stack_snapshot.json" "correct_lambda_nodejs_function_stack_snapshot.json")
 
@@ -38,14 +38,14 @@ yarn build
 
 cd $integration_tests_dir
 RAW_CFN_TEMPLATE="cdk.out/ExampleDatadogStack.template.json"
-for ((i=0; i < ${#LAMBDA_CONFIGS[@]}; i++)); do
+for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     tsc --project tsconfig.json
-    cdk synth --app testlib/integration_tests/stacks/${LAMBDA_CONFIGS[i]} --json
+    cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]} --json
 
     # Normalize LambdaVersion ID's
     perl -p -i -e 's/(LambdaVersion.*")/LambdaVersionXXXX"/g' ${RAW_CFN_TEMPLATE}
-    # Normalize SHA256 hashes
-    perl -p -i -e 's/("CodeSha256":.*)/"CodeSha256": "XXXX"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize S3Key timestamps
+    perl -p -i -e 's/("S3Key".*)/"S3Key": "serverless\/dd-sls-plugin-integration-test\/dev\/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX\/dd-sls-plugin-integration-test.zip"/g' ${RAW_CFN_TEMPLATE}
     # Normalize Datadog Layer Arn versions
     perl -p -i -e 's/(arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-(Python27|Python36|Python37|Python38|Python39|Node10-x|Node12-x|Node14-x|Extension):\d+)/arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-\2:XXX/g' ${RAW_CFN_TEMPLATE}
     # Normalize API Gateway timestamps
