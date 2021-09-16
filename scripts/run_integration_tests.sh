@@ -30,22 +30,22 @@ fi
 # Login to ECR. This is a required step in order to pull a public Docker image for the PythonFunction construct
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
-yarn
-yarn build
-
 cd $integration_tests_dir
 
-OUTPUT_ARRAY+=("====================================")
-allTestsPassed=true
+OUTPUT_ARRAY=("====================================")
+ALL_TESTS_PASSED=0
 compose_output() {
      if [ $1 -eq 0 ]; then
-        OUTPUT_ARRAY+=("SUCCESS: There were no differences between the $2 and $3")
+        SUCCESS_MESSAGE="PASS: $2"
+        OUTPUT_ARRAY+=("$SUCCESS_MESSAGE")
+        echo $SUCCESS_MESSAGE
+        ((ALL_TESTS_PASSED+=1))
     else
-        allTestsPassed=false
-        OUTPUT_ARRAY+=("FAILURE: There were differences between the $2 and $3. Review the diff output above.")
-        OUTPUT_ARRAY+=("If you expected the $2 to be different generate new snapshots by running this command from a development branch on your local repository: 'UPDATE_SNAPSHOTS=true ./scripts/run_integration_tests.sh'")
+        ERR_MESSAGE="FAIL: $2. Review the diff output above."
+        INFO_MESSAGE="If you expected the $2 to be different, generate new snapshots by running this command from a development branch on your local repository: 'UPDATE_SNAPSHOTS=true ./scripts/run_integration_tests.sh'"
+        OUTPUT_ARRAY+=("$ERR_MESSAGE")
+        echo $ERR_MESSAGE $INFO_MESSAGE
     fi
-    OUTPUT_ARRAY+=("====================================")
 }
 
 printOutputAndExit() {
@@ -53,9 +53,12 @@ printOutputAndExit() {
         echo ${OUTPUT_ARRAY[i]}
     done
 
-    if [ $allTestsPassed ]; then
+    NEWLINE=$'\n'
+    if [ $ALL_TESTS_PASSED -eq ${#STACK_CONFIGS[@]} ]; then
+        echo "${NEWLINE}SUCCESS: ${ALL_TESTS_PASSED} out of ${#STACK_CONFIGS[@]} snapshot tests passed."
         exit 0
     else
+        echo "${NEWLINE}FAIL: ${ALL_TESTS_PASSED} out of ${#STACK_CONFIGS[@]} snapshot tests passed."
         exit 1
     fi
 }
@@ -98,12 +101,12 @@ for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
         cp ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
     fi
 
-    OUTPUT_ARRAY+=("Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}")
+    echo "Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}"
     set +e # Don't exit right away if there is a diff in snapshots
     diff ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
     return_code=$?
     set -e
-    compose_output $return_code ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
+    compose_output $return_code ${STACK_CONFIGS[i]}
 done
 
 printOutputAndExit
