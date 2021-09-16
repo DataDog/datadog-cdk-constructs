@@ -31,7 +31,7 @@
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "ExampleDatadogStack/HelloHandler/ServiceRole/Resource"
+        "aws:cdk:path": "lambda-nodejs-function-stack/HelloHandler/ServiceRole/Resource"
       }
     },
     "HelloHandlerXXXXXXXX": {
@@ -110,7 +110,7 @@
         "HelloHandlerServiceRoleXXXXXXXX"
       ],
       "Metadata": {
-        "aws:cdk:path": "ExampleDatadogStack/HelloHandler/Resource",
+        "aws:cdk:path": "lambda-nodejs-function-stack/HelloHandler/Resource",
         "aws:asset:path": "asset.XXXXXXXXXXXXX",
         "aws:asset:property": "Code"
       }
@@ -121,7 +121,7 @@
         "Analytics": "vX:XXXXXX:XXXXXX"
       },
       "Metadata": {
-        "aws:cdk:path": "ExampleDatadogStack/CDKMetadata/Default"
+        "aws:cdk:path": "lambda-nodejs-function-stack/CDKMetadata/Default"
       }
     }
   },

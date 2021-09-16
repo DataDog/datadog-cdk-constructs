@@ -35,6 +35,6 @@ export class ExampleStack extends cdk.Stack {
 
 const app = new cdk.App();
 const env = { account: "601427279990", region: "sa-east-1" };
-const stack = new ExampleStack(app, "ExampleDatadogStack", { env: env });
+const stack = new ExampleStack(app, "lambda-nodejs-function-stack", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();
