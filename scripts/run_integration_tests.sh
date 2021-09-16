@@ -8,13 +8,10 @@
 
 set -e
 
-# To add new tests create a new ts file in the 'integration_tests/lambda' directory, append it as a js file to the STACK_CONFIGS array
-# as well as creating a name for the snapshots that will be compared in your test. Add those snapshot names to the TEST_SNAPSHOTS and CORRECT_SNAPSHOTS arrays.
-# Note: Each yml config, test, and correct snapshot file should be at the same index in their own array. e.g. All the files for the forwarder test are at index 0.
-#       In order for this script to work correctly these arrays should have the same amount of elements.
-STACK_CONFIGS=("lambda-stack.js" "lambda-nodejs-function-stack.js")
-TEST_SNAPSHOTS=("snapshots/test_lambda_stack_snapshot.json" "snapshots/test_lambda_nodejs_function_stack_snapshot.json")
-CORRECT_SNAPSHOTS=("snapshots/correct_lambda_stack_snapshot.json" "snapshots/correct_lambda_nodejs_function_stack_snapshot.json")
+# To add new tests create a new ts file in the 'integration_tests/stacks' directory, append its file name to the STACK_CONFIGS array.
+# Note: Each ts file will have its respective snapshot built in the snapshots directory, e.g. lambda-function-stack.ts
+#       will generate both snapshots/test-lambda-function-stack-snapshot.json and snapshots/correct-lambda-function-stack-snapshot.json
+STACK_CONFIGS=("lambda-function-stack" "lambda-nodejs-function-stack")
 
 script_path=${BASH_SOURCE[0]}
 scripts_dir=$(dirname $script_path)
@@ -38,9 +35,35 @@ yarn build
 
 cd $integration_tests_dir
 RAW_CFN_TEMPLATE="cdk.out/ExampleDatadogStack.template.json"
+
+OUTPUT_ARRAY+=("====================================")
+allTestsPassed=true
+compose_output() {
+     if [ $1 -eq 0 ]; then
+        OUTPUT_ARRAY+=("SUCCESS: There were no differences between the $2 and $3")
+    else
+        allTestsPassed=false
+        OUTPUT_ARRAY+=("FAILURE: There were differences between the $2 and $3. Review the diff output above.")
+        OUTPUT_ARRAY+=("If you expected the $2 to be different generate new snapshots by running this command from a development branch on your local repository: 'UPDATE_SNAPSHOTS=true ./scripts/run_integration_tests.sh'")
+    fi
+    OUTPUT_ARRAY+=("====================================")
+}
+
+printOutputAndExit() {
+    for ((i=0; i < ${#OUTPUT_ARRAY[@]}; i++)); do
+        echo ${OUTPUT_ARRAY[i]}
+    done
+
+    if [ $allTestsPassed ]; then
+        exit 0
+    else
+        exit 1
+    fi
+}
+
 for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     tsc --project tsconfig.json
-    cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]} --json --quiet
+    cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]}.js --json --quiet
 
     # Normalize LambdaVersion IDs
     perl -p -i -e 's/(LambdaVersion.*")/LambdaVersionXXXX"/g' ${RAW_CFN_TEMPLATE}
@@ -65,25 +88,21 @@ for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     # Normalize API Gateway timestamps
     perl -p -i -e 's/("ApiGatewayDeployment.*")/"ApiGatewayDeploymentxxxx"/g' ${RAW_CFN_TEMPLATE}
 
-    cp ${RAW_CFN_TEMPLATE} ${TEST_SNAPSHOTS[i]}
-    echo "===================================="
+    TEST_SNAPSHOT="snapshots/test-${STACK_CONFIGS[i]}-snapshot.json"
+    CORRECT_SNAPSHOT="snapshots/correct-${STACK_CONFIGS[i]}-snapshot.json"
+
+    cp ${RAW_CFN_TEMPLATE} ${TEST_SNAPSHOT}
     if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
-        echo "Overriding ${CORRECT_SNAPSHOTS[i]}"
-        cp ${TEST_SNAPSHOTS[i]} ${CORRECT_SNAPSHOTS[i]}
+        echo "Overriding ${CORRECT_SNAPSHOT}"
+        cp ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
     fi
 
-    echo "Performing diff of ${TEST_SNAPSHOTS[i]} against ${CORRECT_SNAPSHOTS[i]}"
+    OUTPUT_ARRAY+=("Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}")
     set +e # Don't exit right away if there is a diff in snapshots
-    diff ${TEST_SNAPSHOTS[i]} ${CORRECT_SNAPSHOTS[i]}
+    diff ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
     return_code=$?
     set -e
-    if [ $return_code -eq 0 ]; then
-        echo "SUCCESS: There were no differences between the ${TEST_SNAPSHOTS[i]} and ${CORRECT_SNAPSHOTS[i]}"
-    else
-        echo "FAILURE: There were differences between the ${TEST_SNAPSHOTS[i]} and ${CORRECT_SNAPSHOTS[i]}. Review the diff output above."
-        echo "If you expected the ${TEST_SNAPSHOTS[i]} to be different generate new snapshots by running this command from a development branch on your local repository: 'UPDATE_SNAPSHOTS=true ./scripts/run_integration_tests.sh'"
-        exit 1
-    fi
-    echo "===================================="
+    compose_output $return_code ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
 done
-exit 0
+
+printOutputAndExit
