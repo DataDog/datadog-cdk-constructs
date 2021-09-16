@@ -13,16 +13,16 @@ set -e
 #       will generate both snapshots/test-lambda-function-stack-snapshot.json and snapshots/correct-lambda-function-stack-snapshot.json
 STACK_CONFIGS=("lambda-function-stack" "lambda-nodejs-function-stack")
 
-script_path=${BASH_SOURCE[0]}
-scripts_dir=$(dirname $script_path)
-repo_dir=$(dirname $scripts_dir)
-root_dir=$(pwd)
-if [[ "$root_dir" =~ .*"datadog-cdk-constructs/scripts".* ]]; then
+SCRIPT_PATH=${BASH_SOURCE[0]}
+SCRIPTS_DIR=$(dirname $SCRIPT_PATH)
+REPO_DIR=$(dirname $SCRIPTS_DIR)
+ROOT_DIR=$(pwd)
+if [[ "$ROOT_DIR" =~ .*"datadog-cdk-constructs/scripts".* ]]; then
     echo "Make sure to run this script from the root $(datadog-cdk-constructs) directory, aborting"
     exit 1
 fi
 
-integration_tests_dir="$repo_dir/integration_tests/"
+INTEGRATION_TESTS_DIR="$REPO_DIR/integration_tests/"
 if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
     echo "Overwriting snapshots in this execution"
 fi
@@ -30,7 +30,7 @@ fi
 # Login to ECR. This is a required step in order to pull a public Docker image for the PythonFunction construct
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
-cd $integration_tests_dir
+cd $INTEGRATION_TESTS_DIR
 
 OUTPUT_ARRAY=("====================================")
 ALL_TESTS_PASSED=0
@@ -104,9 +104,9 @@ for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     echo "Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}"
     set +e # Don't exit right away if there is a diff in snapshots
     diff ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
-    return_code=$?
+    RETURN_CODE=$?
     set -e
-    compose_output $return_code ${STACK_CONFIGS[i]}
+    compose_output $RETURN_CODE ${STACK_CONFIGS[i]}
 done
 
 printOutputAndExit
