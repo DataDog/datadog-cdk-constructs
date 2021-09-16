@@ -40,9 +40,9 @@ cd $integration_tests_dir
 RAW_CFN_TEMPLATE="cdk.out/ExampleDatadogStack.template.json"
 for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     tsc --project tsconfig.json
-    cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]} --json
+    cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]} --json --quiet
 
-    # Normalize LambdaVersion ID's
+    # Normalize LambdaVersion IDs
     perl -p -i -e 's/(LambdaVersion.*")/LambdaVersionXXXX"/g' ${RAW_CFN_TEMPLATE}
     # Normalize S3Key timestamps
     perl -p -i -e 's/("S3Key".*)/"S3Key": "serverless\/dd-cdk-construct-integration-test\/dev\/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX\/dd-cdk-construct-integration-test.zip"/g' ${RAW_CFN_TEMPLATE}
@@ -73,7 +73,7 @@ for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     fi
 
     echo "Performing diff of ${TEST_SNAPSHOTS[i]} against ${CORRECT_SNAPSHOTS[i]}"
-    set +e # Dont exit right away if there is a diff in snapshots
+    set +e # Don't exit right away if there is a diff in snapshots
     diff ${TEST_SNAPSHOTS[i]} ${CORRECT_SNAPSHOTS[i]}
     return_code=$?
     set -e
