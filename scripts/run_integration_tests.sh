@@ -13,8 +13,8 @@ set -e
 # Note: Each yml config, test, and correct snapshot file should be at the same index in their own array. e.g. All the files for the forwarder test are at index 0.
 #       In order for this script to work correctly these arrays should have the same amount of elements.
 STACK_CONFIGS=("lambda-stack.js" "lambda-nodejs-function-stack.js")
-TEST_SNAPSHOTS=("test_lambda_stack_snapshot.json" "test_lambda_nodejs_function_stack_snapshot.json")
-CORRECT_SNAPSHOTS=("correct_lambda_stack_snapshot.json" "correct_lambda_nodejs_function_stack_snapshot.json")
+TEST_SNAPSHOTS=("snapshots/test_lambda_stack_snapshot.json" "snapshots/test_lambda_nodejs_function_stack_snapshot.json")
+CORRECT_SNAPSHOTS=("snapshots/correct_lambda_stack_snapshot.json" "snapshots/correct_lambda_nodejs_function_stack_snapshot.json")
 
 script_path=${BASH_SOURCE[0]}
 scripts_dir=$(dirname $script_path)
