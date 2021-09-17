@@ -8,6 +8,8 @@
 
 import * as lambda from "@aws-cdk/aws-lambda";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
+import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import { Datadog } from "../../src/index";
 
@@ -21,6 +23,14 @@ export class ExampleStack extends cdk.Stack {
       handler: "handler",
     });
 
+    const restLogGroup = new LogGroup(this, "restLogGroup");
+    new LambdaRestApi(this, "rest-test", {
+      handler: lambdaNodejsFunction,
+      deployOptions: {
+        accessLogDestination: new LogGroupLogDestination(restLogGroup),
+      },
+    });
+
     const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 62,
       extensionLayerVersion: 10,
@@ -30,6 +40,7 @@ export class ExampleStack extends cdk.Stack {
       site: "datadoghq.com",
     });
     datadogCDK.addLambdaFunctions([lambdaNodejsFunction]);
+    datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup]);
   }
 }
 
