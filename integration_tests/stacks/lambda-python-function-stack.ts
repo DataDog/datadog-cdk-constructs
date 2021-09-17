@@ -23,7 +23,6 @@ export class ExampleStack extends cdk.Stack {
     });
 
     const datadogCDK = new Datadog(this, "Datadog", {
-      nodeLayerVersion: 62,
       pythonLayerVersion: 46,
       extensionLayerVersion: 10,
       enableDatadogTracing: true,
