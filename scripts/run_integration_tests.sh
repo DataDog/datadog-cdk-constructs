@@ -11,7 +11,7 @@ set -e
 # To add new tests create a new ts file in the 'integration_tests/stacks' directory, append its file name to the STACK_CONFIGS array.
 # Note: Each ts file will have its respective snapshot built in the snapshots directory, e.g. lambda-function-stack.ts
 #       will generate both snapshots/test-lambda-function-stack-snapshot.json and snapshots/correct-lambda-function-stack-snapshot.json
-STACK_CONFIGS=("lambda-function-stack" "lambda-nodejs-function-stack")
+STACK_CONFIGS=("lambda-function-stack" "lambda-nodejs-function-stack" "lambda-python-function-stack")
 
 SCRIPT_PATH=${BASH_SOURCE[0]}
 SCRIPTS_DIR=$(dirname $SCRIPT_PATH)
@@ -91,6 +91,23 @@ for ((i=0; i < ${#STACK_CONFIGS[@]}; i++)); do
     perl -p -i -e 's/(arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-(Python27|Python36|Python37|Python38|Python39|Node10-x|Node12-x|Node14-x|Extension):\d+)/arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-\2:XXX/g' ${RAW_CFN_TEMPLATE}
     # Normalize API Gateway timestamps
     perl -p -i -e 's/("ApiGatewayDeployment.*")/"ApiGatewayDeploymentxxxx"/g' ${RAW_CFN_TEMPLATE}
+    
+    # Normalize resttest resource names
+    perl -p -i -e 's/("restLogGroup.*")/"restLogGroupXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestCloudWatchRole.*")/"resttestCloudWatchRoleXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestDeploymentStageprod.*")/"resttestDeploymentStageprodXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestDeployment(?!Stageprod).*")/"resttestDeploymentXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestAccount.*")/"resttestAccountXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    
+    perl -p -i -e 's/("resttestproxyANY(?!Api).*")/"resttestproxyANYXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestproxyANYApiPermissionlambda(nodejs|python)?functionstackresttest.*")/"resttestproxyANYApiPermissionlambdafunctionstackresttestXXXXXXXXANYproxyXXXXXXXX"/g'  ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestproxyANYApiPermissionTestlambda(nodejs|python)?functionstackresttest.*")/"resttestproxyANYApiPermissionTestlambdafunctionstackresttestXXXXXXXXANYproxyXXXXXXXX"/g'  ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestproxy(?!ANY).*")/"resttestproxyXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+
+    perl -p -i -e 's/(functionstackresttest.*")/functionstackresttestXXXXXXXXANYXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestANY(?!Api).*")/"resttestANYXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttest(?!.*(Deployment|Endpoint|Cloud|Account|XXXXXXXX)).*")/"resttestXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("resttestEndpoint.*")/"resttestEndpointXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
 
     TEST_SNAPSHOT="snapshots/test-${STACK_CONFIGS[i]}-snapshot.json"
     CORRECT_SNAPSHOT="snapshots/correct-${STACK_CONFIGS[i]}-snapshot.json"

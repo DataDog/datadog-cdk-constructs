@@ -31,14 +31,49 @@
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/HelloHandler/ServiceRole/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/HelloHandler/ServiceRole/Resource"
       }
     },
     "HelloHandlerXXXXXXXX": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "ZipFile": "test"
+          "S3Bucket": {
+            "Ref": "AssetParametersXXXXXXXXXXXXX"
+          },
+          "S3Key": "serverless/dd-cdk-construct-integration-test/dev/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX/dd-cdk-construct-integration-test.zip"
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersXXXXXXXXXXXXX"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersXXXXXXXXXXXXX"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
         },
         "Role": {
           "Fn::GetAtt": [
@@ -48,7 +83,7 @@
         },
         "Environment": {
           "Variables": {
-            "DD_LAMBDA_HANDLER": "lambdaFunction.handler",
+            "DD_LAMBDA_HANDLER": "example-python.handler",
             "DD_TRACE_ENABLED": "true",
             "DD_LOGS_INJECTION": "true",
             "DD_SERVERLESS_LOGS_ENABLED": "true",
@@ -57,12 +92,12 @@
             "DD_API_KEY": "1234"
           }
         },
-        "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
+        "Handler": "datadog_lambda.handler.handler",
         "Layers": [
-          "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
+          "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Python37:XXX",
           "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
         ],
-        "Runtime": "nodejs14.x",
+        "Runtime": "python3.7",
         "Tags": [
           {
             "Key": "dd_cdk_construct",
@@ -74,7 +109,9 @@
         "HelloHandlerServiceRoleXXXXXXXX"
       ],
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/HelloHandler/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/HelloHandler/Resource",
+        "aws:asset:path": "asset.XXXXXXXXXXXXX",
+        "aws:asset:property": "Code"
       }
     },
     "restLogGroupXXXXXXXX": {
@@ -85,7 +122,7 @@
       "UpdateReplacePolicy": "Retain",
       "DeletionPolicy": "Retain",
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/restLogGroup/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/restLogGroup/Resource"
       }
     },
     "resttestXXXXXXXX": {
@@ -94,7 +131,7 @@
         "Name": "rest-test"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Resource"
       }
     },
     "resttestCloudWatchRoleXXXXXXXX": {
@@ -128,7 +165,7 @@
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/CloudWatchRole/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/CloudWatchRole/Resource"
       }
     },
     "resttestAccountXXXXXXXX": {
@@ -145,7 +182,7 @@
         "resttestXXXXXXXX"
       ],
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Account"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Account"
       }
     },
     "resttestDeploymentXXXXXXXX": {
@@ -162,7 +199,7 @@
         "resttestANYXXXXXXXX"
       ],
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Deployment/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Deployment/Resource"
       }
     },
     "resttestDeploymentStageprodXXXXXXXX": {
@@ -186,7 +223,7 @@
         "StageName": "prod"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/DeploymentStage.prod/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/DeploymentStage.prod/Resource"
       }
     },
     "resttestproxyXXXXXXXX": {
@@ -204,7 +241,7 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/{proxy+}/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/{proxy+}/Resource"
       }
     },
     "resttestproxyANYApiPermissionlambdafunctionstackresttestXXXXXXXXANYXXXXXXXX": {
@@ -240,7 +277,7 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.lambdafunctionstackresttestXXXXXXXXANYXXXXXXXX"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.lambdapythonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
       }
     },
     "resttestproxyANYApiPermissionTestlambdafunctionstackresttestXXXXXXXXANYXXXXXXXX": {
@@ -272,7 +309,7 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.Test.lambdafunctionstackresttestXXXXXXXXANYXXXXXXXX"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.Test.lambdapythonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
       }
     },
     "resttestproxyANYXXXXXXXX": {
@@ -311,10 +348,10 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/{proxy+}/ANY/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/{proxy+}/ANY/Resource"
       }
     },
-    "resttestANYApiPermissionlambdafunctionstackresttestXXXXXXXXANYXXXXXXXX": {
+    "resttestANYApiPermissionlambdapythonfunctionstackresttestXXXXXXXXANYXXXXXXXX": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "Action": "lambda:InvokeFunction",
@@ -347,10 +384,10 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/ANY/ApiPermission.lambdafunctionstackresttestXXXXXXXXANYXXXXXXXX"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/ANY/ApiPermission.lambdapythonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
       }
     },
-    "resttestANYApiPermissionTestlambdafunctionstackresttestXXXXXXXXANYXXXXXXXX": {
+    "resttestANYApiPermissionTestlambdapythonfunctionstackresttestXXXXXXXXANYXXXXXXXX": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "Action": "lambda:InvokeFunction",
@@ -379,7 +416,7 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/ANY/ApiPermission.Test.lambdafunctionstackresttestXXXXXXXXANYXXXXXXXX"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/ANY/ApiPermission.Test.lambdapythonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
       }
     },
     "resttestANYXXXXXXXX": {
@@ -421,7 +458,7 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/rest-test/Default/ANY/Resource"
+        "aws:cdk:path": "lambda-python-function-stack/rest-test/Default/ANY/Resource"
       }
     },
     "CDKMetadata": {
@@ -430,8 +467,22 @@
         "Analytics": "vX:XXXXXX:XXXXXX"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-function-stack/CDKMetadata/Default"
+        "aws:cdk:path": "lambda-python-function-stack/CDKMetadata/Default"
       }
+    }
+  },
+  "Parameters": {
+    "AssetParametersXXXXXXXXXXXXX": {
+      "Type": "String",
+      "Description": "S3 bucket for asset XXXXXXXXXXXXX"
+    },
+    "AssetParametersXXXXXXXXXXXXX": {
+      "Type": "String",
+      "Description": "S3 key for asset XXXXXXXXXXXXX"
+    },
+    "AssetParametersXXXXXXXXXXXXX": {
+      "Type": "String",
+      "Description": "Artifact hash for asset XXXXXXXXXXXXX"
     }
   },
   "Outputs": {
