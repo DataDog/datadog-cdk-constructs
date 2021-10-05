@@ -1,8 +1,8 @@
+import "@aws-cdk/assert/jest";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
-import { Datadog, addCdkConstructVersionTag } from "../src/index";
+import { addCdkConstructVersionTag, Datadog } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
@@ -58,7 +58,9 @@ describe("validateProps", () => {
       datadogCdk.addLambdaFunctions([hello]);
     } catch (e) {
       threwError = true;
-      thrownError = e;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
@@ -114,7 +116,9 @@ describe("validateProps", () => {
       datadogCdk.addLambdaFunctions([hello]);
     } catch (e) {
       threwError = true;
-      thrownError = e;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
