@@ -32,6 +32,8 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 
 cd $INTEGRATION_TESTS_DIR
 
+yarn install
+
 OUTPUT_ARRAY=("====================================")
 ALL_TESTS_PASSED=0
 compose_output() {
