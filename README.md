@@ -47,6 +47,7 @@ const datadog = new Datadog(this, "Datadog", {
   pythonLayerVersion: <LAYER_VERSION>,
   addLayers: <BOOLEAN>,
   extensionLayerVersion: "<EXTENSION_VERSION>",
+  forwarderArn: "<FORWARDER_ARN>",
   flushMetricsToLogs: <BOOLEAN>,
   site: "<SITE>",
   apiKey: "{Datadog_API_Key}",
