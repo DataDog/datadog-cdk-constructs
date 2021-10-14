@@ -30,6 +30,7 @@ export interface DatadogProps {
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
   readonly enableDatadogLogs?: boolean;
+  readonly architecture?: string;
 }
 
 enum TagKeys {
@@ -41,6 +42,7 @@ export const defaultProps = {
   enableDatadogTracing: true,
   injectLogContext: true,
   enableDatadogLogs: true,
+  architecture: "x86",
 };
 
 export class Datadog extends cdk.Construct {
@@ -101,6 +103,7 @@ export class Datadog extends cdk.Construct {
         this.props.pythonLayerVersion,
         this.props.nodeLayerVersion,
         this.props.extensionLayerVersion,
+        this.props.architecture,
       );
       redirectHandlers(lambdaFunctions, addLayers);
 
@@ -159,6 +162,11 @@ function validateProps(props: DatadogProps) {
   if (props.extensionLayerVersion !== undefined) {
     if (props.apiKey === undefined && props.apiKmsKey === undefined) {
       throw new Error("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+    }
+  }
+  if (props.architecture !== undefined) {
+    if (props.architecture !== "x86" && props.architecture !== "ARM") {
+      throw new Error("Warning: Invalid `architecture` property. Must be set to either x86 or ARM.");
     }
   }
 }

@@ -11,6 +11,7 @@ import {
   getMissingLayerVersionErrorMsg,
   generateLambdaLayerId,
   generateExtensionLayerId,
+  addArmSuffix,
 } from "../src/layer";
 const NODE_LAYER_VERSION = 1;
 const PYTHON_LAYER_VERSION = 2;
@@ -92,6 +93,37 @@ describe("applyLayers", () => {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
+  it("adds the -ARM suffix when the architecture property is ARM", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      architecture: "ARM",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
       ],
     });
   });
@@ -296,5 +328,19 @@ describe("generateExtensionLayerId", () => {
     const lambdaLayerId: string = generateExtensionLayerId(lambdaFunctionArn);
     const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
     expect(lambdaLayerId).toEqual(`DatadogExtension-${layerValue}`);
+  });
+});
+
+describe("addArmSuffix", () => {
+  it("Doesn't add the -ARM suffix if the arn is invalid", () => {
+    const malformedArn = `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension`;
+    const suffixedArn = addArmSuffix(malformedArn);
+    expect(suffixedArn).toEqual(malformedArn);
+  });
+
+  it("Adds the -ARM suffix when the arn is valid", () => {
+    const arn = `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:11`;
+    const suffixedArn = addArmSuffix(arn);
+    expect(suffixedArn).toEqual(`arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:11`);
   });
 });

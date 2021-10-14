@@ -51,6 +51,7 @@ export function applyLayers(
   pythonLayerVersion?: number,
   nodeLayerVersion?: number,
   extensionLayerVersion?: number,
+  architecture?: string,
 ) {
   // TODO: check region availability
   const errors: string[] = [];
@@ -58,6 +59,7 @@ export function applyLayers(
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
+    const isARM = architecture === "ARM";
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
       return;
@@ -71,6 +73,9 @@ export function applyLayers(
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime);
+      if (isARM) {
+        lambdaLayerArn = addArmSuffix(lambdaLayerArn);
+      }
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -81,12 +86,18 @@ export function applyLayers(
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime);
+      if (isARM) {
+        lambdaLayerArn = addArmSuffix(lambdaLayerArn);
+      }
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (extensionLayerVersion !== undefined) {
       extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion);
+      if (isARM) {
+        extensionLayerArn = addArmSuffix(extensionLayerArn);
+      }
       log.debug(`Using extension layer: ${extensionLayerArn}`);
       addLayer(extensionLayerArn, true, scope, lam, runtime);
     }
@@ -139,6 +150,18 @@ export function getExtensionLayerArn(region: string, version: number) {
     return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
   }
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
+}
+
+export function addArmSuffix(arn: string) {
+  const elements = arn.split(":");
+  //test length since we are exporting the function
+  if (elements.length !== 8) {
+    log.debug("Unexpected ARN length. Not adding ARM suffix to lambda ARN");
+    return arn;
+  }
+  const layerName = elements[6];
+  elements[6] = layerName + "-ARM";
+  return elements.join(":");
 }
 
 export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
