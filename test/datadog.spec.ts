@@ -156,7 +156,9 @@ describe("validateProps", () => {
       }
     }
     expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual("Warning: Invalid `architecture` property. Must be set to either x86 or ARM.");
+    expect(thrownError?.message).toEqual(
+      "Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.",
+    );
   });
 });
 

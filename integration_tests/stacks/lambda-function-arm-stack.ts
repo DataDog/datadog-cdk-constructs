@@ -37,7 +37,7 @@ export class ExampleStack extends cdk.Stack {
       flushMetricsToLogs: true,
       apiKey: "1234",
       site: "datadoghq.com",
-      architecture: "ARM",
+      architecture: "ARM_64",
     });
     datadogCDK.addLambdaFunctions([lambdaFunction]);
     datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup]);

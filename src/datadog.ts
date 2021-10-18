@@ -42,7 +42,7 @@ export const defaultProps = {
   enableDatadogTracing: true,
   injectLogContext: true,
   enableDatadogLogs: true,
-  architecture: "x86",
+  architecture: "X86_64",
 };
 
 export class Datadog extends cdk.Construct {
@@ -165,8 +165,8 @@ function validateProps(props: DatadogProps) {
     }
   }
   if (props.architecture !== undefined) {
-    if (props.architecture !== "x86" && props.architecture !== "ARM") {
-      throw new Error("Warning: Invalid `architecture` property. Must be set to either x86 or ARM.");
+    if (props.architecture !== "X86_64" && props.architecture !== "ARM_64") {
+      throw new Error("Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.");
     }
   }
 }

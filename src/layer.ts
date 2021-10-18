@@ -59,7 +59,7 @@ export function applyLayers(
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
-    const isARM = architecture === "ARM";
+    const isARM = architecture === "ARM_64";
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
       return;
@@ -72,10 +72,7 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime);
-      if (isARM) {
-        lambdaLayerArn = addArmSuffix(lambdaLayerArn);
-      }
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM);
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -85,19 +82,13 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime);
-      if (isARM) {
-        lambdaLayerArn = addArmSuffix(lambdaLayerArn);
-      }
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM);
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (extensionLayerVersion !== undefined) {
-      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion);
-      if (isARM) {
-        extensionLayerArn = addArmSuffix(extensionLayerArn);
-      }
+      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM);
       log.debug(`Using extension layer: ${extensionLayerArn}`);
       addLayer(extensionLayerArn, true, scope, lam, runtime);
     }
@@ -130,8 +121,9 @@ function addLayer(
   }
 }
 
-export function getLambdaLayerArn(region: string, version: number, runtime: string) {
-  const layerName = runtimeToLayerName[runtime];
+export function getLambdaLayerArn(region: string, version: number, runtime: string, isArm: boolean) {
+  const baseLayerName = runtimeToLayerName[runtime];
+  const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
 
@@ -143,25 +135,15 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-export function getExtensionLayerArn(region: string, version: number) {
+export function getExtensionLayerArn(region: string, version: number, isArm: boolean) {
+  const baseLayerName = "Datadog-Extension";
+  const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
   if (isGovCloud) {
     log.debug("GovCloud region detected, using the GovCloud extension layer");
-    return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
+    return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
   }
-  return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${version}`;
-}
-
-export function addArmSuffix(arn: string) {
-  const elements = arn.split(":");
-  //test length since we are exporting the function
-  if (elements.length !== 8) {
-    log.debug("Unexpected ARN length. Not adding ARM suffix to lambda ARN");
-    return arn;
-  }
-  const layerName = elements[6];
-  elements[6] = layerName + "-ARM";
-  return elements.join(":");
+  return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
 export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
