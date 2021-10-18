@@ -1,6 +1,4 @@
 import * as lambda from "@aws-cdk/aws-lambda";
-import * as lambdaNodeJS from "@aws-cdk/aws-lambda-nodejs";
-import * as lambdaPython from "@aws-cdk/aws-lambda-python";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
@@ -143,83 +141,6 @@ describe("addLambdaFunctions", () => {
       Layers: [
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:20`,
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
-      ],
-    });
-  });
-
-  it("adds DD Lambda Extension to aws-lambda-nodejs NodejsFunctions", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const helloNodejsFunction = new lambdaNodeJS.NodejsFunction(stack, "HelloNodeJsHandler", {
-      runtime: lambda.Runtime.NODEJS_14_X,
-      entry: "./test/lambda/example-lambda.ts",
-      handler: "handler",
-    });
-
-    let threwError = false;
-    try {
-      const datadogCdk = new Datadog(stack, "Datadog", {
-        nodeLayerVersion: 62,
-        addLayers: true,
-        enableDatadogTracing: false,
-        extensionLayerVersion: 10,
-        flushMetricsToLogs: true,
-        site: "datadoghq.com",
-        forwarderArn: "forwarder-arn",
-        apiKey: "1234",
-      });
-      datadogCdk.addLambdaFunctions([helloNodejsFunction]);
-    } catch (e) {
-      threwError = true;
-    }
-    expect(threwError).toBe(false);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node14-x:62`,
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:10`,
-      ],
-    });
-  });
-
-  it("adds DD Lambda Extension to aws-lambda-python PythonFunctions", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const helloPythonFunction = new lambdaPython.PythonFunction(stack, "HelloPythonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
-      entry: "./test/lambda/",
-      index: "example-lambda.py",
-      handler: "handler",
-    });
-
-    let threwError = false;
-    try {
-      const datadogCdk = new Datadog(stack, "Datadog", {
-        pythonLayerVersion: 46,
-        addLayers: true,
-        enableDatadogTracing: false,
-        extensionLayerVersion: 10,
-        flushMetricsToLogs: true,
-        site: "datadoghq.com",
-        forwarderArn: "forwarder-arn",
-        apiKey: "1234",
-      });
-      datadogCdk.addLambdaFunctions([helloPythonFunction]);
-    } catch (e) {
-      threwError = true;
-    }
-    expect(threwError).toBe(false);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Python37:46`,
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:10`,
       ],
     });
   });
