@@ -60,6 +60,7 @@ export function applyLayers(
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
     const isARM = architecture === "ARM_64";
+    const isNode = lambdaRuntimeType === RuntimeType.NODE;
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
       return;
@@ -72,7 +73,7 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM);
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, isNode);
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -82,7 +83,7 @@ export function applyLayers(
         errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM);
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode);
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -121,9 +122,9 @@ function addLayer(
   }
 }
 
-export function getLambdaLayerArn(region: string, version: number, runtime: string, isArm: boolean) {
+export function getLambdaLayerArn(region: string, version: number, runtime: string, isArm: boolean, isNode: boolean) {
   const baseLayerName = runtimeToLayerName[runtime];
-  const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
+  const layerName = isArm && !isNode ? `${baseLayerName}-ARM` : baseLayerName;
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
 
