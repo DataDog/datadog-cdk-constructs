@@ -59,7 +59,7 @@
         },
         "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
         "Layers": [
-          "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x-ARM:62",
+          "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
           "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension-ARM:10"
         ],
         "Runtime": "nodejs14.x",
