@@ -145,14 +145,14 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
 
 function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
-  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "us5.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
     throw new Error("Both `apiKey` and `apiKmsKey` cannot be set.");
   }
 
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
     throw new Error(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
     );
   }
 
