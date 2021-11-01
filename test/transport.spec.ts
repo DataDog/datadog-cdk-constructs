@@ -328,8 +328,8 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
-      flushMetricsToLogs: false,
+      extensionLayerVersion: 13,
+      flushMetricsToLogs: true,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
     });

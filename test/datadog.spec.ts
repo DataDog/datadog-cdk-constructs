@@ -63,7 +63,7 @@ describe("validateProps", () => {
         site: "datadoghq.com",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError("When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
+    }).toThrowError("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
   });
 
   it("throws an error when the `extensionLayerVersion` is set and neither the `apiKey` nor `apiKmsKey` is set", () => {
@@ -99,6 +99,7 @@ describe("validateProps", () => {
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
   });
+
   it("throws an error if an invalid architecture property is defined", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {

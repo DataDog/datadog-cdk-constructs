@@ -156,8 +156,8 @@ function validateProps(props: DatadogProps) {
     );
   }
 
-  if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error("When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
+  if (props.apiKey === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
   }
   if (props.extensionLayerVersion !== undefined) {
     if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined) {
