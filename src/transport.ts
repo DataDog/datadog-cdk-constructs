@@ -8,6 +8,7 @@
 
 import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
+import { runtimeLookup, RuntimeType } from ".";
 
 export const API_KEY_ENV_VAR = "DD_API_KEY";
 export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
@@ -73,8 +74,11 @@ export class Transport {
       if (this.apiKey !== undefined) {
         lam.addEnvironment(API_KEY_ENV_VAR, this.apiKey);
       }
-      if (this.apiKeySecretArn !== undefined) {
+      const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE
+      if (this.apiKeySecretArn !== undefined && this.flushMetricsToLogs === false && !isNode) {
         lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
+      } else {
+        log.debug(`When using Synchronous Metrics in Node, \`apiKeySecretArn\` will be ignored.`)
       }
       if (this.apiKmsKey !== undefined) {
         lam.addEnvironment(KMS_API_KEY_ENV_VAR, this.apiKmsKey);

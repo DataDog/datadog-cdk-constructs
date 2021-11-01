@@ -348,6 +348,37 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       },
     });
   });
+
+  it("doesn't set DD_API_KEY_SECRET_ARN when using synchronous metrics", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
 });
 describe("apiKMSKeyEnvVar", () => {
   it("adds DD_KMS_API_KEY environment variable", () => {
