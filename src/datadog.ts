@@ -25,6 +25,7 @@ export interface DatadogProps {
   readonly flushMetricsToLogs?: boolean;
   readonly site?: string;
   readonly apiKey?: string;
+  readonly apiKeySecretArn?: string;
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
   readonly injectLogContext?: boolean;
@@ -59,6 +60,7 @@ export class Datadog extends cdk.Construct {
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
+      this.props.apiKeySecretArn,
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
     );
@@ -145,28 +147,43 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
 
 function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
-  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "us5.datadoghq.com", "ddog-gov.com"];
-  if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
-    throw new Error("Both `apiKey` and `apiKmsKey` cannot be set.");
-  }
 
+  checkForMultipleApiKeys(props);
+  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "us5.datadoghq.com", "ddog-gov.com"];
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
     throw new Error(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
     );
   }
 
-  if (props.apiKey === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
-    throw new Error("When `flushMetricsToLogs` is false, `apiKey` or `apiKmsKey` must also be set.");
+  if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined && props.flushMetricsToLogs === false) {
+    throw new Error("When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
   }
   if (props.extensionLayerVersion !== undefined) {
-    if (props.apiKey === undefined && props.apiKmsKey === undefined) {
-      throw new Error("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+    if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined) {
+      throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
     }
   }
   if (props.architecture !== undefined) {
     if (props.architecture !== "X86_64" && props.architecture !== "ARM_64") {
       throw new Error("Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.");
     }
+  }
+}
+
+export function checkForMultipleApiKeys(props: DatadogProps) {
+  let multipleApiKeysMessage;
+  if (props.apiKey !== undefined && props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
+    multipleApiKeysMessage = "`apiKey`, `apiKmsKey`, and `apiKeySecretArn`";
+  } else if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
+    multipleApiKeysMessage = "`apiKey` and `apiKmsKey`";
+  } else if (props.apiKey !== undefined && props.apiKeySecretArn !== undefined) {
+    multipleApiKeysMessage = "`apiKey` and `apiKeySecretArn`";
+  } else if (props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
+    multipleApiKeysMessage = "`apiKmsKey` and `apiKeySecretArn`";
+  }
+
+  if (multipleApiKeysMessage) {
+    throw new Error(`${multipleApiKeysMessage} should not be set at the same time.`);
   }
 }

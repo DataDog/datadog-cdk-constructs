@@ -10,6 +10,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
 
 export const API_KEY_ENV_VAR = "DD_API_KEY";
+export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
 export const KMS_API_KEY_ENV_VAR = "DD_KMS_API_KEY";
 export const SITE_URL_ENV_VAR = "DD_SITE";
 export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
@@ -24,6 +25,7 @@ export class Transport {
   flushMetricsToLogs: boolean;
   site: string;
   apiKey?: string;
+  apiKeySecretArn?: string;
   apiKmsKey?: string;
   extensionLayerVersion?: number;
 
@@ -31,6 +33,7 @@ export class Transport {
     flushMetricsToLogs?: boolean,
     site?: string,
     apiKey?: string,
+    apiKeySecretArn?: string,
     apiKmsKey?: string,
     extensionLayerVersion?: number,
   ) {
@@ -56,6 +59,7 @@ export class Transport {
     }
 
     this.apiKey = apiKey;
+    this.apiKeySecretArn = apiKeySecretArn;
     this.apiKmsKey = apiKmsKey;
   }
 
@@ -68,6 +72,9 @@ export class Transport {
       }
       if (this.apiKey !== undefined) {
         lam.addEnvironment(API_KEY_ENV_VAR, this.apiKey);
+      }
+      if (this.apiKeySecretArn !== undefined) {
+        lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
       }
       if (this.apiKmsKey !== undefined) {
         lam.addEnvironment(KMS_API_KEY_ENV_VAR, this.apiKmsKey);
