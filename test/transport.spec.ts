@@ -368,7 +368,9 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       });
       datadogCDK.addLambdaFunctions([hello]);
-    }).toThrowError(`When using Synchronous Metrics in Node, \`apiKeySecretArn\` will be ignored.`)
+    }).toThrowError(
+      `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
+    );
   });
 
   it("adds DD_API_KEY_SECRET_ARN when using synchronous metrics in python", () => {

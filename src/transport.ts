@@ -74,15 +74,17 @@ export class Transport {
       if (this.apiKey !== undefined) {
         lam.addEnvironment(API_KEY_ENV_VAR, this.apiKey);
       }
-      const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE
-      const isSendingSynchronousMetrics = this.extensionLayerVersion === undefined && !this.flushMetricsToLogs
+      const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE;
+      const isSendingSynchronousMetrics = this.extensionLayerVersion === undefined && !this.flushMetricsToLogs;
       if (this.apiKeySecretArn !== undefined) {
         if (!(isSendingSynchronousMetrics && isNode)) {
           lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
         } else {
-          throw new Error(`When using Synchronous Metrics in Node, \`apiKeySecretArn\` will be ignored.`);
+          throw new Error(
+            `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
+          );
         }
-      } 
+      }
       if (this.apiKmsKey !== undefined) {
         lam.addEnvironment(KMS_API_KEY_ENV_VAR, this.apiKmsKey);
       }
