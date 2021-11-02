@@ -74,9 +74,9 @@ export class Transport {
       if (this.apiKey !== undefined) {
         lam.addEnvironment(API_KEY_ENV_VAR, this.apiKey);
       }
-      const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE;
-      const isSendingSynchronousMetrics = this.extensionLayerVersion === undefined && !this.flushMetricsToLogs;
       if (this.apiKeySecretArn !== undefined) {
+        const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE;
+        const isSendingSynchronousMetrics = this.extensionLayerVersion === undefined && !this.flushMetricsToLogs;
         if (isSendingSynchronousMetrics && isNode) {
           throw new Error(
             `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
