@@ -80,7 +80,7 @@ export class Transport {
         if (isSendingSynchronousMetrics && isNode) {
           throw new Error(
             `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
-          ); 
+          );
         }
         lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
       }
