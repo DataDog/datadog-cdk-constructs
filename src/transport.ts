@@ -80,7 +80,7 @@ export class Transport {
         if (!(isSendingSynchronousMetrics && isNode)) {
           lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
         } else {
-          log.debug(`When using Synchronous Metrics in Node, \`apiKeySecretArn\` will be ignored.`)
+          throw new Error(`When using Synchronous Metrics in Node, \`apiKeySecretArn\` will be ignored.`);
         }
       } 
       if (this.apiKmsKey !== undefined) {

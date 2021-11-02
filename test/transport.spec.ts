@@ -361,24 +361,14 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
-      flushMetricsToLogs: false,
-      site: "datadoghq.com",
-      apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
-    });
-    datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Environment: {
-        Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [SITE_URL_ENV_VAR]: "datadoghq.com",
-          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
-          [ENABLE_DD_TRACING_ENV_VAR]: "true",
-          [ENABLE_DD_LOGS_ENV_VAR]: "true",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
-        },
-      },
-    });
+    expect(() => {
+      const datadogCDK = new Datadog(stack, "Datadog", {
+        flushMetricsToLogs: false,
+        site: "datadoghq.com",
+        apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+      });
+      datadogCDK.addLambdaFunctions([hello]);
+    }).toThrowError(`When using Synchronous Metrics in Node, \`apiKeySecretArn\` will be ignored.`)
   });
 
   it("adds DD_API_KEY_SECRET_ARN when using synchronous metrics in python", () => {
