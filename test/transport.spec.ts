@@ -349,7 +349,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
     });
   });
 
-  it("doesn't set DD_API_KEY_SECRET_ARN when using synchronous metrics", () => {
+  it("doesn't set DD_API_KEY_SECRET_ARN when using synchronous metrics in node", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -362,7 +362,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      flushMetricsToLogs: true,
+      flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
     });
@@ -371,10 +371,44 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+
+  it("adds DD_API_KEY_SECRET_ARN when using synchronous metrics in python", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_9,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      flushMetricsToLogs: false,
+      site: "datadoghq.com",
+      apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [API_KEY_SECRET_ARN_ENV_VAR]: "some-resource:from:aws:secrets-manager:arn",
         },
       },
     });
