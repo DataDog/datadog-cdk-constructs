@@ -1,8 +1,8 @@
+import "@aws-cdk/assert/jest";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
-import { Datadog, addCdkConstructVersionTag } from "../src/index";
+import { addCdkConstructVersionTag, Datadog } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
@@ -58,11 +58,13 @@ describe("validateProps", () => {
       datadogCdk.addLambdaFunctions([hello]);
     } catch (e) {
       threwError = true;
-      thrownError = e;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
     );
   });
 
@@ -114,10 +116,49 @@ describe("validateProps", () => {
       datadogCdk.addLambdaFunctions([hello]);
     } catch (e) {
       threwError = true;
-      thrownError = e;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+  });
+  it("throws an error if an invalid architecture property is defined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_10_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        addLayers: true,
+        apiKey: "1234",
+        enableDatadogTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+        architecture: "Pentium II",
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual(
+      "Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.",
+    );
   });
 });
 

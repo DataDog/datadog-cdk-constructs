@@ -30,6 +30,7 @@ export interface DatadogProps {
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
   readonly enableDatadogLogs?: boolean;
+  readonly architecture?: string;
 }
 
 enum TagKeys {
@@ -41,6 +42,7 @@ export const defaultProps = {
   enableDatadogTracing: true,
   injectLogContext: true,
   enableDatadogLogs: true,
+  architecture: "X86_64",
 };
 
 export class Datadog extends cdk.Construct {
@@ -101,6 +103,7 @@ export class Datadog extends cdk.Construct {
         this.props.pythonLayerVersion,
         this.props.nodeLayerVersion,
         this.props.extensionLayerVersion,
+        this.props.architecture,
       );
       redirectHandlers(lambdaFunctions, addLayers);
 
@@ -142,14 +145,14 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
 
 function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
-  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"];
+  const siteList: string[] = ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "us5.datadoghq.com", "ddog-gov.com"];
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
     throw new Error("Both `apiKey` and `apiKmsKey` cannot be set.");
   }
 
   if (props.site !== undefined && !siteList.includes(props.site.toLowerCase())) {
     throw new Error(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, or ddog-gov.com.",
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
     );
   }
 
@@ -159,6 +162,11 @@ function validateProps(props: DatadogProps) {
   if (props.extensionLayerVersion !== undefined) {
     if (props.apiKey === undefined && props.apiKmsKey === undefined) {
       throw new Error("When `extensionLayer` is set, `apiKey` or `apiKmsKey` must also be set.");
+    }
+  }
+  if (props.architecture !== undefined) {
+    if (props.architecture !== "X86_64" && props.architecture !== "ARM_64") {
+      throw new Error("Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.");
     }
   }
 }
