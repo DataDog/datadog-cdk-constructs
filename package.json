@@ -66,9 +66,7 @@
     "constructs": "^3.2.27"
   },
   "dependencies": {
-    "global": "^4.4.0",
-    "loglevel": "^1.7.1",
-    "tsc": "^2.0.3"
+    "loglevel": "^1.7.1"
   },
   "bundledDependencies": [
     "loglevel"

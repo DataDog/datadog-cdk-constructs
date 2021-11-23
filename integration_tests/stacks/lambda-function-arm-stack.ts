@@ -11,7 +11,6 @@ import * as cdk from "@aws-cdk/core";
 import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import { Datadog } from "../../src/index";
-import { Architecture } from "@aws-cdk/aws-lambda";
 
 export class ExampleStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
@@ -21,7 +20,6 @@ export class ExampleStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromInline("test"),
       handler: "lambdaFunction.handler",
-      architecture: Architecture.ARM_64,
     });
 
     const restLogGroup = new LogGroup(this, "restLogGroup");
@@ -39,7 +37,7 @@ export class ExampleStack extends cdk.Stack {
       flushMetricsToLogs: true,
       apiKey: "1234",
       site: "datadoghq.com",
-      
+      architecture: "ARM_64",
     });
     datadogCDK.addLambdaFunctions([lambdaFunction]);
     datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup]);
