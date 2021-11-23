@@ -12,6 +12,7 @@ import {
   generateLambdaLayerId,
   generateExtensionLayerId,
 } from "../src/layer";
+import { Architecture } from "@aws-cdk/aws-lambda";
 const NODE_LAYER_VERSION = 1;
 const PYTHON_LAYER_VERSION = 2;
 const EXTENSION_LAYER_VERSION = 5;
@@ -77,6 +78,7 @@ describe("applyLayers", () => {
       runtime: lambda.Runtime.NODEJS_10_X,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
+      architecture: Architecture.ARM_64,
     });
 
     const datadogCdk = new Datadog(stack, "Datadog", {
@@ -87,7 +89,6 @@ describe("applyLayers", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      architecture: "ARM_64",
     });
     datadogCdk.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -139,6 +140,7 @@ describe("applyLayers", () => {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
+      architecture: Architecture.ARM_64,
     });
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
@@ -148,7 +150,6 @@ describe("applyLayers", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      architecture: "ARM_64",
     });
     datadogCdk.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -353,6 +354,7 @@ describe("isGovCloud", () => {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
+      architecture: Architecture.ARM_64,
     });
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
@@ -362,7 +364,6 @@ describe("isGovCloud", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      architecture: "ARM_64",
     });
     datadogCdk.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
