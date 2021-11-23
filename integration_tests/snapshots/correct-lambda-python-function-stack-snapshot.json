@@ -111,6 +111,8 @@
       "Metadata": {
         "aws:cdk:path": "lambda-python-function-stack/HelloHandler/Resource",
         "aws:asset:path": "asset.XXXXXXXXXXXXX",
+        "aws:asset:original-path": "/Users/jordan.gonzalez/go/src/github.com/DataDog/datadog-cdk-constructs/integration_tests/lambda",
+        "aws:asset:is-bundled": true,
         "aws:asset:property": "Code"
       }
     },
