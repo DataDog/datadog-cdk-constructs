@@ -88,7 +88,7 @@ for ((i = 0; i < ${#STACK_CONFIGS[@]}; i++)); do
     # Normalize S3 Bucket for asset
     perl -p -i -e 's/(for asset .*")/for asset XXXXXXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
     # Normalize Metadata aws:asset:path
-    perl -p -i -e 's/("aws:asset:path\..*")/"asset.XXXXXXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+    perl -p -i -e 's/("asset\..*")/"asset.XXXXXXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
     # Normalize Metadata aws:asset:original-path
     perl -p -i -e 's/("aws:asset:original-path": )"(.+)"/$1\"XXXXXXXXXXXXX\"/g' ${RAW_CFN_TEMPLATE}
     # Normalize Datadog Layer Arn versions
