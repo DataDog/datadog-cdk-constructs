@@ -111,6 +111,8 @@
       "Metadata": {
         "aws:cdk:path": "lambda-python-function-stack/HelloHandler/Resource",
         "aws:asset:path": "asset.XXXXXXXXXXXXX",
+        "aws:asset:original-path": "XXXXXXXXXXXXX",
+        "aws:asset:is-bundled": true,
         "aws:asset:property": "Code"
       }
     },

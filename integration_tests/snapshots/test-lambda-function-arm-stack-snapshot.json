@@ -46,6 +46,9 @@
             "Arn"
           ]
         },
+        "Architectures": [
+          "arm64"
+        ],
         "Environment": {
           "Variables": {
             "DD_LAMBDA_HANDLER": "lambdaFunction.handler",

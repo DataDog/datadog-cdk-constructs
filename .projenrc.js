@@ -21,7 +21,7 @@ const project = new AwsCdkConstructLibrary({
     distName: "datadog-cdk-constructs",
     module: "datadog_cdk_constructs",
   },
-  cdkVersion: "1.121.0",
+  cdkVersion: "1.134.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   cdkDependencies: [

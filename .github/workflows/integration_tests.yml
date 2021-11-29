@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Node 14
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: 14
 
@@ -24,6 +24,9 @@ jobs:
 
       - name: Install CDK CLI
         run: sudo yarn global add aws-cdk --prefix /usr/local
+
+      - name: Install Packages
+        run: sudo yarn projen
 
       - name: Run tests
         env:

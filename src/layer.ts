@@ -8,6 +8,7 @@
 
 import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
+import { Architecture } from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 export const DD_ACCOUNT_ID = "464622532012";
@@ -51,7 +52,6 @@ export function applyLayers(
   pythonLayerVersion?: number,
   nodeLayerVersion?: number,
   extensionLayerVersion?: number,
-  architecture?: string,
 ) {
   // TODO: check region availability
   const errors: string[] = [];
@@ -59,7 +59,7 @@ export function applyLayers(
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
-    const isARM = architecture === "ARM_64";
+    const isARM = lam.architecture === Architecture.ARM_64;
     const isNode = lambdaRuntimeType === RuntimeType.NODE;
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);

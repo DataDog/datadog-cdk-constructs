@@ -103,44 +103,6 @@ describe("validateProps", () => {
       "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   });
-
-  it("throws an error if an invalid architecture property is defined", () => {
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    let threwError = false;
-    let thrownError: Error | undefined;
-    try {
-      const datadogCdk = new Datadog(stack, "Datadog", {
-        nodeLayerVersion: NODE_LAYER_VERSION,
-        extensionLayerVersion: EXTENSION_LAYER_VERSION,
-        addLayers: true,
-        apiKey: "1234",
-        enableDatadogTracing: false,
-        flushMetricsToLogs: true,
-        site: "datadoghq.com",
-        architecture: "Pentium II",
-      });
-      datadogCdk.addLambdaFunctions([hello]);
-    } catch (e) {
-      threwError = true;
-      if (e instanceof Error) {
-        thrownError = e;
-      }
-    }
-    expect(threwError).toBe(true);
-    expect(thrownError?.message).toEqual(
-      "Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.",
-    );
-  });
 });
 
 describe("addCdkConstructVersionTag", () => {

@@ -31,7 +31,6 @@ export interface DatadogProps {
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
   readonly enableDatadogLogs?: boolean;
-  readonly architecture?: string;
 }
 
 enum TagKeys {
@@ -105,7 +104,6 @@ export class Datadog extends cdk.Construct {
         this.props.pythonLayerVersion,
         this.props.nodeLayerVersion,
         this.props.extensionLayerVersion,
-        this.props.architecture,
       );
       redirectHandlers(lambdaFunctions, addLayers);
 
@@ -175,11 +173,6 @@ function validateProps(props: DatadogProps) {
   if (props.extensionLayerVersion !== undefined) {
     if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined) {
       throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
-    }
-  }
-  if (props.architecture !== undefined) {
-    if (props.architecture !== "X86_64" && props.architecture !== "ARM_64") {
-      throw new Error("Warning: Invalid `architecture` property. Must be set to either X86_64 or ARM_64.");
     }
   }
 }
