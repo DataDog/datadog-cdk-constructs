@@ -30,7 +30,7 @@ jobs:
         run: sudo yarn global add aws-cdk --prefix /usr/local
 
       - name: Install Packages
-        run: sudo yarn projen
+        run: npx projen
 
       - name: Run tests
         env:
