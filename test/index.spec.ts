@@ -7,6 +7,7 @@ import {
   ENABLE_DD_TRACING_ENV_VAR,
   INJECT_LOG_CONTEXT_ENV_VAR,
   ENABLE_DD_LOGS_ENV_VAR,
+  CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
 } from "../src/index";
 import { DD_ACCOUNT_ID } from "../src/layer";
 import { JS_HANDLER_WITH_LAYERS, DD_HANDLER_ENV_VAR, PYTHON_HANDLER } from "../src/redirect";
@@ -175,6 +176,7 @@ describe("applyLayers", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
@@ -208,6 +210,7 @@ describe("applyLayers", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
@@ -254,6 +257,7 @@ describe("applyLayers", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },

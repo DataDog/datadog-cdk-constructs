@@ -22,11 +22,15 @@ jobs:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install
+
       - name: Install CDK CLI
         run: sudo yarn global add aws-cdk --prefix /usr/local
 
       - name: Install Packages
-        run: sudo yarn projen
+        run: npx projen
 
       - name: Run tests
         env:
