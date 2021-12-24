@@ -14,24 +14,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
   jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
   releaseEveryCommit: false,
-  cdkDependenciesAsDeps: false,
-
   publishToPypi: {
     distName: "datadog-cdk-constructs",
     module: "datadog_cdk_constructs",
   },
-  cdkVersion: "1.134.0",
+  cdkVersion: "2.0.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
-  cdkDependencies: [
-    "@aws-cdk/aws-lambda",
-    "@aws-cdk/aws-lambda-nodejs",
-    "@aws-cdk/aws-lambda-python",
-    "@aws-cdk/aws-logs",
-    "@aws-cdk/aws-logs-destinations",
-    "@aws-cdk/core",
-    "@aws-cdk/aws-apigateway",
-  ],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
   gitignore: [
     "*.js",
