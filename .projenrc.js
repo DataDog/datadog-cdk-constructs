@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
+const { awscdk, javascript } = require("projen");
 
-const project = new AwsCdkConstructLibrary({
+const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs",
   description: "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
   author: "Datadog",
@@ -9,8 +9,7 @@ const project = new AwsCdkConstructLibrary({
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
-  projectType: ProjectType.LIB,
-  packageManager: NodePackageManager.YARN,
+  packageManager: javascript.NodePackageManager.YARN,
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
@@ -65,6 +64,7 @@ const project = new AwsCdkConstructLibrary({
   dependabot: false,
   buildWorkflow: false,
   releaseWorkflow: false,
+  githubOptions: { workflows: false },
   rebuildBot: false,
   mergify: false,
   licensed: true,
