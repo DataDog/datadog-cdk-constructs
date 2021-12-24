@@ -1,6 +1,6 @@
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
+import { Template } from "aws-cdk-lib/assertions";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as cdk from "aws-cdk-lib/core";
 import {
   Datadog,
   API_KEY_ENV_VAR,
@@ -36,7 +36,7 @@ describe("SITE_URL_ENV_VAR", () => {
       apiKey: "1234",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [SITE_URL_ENV_VAR]: "datadoghq.eu",
@@ -70,7 +70,7 @@ describe("SITE_URL_ENV_VAR", () => {
       apiKey: "1234",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
@@ -103,7 +103,7 @@ describe("SITE_URL_ENV_VAR", () => {
       apiKey: "1234",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
@@ -137,7 +137,7 @@ describe("SITE_URL_ENV_VAR", () => {
       apiKey: "1234",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
@@ -171,7 +171,7 @@ describe("SITE_URL_ENV_VAR", () => {
       site: "datadoghq.eu",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
@@ -206,7 +206,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       site: "datadoghq.com",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [SITE_URL_ENV_VAR]: "datadoghq.com",
@@ -238,7 +238,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
@@ -270,7 +270,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       flushMetricsToLogs: true,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
@@ -307,7 +307,7 @@ describe("API_KEY_ENV_VAR", () => {
       apiKey: "1234",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -344,7 +344,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -402,7 +402,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -438,7 +438,7 @@ describe("apiKMSKeyEnvVar", () => {
       apiKmsKey: "5678",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",

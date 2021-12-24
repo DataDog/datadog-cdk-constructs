@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as lambdaNodejs from "@aws-cdk/aws-lambda-nodejs";
-import * as lambdaPython from "@aws-cdk/aws-lambda-python";
-import { LogGroup } from "@aws-cdk/aws-logs";
-import * as cdk from "@aws-cdk/core";
+import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
+import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import { LogGroup } from "aws-cdk-lib/aws-logs";
+import * as cdk from "aws-cdk-lib/core";
 import { Datadog } from "../index";
 
 export class ExampleStack extends cdk.Stack {

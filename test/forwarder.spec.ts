@@ -1,8 +1,8 @@
-import { LambdaRestApi, LogGroupLogDestination } from "@aws-cdk/aws-apigateway";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { LogGroup } from "@aws-cdk/aws-logs";
-import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
+import { Template } from "aws-cdk-lib/assertions";
+import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { LogGroup } from "aws-cdk-lib/aws-logs";
+import * as cdk from "aws-cdk-lib/core";
 
 import { addForwarder, addForwarderToLogGroups } from "../src/forwarder";
 import { findDatadogSubscriptionFilters } from "./test-utils";
@@ -21,7 +21,7 @@ describe("Forwarder", () => {
       handler: "hello.handler",
     });
     addForwarder(stack, [pythonLambda], "forwarder-arn");
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
@@ -175,7 +175,7 @@ describe("Forwarder", () => {
       },
     });
     addForwarderToLogGroups(stack, [restLogGroup], "forwarder-arn");
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
@@ -189,7 +189,7 @@ describe("Forwarder", () => {
     });
     const logGroup = LogGroup.fromLogGroupName(stack, "LogGroup", "logGroupName");
     addForwarderToLogGroups(stack, [logGroup], "forwarder-arn");
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
@@ -252,11 +252,11 @@ describe("Forwarder", () => {
     });
     addForwarder(stack, [pythonLambda], "forwarder-arn");
     addForwarderToLogGroups(stack, [restLogGroup], "forwarder-arn-rest");
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn-rest",
       FilterPattern: "",
     });

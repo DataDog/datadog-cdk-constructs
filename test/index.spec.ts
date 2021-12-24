@@ -1,6 +1,6 @@
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
+import { Template } from "aws-cdk-lib/assertions";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as cdk from "aws-cdk-lib/core";
 import {
   Datadog,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
@@ -105,7 +105,7 @@ describe("addLambdaFunctions", () => {
     });
     NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
 
-    expect(NestedStack).toHaveResource("AWS::Logs::SubscriptionFilter", {
+    Template.fromStack(NestedStack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "forwarder-arn",
       FilterPattern: "",
     });
@@ -138,7 +138,7 @@ describe("addLambdaFunctions", () => {
     });
     NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
 
-    expect(NestedStack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(NestedStack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:20`,
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
@@ -166,10 +166,10 @@ describe("applyLayers", () => {
       forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -200,10 +200,10 @@ describe("applyLayers", () => {
       forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -246,11 +246,11 @@ describe("applyLayers", () => {
       forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 3);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",

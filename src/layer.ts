@@ -7,9 +7,9 @@
  */
 
 import * as crypto from "crypto";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { Architecture } from "@aws-cdk/aws-lambda";
-import * as cdk from "@aws-cdk/core";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { Architecture } from "aws-cdk-lib/aws-lambda";
+import { Construct } from "constructs";
 import log from "loglevel";
 export const DD_ACCOUNT_ID = "464622532012";
 export const DD_GOV_ACCOUNT_ID = "002406178527";
@@ -46,7 +46,7 @@ const runtimeToLayerName: { [key: string]: string } = {
 const layers: Map<string, lambda.ILayerVersion> = new Map();
 
 export function applyLayers(
-  scope: cdk.Construct,
+  scope: Construct,
   region: string,
   lambdas: lambda.Function[],
   pythonLayerVersion?: number,
@@ -100,7 +100,7 @@ export function applyLayers(
 function addLayer(
   layerArn: string,
   isExtensionLayer: boolean,
-  scope: cdk.Construct,
+  scope: Construct,
   lam: lambda.Function,
   runtime: string,
 ) {

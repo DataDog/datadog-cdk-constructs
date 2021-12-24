@@ -7,12 +7,13 @@
  */
 
 import * as crypto from "crypto";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { FilterPattern, ILogGroup } from "@aws-cdk/aws-logs";
-import * as cdk from "@aws-cdk/core";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { FilterPattern, ILogGroup } from "aws-cdk-lib/aws-logs";
+import * as cdk from "aws-cdk-lib/core";
+import { Construct } from "constructs";
 import log from "loglevel";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
-// Change back to 'import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";'
+// Change back to 'import { LambdaDestination } from "aws-cdk-lib/aws-logs-destinations";'
 // once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
 import { LambdaDestination } from "./lambdaDestination";
 
@@ -34,7 +35,7 @@ function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: 
   return subscriptionFilterName;
 }
 
-function getForwarder(scope: cdk.Construct, forwarderArn: string) {
+function getForwarder(scope: Construct, forwarderArn: string) {
   const forwarderConstructId = generateForwarderConstructId(forwarderArn);
   if (scope.node.tryFindChild(forwarderConstructId)) {
     return scope.node.tryFindChild(forwarderConstructId) as lambda.IFunction;
@@ -43,7 +44,7 @@ function getForwarder(scope: cdk.Construct, forwarderArn: string) {
   }
 }
 
-export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
+export function addForwarder(scope: Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);
   lambdaFunctions.forEach((lam) => {
@@ -56,7 +57,7 @@ export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Funct
   });
 }
 
-export function addForwarderToLogGroups(scope: cdk.Construct, logGroups: ILogGroup[], forwarderArn: string) {
+export function addForwarderToLogGroups(scope: Construct, logGroups: ILogGroup[], forwarderArn: string) {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);
   logGroups.forEach((group) => {

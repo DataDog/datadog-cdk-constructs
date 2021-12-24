@@ -1,7 +1,7 @@
-import "@aws-cdk/assert/jest";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { LogGroup } from "@aws-cdk/aws-logs";
-import * as cdk from "@aws-cdk/core";
+import { Template } from "aws-cdk-lib/assertions";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { LogGroup } from "aws-cdk-lib/aws-logs";
+import * as cdk from "aws-cdk-lib/core";
 import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
@@ -124,7 +124,7 @@ describe("addCdkConstructVersionTag", () => {
       handler: "hello.handler",
     });
     addCdkConstructVersionTag([hello1, hello2]);
-    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Runtime: "nodejs10.x",
       Tags: [
         {
@@ -133,7 +133,7 @@ describe("addCdkConstructVersionTag", () => {
         },
       ],
     });
-    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Runtime: "python3.8",
       Tags: [
         {
@@ -168,7 +168,7 @@ describe("addCdkConstructVersionTag", () => {
     });
 
     datadogCdk.addLambdaFunctions([hello1]);
-    expect(stack).not.toHaveResource("AWS::Logs::SubscriptionFilter");
+    Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 0);
   });
 
   it("Does call the addForwarderToNonLambdaLogGrpoups function when the extension is enabled", () => {
@@ -193,8 +193,7 @@ describe("addCdkConstructVersionTag", () => {
     });
 
     datadogCdk.addForwarderToNonLambdaLogGroups([helloLogGroup]);
-
-    expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");
+    Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 1);
   });
 });
 

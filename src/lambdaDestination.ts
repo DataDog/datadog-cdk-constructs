@@ -1,5 +1,5 @@
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as logs from "@aws-cdk/aws-logs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 
 /**
  * Use a Lambda Function as the destination for a log subscription.

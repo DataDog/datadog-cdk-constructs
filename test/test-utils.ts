@@ -1,8 +1,8 @@
-import { CfnSubscriptionFilter } from "@aws-cdk/aws-logs";
-import * as cdk from "@aws-cdk/core";
+import { CfnSubscriptionFilter } from "aws-cdk-lib/aws-logs";
+import { Construct } from "constructs";
 import { SUBSCRIPTION_FILTER_PREFIX } from "../src/forwarder";
 
-export const findDatadogSubscriptionFilters = (baseConstruct: cdk.Construct) => {
+export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
   return baseConstruct.node
     .findAll()
     .filter((construct) => construct.node.id.startsWith(SUBSCRIPTION_FILTER_PREFIX))

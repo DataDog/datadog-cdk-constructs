@@ -1,6 +1,6 @@
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
+import { Template } from "aws-cdk-lib/assertions";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as cdk from "aws-cdk-lib/core";
 import {
   redirectHandlers,
   JS_HANDLER_WITH_LAYERS,
@@ -23,7 +23,7 @@ describe("redirectHandlers", () => {
       handler: "hello.handler",
     });
     redirectHandlers([hello], true);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
   });
@@ -41,7 +41,7 @@ describe("redirectHandlers", () => {
       handler: "hello.handler",
     });
     redirectHandlers([hello], false);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER}`,
     });
   });
@@ -59,10 +59,10 @@ describe("redirectHandlers", () => {
       handler: "hello.handler",
     });
     redirectHandlers([hello], true);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",

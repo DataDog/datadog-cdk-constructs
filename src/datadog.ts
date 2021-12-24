@@ -6,11 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as lambdaNodejs from "@aws-cdk/aws-lambda-nodejs";
-import * as lambdaPython from "@aws-cdk/aws-lambda-python";
-import * as logs from "@aws-cdk/aws-logs";
-import * as cdk from "@aws-cdk/core";
+import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import * as logs from "aws-cdk-lib/aws-logs";
+import * as cdk from "aws-cdk-lib/core";
+import { Construct } from "constructs";
 import log from "loglevel";
 import { applyLayers, redirectHandlers, addForwarder, addForwarderToLogGroups, applyEnvVariables } from "./index";
 import { Transport } from "./transport";
@@ -47,11 +48,11 @@ export const defaultProps = {
   captureLambdaPayload: false,
 };
 
-export class Datadog extends cdk.Construct {
-  scope: cdk.Construct;
+export class Datadog extends Construct {
+  scope: Construct;
   props: DatadogProps;
   transport: Transport;
-  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+  constructor(scope: Construct, id: string, props: DatadogProps) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS == "true") log.setLevel("debug");
     super(scope, id);
     this.scope = scope;

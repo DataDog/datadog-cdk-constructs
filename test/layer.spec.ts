@@ -1,8 +1,8 @@
 import * as crypto from "crypto";
-import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
+import { Match, Template } from "aws-cdk-lib/assertions";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { Architecture } from "aws-cdk-lib/aws-lambda";
+import * as cdk from "aws-cdk-lib/core";
 import { Datadog } from "../src/index";
 import {
   applyLayers,
@@ -12,7 +12,6 @@ import {
   generateLambdaLayerId,
   generateExtensionLayerId,
 } from "../src/layer";
-import { Architecture } from "@aws-cdk/aws-lambda";
 const NODE_LAYER_VERSION = 1;
 const PYTHON_LAYER_VERSION = 2;
 const EXTENSION_LAYER_VERSION = 5;
@@ -31,7 +30,7 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
     const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`],
     });
     expect(errors.length).toEqual(0);
@@ -59,7 +58,7 @@ describe("applyLayers", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
@@ -91,7 +90,7 @@ describe("applyLayers", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
@@ -121,7 +120,7 @@ describe("applyLayers", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
@@ -152,7 +151,7 @@ describe("applyLayers", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
@@ -187,13 +186,13 @@ describe("applyLayers", () => {
     const errors = applyLayers(stack, stack.region, [hello1, hello2, hello3], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
 
     expect(errors.length).toEqual(0);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`],
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:${NODE_LAYER_VERSION}`],
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node14-x:${NODE_LAYER_VERSION}`],
     });
   });
@@ -211,8 +210,8 @@ describe("applyLayers", () => {
       handler: "hello.handler",
     });
     const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: ABSENT,
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.absent(),
     });
     expect(errors.length).toEqual(0);
   });
@@ -235,8 +234,8 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
     const errors = applyLayers(stack, stack.region, [hello1, hello2]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Layers: ABSENT,
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.absent(),
     });
     expect(errors).toEqual([
       getMissingLayerVersionErrorMsg("NodeHandler", "Node.js", "node"),
@@ -273,12 +272,12 @@ describe("isGovCloud", () => {
     );
 
     expect(errors.length).toEqual(0);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python36:${PYTHON_LAYER_VERSION}`,
       ],
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`],
     });
   });
@@ -305,7 +304,7 @@ describe("isGovCloud", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node10-x:${NODE_LAYER_VERSION}`,
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
@@ -335,7 +334,7 @@ describe("isGovCloud", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
@@ -366,7 +365,7 @@ describe("isGovCloud", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,

@@ -6,7 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import { RuntimeType, runtimeLookup } from "./index";
 export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";

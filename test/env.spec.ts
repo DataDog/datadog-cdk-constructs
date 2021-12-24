@@ -1,6 +1,6 @@
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as cdk from "@aws-cdk/core";
-import "@aws-cdk/assert/jest";
+import { Template } from "aws-cdk-lib/assertions";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as cdk from "aws-cdk-lib/core";
 import {
   Datadog,
   defaultProps,
@@ -31,7 +31,7 @@ describe("applyEnvVariables", () => {
       forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -63,7 +63,7 @@ describe("applyEnvVariables", () => {
       logLevel: EXAMPLE_LOG_LEVEL,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
@@ -96,7 +96,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       enableDatadogTracing: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -124,7 +124,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {});
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -158,7 +158,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
     });
     datadogCDK.addLambdaFunctions([hello]);
 
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -188,7 +188,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       forwarderArn: "forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -222,7 +222,7 @@ describe("LOG_LEVEL_ENV_VAR", () => {
     });
     datadogCDK.addLambdaFunctions([hello]);
 
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -255,7 +255,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       enableDatadogLogs: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -283,7 +283,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {});
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -315,7 +315,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       captureLambdaPayload: true,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
@@ -345,7 +345,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       captureLambdaPayload: undefined,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
