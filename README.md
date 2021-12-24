@@ -16,15 +16,25 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 ## npm Package Installation:
 
 ```
-yarn add --dev datadog-cdk-constructs
+## CDKv1
+yarn add --dev datadog-cdk-constructs@^1.0.0
 # or
-npm install datadog-cdk-constructs --save-dev
+npm install datadog-cdk-constructs@^1.0.0 --save-dev
+
+## CDKv2
+yarn add --dev datadog-cdk-constructs@^2.0.0
+# or
+npm install datadog-cdk-constructs@^2.0.0 --save-dev
 ```
 
 ## PyPI Package Installation:
 
 ```
-pip install datadog-cdk-constructs
+## CDKv1
+pip install datadog-cdk-constructs~=1.0
+
+## CDKv2
+pip install datadog-cdk-constructs~=2.0
 ```
 
 ### Note:
@@ -90,7 +100,9 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK documentation][9].
 
 ```typescript
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+// for CDKv1 use
+//import * as lambda from "@aws-cdk/aws-lambda";
 
 const lambda_function = new lambda.Function(this, "HelloHandler", {
   runtime: lambda.Runtime.NODEJS_10_X,
@@ -106,7 +118,9 @@ Add the Datadog CDK Construct to each stack you wish to instrument with Datadog.
 
 ```typescript
 import { Datadog } from "datadog-cdk-constructs";
-import * as cdk from "@aws-cdk/core";
+import * as cdk from "aws-cdk-lib/core";
+// for CDKv1 use
+//import * as cdk from "@aws-cdk/core";
 
 class RootStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
