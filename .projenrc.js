@@ -12,7 +12,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   packageManager: javascript.NodePackageManager.YARN,
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
-  defaultReleaseBranch: "main",
   releaseEveryCommit: false,
   publishToPypi: {
     distName: "datadog-cdk-constructs",
@@ -59,6 +58,15 @@ const project = new awscdk.AwsCdkConstructLibrary({
   mergify: false,
   licensed: true,
   docgen: false,
+
+  defaultReleaseBranch: "main-v2",
+  majorVersion: 2,
+  releaseBranches: {
+    "main-v1": {
+      majorVersion: 1,
+      npmDistTag: "latest-v1",
+    },
+  },
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
