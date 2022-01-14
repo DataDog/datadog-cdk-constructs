@@ -33,7 +33,7 @@
     "@aws-cdk/aws-logs-destinations": "^1.134.0",
     "@aws-cdk/core": "^1.134.0",
     "@types/jest": "^26.0.20",
-    "@types/node": "^10.17.0",
+    "@types/node": "^10.17.60",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "eslint": "^7.21.0",

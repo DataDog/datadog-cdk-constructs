@@ -3,15 +3,12 @@ import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { Datadog } from "../src/index";
 import {
-  applyLayers,
-  DD_ACCOUNT_ID,
-  DD_GOV_ACCOUNT_ID,
   getMissingLayerVersionErrorMsg,
   generateLambdaLayerId,
   generateExtensionLayerId,
-} from "../src/layer";
+} from "../src/common/experiment";
+import { Datadog, applyLayers, DD_ACCOUNT_ID, DD_GOV_ACCOUNT_ID } from "../src/index";
 import { Architecture } from "@aws-cdk/aws-lambda";
 const NODE_LAYER_VERSION = 1;
 const PYTHON_LAYER_VERSION = 2;

@@ -1,13 +1,7 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import {
-  redirectHandlers,
-  JS_HANDLER_WITH_LAYERS,
-  JS_HANDLER,
-  PYTHON_HANDLER,
-  DD_HANDLER_ENV_VAR,
-} from "../src/redirect";
+import { redirectHandlers, JS_HANDLER_WITH_LAYERS, JS_HANDLER, PYTHON_HANDLER, DD_HANDLER_ENV_VAR } from "../src/index";
 
 describe("redirectHandlers", () => {
   it("redirects js handler correctly when addLayers is true", () => {

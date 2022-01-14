@@ -11,8 +11,8 @@ import {
   LOG_LEVEL_ENV_VAR,
   ENABLE_DD_LOGS_ENV_VAR,
   CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
+  DD_HANDLER_ENV_VAR,
 } from "../src/index";
-import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 
 describe("applyEnvVariables", () => {
   it("applies default values correctly", () => {

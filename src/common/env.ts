@@ -6,8 +6,8 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
+import { LambdaFunction } from "../index";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
@@ -16,7 +16,7 @@ export const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
 export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
 
 export function applyEnvVariables(
-  lambdas: lambda.Function[],
+  lambdas: LambdaFunction[],
   enableDatadogTracing: boolean,
   injectLogContext: boolean,
   enableDatadogLogs: boolean,
