@@ -13,6 +13,15 @@ export enum RuntimeType {
   UNSUPPORTED,
 }
 
+export const DefaultDatadogProps = {
+  addLayers: true,
+  enableDatadogTracing: true,
+  injectLogContext: true,
+  enableDatadogLogs: true,
+  architecture: "X86_64",
+  captureLambdaPayload: false,
+};
+
 export enum TagKeys {
   Cdk = "dd_cdk_construct",
 }

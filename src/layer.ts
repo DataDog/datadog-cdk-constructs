@@ -10,8 +10,15 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { Architecture } from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
-import * as constants from "./common/constants";
-import * as exp from "./common/experiment";
+import {
+  getMissingLayerVersionErrorMsg,
+  getLambdaLayerArn,
+  getExtensionLayerArn,
+  generateExtensionLayerId,
+  generateLambdaLayerId,
+  runtimeLookup,
+  RuntimeType,
+} from "./index";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
 
@@ -28,38 +35,38 @@ export function applyLayers(
   log.debug("Applying layers to Lambda functions...");
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
-    const lambdaRuntimeType: constants.RuntimeType = constants.runtimeLookup[runtime];
+    const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
     const isARM = lam.architecture === Architecture.ARM_64;
-    const isNode = lambdaRuntimeType === constants.RuntimeType.NODE;
-    if (lambdaRuntimeType === constants.RuntimeType.UNSUPPORTED) {
+    const isNode = lambdaRuntimeType === RuntimeType.NODE;
+    if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
       return;
     }
 
     let lambdaLayerArn;
     let extensionLayerArn;
-    if (lambdaRuntimeType === constants.RuntimeType.PYTHON) {
+    if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
-        errors.push(exp.getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
+        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
         return;
       }
-      lambdaLayerArn = exp.getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, isNode);
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, isNode);
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
-    if (lambdaRuntimeType === constants.RuntimeType.NODE) {
+    if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
-        errors.push(exp.getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
+        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
         return;
       }
-      lambdaLayerArn = exp.getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode);
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode);
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (extensionLayerVersion !== undefined) {
-      extensionLayerArn = exp.getExtensionLayerArn(region, extensionLayerVersion, isARM);
+      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM);
       log.debug(`Using extension layer: ${extensionLayerArn}`);
       addLayer(extensionLayerArn, true, scope, lam, runtime);
     }
@@ -76,9 +83,9 @@ function addLayer(
 ) {
   let layerId;
   if (isExtensionLayer) {
-    layerId = exp.generateExtensionLayerId(lam.functionArn);
+    layerId = generateExtensionLayerId(lam.functionArn);
   } else {
-    layerId = exp.generateLambdaLayerId(lam.functionArn, runtime);
+    layerId = generateLambdaLayerId(lam.functionArn, runtime);
   }
 
   if (layerArn !== undefined) {

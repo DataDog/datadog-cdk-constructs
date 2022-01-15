@@ -14,7 +14,8 @@ import log from "loglevel";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 // Change back to 'import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";'
 // once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
-import { LambdaDestination } from "./lambdaDestination";
+// import { LambdaDestination } from "./lambdaDestination";
+import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 
 function generateForwarderConstructId(forwarderArn: string) {
   log.debug("Generating construct Id for Datadog Lambda Forwarder");

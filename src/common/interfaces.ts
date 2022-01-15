@@ -17,7 +17,5 @@ export interface DatadogProps {
 }
 
 export interface LambdaFunction {
-  runtime: any;
-  node: any;
   addEnvironment(ey: string, value: string, options?: Record<string, unknown>): any;
 }

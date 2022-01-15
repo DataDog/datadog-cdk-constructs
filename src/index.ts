@@ -14,4 +14,5 @@ export * from "./common/env";
 export * from "./common/transport";
 export * from "./common/constants";
 export * from "./common/interfaces";
-export * from "./common/experiment";
+export * from "./common/datadogSharedLogic";
+export * from "./common/layerSharedLogic";

@@ -3,7 +3,7 @@ import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
   Datadog,
-  defaultProps,
+  DefaultDatadogProps,
   transportDefaults,
   ENABLE_DD_TRACING_ENV_VAR,
   INJECT_LOG_CONTEXT_ENV_VAR,
@@ -36,10 +36,10 @@ describe("applyEnvVariables", () => {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: transportDefaults.flushMetricsToLogs.toString(),
-          [ENABLE_DD_TRACING_ENV_VAR]: defaultProps.enableDatadogTracing.toString(),
-          [ENABLE_DD_LOGS_ENV_VAR]: defaultProps.enableDatadogLogs.toString(),
-          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: defaultProps.captureLambdaPayload.toString(),
-          [INJECT_LOG_CONTEXT_ENV_VAR]: defaultProps.injectLogContext.toString(),
+          [ENABLE_DD_TRACING_ENV_VAR]: DefaultDatadogProps.enableDatadogTracing.toString(),
+          [ENABLE_DD_LOGS_ENV_VAR]: DefaultDatadogProps.enableDatadogLogs.toString(),
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: DefaultDatadogProps.captureLambdaPayload.toString(),
+          [INJECT_LOG_CONTEXT_ENV_VAR]: DefaultDatadogProps.injectLogContext.toString(),
         },
       },
     });
@@ -68,10 +68,10 @@ describe("applyEnvVariables", () => {
         Variables: {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
-          ["DD_TRACE_ENABLED"]: defaultProps.enableDatadogTracing.toString(),
-          ["DD_SERVERLESS_LOGS_ENABLED"]: defaultProps.enableDatadogLogs.toString(),
-          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: defaultProps.captureLambdaPayload.toString(),
-          ["DD_LOGS_INJECTION"]: defaultProps.injectLogContext.toString(),
+          ["DD_TRACE_ENABLED"]: DefaultDatadogProps.enableDatadogTracing.toString(),
+          ["DD_SERVERLESS_LOGS_ENABLED"]: DefaultDatadogProps.enableDatadogLogs.toString(),
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: DefaultDatadogProps.captureLambdaPayload.toString(),
+          ["DD_LOGS_INJECTION"]: DefaultDatadogProps.injectLogContext.toString(),
           ["DD_LOG_LEVEL"]: EXAMPLE_LOG_LEVEL,
         },
       },

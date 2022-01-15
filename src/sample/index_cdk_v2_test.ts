@@ -26,7 +26,7 @@ export class ExampleStack extends cdk.Stack {
       extensionLayerVersion: 16,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
-      apiKey: "2412134ac47e3c357049d9cdb5827d61",
+      apiKey: "1234",
     });
     datadogCDK.addLambdaFunctions([lambdaNodejsFunction]);
   }
@@ -34,6 +34,6 @@ export class ExampleStack extends cdk.Stack {
 
 const app = new cdk.App();
 const env = { account: process.env.CDK_DEFAULT_ACCOUNT, region: "sa-east-1" };
-const stack = new ExampleStack(app, "DavidCDKV2TestingExampleDatadogStack", { env: env });
+const stack = new ExampleStack(app, "CDKV2TestingExampleDatadogStack", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();
