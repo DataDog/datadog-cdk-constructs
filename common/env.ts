@@ -7,7 +7,7 @@
  */
 
 import log from "loglevel";
-import { LambdaFunction } from "../index";
+import { LambdaFunction } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";

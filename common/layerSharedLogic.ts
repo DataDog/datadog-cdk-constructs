@@ -1,6 +1,12 @@
 import * as crypto from "crypto";
 import log from "loglevel";
-import { runtimeToLayerName, DD_GOV_ACCOUNT_ID, DD_ACCOUNT_ID, LAYER_PREFIX, EXTENSION_LAYER_PREFIX } from "../index";
+import {
+  runtimeToLayerName,
+  DD_GOV_ACCOUNT_ID,
+  DD_ACCOUNT_ID,
+  LAYER_PREFIX,
+  EXTENSION_LAYER_PREFIX,
+} from "./constants";
 
 export function getLambdaLayerArn(region: string, version: number, runtime: string, isArm: boolean, isNode: boolean) {
   const baseLayerName = runtimeToLayerName[runtime];

@@ -8,14 +8,14 @@
 
 import log from "loglevel";
 import {
-  LambdaFunction,
   RuntimeType,
   runtimeLookup,
   DD_HANDLER_ENV_VAR,
   JS_HANDLER_WITH_LAYERS,
   JS_HANDLER,
   PYTHON_HANDLER,
-} from "../index";
+} from "./constants";
+import { LambdaFunction } from "./interfaces";
 
 /**
  * To avoid modifying code in the user's lambda handler, redirect the handler to a Datadog

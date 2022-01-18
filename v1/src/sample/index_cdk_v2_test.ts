@@ -26,7 +26,7 @@ export class ExampleStack extends cdk.Stack {
       extensionLayerVersion: 16,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
-      apiKey: "1234",
+      apiKey: process.env.API_KEY,
     });
     datadogCDK.addLambdaFunctions([lambdaNodejsFunction]);
   }

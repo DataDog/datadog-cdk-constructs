@@ -1,5 +1,5 @@
 import log from "loglevel";
-import { DatadogProps } from "../index";
+import { DatadogProps } from "./interfaces";
 
 export function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
