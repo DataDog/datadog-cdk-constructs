@@ -16,3 +16,4 @@ export * from "./common/constants";
 export * from "./common/interfaces";
 export * from "./common/datadogSharedLogic";
 export * from "./common/layerSharedLogic";
+export * from "./common/forwarderSharedLogic";

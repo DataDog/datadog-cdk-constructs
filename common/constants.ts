@@ -1,3 +1,11 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed
+ * under the Apache License Version 2.0.
+ *
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2021 Datadog, Inc.
+ */
+
 export const LAYER_PREFIX = "DatadogLayer";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
 export const DD_ACCOUNT_ID = "464622532012";
@@ -6,6 +14,7 @@ export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
 export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
 export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
 export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
+export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
 export enum RuntimeType {
   NODE,

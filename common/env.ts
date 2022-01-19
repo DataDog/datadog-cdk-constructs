@@ -7,7 +7,7 @@
  */
 
 import log from "loglevel";
-import { LambdaFunction } from "./interfaces";
+import { LambdaFunction, DatadogStrictProps } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
@@ -15,22 +15,15 @@ export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
 export const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
 export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
 
-export function applyEnvVariables(
-  lambdas: LambdaFunction[],
-  enableDatadogTracing: boolean,
-  injectLogContext: boolean,
-  enableDatadogLogs: boolean,
-  captureLambdaPayload: boolean,
-  logLevel?: string,
-) {
+export function applyEnvVariables(lambdas: LambdaFunction[], baseProps: DatadogStrictProps) {
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
-    lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, enableDatadogTracing.toString().toLowerCase());
-    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, injectLogContext.toString().toLowerCase());
-    lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, enableDatadogLogs.toString().toLowerCase());
-    lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, captureLambdaPayload.toString().toLowerCase());
-    if (logLevel) {
-      lam.addEnvironment(LOG_LEVEL_ENV_VAR, logLevel);
+    lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
+    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+    lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
+    lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
+    if (baseProps.logLevel) {
+      lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
     }
   });
 }

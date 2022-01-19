@@ -22,7 +22,8 @@ import {
   validateProps,
   TagKeys,
   DatadogProps,
-  DefaultDatadogProps,
+  DatadogStrictProps,
+  handleSettingPropDefaults,
 } from "./index";
 
 const versionJson = require("../version.json");
@@ -50,38 +51,7 @@ export class Datadog extends cdk.Construct {
   public addLambdaFunctions(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
   ) {
-    let addLayers = this.props.addLayers;
-    let enableDatadogTracing = this.props.enableDatadogTracing;
-    let injectLogContext = this.props.injectLogContext;
-    const logLevel = this.props.logLevel;
-    let enableDatadogLogs = this.props.enableDatadogLogs;
-    let captureLambdaPayload = this.props.captureLambdaPayload;
-
-    if (addLayers === undefined) {
-      log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
-      addLayers = DefaultDatadogProps.addLayers;
-    }
-    if (enableDatadogTracing === undefined) {
-      log.debug(
-        `No value provided for enableDatadogTracing, defaulting to ${DefaultDatadogProps.enableDatadogTracing}`,
-      );
-      enableDatadogTracing = DefaultDatadogProps.enableDatadogTracing;
-    }
-    if (injectLogContext === undefined) {
-      log.debug(`No value provided for injectLogContext, defaulting to ${DefaultDatadogProps.injectLogContext}`);
-      injectLogContext = DefaultDatadogProps.injectLogContext;
-    }
-    if (logLevel === undefined) {
-      log.debug(`No value provided for logLevel`);
-    }
-    if (enableDatadogLogs === undefined) {
-      log.debug(`No value provided for enableDatadogLogs, defaulting to ${DefaultDatadogProps.enableDatadogLogs}`);
-      enableDatadogLogs = DefaultDatadogProps.enableDatadogLogs;
-    }
-    if (captureLambdaPayload === undefined) {
-      log.debug(`No value provided for captureLambdaPayload, default to ${DefaultDatadogProps.captureLambdaPayload}`);
-      captureLambdaPayload = DefaultDatadogProps.captureLambdaPayload;
-    }
+    const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
 
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
@@ -94,7 +64,7 @@ export class Datadog extends cdk.Construct {
         this.props.nodeLayerVersion,
         this.props.extensionLayerVersion,
       );
-      redirectHandlers(lambdaFunctions, addLayers);
+      redirectHandlers(lambdaFunctions, baseProps.addLayers);
 
       if (this.props.forwarderArn !== undefined) {
         if (this.props.extensionLayerVersion !== undefined) {
@@ -109,14 +79,8 @@ export class Datadog extends cdk.Construct {
 
       addCdkConstructVersionTag(lambdaFunctions);
 
-      applyEnvVariables(
-        lambdaFunctions,
-        enableDatadogTracing,
-        injectLogContext,
-        enableDatadogLogs,
-        captureLambdaPayload,
-        logLevel,
-      );
+      applyEnvVariables(lambdaFunctions, baseProps);
+
       this.transport.applyEnvVars(lambdaFunctions);
     }
   }

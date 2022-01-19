@@ -14,10 +14,9 @@ import {
   getMissingLayerVersionErrorMsg,
   getLambdaLayerArn,
   getExtensionLayerArn,
-  generateExtensionLayerId,
-  generateLambdaLayerId,
   runtimeLookup,
   RuntimeType,
+  generateLayerId,
 } from "./index";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
@@ -81,12 +80,7 @@ function addLayer(
   lam: lambda.Function,
   runtime: string,
 ) {
-  let layerId;
-  if (isExtensionLayer) {
-    layerId = generateExtensionLayerId(lam.functionArn);
-  } else {
-    layerId = generateLambdaLayerId(lam.functionArn, runtime);
-  }
+  const layerId = generateLayerId(isExtensionLayer, lam.functionArn, runtime);
 
   if (layerArn !== undefined) {
     let lambdaLayer = layers.get(layerArn);

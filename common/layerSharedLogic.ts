@@ -1,3 +1,11 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed
+ * under the Apache License Version 2.0.
+ *
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2021 Datadog, Inc.
+ */
+
 import * as crypto from "crypto";
 import log from "loglevel";
 import {
@@ -50,4 +58,11 @@ export function generateExtensionLayerId(lambdaFunctionArn: string) {
   log.debug("Generating construct Id for Datadog Extension layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return EXTENSION_LAYER_PREFIX + "-" + layerValue;
+}
+
+export function generateLayerId(isExtensionLayer: boolean, functionArn: string, runtime: string) {
+  if (isExtensionLayer) {
+    return generateExtensionLayerId(functionArn);
+  }
+  return generateLambdaLayerId(functionArn, runtime);
 }

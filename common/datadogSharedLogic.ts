@@ -1,5 +1,14 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed
+ * under the Apache License Version 2.0.
+ *
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2021 Datadog, Inc.
+ */
+
 import log from "loglevel";
-import { DatadogProps } from "./interfaces";
+import { DefaultDatadogProps } from "./constants";
+import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
 export function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
@@ -50,4 +59,46 @@ export function checkForMultipleApiKeys(props: DatadogProps) {
   if (multipleApiKeysMessage) {
     throw new Error(`${multipleApiKeysMessage} should not be set at the same time.`);
   }
+}
+
+export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictProps {
+  let addLayers = props.addLayers;
+  let enableDatadogTracing = props.enableDatadogTracing;
+  let injectLogContext = props.injectLogContext;
+  const logLevel = props.logLevel;
+  let enableDatadogLogs = props.enableDatadogLogs;
+  let captureLambdaPayload = props.captureLambdaPayload;
+
+  if (addLayers === undefined) {
+    log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
+    addLayers = DefaultDatadogProps.addLayers;
+  }
+  if (enableDatadogTracing === undefined) {
+    log.debug(`No value provided for enableDatadogTracing, defaulting to ${DefaultDatadogProps.enableDatadogTracing}`);
+    enableDatadogTracing = DefaultDatadogProps.enableDatadogTracing;
+  }
+  if (injectLogContext === undefined) {
+    log.debug(`No value provided for injectLogContext, defaulting to ${DefaultDatadogProps.injectLogContext}`);
+    injectLogContext = DefaultDatadogProps.injectLogContext;
+  }
+  if (logLevel === undefined) {
+    log.debug(`No value provided for logLevel`);
+  }
+  if (enableDatadogLogs === undefined) {
+    log.debug(`No value provided for enableDatadogLogs, defaulting to ${DefaultDatadogProps.enableDatadogLogs}`);
+    enableDatadogLogs = DefaultDatadogProps.enableDatadogLogs;
+  }
+  if (captureLambdaPayload === undefined) {
+    log.debug(`No value provided for captureLambdaPayload, default to ${DefaultDatadogProps.captureLambdaPayload}`);
+    captureLambdaPayload = DefaultDatadogProps.captureLambdaPayload;
+  }
+
+  return {
+    addLayers: addLayers,
+    enableDatadogTracing: enableDatadogTracing,
+    injectLogContext: injectLogContext,
+    logLevel: logLevel,
+    enableDatadogLogs: enableDatadogLogs,
+    captureLambdaPayload: captureLambdaPayload,
+  };
 }
