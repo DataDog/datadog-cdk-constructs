@@ -8,7 +8,7 @@
 
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./constants";
-import { LambdaFunction } from "./interfaces";
+import { ILambdaFunction } from "./interfaces";
 
 export const API_KEY_ENV_VAR = "DD_API_KEY";
 export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
@@ -64,7 +64,7 @@ export class Transport {
     this.apiKmsKey = apiKmsKey;
   }
 
-  applyEnvVars(lambdas: LambdaFunction[]) {
+  applyEnvVars(lambdas: ILambdaFunction[]) {
     log.debug(`Setting Datadog transport environment variables...`);
     lambdas.forEach((lam) => {
       lam.addEnvironment(FLUSH_METRICS_TO_LOGS_ENV_VAR, this.flushMetricsToLogs.toString());

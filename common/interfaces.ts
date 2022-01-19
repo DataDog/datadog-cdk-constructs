@@ -24,16 +24,33 @@ export interface DatadogProps {
   readonly captureLambdaPayload?: boolean;
 }
 
-// Makes fields shared with DefaultDatadogProps (in constants file) required.
-export interface DatadogStrictProps extends DatadogProps {
+/*
+ * Makes fields shared with DefaultDatadogProps (in constants file) required.
+
+  Cannot use "extends DatadogProps" or "extends Omit<DatadogProps, "addLayers" | "enableDatadogLogs"...>"
+  Due to JSII typescript restrictions.
+
+  TODO: Research better way to create this second interface
+ */
+export interface DatadogStrictProps {
   readonly addLayers: boolean;
   readonly enableDatadogLogs: boolean;
   readonly captureLambdaPayload: boolean;
   readonly injectLogContext: boolean;
   readonly enableDatadogTracing: boolean;
+  readonly pythonLayerVersion?: number;
+  readonly nodeLayerVersion?: number;
+  readonly extensionLayerVersion?: number;
+  readonly forwarderArn?: string;
+  readonly flushMetricsToLogs?: boolean;
+  readonly site?: string;
+  readonly apiKey?: string;
+  readonly apiKeySecretArn?: string;
+  readonly apiKmsKey?: string;
+  readonly logLevel?: string;
 }
 
-export interface LambdaFunction {
+export interface ILambdaFunction {
   runtime: any;
   node: any;
   addEnvironment(ey: string, value: string, options?: Record<string, unknown>): unknown;

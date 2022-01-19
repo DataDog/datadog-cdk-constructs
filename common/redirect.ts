@@ -15,7 +15,7 @@ import {
   JS_HANDLER,
   PYTHON_HANDLER,
 } from "./constants";
-import { LambdaFunction } from "./interfaces";
+import { ILambdaFunction } from "./interfaces";
 
 /**
  * To avoid modifying code in the user's lambda handler, redirect the handler to a Datadog
@@ -24,7 +24,7 @@ import { LambdaFunction } from "./interfaces";
  * replacement handler to find.
  */
 
-export function redirectHandlers(lambdas: LambdaFunction[], addLayers: boolean) {
+export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
     // const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
@@ -40,7 +40,7 @@ export function redirectHandlers(lambdas: LambdaFunction[], addLayers: boolean) 
   });
 }
 
-function getDDHandler(lam: LambdaFunction, addLayers: boolean) {
+function getDDHandler(lam: ILambdaFunction, addLayers: boolean) {
   const runtime: string = lam.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
   if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {

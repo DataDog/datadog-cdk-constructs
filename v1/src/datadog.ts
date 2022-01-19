@@ -97,7 +97,7 @@ export class Datadog extends cdk.Construct {
 export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
   lambdaFunctions.forEach((functionName) => {
-    cdk.Tags.of(functionName).add(TagKeys.Cdk, `v${versionJson.version}`, {
+    cdk.Tags.of(functionName).add(TagKeys.CDK, `v${versionJson.version}`, {
       includeResourceTypes: ["AWS::Lambda::Function"],
     });
   });

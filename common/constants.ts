@@ -32,7 +32,7 @@ export const DefaultDatadogProps = {
 };
 
 export enum TagKeys {
-  Cdk = "dd_cdk_construct",
+  CDK = "dd_cdk_construct",
 }
 
 export const runtimeLookup: { [key: string]: RuntimeType } = {
