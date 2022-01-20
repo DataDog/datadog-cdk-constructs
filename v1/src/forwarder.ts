@@ -25,6 +25,9 @@ function getForwarder(scope: cdk.Construct, forwarderArn: string) {
   }
 }
 
+/*
+* Unchanged
+*/
 export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Function[], forwarderArn: string) {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);
@@ -38,6 +41,9 @@ export function addForwarder(scope: cdk.Construct, lambdaFunctions: lambda.Funct
   });
 }
 
+/*
+* Unchanged
+*/
 export function addForwarderToLogGroups(scope: cdk.Construct, logGroups: ILogGroup[], forwarderArn: string) {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder);

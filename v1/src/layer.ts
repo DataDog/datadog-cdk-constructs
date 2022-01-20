@@ -21,6 +21,9 @@ import {
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
 
+/*
+ * Unchanged
+ */
 export function applyLayers(
   scope: cdk.Construct,
   region: string,
@@ -73,6 +76,9 @@ export function applyLayers(
   return errors;
 }
 
+/*
+ * Unchanged
+ */
 function addLayer(
   layerArn: string,
   isExtensionLayer: boolean,

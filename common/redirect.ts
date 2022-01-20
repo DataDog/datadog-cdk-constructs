@@ -6,6 +6,13 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+/*
+ * This file used to be in v1/src, was moved to common by using the ILambdaFunction interface
+ * in place of importing Function from @aws-cdk/aws-lambda
+ * 
+ * NOTE: The only change to the functions are the use of ILambdaFunction 
+ */
+
 import log from "loglevel";
 import {
   RuntimeType,
@@ -22,8 +29,9 @@ import { ILambdaFunction } from "./interfaces";
  * handler that initializes the Lambda Layers and then calls the original handler.
  * 'DD_LAMBDA_HANDLER' is set to the original handler in the lambda's environment for the
  * replacement handler to find.
+ * 
+ * Unchanged aside from parameter type
  */
-
 export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
@@ -39,7 +47,9 @@ export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean)
     cfnFunction.handler = handler;
   });
 }
-
+/*
+ * Unchanged aside from parameter type
+ */
 function getDDHandler(lam: ILambdaFunction, addLayers: boolean) {
   const runtime: string = lam.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];

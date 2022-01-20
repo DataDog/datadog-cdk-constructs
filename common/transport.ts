@@ -6,6 +6,11 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+/*
+ * This file used to be in v1/src, was moved to common by using the ILambdaFunction interface
+ * in place of importing Function from @aws-cdk/aws-lambda
+ */
+
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./constants";
 import { ILambdaFunction } from "./interfaces";
@@ -22,6 +27,9 @@ export const transportDefaults = {
   enableDatadogTracing: true,
 };
 
+/*
+ * No change to this class aside from applyEnvVars function parameter type change
+ */
 export class Transport {
   flushMetricsToLogs: boolean;
   site: string;
@@ -64,6 +72,11 @@ export class Transport {
     this.apiKmsKey = apiKmsKey;
   }
 
+  /*
+   * This function's parameter/return type changed.
+   *
+   * ILambdaFunction is used instead of a AWS import
+   */
   applyEnvVars(lambdas: ILambdaFunction[]) {
     log.debug(`Setting Datadog transport environment variables...`);
     lambdas.forEach((lam) => {

@@ -6,6 +6,11 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+/*
+ * Stores interfaces used to help split logic to be used by V1 and V2.
+ */
+
+/* Not changed, just moved location from datadog.ts to this file */
 export interface DatadogProps {
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
@@ -26,11 +31,11 @@ export interface DatadogProps {
 
 /*
  * Makes fields shared with DefaultDatadogProps (in constants file) required.
-
-  Cannot use "extends DatadogProps" or "extends Omit<DatadogProps, "addLayers" | "enableDatadogLogs"...>"
-  Due to JSII typescript restrictions.
-
-  TODO: Research better way to create this second interface
+ *
+ * Cannot use "extends DatadogProps" or "extends Omit<DatadogProps, "addLayers" | "enableDatadogLogs"...>"
+ * Due to JSII typescript restrictions.
+ *
+ * TODO: Research better way to create this second interface
  */
 export interface DatadogStrictProps {
   readonly addLayers: boolean;
