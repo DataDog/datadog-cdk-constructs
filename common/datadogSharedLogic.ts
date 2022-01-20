@@ -8,7 +8,7 @@
 
 /*
  * Contains logic that will be shared between the two datadog.ts files within the V1 and V2 directories
- * 
+ *
  * NOTE: handleSettingPropDefaults is a new function. The rest of the functions were not changed,
  *       only moved location.
  */
@@ -17,7 +17,7 @@ import log from "loglevel";
 import { DefaultDatadogProps } from "./constants";
 import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
-/* Unchnanged, just moved location from datadog.ts to this file */
+/* Unchanged, just moved location from datadog.ts to this file */
 export function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
 
@@ -52,7 +52,7 @@ export function validateProps(props: DatadogProps) {
   }
 }
 
-/* Unchnanged, just moved location from datadog.ts to this file */
+/* Unchanged, just moved location from datadog.ts to this file */
 export function checkForMultipleApiKeys(props: DatadogProps) {
   let multipleApiKeysMessage;
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
@@ -70,10 +70,10 @@ export function checkForMultipleApiKeys(props: DatadogProps) {
   }
 }
 
-/* 
- * Separates logic dedicated to checking for missing properties in DatadogProps, 
+/*
+ * Separates logic dedicated to checking for missing properties in DatadogProps,
  * adding their default values if they exist.
- * 
+ *
  * @returns DatadogStrictProps, identical to the DatadogProps type but with properties
  * that have default values now set to required.
  */

@@ -6,7 +6,6 @@ import * as logs from "@aws-cdk/aws-logs";
  * Using this class temporarily until https://github.com/aws/aws-cdk/pull/14222 is merged and released.
  */
 
-
 /*
  * File can be deleted once we confirm the aforementioned merge and release of the PR fixes the issue we were having
  */

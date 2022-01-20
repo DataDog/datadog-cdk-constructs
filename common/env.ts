@@ -11,7 +11,6 @@
  * in place of importing Function from @aws-cdk/aws-lambda
  */
 
-
 import log from "loglevel";
 import { ILambdaFunction, DatadogStrictProps } from "./interfaces";
 
@@ -26,8 +25,8 @@ export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
  *
  * ILambdaFunction is used instead of a AWS import
  * DatadogStrictProps is used to contain the properties:
- *    - enableDatadogTracing, 
- *    - injectLogContext, 
+ *    - enableDatadogTracing,
+ *    - injectLogContext,
  *    - enableDatadogLogs,
  *    - captureLambdaPayload
  * that were previously passed directly into the function

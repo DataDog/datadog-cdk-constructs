@@ -8,7 +8,7 @@
 
 /*
  * Contains logic that will be shared between the two layer.ts files within the V1 and V2 directories
- * 
+ *
  * NOTE: No functions were changed, just moved location
  */
 import * as crypto from "crypto";
@@ -21,7 +21,7 @@ import {
   EXTENSION_LAYER_PREFIX,
 } from "./constants";
 
-/* Unchnanged, just moved location from layer.ts to this file */
+/* unchanged, just moved location from layer.ts to this file */
 export function getLambdaLayerArn(region: string, version: number, runtime: string, isArm: boolean, isNode: boolean) {
   const baseLayerName = runtimeToLayerName[runtime];
   const layerName = isArm && !isNode ? `${baseLayerName}-ARM` : baseLayerName;
@@ -36,7 +36,7 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-/* Unchnanged, just moved location from layer.ts to this file */
+/* unchanged, just moved location from layer.ts to this file */
 export function getExtensionLayerArn(region: string, version: number, isArm: boolean) {
   const baseLayerName = "Datadog-Extension";
   const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
@@ -48,7 +48,7 @@ export function getExtensionLayerArn(region: string, version: number, isArm: boo
   return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-/* Unchnanged, just moved location from layer.ts to this file */
+/* unchanged, just moved location from layer.ts to this file */
 export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
   return (
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
@@ -56,7 +56,7 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
   );
 }
 
-/* Unchnanged, just moved location from layer.ts to this file */
+/* unchanged just moved location from layer.ts to this file */
 export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
   log.debug("Generating construct Id for Datadog Lambda layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");

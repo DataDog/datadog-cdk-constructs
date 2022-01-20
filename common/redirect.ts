@@ -9,8 +9,8 @@
 /*
  * This file used to be in v1/src, was moved to common by using the ILambdaFunction interface
  * in place of importing Function from @aws-cdk/aws-lambda
- * 
- * NOTE: The only change to the functions are the use of ILambdaFunction 
+ *
+ * NOTE: The only change to the functions are the use of ILambdaFunction
  */
 
 import log from "loglevel";
@@ -29,7 +29,7 @@ import { ILambdaFunction } from "./interfaces";
  * handler that initializes the Lambda Layers and then calls the original handler.
  * 'DD_LAMBDA_HANDLER' is set to the original handler in the lambda's environment for the
  * replacement handler to find.
- * 
+ *
  * Unchanged aside from parameter type
  */
 export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean) {
