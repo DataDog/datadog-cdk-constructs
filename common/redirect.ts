@@ -6,13 +6,6 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-/*
- * This file used to be in v1/src, was moved to common by using the ILambdaFunction interface
- * in place of importing Function from @aws-cdk/aws-lambda
- *
- * NOTE: The only change to the functions are the use of ILambdaFunction
- */
-
 import log from "loglevel";
 import {
   RuntimeType,
@@ -47,9 +40,7 @@ export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean)
     cfnFunction.handler = handler;
   });
 }
-/*
- * Unchanged aside from parameter type
- */
+
 function getDDHandler(lam: ILambdaFunction, addLayers: boolean) {
   const runtime: string = lam.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];

@@ -6,11 +6,6 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-/*
- * Stores constants/enums that can be used between V1 and V2, taken from
- * various files
- */
-
 export const LAYER_PREFIX = "DatadogLayer";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
 export const DD_ACCOUNT_ID = "464622532012";

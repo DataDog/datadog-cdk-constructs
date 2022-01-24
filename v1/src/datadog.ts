@@ -48,14 +48,9 @@ export class Datadog extends cdk.Construct {
     );
   }
 
-  /*
-   * Only change was to seperate default property setting to seperate file in datadogSharedLogic.ts
-   */
   public addLambdaFunctions(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
   ) {
-    // baseProps contains all properties set by the user, with default values for properties
-    // defined in DefaultDatadogProps (if not set by user)
     const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
 
     if (this.props !== undefined && lambdaFunctions.length > 0) {
@@ -90,9 +85,6 @@ export class Datadog extends cdk.Construct {
     }
   }
 
-  /*
-   * Unchanged
-   */
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
     if (this.props.forwarderArn !== undefined) {
       addForwarderToLogGroups(this.scope, logGroups, this.props.forwarderArn);
@@ -102,9 +94,6 @@ export class Datadog extends cdk.Construct {
   }
 }
 
-/*
- * Unchanged
- */
 export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
   lambdaFunctions.forEach((functionName) => {

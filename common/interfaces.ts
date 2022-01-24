@@ -6,11 +6,6 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-/*
- * Stores interfaces used to help split logic to be used by V1 and V2.
- */
-
-/* Not changed, just moved location from datadog.ts to this file */
 export interface DatadogProps {
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
