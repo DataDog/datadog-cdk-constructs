@@ -1,6 +1,9 @@
 {
     "dependencies": {
         "loglevel": "^1.7.1"
-    }
+    },
+    "bundledDependencies": [
+        "loglevel"
+    ]
 }
   
