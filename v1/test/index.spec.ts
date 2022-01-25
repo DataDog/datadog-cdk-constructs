@@ -24,7 +24,7 @@ describe("addLambdaFunctions", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -61,7 +61,7 @@ describe("addLambdaFunctions", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -91,7 +91,7 @@ describe("addLambdaFunctions", () => {
     const NestedStack = new cdk.NestedStack(RootStack, "NestedStack");
 
     const NestedStackLambda = new lambda.Function(NestedStack, "NestedStackLambda", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -123,7 +123,7 @@ describe("addLambdaFunctions", () => {
     const NestedStack = new cdk.NestedStack(RootStack, "NestedStack");
 
     const NestedStackLambda = new lambda.Function(NestedStack, "NestedStackLambda", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -142,7 +142,7 @@ describe("addLambdaFunctions", () => {
 
     expect(NestedStack).toHaveResource("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node10-x:20`,
+        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:20`,
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
       ],
     });
@@ -158,7 +158,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

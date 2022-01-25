@@ -33,7 +33,9 @@ export class Datadog extends cdk.Construct {
   props: DatadogProps;
   transport: Transport;
   constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
-    if (process.env.DD_CONSTRUCT_DEBUG_LOGS == "true") log.setLevel("debug");
+    if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
+      log.setLevel("debug");
+    }
     super(scope, id);
     this.scope = scope;
     this.props = props;

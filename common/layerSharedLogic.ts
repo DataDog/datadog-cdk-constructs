@@ -10,6 +10,7 @@ import * as crypto from "crypto";
 import log from "loglevel";
 import {
   runtimeToLayerName,
+  govCloudRegions,
   DD_GOV_ACCOUNT_ID,
   DD_ACCOUNT_ID,
   LAYER_PREFIX,
@@ -20,7 +21,7 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
   const baseLayerName = runtimeToLayerName[runtime];
   const layerName = isArm && !isNode ? `${baseLayerName}-ARM` : baseLayerName;
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
-  const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
+  const isGovCloud = govCloudRegions.includes(region);
 
   // if this is a GovCloud region, use the GovCloud lambda layer
   if (isGovCloud) {
@@ -33,7 +34,7 @@ export function getLambdaLayerArn(region: string, version: number, runtime: stri
 export function getExtensionLayerArn(region: string, version: number, isArm: boolean) {
   const baseLayerName = "Datadog-Extension";
   const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
-  const isGovCloud = region === "us-gov-east-1" || region === "us-gov-west-1";
+  const isGovCloud = govCloudRegions.includes(region);
   if (isGovCloud) {
     log.debug("GovCloud region detected, using the GovCloud extension layer");
     return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
@@ -51,13 +52,13 @@ export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntim
 export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
   log.debug("Generating construct Id for Datadog Lambda layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
-  return LAYER_PREFIX + "-" + runtime + "-" + layerValue;
+  return `${LAYER_PREFIX}-${runtime}-${layerValue}`;
 }
 
 export function generateExtensionLayerId(lambdaFunctionArn: string) {
   log.debug("Generating construct Id for Datadog Extension layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
-  return EXTENSION_LAYER_PREFIX + "-" + layerValue;
+  return `${EXTENSION_LAYER_PREFIX}-${layerValue}`;
 }
 
 export function generateLayerId(isExtensionLayer: boolean, functionArn: string, runtime: string) {

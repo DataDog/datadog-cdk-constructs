@@ -36,7 +36,6 @@ export enum TagKeys {
 }
 
 export const runtimeLookup: { [key: string]: RuntimeType } = {
-  "nodejs10.x": RuntimeType.NODE,
   "nodejs12.x": RuntimeType.NODE,
   "nodejs14.x": RuntimeType.NODE,
   "python2.7": RuntimeType.PYTHON,
@@ -47,7 +46,6 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
-  "nodejs10.x": "Datadog-Node10-x",
   "nodejs12.x": "Datadog-Node12-x",
   "nodejs14.x": "Datadog-Node14-x",
   "python2.7": "Datadog-Python27",
@@ -56,3 +54,5 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "python3.8": "Datadog-Python38",
   "python3.9": "Datadog-Python39",
 };
+
+export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];

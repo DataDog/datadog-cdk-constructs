@@ -28,7 +28,6 @@ import { ILambdaFunction } from "./interfaces";
 export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
-    // const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
     const cfnFunction = lam.node.defaultChild;
     const originalHandler = cfnFunction.handler as string;
     lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
