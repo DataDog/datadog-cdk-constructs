@@ -8,9 +8,6 @@
 
 import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern, ILogGroup } from "@aws-cdk/aws-logs";
-// Change back to 'import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";'
-// once https://github.com/aws/aws-cdk/pull/14222 is merged and released.
-// import { LambdaDestination } from "./lambdaDestination";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
