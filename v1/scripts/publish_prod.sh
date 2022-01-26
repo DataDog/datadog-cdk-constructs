@@ -19,15 +19,26 @@ fi
 #Read the current version
 CURRENT_VERSION=$(node -pe "require('./package.json').version")
 
-#Read the desired version
+#Read the desired version for the github release
 if [ -z "$1" ]; then
-    echo "Must specify a desired version number"
+    echo "Must specify a desired github release version number"
     exit 1
 elif [[ ! $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "Must use a semantic version, e.g., 3.1.4"
     exit 1
 else
-    VERSION=$1
+    GITHUB_VERSION=$1
+fi
+
+#Read the desired version for the package release
+if [ -z "$2" ]; then
+    echo "Must specify a desired package release version number"
+    exit 1
+elif [[ ! $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "Must use a semantic version, e.g., 3.1.4"
+    exit 1
+else
+    PACKAGE_VERSION=$1
 fi
 
 if ! [ -x "$(command -v yarn)" ]; then
@@ -57,14 +68,14 @@ echo "Removing folder 'dist' to clear previously built distributions"
 rm -rf dist;
 
 #Confirm to proceed
-read -p "About to bump the version from ${CURRENT_VERSION} to ${VERSION}, and publish. Continue (y/n)?" CONT
+read -p "About to publish, bumping package version from ${CURRENT_VERSION} to ${PACKAGE_VERSION} and releasing version ${GITHUB_VERSION} to github. Continue (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
 fi
 
-if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
-    echo "tag v${VERSION} already exists, aborting"
+if git rev-parse "v${GITHUB_VERSION}" >/dev/null 2>&1; then
+    echo "tag v${GITHUB_VERSION} already exists, aborting"
     exit 1
 fi
 
@@ -73,25 +84,25 @@ if git log --oneline -1 | grep -q "chore(release):"; then
     echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message. This means if the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again, aborting"
     exit 1
 else
-    yarn standard-version --release-as $VERSION
+    yarn standard-version --release-as $GITHUB_VERSION
 fi
 
 echo "Building artifacts"
 yarn build
 #Make sure artifacts were created before publishing
-JS_TARBALL=./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz
+JS_TARBALL=./dist/js/datadog-cdk-constructs@$PACKAGE_VERSION.jsii.tgz
 if [ ! -f $JS_TARBALL ]; then
     echo "'${JS_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
 fi
 
-PY_WHEEL=./dist/python/datadog_cdk_constructs-$VERSION-py3-none-any.whl
+PY_WHEEL=./dist/python/datadog_cdk_constructs-$PACKAGE_VERSION-py3-none-any.whl
 if [ ! -f $PY_WHEEL ]; then
     echo "'${PY_WHEEL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
 fi
 
-PY_TARBALL=./dist/python/datadog-cdk-constructs-$VERSION.tar.gz
+PY_TARBALL=./dist/python/datadog-cdk-constructs-$PACKAGE_VERSION.tar.gz
 if [ ! -f $PY_TARBALL ]; then
     echo "'${PY_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
@@ -101,12 +112,12 @@ yarn logout
 yarn login
 
 echo "Publishing to npm"
-yarn publish $JS_TARBALL --new-version "$VERSION"
+yarn publish $JS_TARBALL --new-version "$PACKAGE_VERSION"
 
 echo "Publishing to PyPI"
 python3 -m twine upload ./dist/python/*
 
 echo 'Pushing updates to github'
 git push origin main
-git push origin "refs/tags/v$VERSION"
+git push origin "refs/tags/v$GITHUB_VERSION"
 echo 'Please add release notes in GitHub!'
