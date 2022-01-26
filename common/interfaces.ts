@@ -50,8 +50,16 @@ export interface DatadogStrictProps {
   readonly logLevel?: string;
 }
 
+export interface Runtime {
+  readonly name: string;
+}
+
+export interface Node {
+  readonly defaultChild: any;
+}
+
 export interface ILambdaFunction {
-  runtime: any;
-  node: any;
-  addEnvironment(ey: string, value: string, options?: Record<string, unknown>): unknown;
+  runtime: Runtime;
+  node: Node;
+  addEnvironment(ey: string, value: string, options?: Record<string, unknown>): void;
 }
