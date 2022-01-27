@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { AwsCdkConstructLibrary, ProjectType, NodePackageManager } = require("projen");
+import { AwsCdkConstructLibrary, ProjectType, NodePackageManager } from require("projen");
 
 const project = new AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs",
