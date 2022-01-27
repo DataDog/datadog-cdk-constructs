@@ -1,4 +1,4 @@
-name: integration-tests
+name: integration-tests-v2
 
 on: push
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: v1
+        working-directory: v2
     steps:
       - name: Checkout
         uses: actions/checkout@v2
