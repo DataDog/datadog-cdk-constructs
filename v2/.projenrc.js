@@ -35,7 +35,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     ".parcel-cache",
     "test/__snapshots__",
     ".DS_Store",
-    "!integration_tests/tsconfig.json",
     "integration_tests/cdk.out",
     "integration_tests/testlib",
   ],
