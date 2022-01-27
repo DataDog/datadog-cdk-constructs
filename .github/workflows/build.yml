@@ -5,7 +5,9 @@ on: push
 jobs:
   lint:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: v1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,14 +39,16 @@ jobs:
           fi
 
       - name: Check formatting
-        run: prettier --version
         run: yarn check-formatting
 
       - name: Lint
         run: yarn eslint
-  
+
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: v1
     strategy:
       max-parallel: 4
       matrix:
@@ -65,6 +69,10 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      
+      - name: Install common dependencies
+        working-directory: ./
+        run: yarn install
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'

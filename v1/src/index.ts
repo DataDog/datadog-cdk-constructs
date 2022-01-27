@@ -8,7 +8,12 @@
 
 export * from "./datadog";
 export * from "./layer";
-export * from "./redirect";
+export * from "./common/redirect";
 export * from "./forwarder";
-export * from "./env";
-export * from "./transport";
+export * from "./common/env";
+export * from "./common/transport";
+export * from "./common/constants";
+export * from "./common/interfaces";
+export * from "./common/datadogSharedLogic";
+export * from "./common/layerSharedLogic";
+export * from "./common/forwarderSharedLogic";

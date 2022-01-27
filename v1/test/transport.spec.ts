@@ -12,8 +12,8 @@ import {
   ENABLE_DD_LOGS_ENV_VAR,
   API_KEY_SECRET_ARN_ENV_VAR,
   CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
+  DD_HANDLER_ENV_VAR,
 } from "../src/index";
-import { DD_HANDLER_ENV_VAR } from "../src/redirect";
 const EXTENSION_LAYER_VERSION = 5;
 
 describe("SITE_URL_ENV_VAR", () => {
@@ -25,7 +25,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -60,7 +60,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -94,7 +94,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -127,7 +127,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -161,7 +161,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -195,7 +195,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -230,7 +230,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -260,7 +260,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -296,7 +296,7 @@ describe("API_KEY_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -333,7 +333,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -368,7 +368,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -427,7 +427,7 @@ describe("apiKMSKeyEnvVar", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

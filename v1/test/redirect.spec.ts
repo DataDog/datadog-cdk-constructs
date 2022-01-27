@@ -1,13 +1,7 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import {
-  redirectHandlers,
-  JS_HANDLER_WITH_LAYERS,
-  JS_HANDLER,
-  PYTHON_HANDLER,
-  DD_HANDLER_ENV_VAR,
-} from "../src/redirect";
+import { redirectHandlers, JS_HANDLER_WITH_LAYERS, JS_HANDLER, PYTHON_HANDLER, DD_HANDLER_ENV_VAR } from "../src/index";
 
 describe("redirectHandlers", () => {
   it("redirects js handler correctly when addLayers is true", () => {
@@ -18,7 +12,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -36,7 +30,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

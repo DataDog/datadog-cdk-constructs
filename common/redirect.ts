@@ -6,25 +6,29 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
-import { RuntimeType, runtimeLookup } from "./index";
-export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
-export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
-export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
-export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
+import {
+  RuntimeType,
+  runtimeLookup,
+  DD_HANDLER_ENV_VAR,
+  JS_HANDLER_WITH_LAYERS,
+  JS_HANDLER,
+  PYTHON_HANDLER,
+} from "./constants";
+import { ILambdaFunction } from "./interfaces";
 
 /**
  * To avoid modifying code in the user's lambda handler, redirect the handler to a Datadog
  * handler that initializes the Lambda Layers and then calls the original handler.
  * 'DD_LAMBDA_HANDLER' is set to the original handler in the lambda's environment for the
  * replacement handler to find.
+ *
+ * Unchanged aside from parameter type
  */
-
-export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
+export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
-    const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
+    const cfnFunction = lam.node.defaultChild;
     const originalHandler = cfnFunction.handler as string;
     lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
     const handler = getDDHandler(lam, addLayers);
@@ -36,7 +40,7 @@ export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean)
   });
 }
 
-function getDDHandler(lam: lambda.Function, addLayers: boolean) {
+function getDDHandler(lam: ILambdaFunction, addLayers: boolean) {
   const runtime: string = lam.runtime.name;
   const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
   if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
