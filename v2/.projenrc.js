@@ -89,6 +89,9 @@ eslintConfig.addOverride("rules", {
     },
   ],
 });
+
+project.addGitIgnore("!integration_tests/tsconfig.json");
+
 eslintConfig.addDeletionOverride("rules.quotes");
 /*
 TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
