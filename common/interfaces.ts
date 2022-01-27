@@ -26,11 +26,6 @@ export interface DatadogProps {
 
 /*
  * Makes fields shared with DefaultDatadogProps (in constants file) required.
- *
- * Cannot use "extends DatadogProps" or "extends Omit<DatadogProps, "addLayers" | "enableDatadogLogs"...>"
- * Due to JSII typescript restrictions.
- *
- * TODO: Research better way to create this second interface
  */
 export interface DatadogStrictProps {
   readonly addLayers: boolean;

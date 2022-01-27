@@ -1,6 +1,7 @@
 import * as crypto from "crypto";
 import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import * as lambda from "@aws-cdk/aws-lambda";
+import { Architecture } from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
@@ -12,7 +13,6 @@ import {
   generateLambdaLayerId,
   generateExtensionLayerId,
 } from "../src/index";
-import { Architecture } from "@aws-cdk/aws-lambda";
 const NODE_LAYER_VERSION = 1;
 const PYTHON_LAYER_VERSION = 2;
 const EXTENSION_LAYER_VERSION = 5;
