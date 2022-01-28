@@ -1,4 +1,4 @@
-name: integration-tests
+name: integration-tests-v1
 
 on: push
 
