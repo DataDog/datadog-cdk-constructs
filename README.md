@@ -15,11 +15,11 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - `datadog-cdk-constructs-v2` REQUIRES Node version 14+
 - Otherwise, using the two versions is identical.
 
-## AWS CDK V1 vs V2
+## AWS CDK V1 vs AWS CDK V2
 Two versions of Datadog CDK Constructs exist, `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These two support the use of `AWS CDK V1` and `AWS CDK V2` respectively.
 
 - Please pay attention to the version of AWS CDK you are using (All new users are likely to be using AWS CDK V2, and this is recommended)
-- If you need to use AWS CDK V1, please instead install/import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
+- If you are using AWS CDK V1, please instead install/import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
 
 ## npm Package Installation:
 
@@ -182,9 +182,15 @@ While Lambda function based log groups are handled by the `addLambdaFunctions` m
 - [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
 - [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
 
+## Repository Structure
+
+In this repository, the folders `v1` and `v2` correspond to the packages `datadog-cdk-constructs` and `datadog-cdk-contructs-v2`. Each can be treated as a separate project (with separate dependencies, config files, tests, and scripts).
+
+Additionally, there is a `common` folder that contains shared logic common to both `v1` and `v2 ` packages. This is done by soft-linking a `common` folder within `v1/src` and `v2/src` to the `common` folder in the root of the repository.
+
 ## Using Projen
 
-This AWS CDK Construct Library uses Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
+The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
 
 ## Opening Issues
 
@@ -200,11 +206,12 @@ If you find an issue with this package and have a fix, please feel free to open 
 
 ## Testing
 
-If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing:
+If you contribute to this package you can run the tests using `yarn test` within the `v1` or `v2` folders. This package also includes a sample application for manual testing:
 
-1. Open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
-2. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
-3. At the root `datadog-cdk-constructs` directory run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
+1. Open a seperate terminal and `cd` into `v1` or `v2`.
+2. Run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
+3. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
+4. At the root of the `v1` or `v2` directory (whichever you are working on), run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
 - Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
 
