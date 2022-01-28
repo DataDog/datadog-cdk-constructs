@@ -12,19 +12,27 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Installing and configuring the Datadog Lambda library for your [Python][1] and [Node.js][2] Lambda functions.
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
+- `datadog-cdk-constructs-v2` REQUIRES Node version 14+
+- Otherwise, using the two versions is identical.
+
+## AWS CDK V1 vs V2
+Two versions of Datadog CDK Constructs exist, `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These two support the use of `AWS CDK V1` and `AWS CDK V2` respectively.
+
+- Please pay attention to the version of AWS CDK you are using (All new users are likely to be using AWS CDK V2, and this is recommended)
+- If you need to use AWS CDK V1, please instead install/import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
 
 ## npm Package Installation:
 
 ```
-yarn add --dev datadog-cdk-constructs
+yarn add --dev datadog-cdk-constructs-v2
 # or
-npm install datadog-cdk-constructs --save-dev
+npm install datadog-cdk-constructs-v2 --save-dev
 ```
 
 ## PyPI Package Installation:
 
 ```
-pip install datadog-cdk-constructs
+pip install datadog-cdk-constructs-v2
 ```
 
 ### Note:
@@ -40,7 +48,7 @@ _If you are new to AWS CDK then check out this [workshop][14]._
 Add this to your CDK stack:
 
 ```typescript
-import { Datadog } from "datadog-cdk-constructs";
+import { Datadog } from "datadog-cdk-constructs-v2";
 
 const datadog = new Datadog(this, "Datadog", {
   nodeLayerVersion: <LAYER_VERSION>,
@@ -90,7 +98,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK documentation][9].
 
 ```typescript
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 
 const lambda_function = new lambda.Function(this, "HelloHandler", {
   runtime: lambda.Runtime.NODEJS_12_X,
@@ -105,8 +113,9 @@ const lambda_function = new lambda.Function(this, "HelloHandler", {
 Add the Datadog CDK Construct to each stack you wish to instrument with Datadog. In the example below, we initialize the Datadog CDK Construct and call `addLambdaFunctions()` in both the `RootStack` and `NestedStack`.
 
 ```typescript
-import { Datadog } from "datadog-cdk-constructs";
-import * as cdk from "@aws-cdk/core";
+import { Datadog } from "datadog-cdk-constructs-v2";
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
 
 class RootStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
@@ -133,7 +142,7 @@ class RootStack extends cdk.Stack {
 }
 
 class NestedStack extends cdk.NestedStack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.NestedStackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
     super(scope, id, props);
 
     const datadog = new Datadog(this, "Datadog", {
