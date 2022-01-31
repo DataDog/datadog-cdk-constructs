@@ -14,14 +14,14 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Installing and configuring the Datadog Lambda library for your [Python][1] and [Node.js][2] Lambda functions.
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
-- `datadog-cdk-constructs-v2` REQUIRES Node version 14+
-- Otherwise, using the two versions is identical.
 
 ## AWS CDK V1 vs AWS CDK V2
 Two versions of Datadog CDK Constructs exist, `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These two support the use of `AWS CDK V1` and `AWS CDK V2` respectively.
 
 - Please pay attention to the version of AWS CDK you are using (All new users are likely to be using AWS CDK V2, and this is recommended)
 - If you are using AWS CDK V1, please instead install/import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
+- datadog-cdk-constructs-v2 REQUIRES Node version 14+, while datadog-cdk-constructs-v1 still supports Node 12.
+- Otherwise, the use of the two packages is identical.
 
 ## npm Package Installation:
 
@@ -46,6 +46,8 @@ Pay attention to the output from your package manager as the `Datadog CDK Constr
 ### AWS CDK
 
 _If you are new to AWS CDK then check out this [workshop][14]._
+
+_The following examples assume the use of AWS CDK v2. If you're still using CDK V1, import `datadog-cdk-construcs` (without the `-v2`) instead._
 
 Add this to your CDK stack:
 
@@ -192,7 +194,7 @@ Additionally, there is a `common` folder that contains shared logic common to bo
 
 ## Using Projen
 
-The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
+The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` (within the folder) to synthesize the new changes. Check out [Projen][13] for more details.
 
 ## Opening Issues
 
@@ -248,7 +250,7 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [8]: https://docs.datadoghq.com/account_management/api-app-keys/#api-keys
 [9]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-lambda.Tracing.html
 [10]: https://docs.aws.amazon.com/cdk/latest/guide/tagging.html
-[11]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.Tags.html
+[11]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.Tags.html
 [12]: https://docs.datadoghq.com/serverless/datadog_lambda_library/extension/
 [13]: https://github.com/projen/projen
 [14]: https://cdkworkshop.com/15-prerequisites.html
