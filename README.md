@@ -1,7 +1,9 @@
 # Datadog CDK Constructs
 
-[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue)](https://www.npmjs.com/package/datadog-cdk-constructs)
-[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs?color=blue)](https://pypi.org/project/datadog-cdk-constructs/)
+[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue&label=npm+cdk+v1)](https://www.npmjs.com/package/datadog-cdk-constructs)
+[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs-v2?color=blue&label=npm+cdk+v2)](https://www.npmjs.com/package/datadog-cdk-constructs-v2)
+[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs?color=blue&label=pypi+cdk+v1)](https://pypi.org/project/datadog-cdk-constructs/)
+[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs-v2?color=blue&label=pypi+cdk+v2)](https://pypi.org/project/datadog-cdk-constructs-v2/)
 [![Slack](https://chat.datadoghq.com/badge.svg?bg=632CA6)](https://chat.datadoghq.com/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
