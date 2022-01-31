@@ -38,7 +38,7 @@ elif [[ ! $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "Must use a semantic version, e.g., 3.1.4"
     exit 1
 else
-    PACKAGE_VERSION=$1
+    PACKAGE_VERSION=$2
 fi
 
 if ! [ -x "$(command -v yarn)" ]; then
@@ -68,7 +68,7 @@ echo "Removing folder 'dist' to clear previously built distributions"
 rm -rf dist;
 
 #Confirm to proceed
-read -p "About to publish, bumping package version from ${CURRENT_VERSION} to ${PACKAGE_VERSION} and releasing version ${GITHUB_VERSION} to github. Continue (y/n)?" CONT
+read -p "About to publish, releasing version ${GITHUB_VERSION} to github and bumping package version from ${CURRENT_VERSION} to ${PACKAGE_VERSION}. Continue (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
