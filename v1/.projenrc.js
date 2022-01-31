@@ -9,7 +9,6 @@ const project = new AwsCdkConstructLibrary({
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
-  projectType: ProjectType.LIB,
   packageManager: NodePackageManager.YARN,
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
@@ -69,6 +68,12 @@ const project = new AwsCdkConstructLibrary({
   mergify: false,
   licensed: true,
   docgen: false,
+
+  versionrcOptions: {
+    skip: {
+      tag: true,
+    },
+  },
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [

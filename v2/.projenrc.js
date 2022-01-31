@@ -60,6 +60,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
   mergify: false,
   licensed: true,
   docgen: false,
+
+  versionrcOptions: {
+    skip: {
+      tag: true,
+    },
+  },
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [

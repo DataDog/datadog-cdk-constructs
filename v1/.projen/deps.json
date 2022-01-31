@@ -46,7 +46,7 @@
     },
     {
       "name": "@types/node",
-      "version": "^10.17.0",
+      "version": "^14.17.0",
       "type": "build"
     },
     {
@@ -107,17 +107,16 @@
       "type": "build"
     },
     {
+      "name": "npm-check-updates",
+      "version": "^11",
+      "type": "build"
+    },
+    {
       "name": "prettier",
       "type": "build"
     },
     {
       "name": "projen",
-      "version": "^0.16.42",
-      "type": "build"
-    },
-    {
-      "name": "standard-version",
-      "version": "^9",
       "type": "build"
     },
     {
