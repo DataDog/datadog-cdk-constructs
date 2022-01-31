@@ -26,7 +26,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-v1
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-${{ matrix.working-dir }}
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -73,7 +73,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-v1
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-${{ matrix.working-dir }}
       
       - name: Install common dependencies
         working-directory: ./
