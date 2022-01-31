@@ -16,29 +16,35 @@ else
     git pull origin main
 fi
 
-#Read the current version
+#Read the current package version
 CURRENT_VERSION=$(node -pe "require('./package.json').version")
 
-#Read the desired version for the github release
-if [ -z "$1" ]; then
-    echo "Must specify a desired github release version number"
+#Read github and package release versions
+if [ -z "$2" ]; then
+    echo "Must specify two arguments: new github release version (first argument), new package release version (second argument)"
     exit 1
 elif [[ ! $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo "Must use a semantic version, e.g., 3.1.4"
+    echo "Must use a semantic version, e.g. 3.1.4, for the github release version number"
+    exit 1
+elif [[ ! $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "Must use a semantic version, e.g. 3.1.4, for the package release version number"
     exit 1
 else
     GITHUB_VERSION=$1
+    PACKAGE_VERSION=$2
 fi
 
-#Read the desired version for the package release
-if [ -z "$2" ]; then
-    echo "Must specify a desired package release version number"
+#Confirm to proceed
+read -p "
+
+Please confirm the github and package versions before proceeding (versions will not be bumped yet.):
+New github release version: ${GITHUB_VERSION}
+New package release version: ${PACKAGE_VERSION}
+
+Continue (y/n)?" CONT
+if [ "$CONT" != "y" ]; then
+    echo "Exiting"
     exit 1
-elif [[ ! $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo "Must use a semantic version, e.g., 3.1.4"
-    exit 1
-else
-    PACKAGE_VERSION=$2
 fi
 
 if ! [ -x "$(command -v yarn)" ]; then
@@ -79,13 +85,16 @@ if git rev-parse "v${GITHUB_VERSION}" >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "Bumping the version number and committing the changes"
+echo "Bumping the package version number and committing the changes"
 if git log --oneline -1 | grep -q "chore(release):"; then
     echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message. This means if the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again, aborting"
     exit 1
 else
-    yarn standard-version --release-as $GITHUB_VERSION
+    yarn standard-version --release-as $PACKAGE_VERSION
 fi
+
+echo "Creating github version tag"
+git tag $GITHUB_VERSION HEAD
 
 echo "Building artifacts"
 yarn build
