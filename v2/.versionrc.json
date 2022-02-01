@@ -16,6 +16,7 @@
     "postbump": "npx projen && git add ."
   },
   "skip": {
-    "tag": true
+    "tag": true,
+    "bump": true
   }
 }

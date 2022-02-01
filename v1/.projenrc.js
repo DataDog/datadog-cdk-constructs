@@ -32,7 +32,7 @@ const project = new AwsCdkConstructLibrary({
     "@aws-cdk/core",
     "@aws-cdk/aws-apigateway",
   ],
-  devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
+  devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier", "standard-version"],
   gitignore: [
     "*.js",
     "!jest.config.js",
@@ -72,6 +72,7 @@ const project = new AwsCdkConstructLibrary({
   versionrcOptions: {
     skip: {
       tag: true,
+      bump: true,
     },
   },
 });
@@ -109,6 +110,11 @@ TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
       project.removeScript("<scriptName>") calls once https://github.com/projen/projen/issues/631 is fixed.
 */
 const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
+projenTasks.addOverride("tasks.pre-compile.steps", [
+  {
+    exec: "node ./src/common/scripts/fix-version.js",
+  },
+]);
 projenTasks.addDeletionOverride("tasks.clobber");
 projenTasks.addDeletionOverride("tasks.test:update");
 projenTasks.addDeletionOverride("tasks.release");

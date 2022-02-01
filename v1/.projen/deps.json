@@ -120,6 +120,10 @@
       "type": "build"
     },
     {
+      "name": "standard-version",
+      "type": "build"
+    },
+    {
       "name": "ts-jest",
       "type": "build"
     },

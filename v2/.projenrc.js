@@ -24,7 +24,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   peerDeps: ["@aws-cdk/aws-lambda-python-alpha@^2.0.0-alpha.1"],
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
-  devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier"],
+  devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier", "standard-version"],
   gitignore: [
     "*.js",
     "!jest.config.js",
@@ -64,6 +64,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   versionrcOptions: {
     skip: {
       tag: true,
+      bump: true,
     },
   },
 });
@@ -122,6 +123,11 @@ projenTasks.addOverride("tasks.build.steps", [
   },
   {
     spawn: "package-all",
+  },
+]);
+projenTasks.addOverride("tasks.pre-compile.steps", [
+  {
+    exec: "node ./src/common/scripts/fix-version.js",
   },
 ]);
 projenTasks.addDeletionOverride("tasks.clobber");

@@ -85,12 +85,15 @@ if git rev-parse "v${GITHUB_VERSION}" >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "Bumping the package version number and committing the changes"
+echo "Bumping package version to ${PACKAGE_VERSION}"
+node ./src/common/scripts/bump-version.js ${PACKAGE_VERSION}
+
+echo "Updating CHANGELOG.md and committing changes"
 if git log --oneline -1 | grep -q "chore(release):"; then
     echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message. This means if the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again, aborting"
     exit 1
 else
-    yarn standard-version --release-as $PACKAGE_VERSION
+    yarn standard-version --release-as $GITHUB_VERSION
 fi
 
 echo "Creating github version tag"
