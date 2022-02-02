@@ -14,10 +14,5 @@
   "commitAll": true,
   "scripts": {
     "postbump": "npx projen && git add ."
-  },
-  "skip": {
-    "tag": true,
-    "bump": true,
-    "commit": true
   }
 }

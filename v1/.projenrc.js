@@ -68,14 +68,6 @@ const project = new AwsCdkConstructLibrary({
   mergify: false,
   licensed: true,
   docgen: false,
-
-  versionrcOptions: {
-    skip: {
-      tag: true,
-      bump: true,
-      commit: true,
-    },
-  },
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
@@ -113,7 +105,7 @@ TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
 const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
 projenTasks.addOverride("tasks.pre-compile.steps", [
   {
-    exec: "node ./src/common/scripts/fix-version.js",
+    exec: "node ./src/common/scripts/fix-version.js v1",
   },
 ]);
 projenTasks.addDeletionOverride("tasks.clobber");

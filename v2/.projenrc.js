@@ -60,14 +60,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   mergify: false,
   licensed: true,
   docgen: false,
-
-  versionrcOptions: {
-    skip: {
-      tag: true,
-      bump: true,
-      commit: true,
-    },
-  },
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
@@ -128,7 +120,7 @@ projenTasks.addOverride("tasks.build.steps", [
 ]);
 projenTasks.addOverride("tasks.pre-compile.steps", [
   {
-    exec: "node ./src/common/scripts/fix-version.js",
+    exec: "node ./src/common/scripts/fix-version.js v2",
   },
 ]);
 projenTasks.addDeletionOverride("tasks.clobber");
