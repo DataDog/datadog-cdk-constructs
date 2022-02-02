@@ -8,6 +8,9 @@
           "spawn": "default"
         },
         {
+          "spawn": "test"
+        },
+        {
           "spawn": "pre-compile"
         },
         {
@@ -15,9 +18,6 @@
         },
         {
           "spawn": "post-compile"
-        },
-        {
-          "spawn": "test"
         },
         {
           "spawn": "package"

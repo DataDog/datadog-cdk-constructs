@@ -103,6 +103,26 @@ TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
       project.removeScript("<scriptName>") calls once https://github.com/projen/projen/issues/631 is fixed.
 */
 const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
+projenTasks.addOverride("tasks.build.steps", [
+  {
+    spawn: "default",
+  },
+  {
+    spawn: "test",
+  },
+  {
+    spawn: "pre-compile",
+  },
+  {
+    spawn: "compile",
+  },
+  {
+    spawn: "post-compile",
+  },
+  {
+    spawn: "package",
+  },
+]);
 projenTasks.addOverride("tasks.pre-compile.steps", [
   {
     exec: "node ./src/common/scripts/fix-version.js v1",
