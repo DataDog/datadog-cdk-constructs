@@ -93,7 +93,11 @@ if git log --oneline -1 | grep -q "chore(release):"; then
     echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message. This means if the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again, aborting"
     exit 1
 else
+    node ./src/common/scripts/bump-version.js $GITHUB_VERSION
     yarn standard-version --release-as $GITHUB_VERSION
+    node ./src/common/scripts/bump-version.js $PACKAGE_VERSION
+    git add .
+    git commit -m "chore(release): ${GITHUB_VERSION}" 
 fi
 
 echo "Creating github version tag"

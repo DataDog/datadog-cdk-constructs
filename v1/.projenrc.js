@@ -73,6 +73,7 @@ const project = new AwsCdkConstructLibrary({
     skip: {
       tag: true,
       bump: true,
+      commit: true
     },
   },
 });

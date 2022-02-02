@@ -65,6 +65,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     skip: {
       tag: true,
       bump: true,
+      commit: true,
     },
   },
 });

@@ -17,6 +17,7 @@
   },
   "skip": {
     "tag": true,
-    "bump": true
+    "bump": true,
+    "commit": true
   }
 }
