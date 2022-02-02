@@ -78,10 +78,7 @@ if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "Bumping package version to ${VERSION}"
-node ./src/common/scripts/bump-version.js ${VERSION}
-
-echo "Updating CHANGELOG.md and committing changes"
+echo "Bumping package version, updating CHANGELOG.md, and committing changes"
 if git log --oneline -1 | grep -q "chore(release):"; then
     echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message. This means if the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again, aborting"
     exit 1
