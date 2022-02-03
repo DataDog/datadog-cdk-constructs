@@ -31,7 +31,7 @@ fi
 read -p "
 
 Please confirm the github and package versions before proceeding (versions will not be bumped yet.):
-New github release version: v${VERSION}
+New github release version: v2-${VERSION}
 New package release version: ${VERSION}
 
 Continue (y/n)?" CONT
@@ -67,14 +67,14 @@ echo "Removing folder 'dist' to clear previously built distributions"
 rm -rf dist;
 
 #Confirm to proceed
-read -p "About to publish, releasing version v${VERSION} to github and bumping package version to ${VERSION}. Continue (y/n)?" CONT
+read -p "About to publish, releasing version v2-${VERSION} to github and bumping package version to ${VERSION}. Continue (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
 fi
 
-if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
-    echo "tag v${VERSION} already exists, aborting"
+if git rev-parse "v2-${VERSION}" >/dev/null 2>&1; then
+    echo "tag v2-${VERSION} already exists, aborting"
     exit 1
 fi
 
@@ -83,25 +83,26 @@ if git log --oneline -1 | grep -q "chore(release):"; then
     echo "Create a new commit before attempting to release. Be sure to not include 'chore(release):' in the commit message. This means if the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again, aborting"
     exit 1
 else
-    yarn standard-version --release-as $VERSION
+    yarn standard-version --tag-prefix "v2-" --release-as $VERSION
 fi
+
 
 echo "Building artifacts"
 yarn build
 #Make sure artifacts were created before publishing
-JS_TARBALL=./dist/js/datadog-cdk-constructs@$VERSION.jsii.tgz
+JS_TARBALL=./dist/js/datadog-cdk-constructs-v2@$VERSION.jsii.tgz
 if [ ! -f $JS_TARBALL ]; then
     echo "'${JS_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
 fi
 
-PY_WHEEL=./dist/python/datadog_cdk_constructs-$VERSION-py3-none-any.whl
+PY_WHEEL=./dist/python/datadog_cdk_constructs_v2-$VERSION-py3-none-any.whl
 if [ ! -f $PY_WHEEL ]; then
     echo "'${PY_WHEEL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
 fi
 
-PY_TARBALL=./dist/python/datadog-cdk-constructs-$VERSION.tar.gz
+PY_TARBALL=./dist/python/datadog-cdk-constructs-v2-$VERSION.tar.gz
 if [ ! -f $PY_TARBALL ]; then
     echo "'${PY_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
@@ -118,5 +119,5 @@ python3 -m twine upload ./dist/python/*
 
 echo 'Pushing updates to github'
 git push origin main
-git push origin "refs/tags/v$VERSION"
+git push origin "refs/tags/v2-$VERSION"
 echo 'Please add release notes in GitHub!'
