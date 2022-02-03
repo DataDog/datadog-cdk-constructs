@@ -1,37 +1,29 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { AwsCdkConstructLibrary, NodePackageManager } = require("projen");
+const { awscdk, javascript } = require("projen");
 
-const project = new AwsCdkConstructLibrary({
-  name: "datadog-cdk-constructs",
-  description: "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog",
+const project = new awscdk.AwsCdkConstructLibrary({
+  name: "datadog-cdk-constructs-v2",
+  description:
+    "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog using AWS CDK v2",
   author: "Datadog",
   authorOrganization: true,
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
-  packageManager: NodePackageManager.YARN,
+  packageManager: javascript.NodePackageManager.YARN,
+  minNodeVersion: "14.15.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
   releaseEveryCommit: false,
-  cdkDependenciesAsDeps: false,
-
   publishToPypi: {
-    distName: "datadog-cdk-constructs",
-    module: "datadog_cdk_constructs",
+    distName: "datadog-cdk-constructs-v2",
+    module: "datadog_cdk_constructs_v2",
   },
-  cdkVersion: "1.134.0",
+  cdkVersion: "2.0.0",
+  peerDeps: ["@aws-cdk/aws-lambda-python-alpha@^2.0.0-alpha.1"],
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
-  cdkDependencies: [
-    "@aws-cdk/aws-lambda",
-    "@aws-cdk/aws-lambda-nodejs",
-    "@aws-cdk/aws-lambda-python",
-    "@aws-cdk/aws-logs",
-    "@aws-cdk/aws-logs-destinations",
-    "@aws-cdk/core",
-    "@aws-cdk/aws-apigateway",
-  ],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier", "standard-version"],
   gitignore: [
     "*.js",
@@ -97,6 +89,9 @@ eslintConfig.addOverride("rules", {
     },
   ],
 });
+
+project.addGitIgnore("!integration_tests/tsconfig.json");
+
 eslintConfig.addDeletionOverride("rules.quotes");
 /*
 TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
@@ -120,12 +115,12 @@ projenTasks.addOverride("tasks.build.steps", [
     spawn: "post-compile",
   },
   {
-    spawn: "package",
+    spawn: "package-all",
   },
 ]);
 projenTasks.addOverride("tasks.pre-compile.steps", [
   {
-    exec: "node ./src/common/scripts/fix-version.js v1",
+    exec: "node ./src/common/scripts/fix-version.js v2",
   },
 ]);
 projenTasks.addDeletionOverride("tasks.clobber");

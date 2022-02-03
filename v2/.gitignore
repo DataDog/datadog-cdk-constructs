@@ -2,6 +2,8 @@
 !/.gitattributes
 !/.projen/tasks.json
 !/.projen/deps.json
+!/.projen/files.json
+!/.github/workflows/pull-request-lint.yml
 !/.github/workflows/stale.yml
 !/package.json
 !/LICENSE
@@ -52,4 +54,5 @@ junit.xml
 !/.eslintrc.json
 .jsii
 tsconfig.json
+!integration_tests/tsconfig.json
 !/.github/workflows/upgrade.yml
