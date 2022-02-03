@@ -16,11 +16,11 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
 ## AWS CDK V1 vs AWS CDK V2
-Two versions of Datadog CDK Constructs exist, `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These two support the use of `AWS CDK V1` and `AWS CDK V2` respectively.
+Two versions of Datadog CDK Constructs exist, `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These two support the use of `AWS CDK v1` and `AWS CDK v2` respectively.
 
 - Please pay attention to the version of AWS CDK you are using (All new users are likely to be using AWS CDK V2, and this is recommended)
-- If you are using AWS CDK V1, please instead install/import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
-- datadog-cdk-constructs-v2 REQUIRES Node version 14+, while datadog-cdk-constructs-v1 still supports Node 12.
+- If you are using AWS CDK v1, please instead install and import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
+- `datadog-cdk-constructs-v2` REQUIRES Node 14+, while datadog-cdk-constructs-v1 still supports Node 12.
 - Otherwise, the use of the two packages is identical.
 
 ## npm Package Installation:
@@ -45,9 +45,8 @@ Pay attention to the output from your package manager as the `Datadog CDK Constr
 
 ### AWS CDK
 
-_If you are new to AWS CDK then check out this [workshop][14]._
-
-_The following examples assume the use of AWS CDK v2. If you're still using CDK V1, import `datadog-cdk-construcs` (without the `-v2`) instead._
+- _If you are new to AWS CDK then check out this [workshop][14]._
+- _The following examples assume the use of AWS CDK v2. If you're using CDK v1, import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`._
 
 Add this to your CDK stack:
 
@@ -188,13 +187,13 @@ While Lambda function based log groups are handled by the `addLambdaFunctions` m
 
 ## Repository Structure
 
-In this repository, the folders `v1` and `v2` correspond to the packages `datadog-cdk-constructs` and `datadog-cdk-contructs-v2`. Each can be treated as a separate project (with separate dependencies, config files, tests, and scripts).
+In this repository, the folders `v1` and `v2` correspond to the packages `datadog-cdk-constructs` and `datadog-cdk-contructs-v2`. Each can be treated as a separate project (they are separate projen projects with separate dependencies, config files, tests, and scripts).
 
-Additionally, there is a `common` folder that contains shared logic common to both `v1` and `v2 ` packages. This is done by soft-linking a `common` folder within `v1/src` and `v2/src` to the `common` folder in the root of the repository.
+Additionally, there is a `common` folder that contains shared logic common to both `v1` and `v2` packages. This is done by soft-linking a `common` folder within `v1/src` and `v2/src` to the `common` folder in the root of the repository.
 
 ## Using Projen
 
-The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` (within the folder) to synthesize the new changes. Check out [Projen][13] for more details.
+The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` (while in `v1` or `v2`) to synthesize the new changes. Check out [Projen][13] for more details.
 
 ## Opening Issues
 
@@ -224,7 +223,7 @@ If you contribute to this package you can run the tests using `yarn test` within
 To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output).
 
 Example:
-_Ensure you are at root `datadog-cdk-constructs` directory_
+_Ensure you are at the root of the `v1` or `v2` directory_
 
 ```
 DD_CONSTRUCT_DEBUG_LOGS=true npx cdk --app lib/sample/index.js synth --quiet

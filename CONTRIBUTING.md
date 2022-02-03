@@ -9,10 +9,11 @@ _Please refer to the README.md for information about the structure of this repo 
     git clone git@github.com:<your-username>/datadog-cdk-constructs.git
     git checkout -b <my-branch>
     ```
-2. Install the repositories dependencies, `yarn install`.
+2. Install the repositories dependencies, `yarn install`. Do this within the repo root, as well as within the project version you plan to edit (`v1` or `v2`).
 3. Make your changes.
-4. Test your changes using CDK commands such as `cdk synth`, `cdk diff`, and `cdk deploy` within `v1` or `v2`
-5. Ensure the unit tests pass:
+4. Navigate to the root of the `v1` or `v2` directory
+4. Manually test your changes using CDK commands such as `cdk synth`, `cdk diff`, and `cdk deploy`.
+5. Ensure the unit tests pass (test command must also be run in `v1` or `v2` root):
     ```bash
     yarn test
     ```
