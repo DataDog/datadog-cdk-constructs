@@ -4,6 +4,10 @@
 var fs = require("fs");
 var path = require("path");
 
+if (process.argv.length != 3) {
+    throw new Error("Please include 1 (and only 1) argument: the folder to fix-version in (either \"v1\" or \"v2\")");
+}
+
 var folder = process.argv[2];
 
 version_file_path = path.join(__dirname, "..", "..", folder, "version.json");
