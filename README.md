@@ -18,9 +18,8 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 ## AWS CDK v1 vs AWS CDK v2
 Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
 
-- Please pay attention to the version of AWS CDK you are using (All new users are likely to be using AWS CDK V2, and this is recommended)
-- If you are using AWS CDK v1, please instead install and import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
-- `datadog-cdk-constructs-v2` REQUIRES Node 14+, while datadog-cdk-constructs-v1 still supports Node 12.
+- If you are using AWS CDK v1, please use `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`.
+- `datadog-cdk-constructs-v2` requires Node 14+, while datadog-cdk-constructs-v1 supports Node 12+.
 - Otherwise, the use of the two packages is identical.
 
 ## npm Package Installation:
