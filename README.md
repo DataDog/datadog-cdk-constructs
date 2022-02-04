@@ -1,7 +1,9 @@
 # Datadog CDK Constructs
 
-[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue)](https://www.npmjs.com/package/datadog-cdk-constructs)
-[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs?color=blue)](https://pypi.org/project/datadog-cdk-constructs/)
+[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue&label=npm+cdk+v1)](https://www.npmjs.com/package/datadog-cdk-constructs)
+[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs-v2?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/datadog-cdk-constructs-v2)
+[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs?color=blue&label=pypi+cdk+v1)](https://pypi.org/project/datadog-cdk-constructs/)
+[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs-v2?color=39a356&label=pypi+cdk+v2)](https://pypi.org/project/datadog-cdk-constructs-v2/)
 [![Slack](https://chat.datadoghq.com/badge.svg?bg=632CA6)](https://chat.datadoghq.com/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
@@ -13,8 +15,22 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
+## AWS CDK v1 vs AWS CDK v2
+Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
+
+- `datadog-cdk-constructs-v2` requires Node 14+, while `datadog-cdk-constructs-v1` supports Node 12+.
+- Otherwise, the use of the two packages is identical.
+
 ## npm Package Installation:
 
+For use with AWS CDK v2:
+```
+yarn add --dev datadog-cdk-constructs-v2
+# or
+npm install datadog-cdk-constructs-v2 --save-dev
+```
+
+For use with AWS CDK v1:
 ```
 yarn add --dev datadog-cdk-constructs
 # or
@@ -23,6 +39,12 @@ npm install datadog-cdk-constructs --save-dev
 
 ## PyPI Package Installation:
 
+For use with AWS CDK v2:
+```
+pip install datadog-cdk-constructs-v2
+```
+
+For use with AWS CDK v1:
 ```
 pip install datadog-cdk-constructs
 ```
@@ -35,12 +57,13 @@ Pay attention to the output from your package manager as the `Datadog CDK Constr
 
 ### AWS CDK
 
-_If you are new to AWS CDK then check out this [workshop][14]._
+- _If you are new to AWS CDK then check out this [workshop][14]._
+- _The following examples assume the use of AWS CDK v2. If you're using CDK v1, import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`._
 
 Add this to your CDK stack:
 
 ```typescript
-import { Datadog } from "datadog-cdk-constructs";
+import { Datadog } from "datadog-cdk-constructs-v2";
 
 const datadog = new Datadog(this, "Datadog", {
   nodeLayerVersion: <LAYER_VERSION>,
@@ -90,10 +113,10 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK documentation][9].
 
 ```typescript
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 
 const lambda_function = new lambda.Function(this, "HelloHandler", {
-  runtime: lambda.Runtime.NODEJS_12_X,
+  runtime: lambda.Runtime.NODEJS_14_X,
   code: lambda.Code.fromAsset("lambda"),
   handler: "hello.handler",
   tracing: lambda.Tracing.ACTIVE,
@@ -105,8 +128,9 @@ const lambda_function = new lambda.Function(this, "HelloHandler", {
 Add the Datadog CDK Construct to each stack you wish to instrument with Datadog. In the example below, we initialize the Datadog CDK Construct and call `addLambdaFunctions()` in both the `RootStack` and `NestedStack`.
 
 ```typescript
-import { Datadog } from "datadog-cdk-constructs";
-import * as cdk from "@aws-cdk/core";
+import { Datadog } from "datadog-cdk-constructs-v2";
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
 
 class RootStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
@@ -133,7 +157,7 @@ class RootStack extends cdk.Stack {
 }
 
 class NestedStack extends cdk.NestedStack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.NestedStackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
     super(scope, id, props);
 
     const datadog = new Datadog(this, "Datadog", {
@@ -173,9 +197,15 @@ While Lambda function based log groups are handled by the `addLambdaFunctions` m
 - [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
 - [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
 
+## Repository Structure
+
+In this repository, the folders `v1` and `v2` correspond to the packages `datadog-cdk-constructs` and `datadog-cdk-contructs-v2`. Each can be treated as a separate project (they are separate projen projects with separate dependencies, config files, tests, and scripts).
+
+Additionally, there is a `common` folder that contains shared logic common to both `v1` and `v2` packages. This is done by soft-linking a `common` folder within `v1/src` and `v2/src` to the `common` folder in the root of the repository.
+
 ## Using Projen
 
-This AWS CDK Construct Library uses Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
+The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` (while in `v1` or `v2`) to synthesize the new changes. Check out [Projen][13] for more details.
 
 ## Opening Issues
 
@@ -191,11 +221,12 @@ If you find an issue with this package and have a fix, please feel free to open 
 
 ## Testing
 
-If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing:
+If you contribute to this package you can run the tests using `yarn test` within the `v1` or `v2` folders. This package also includes a sample application for manual testing:
 
-1. Open a seperate terminal and run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
-2. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
-3. At the root `datadog-cdk-constructs` directory run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
+1. Open a seperate terminal and `cd` into `v1` or `v2`.
+2. Run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
+3. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
+4. At the root of the `v1` or `v2` directory (whichever you are working on), run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
 - Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
 
@@ -204,7 +235,7 @@ If you contribute to this package you can run the tests using `yarn test`. This 
 To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output).
 
 Example:
-_Ensure you are at root `datadog-cdk-constructs` directory_
+_Ensure you are at the root of the `v1` or `v2` directory_
 
 ```
 DD_CONSTRUCT_DEBUG_LOGS=true npx cdk --app lib/sample/index.js synth --quiet
@@ -230,7 +261,7 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [8]: https://docs.datadoghq.com/account_management/api-app-keys/#api-keys
 [9]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-lambda.Tracing.html
 [10]: https://docs.aws.amazon.com/cdk/latest/guide/tagging.html
-[11]: https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.Tags.html
+[11]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.Tags.html
 [12]: https://docs.datadoghq.com/serverless/datadog_lambda_library/extension/
 [13]: https://github.com/projen/projen
 [14]: https://cdkworkshop.com/15-prerequisites.html
