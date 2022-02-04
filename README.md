@@ -1,9 +1,9 @@
 # Datadog CDK Constructs
 
 [![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs?color=blue&label=npm+cdk+v1)](https://www.npmjs.com/package/datadog-cdk-constructs)
-[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs-v2?color=blue&label=npm+cdk+v2)](https://www.npmjs.com/package/datadog-cdk-constructs-v2)
+[![NPM](https://img.shields.io/npm/v/datadog-cdk-constructs-v2?color=39a356&label=npm+cdk+v2)](https://www.npmjs.com/package/datadog-cdk-constructs-v2)
 [![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs?color=blue&label=pypi+cdk+v1)](https://pypi.org/project/datadog-cdk-constructs/)
-[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs-v2?color=blue&label=pypi+cdk+v2)](https://pypi.org/project/datadog-cdk-constructs-v2/)
+[![PyPI](https://img.shields.io/pypi/v/datadog-cdk-constructs-v2?color=39a356&label=pypi+cdk+v2)](https://pypi.org/project/datadog-cdk-constructs-v2/)
 [![Slack](https://chat.datadoghq.com/badge.svg?bg=632CA6)](https://chat.datadoghq.com/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
@@ -18,22 +18,35 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 ## AWS CDK v1 vs AWS CDK v2
 Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
 
-- If you are using AWS CDK v1, please use `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`.
-- `datadog-cdk-constructs-v2` requires Node 14+, while datadog-cdk-constructs-v1 supports Node 12+.
+- `datadog-cdk-constructs-v2` requires Node 14+, while `datadog-cdk-constructs-v1` supports Node 12+.
 - Otherwise, the use of the two packages is identical.
 
 ## npm Package Installation:
 
+For use with AWS CDK v2:
 ```
 yarn add --dev datadog-cdk-constructs-v2
 # or
 npm install datadog-cdk-constructs-v2 --save-dev
 ```
 
+For use with AWS CDK v1:
+```
+yarn add --dev datadog-cdk-constructs
+# or
+npm install datadog-cdk-constructs --save-dev
+```
+
 ## PyPI Package Installation:
 
+For use with AWS CDK v2:
 ```
 pip install datadog-cdk-constructs-v2
+```
+
+For use with AWS CDK v1:
+```
+pip install datadog-cdk-constructs
 ```
 
 ### Note:
@@ -103,7 +116,7 @@ Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK do
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
 const lambda_function = new lambda.Function(this, "HelloHandler", {
-  runtime: lambda.Runtime.NODEJS_12_X,
+  runtime: lambda.Runtime.NODEJS_14_X,
   code: lambda.Code.fromAsset("lambda"),
   handler: "hello.handler",
   tracing: lambda.Tracing.ACTIVE,
