@@ -15,8 +15,8 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
-## AWS CDK V1 vs AWS CDK V2
-Two versions of Datadog CDK Constructs exist, `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These two support the use of `AWS CDK v1` and `AWS CDK v2` respectively.
+## AWS CDK v1 vs AWS CDK v2
+Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
 
 - Please pay attention to the version of AWS CDK you are using (All new users are likely to be using AWS CDK V2, and this is recommended)
 - If you are using AWS CDK v1, please instead install and import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`
