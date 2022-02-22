@@ -77,6 +77,41 @@ describe("applyEnvVariables", () => {
       },
     });
   });
+
+  it("adds git hash to environment", () => {
+    const EXAMPLE_LOG_LEVEL = "debug";
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      forwarderArn: "forwarder-arn",
+      logLevel: EXAMPLE_LOG_LEVEL,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addGitCommitMetadata([hello], '1234');
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
+          ["DD_TRACE_ENABLED"]: DefaultDatadogProps.enableDatadogTracing.toString(),
+          ["DD_SERVERLESS_LOGS_ENABLED"]: DefaultDatadogProps.enableDatadogLogs.toString(),
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: DefaultDatadogProps.captureLambdaPayload.toString(),
+          ["DD_LOGS_INJECTION"]: DefaultDatadogProps.injectLogContext.toString(),
+          ["DD_LOG_LEVEL"]: EXAMPLE_LOG_LEVEL,
+          ["DD_TAGS"]: "git.commit.sha:1234",
+        },
+      },
+    });
+  });
 });
 
 describe("ENABLE_DD_TRACING_ENV_VAR", () => {

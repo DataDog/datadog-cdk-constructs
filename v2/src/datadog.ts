@@ -25,6 +25,7 @@ import {
   DatadogProps,
   DatadogStrictProps,
   handleSettingPropDefaults,
+  setGitCommitHashEnvironmentVariable,
 } from "./index";
 
 const versionJson = require("../version.json");
@@ -88,6 +89,13 @@ export class Datadog extends Construct {
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
+  }
+
+  public addGitCommitMetadata(
+    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    gitCommitSha: string,
+  ) {
+    setGitCommitHashEnvironmentVariable(lambdaFunctions, gitCommitSha);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
