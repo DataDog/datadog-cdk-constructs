@@ -52,7 +52,7 @@ export class Datadog extends cdk.Construct {
   }
 
   public addLambdaFunctions(
-    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[]
+    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
   ) {
     const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
 
@@ -92,7 +92,7 @@ export class Datadog extends cdk.Construct {
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
     gitCommitSha: string,
   ) {
-    setGitCommitHashEnvironmentVariable(lambdaFunctions, gitCommitSha)
+    setGitCommitHashEnvironmentVariable(lambdaFunctions, gitCommitSha);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
