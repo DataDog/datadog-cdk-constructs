@@ -7,13 +7,20 @@
  */
 
 import log from "loglevel";
-import { ILambdaFunction, DatadogStrictProps } from "./interfaces";
+import { DatadogStrictProps, ILambdaFunction } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
 export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
 export const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
 export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
+export const DD_TAGS = "DD_TAGS";
+
+export function setGitCommitHashEnvironmentVariable(lambdas: ILambdaFunction[], hash: string) {
+  lambdas.forEach((lambda) => {
+    lambda.addEnvironment(DD_TAGS, "git.commit.sha:" + hash);
+  });
+}
 
 export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: DatadogStrictProps) {
   log.debug(`Setting environment variables...`);

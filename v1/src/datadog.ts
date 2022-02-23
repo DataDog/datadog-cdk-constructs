@@ -14,16 +14,17 @@ import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 import { Transport } from "./common/transport";
 import {
-  applyLayers,
-  redirectHandlers,
   addForwarder,
   addForwarderToLogGroups,
   applyEnvVariables,
-  validateProps,
-  TagKeys,
+  applyLayers,
   DatadogProps,
   DatadogStrictProps,
   handleSettingPropDefaults,
+  redirectHandlers,
+  setGitCommitHashEnvironmentVariable,
+  TagKeys,
+  validateProps,
 } from "./index";
 
 const versionJson = require("../version.json");
@@ -85,6 +86,13 @@ export class Datadog extends cdk.Construct {
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
+  }
+
+  public addGitCommitMetadata(
+    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    gitCommitSha: string,
+  ) {
+    setGitCommitHashEnvironmentVariable(lambdaFunctions, gitCommitSha);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
