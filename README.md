@@ -110,6 +110,7 @@ export class ExampleStack extends cdk.Stack {
     ...
     datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash)
   }
+}
 ```
 
 ## Configuration
