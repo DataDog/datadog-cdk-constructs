@@ -85,6 +85,16 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
+Optionally, if you'd like to enable [source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) (Typescript only), you should add the following:
+
+```typescript
+// Remember to add @datadog/datadog-ci as a dependency
+const datadogCi = require("@datadog/datadog-ci");
+const hash = await datadogCi.gitMetadata.uploadGitCommitHash("<DATADOG_API_KEY>", '<SITE>')
+
+datadog.addGitCommitMetadata([<LAMBDA_FUNCTIONS>], hash)
+```
+
 ## Configuration
 
 To further configure your Datadog construct, use the following custom parameters:
