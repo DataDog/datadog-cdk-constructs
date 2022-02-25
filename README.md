@@ -91,6 +91,7 @@ Change your initialization function as follows (note: we're changing this to pas
 
 ```typescript
 async function main() {
+  // Make sure to add @datadog/datadog-ci via your package manager
   const datadogCi = require("@datadog/datadog-ci");
   const gitHash = await datadogCi.gitMetadata.uploadGitCommitHash('{Datadog_API_Key}', '<SITE>')
 
