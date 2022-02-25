@@ -90,6 +90,7 @@ Optionally, if you'd like to enable [source code integration](https://docs.datad
 ```typescript
 // Remember to add @datadog/datadog-ci as a dependency
 const datadogCi = require("@datadog/datadog-ci");
+// You may need to slightly refactor your code here and use a top-level async function
 const hash = await datadogCi.gitMetadata.uploadGitCommitHash("<DATADOG_API_KEY>", '<SITE>')
 
 datadog.addGitCommitMetadata([<LAMBDA_FUNCTIONS>], hash)
