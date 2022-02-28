@@ -85,6 +85,34 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
+Optionally, if you'd like to enable [source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) (Typescript only), you'll need to make a few changes to your stack setup since the AWS CDK does not support async functions.
+
+Change your initialization function as follows (note: we're changing this to pass the `gitHash` value to the CDK):
+
+```typescript
+async function main() {
+  // Make sure to add @datadog/datadog-ci via your package manager
+  const datadogCi = require("@datadog/datadog-ci");
+  const gitHash = await datadogCi.gitMetadata.uploadGitCommitHash('{Datadog_API_Key}', '<SITE>')
+
+  const app = new cdk.App();
+  // Pass in the hash to the ExampleStack constructor
+  new ExampleStack(app, "ExampleStack", {}, gitHash);
+}
+```
+
+In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
+
+```typescript
+export class ExampleStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string) {
+    ...
+    ...
+    datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash)
+  }
+}
+```
+
 ## Configuration
 
 To further configure your Datadog construct, use the following custom parameters:
