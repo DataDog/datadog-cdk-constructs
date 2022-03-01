@@ -74,7 +74,7 @@ if [ "$CONT" != "y" ]; then
 fi
 
 if git rev-parse "v2-${VERSION}" >/dev/null 2>&1; then
-    echo "tag v2-${VERSION} already exists, aborting. If the script previously prematurely ended without publishing, make sure to delete tag before trying again."
+    echo "tag v2-${VERSION} already exists, aborting. If the script previously prematurely ended without publishing, make sure to delete the tag before trying again."
     exit 1
 fi
 
