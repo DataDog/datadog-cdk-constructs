@@ -22,6 +22,10 @@ export interface DatadogProps {
   readonly logLevel?: string;
   readonly enableDatadogLogs?: boolean;
   readonly captureLambdaPayload?: boolean;
+  readonly env?: string;
+  readonly service?: string;
+  readonly version?: string;
+  readonly tags?: string;
 }
 
 /*

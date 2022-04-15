@@ -22,6 +22,7 @@ import {
   DatadogStrictProps,
   handleSettingPropDefaults,
   redirectHandlers,
+  setDDEnvVariables,
   setGitCommitHashEnvironmentVariable,
   TagKeys,
   validateProps,
@@ -83,6 +84,7 @@ export class Datadog extends cdk.Construct {
       addCdkConstructVersionTag(lambdaFunctions);
 
       applyEnvVariables(lambdaFunctions, baseProps);
+      setDDEnvVariables(lambdaFunctions, this.props);
 
       this.transport.applyEnvVars(lambdaFunctions);
     }

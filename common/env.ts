@@ -6,6 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import { DatadogProps } from "datadog-cdk-constructs";
 import log from "loglevel";
 import { DatadogStrictProps, ILambdaFunction } from "./interfaces";
 
@@ -14,6 +15,9 @@ export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
 export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
 export const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
 export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
+export const DD_ENV_ENV_VAR = "DD_ENV";
+export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
+export const DD_VERSION_ENV_VAR = "DD_VERSION";
 export const DD_TAGS = "DD_TAGS";
 
 export function setGitCommitHashEnvironmentVariable(lambdas: ILambdaFunction[], hash: string) {
@@ -31,6 +35,23 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
     lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
     if (baseProps.logLevel) {
       lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
+    }
+  });
+}
+
+export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProps) {
+  lambdas.forEach((lam) => {
+    if (props.env) {
+      lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
+    }
+    if (props.service) {
+      lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
+    }
+    if (props.version) {
+      lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
+    }
+    if (props.tags) {
+      lam.addEnvironment(DD_TAGS, props.tags);
     }
   });
 }

@@ -26,6 +26,7 @@ import {
   DatadogStrictProps,
   handleSettingPropDefaults,
   setGitCommitHashEnvironmentVariable,
+  setDDEnvVariables,
 } from "./index";
 
 const versionJson = require("../version.json");
@@ -86,6 +87,7 @@ export class Datadog extends Construct {
       addCdkConstructVersionTag(lambdaFunctions);
 
       applyEnvVariables(lambdaFunctions, baseProps);
+      setDDEnvVariables(lambdaFunctions, this.props);
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
