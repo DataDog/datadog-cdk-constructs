@@ -60,5 +60,5 @@ export interface Node {
 export interface ILambdaFunction {
   runtime: Runtime;
   node: Node;
-  addEnvironment(ey: string, value: string, options?: Record<string, unknown>): void;
+  addEnvironment(key: string, value: string, options?: Record<string, unknown>): void;
 }
