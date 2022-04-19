@@ -6,9 +6,8 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { DatadogProps } from "datadog-cdk-constructs";
 import log from "loglevel";
-import { DatadogStrictProps, ILambdaFunction } from "./interfaces";
+import { DatadogProps, DatadogStrictProps, ILambdaFunction } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
