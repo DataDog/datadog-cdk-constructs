@@ -121,13 +121,13 @@ function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
       if (props.env) {
-        cdk.Tags.of(functionName).add(TagKeys.Env, props.env);
+        cdk.Tags.of(functionName).add(TagKeys.ENV, props.env);
       }
       if (props.service) {
-        cdk.Tags.of(functionName).add(TagKeys.Service, props.service);
+        cdk.Tags.of(functionName).add(TagKeys.SERVICE, props.service);
       }
       if (props.version) {
-        cdk.Tags.of(functionName).add(TagKeys.Version, props.version);
+        cdk.Tags.of(functionName).add(TagKeys.VERSION, props.version);
       }
       if (props.tags) {
         const tagsArray = props.tags.split(",");

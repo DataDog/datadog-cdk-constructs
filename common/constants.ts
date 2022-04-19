@@ -33,9 +33,9 @@ export const DefaultDatadogProps = {
 
 export enum TagKeys {
   CDK = "dd_cdk_construct",
-  Env = "env",
-  Service = "service",
-  Version = "version",
+  ENV = "env",
+  SERVICE = "service",
+  VERSION = "version",
 }
 
 export const runtimeLookup: { [key: string]: RuntimeType } = {
