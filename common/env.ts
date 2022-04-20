@@ -41,16 +41,16 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
 export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProps) {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
-      if (props.env && lam.environment?.[DD_ENV_ENV_VAR] === undefined) {
+      if (props.env) {
         lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
       }
-      if (props.service && lam.environment?.[DD_SERVICE_ENV_VAR] === undefined) {
+      if (props.service) {
         lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
       }
-      if (props.version && lam.environment?.[DD_VERSION_ENV_VAR] === undefined) {
+      if (props.version) {
         lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
       }
-      if (props.tags && lam.environment?.[DD_TAGS] === undefined) {
+      if (props.tags) {
         lam.addEnvironment(DD_TAGS, props.tags);
       }
     }
