@@ -80,6 +80,10 @@ const datadog = new Datadog(this, "Datadog", {
   enableDatadogLogs: <BOOLEAN>,
   injectLogContext: <BOOLEAN>,
   logLevel: <STRING>,
+  env: <STRING>, # Optional
+  service: <STRING>, # Optional
+  version: <STRING>, # Optional
+  tags: <STRING>, # Optional
 });
 datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
@@ -135,7 +139,13 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
+| `env` | `env` | When set along with `forwarderArn`, an `env` tag is added to all Lambda functions with the provided value. When set along with `extensionLayerVersion`, a `DD_ENV` environment variable is added
+to all Lambda functions with the provided value |
+| `service` | `service` | When set along with `forwarderArn`, a `service` tag is added to all Lambda functions with the provided value. When set along with `extensionLayerVersion`, a `DD_SERVICE` environment variable is added to all Lambda functions with the provided value |
+| `version` | `version` | When set along with `forwarderArn`, a `version` tag is added to all Lambda functions with the provided value. When set along with `extensionLayerVersion`, a `DD_VERSION` environment variable is added to all Lambda functions with the provided value |
+| `tags` | `tags` | A comma separated list of key:value pairs as a single string. When set along with `forwarderArn`, the cdk parses the string and sets each key:value pair as a tag to all Lambda functions. When set along with `extensionLayerVersion`, a `DD_TAGS` environment variable is added to all Lambda functions with the provided value |
 
+Note: env, service, version, and tags will override function level DD_XXX environment variables.
 ### Tracing
 
 Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK documentation][9].
