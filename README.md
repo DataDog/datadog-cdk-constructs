@@ -144,7 +144,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `version` | `version` | When set along with `extensionLayerVersion`, a `DD_VERSION` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, a `version` tag is added to all Lambda functions with the provided value. |
 | `tags` | `tags` | A comma separated list of key:value pairs as a single string. When set along with `extensionLayerVersion`, a `DD_TAGS` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, the cdk parses the string and sets each key:value pair as a tag to all Lambda functions. |
 
-Note: env, service, version, and tags will override function level DD_XXX environment variables.
+**Note**: `env`, `service`, `version`, and `tags` override function level `DD_XXX` environment variables.
 ### Tracing
 
 Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK documentation][9].
