@@ -22,6 +22,10 @@ export interface DatadogProps {
   readonly logLevel?: string;
   readonly enableDatadogLogs?: boolean;
   readonly captureLambdaPayload?: boolean;
+  readonly env?: string;
+  readonly service?: string;
+  readonly version?: string;
+  readonly tags?: string;
 }
 
 /*
@@ -56,5 +60,5 @@ export interface Node {
 export interface ILambdaFunction {
   runtime: Runtime;
   node: Node;
-  addEnvironment(ey: string, value: string, options?: Record<string, unknown>): void;
+  addEnvironment(key: string, value: string, options?: Record<string, unknown>): void;
 }

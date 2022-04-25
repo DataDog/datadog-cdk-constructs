@@ -96,7 +96,7 @@ describe("applyEnvVariables", () => {
       logLevel: EXAMPLE_LOG_LEVEL,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    datadogCDK.addGitCommitMetadata([hello], '1234');
+    datadogCDK.addGitCommitMetadata([hello], "1234");
     expect(stack).toHaveResource("AWS::Lambda::Function", {
       Environment: {
         Variables: {

@@ -26,6 +26,7 @@ import {
   DatadogStrictProps,
   handleSettingPropDefaults,
   setGitCommitHashEnvironmentVariable,
+  setDDEnvVariables,
 } from "./index";
 
 const versionJson = require("../version.json");
@@ -86,6 +87,8 @@ export class Datadog extends Construct {
       addCdkConstructVersionTag(lambdaFunctions);
 
       applyEnvVariables(lambdaFunctions, baseProps);
+      setDDEnvVariables(lambdaFunctions, this.props);
+      setTags(lambdaFunctions, this.props);
 
       this.transport.applyEnvVars(lambdaFunctions);
     }
@@ -113,5 +116,31 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
     Tags.of(functionName).add(TagKeys.CDK, `v${versionJson.version}`, {
       includeResourceTypes: ["AWS::Lambda::Function"],
     });
+  });
+}
+
+function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
+  log.debug(`Adding datadog tags`);
+  lambdaFunctions.forEach((functionName) => {
+    if (props.forwarderArn) {
+      if (props.env) {
+        Tags.of(functionName).add(TagKeys.ENV, props.env);
+      }
+      if (props.service) {
+        Tags.of(functionName).add(TagKeys.SERVICE, props.service);
+      }
+      if (props.version) {
+        Tags.of(functionName).add(TagKeys.VERSION, props.version);
+      }
+      if (props.tags) {
+        const tagsArray = props.tags.split(",");
+        tagsArray.forEach((tag: string) => {
+          const [key, value] = tag.split(":");
+          if (key && value) {
+            Tags.of(functionName).add(key, value);
+          }
+        });
+      }
+    }
   });
 }
