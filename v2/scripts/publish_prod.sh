@@ -80,6 +80,7 @@ fi
 
 if git log --oneline -1 | grep -q "chore(release):"; then
     echo "The previous commit was a release, 'chore(release):' is in the commit message. If the script previously prematurely ended without publishing you may need to 'git reset --hard' to a previous commit before trying again."
+    echo "If you just released version 1, you can ignore this message and continue."
     read -p "Proceed anyways (y/n)?" CONT
     if [ "$CONT" != "y" ]; then
         echo "Exiting"
