@@ -46,7 +46,9 @@ export function applyLayers(
     let extensionLayerArn;
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
-        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python"));
+        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python");
+        log.debug(errorMessage);
+        errors.push(errorMessage);
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, isNode);
@@ -56,7 +58,9 @@ export function applyLayers(
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
-        errors.push(getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node"));
+        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node");
+        log.debug(errorMessage);
+        errors.push(errorMessage);
         return;
       }
       lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode);
