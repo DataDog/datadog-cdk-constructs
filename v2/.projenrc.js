@@ -21,7 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     module: "datadog_cdk_constructs_v2",
   },
   cdkVersion: "2.0.0",
-  peerDeps: ["@aws-cdk/aws-lambda-python-alpha@^2.0.0-alpha.1"],
+  peerDeps: ["@aws-cdk/aws-lambda-python-alpha"],
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier", "standard-version"],
