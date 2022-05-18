@@ -188,7 +188,7 @@ describe("addCdkConstructVersionTag", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       apiKey: "1234",
     });
 
@@ -263,7 +263,7 @@ describe("setTags", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       apiKey: "1234",
       env: "test-env",
       service: "test-service",

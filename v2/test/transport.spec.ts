@@ -30,7 +30,7 @@ describe("SITE_URL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       site: "datadoghq.eu",
       flushMetricsToLogs: false,
       apiKey: "1234",
@@ -65,7 +65,7 @@ describe("SITE_URL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       apiKey: "1234",
     });
@@ -166,7 +166,7 @@ describe("SITE_URL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: true,
       site: "datadoghq.eu",
     });
@@ -200,7 +200,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       apiKey: "1234",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
@@ -235,7 +235,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -301,7 +301,7 @@ describe("API_KEY_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKey: "1234",
@@ -432,7 +432,7 @@ describe("apiKMSKeyEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKmsKey: "5678",
