@@ -176,8 +176,13 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
+    const hello3 = new lambda.Function(stack, "HelloHandler3", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
 
-    const errors = applyLayers(stack, stack.region, [hello1, hello2], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, [hello1, hello2, hello3], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
 
     expect(errors.length).toEqual(0);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -185,6 +190,9 @@ describe("applyLayers", () => {
     });
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node14-x:${NODE_LAYER_VERSION}`],
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`],
     });
   });
 
