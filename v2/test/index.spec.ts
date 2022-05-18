@@ -37,7 +37,7 @@ describe("addLambdaFunctions", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       enableDatadogTracing: true,
       enableDatadogLogs: true,
       flushMetricsToLogs: true,
@@ -69,7 +69,7 @@ describe("addLambdaFunctions", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       enableDatadogTracing: true,
       enableDatadogLogs: true,
       flushMetricsToLogs: true,
@@ -99,7 +99,7 @@ describe("addLambdaFunctions", () => {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       enableDatadogTracing: true,
       enableDatadogLogs: true,
       flushMetricsToLogs: true,
@@ -108,7 +108,7 @@ describe("addLambdaFunctions", () => {
     NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
 
     Template.fromStack(NestStack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
+      DestinationArn: "arn:test:forwarder:sa-east-1:12345678:1",
       FilterPattern: "",
     });
   });
@@ -165,7 +165,7 @@ describe("applyLayers", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -199,7 +199,7 @@ describe("applyLayers", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -245,7 +245,7 @@ describe("applyLayers", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
     datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
     Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 3);

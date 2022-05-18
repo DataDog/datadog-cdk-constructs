@@ -29,7 +29,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -60,7 +60,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       logLevel: EXAMPLE_LOG_LEVEL,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -154,7 +154,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       injectLogContext: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -186,7 +186,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -218,7 +218,7 @@ describe("LOG_LEVEL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       logLevel: "debug",
     });
     datadogCDK.addLambdaFunctions([hello]);

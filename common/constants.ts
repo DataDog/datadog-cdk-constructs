@@ -41,6 +41,7 @@ export enum TagKeys {
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "nodejs12.x": RuntimeType.NODE,
   "nodejs14.x": RuntimeType.NODE,
+  "nodejs16.x": RuntimeType.NODE,
   "python3.6": RuntimeType.PYTHON,
   "python3.7": RuntimeType.PYTHON,
   "python3.8": RuntimeType.PYTHON,
@@ -50,6 +51,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
 export const runtimeToLayerName: { [key: string]: string } = {
   "nodejs12.x": "Datadog-Node12-x",
   "nodejs14.x": "Datadog-Node14-x",
+  "nodejs16.x": "Datadog-Node16-x",
   "python3.6": "Datadog-Python36",
   "python3.7": "Datadog-Python37",
   "python3.8": "Datadog-Python38",
