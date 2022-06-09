@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aws-cdk/aws-lambda-python-alpha@^2.0.0-alpha.1":
-  version "2.0.0-rc.24"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.0.0-rc.24.tgz#8732258e210efd7380843ff9485905ec177dd722"
-  integrity sha512-XPjIdWJigzCFkYCGCjvdDGyfKzBU26ULf40oMkVAyN5Gr8CJfk+Y0ymM3rY0I7/zGgxVrxC1JhogNdp9HaT04w==
+"@aws-cdk/aws-lambda-python-alpha@2.24.0-alpha.0":
+  version "2.24.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.24.0-alpha.0.tgz#8ebe65bdad73101527d765fdc0d4938c6d898f1d"
+  integrity sha512-cfFjC7/SXgCmHhMUmKZ5z2Bkm7PX3QxRtwGP/iMSac5NLBlIoGFbplB2lljbPskxuz8FPVuesCMtXTt2IaE92g==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.7":
   version "7.16.7"
