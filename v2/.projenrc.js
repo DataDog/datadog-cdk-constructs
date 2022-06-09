@@ -20,7 +20,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: "datadog-cdk-constructs-v2",
     module: "datadog_cdk_constructs_v2",
   },
-  peerDeps: ["@aws-cdk/aws-lambda-python-alpha"],
+  peerDeps: ["@aws-cdk/aws-lambda-python-alpha@^2.24.0-alpha.0"],
   cdkVersion: "2.24.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
