@@ -60,14 +60,16 @@ export class Datadog extends cdk.Construct {
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       const region = `${lambdaFunctions[0].env.region}`;
       log.debug(`Using region: ${region}`);
-      applyLayers(
-        this.scope,
-        region,
-        lambdaFunctions,
-        this.props.pythonLayerVersion,
-        this.props.nodeLayerVersion,
-        this.props.extensionLayerVersion,
-      );
+      if (baseProps.addLayers) {
+        applyLayers(
+          this.scope,
+          region,
+          lambdaFunctions,
+          this.props.pythonLayerVersion,
+          this.props.nodeLayerVersion,
+          this.props.extensionLayerVersion,
+        );
+      }
       redirectHandlers(lambdaFunctions, baseProps.addLayers);
 
       if (this.props.forwarderArn !== undefined) {
