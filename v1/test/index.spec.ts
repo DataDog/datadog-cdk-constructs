@@ -1,6 +1,7 @@
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
+import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import {
   Datadog,
   DD_ACCOUNT_ID,
@@ -12,6 +13,7 @@ import {
   JS_HANDLER_WITH_LAYERS,
   DD_HANDLER_ENV_VAR,
   PYTHON_HANDLER,
+  JS_HANDLER,
 } from "../src/index";
 import { findDatadogSubscriptionFilters } from "./test-utils";
 
@@ -184,6 +186,32 @@ describe("applyLayers", () => {
       },
     });
   });
+
+  it("does not add layers when addLayers is false", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: 80,
+      extensionLayerVersion: 23,
+      apiKey: "1234",
+      addLayers: false,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Handler: `${JS_HANDLER}`,
+      Layers: ABSENT,
+    });
+  });
+
   it("layer is added for python", () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
