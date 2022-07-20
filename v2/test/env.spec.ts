@@ -300,7 +300,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
 });
 
 describe("DD_TAGS_ENV_VAR", () => {
-  it("sets git.commit.sha in DD_TAGS when addGitMetadata is called", () => {
+  it("sets git.commit.sha in DD_TAGS when addGitCommitMetadata is called", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -327,6 +327,42 @@ describe("DD_TAGS_ENV_VAR", () => {
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [DD_TAGS]: "git.commit.sha:1234",
+        },
+      },
+    });
+  });
+
+  it("doesn't overwrite DD_TAGS when addGitCommitMetadata is called", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      captureLambdaPayload: true,
+      tags: 'key:value',
+      // the below fields are needed or DD_TAGS won't get set
+      extensionLayerVersion: 10,
+      apiKey: 'test',
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addGitCommitMetadata([hello], "1234");
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [DD_TAGS]: "key:value,git.commit.sha:1234",
         },
       },
     });
