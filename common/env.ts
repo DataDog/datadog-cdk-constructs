@@ -7,11 +7,7 @@
  */
 
 import log from "loglevel";
-import {
-  DatadogProps,
-  DatadogStrictProps,
-  ILambdaFunction,
-} from "./interfaces";
+import { DatadogProps, DatadogStrictProps, ILambdaFunction } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
@@ -23,52 +19,31 @@ export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
 export const DD_VERSION_ENV_VAR = "DD_VERSION";
 export const DD_TAGS = "DD_TAGS";
 
-export function setGitCommitHashEnvironmentVariable(
-  lambdas: any[],
-  hash: string
-) {
+export function setGitCommitHashEnvironmentVariable(lambdas: any[], hash: string) {
   // We're using an any type here because AWS does not expose the `environment` field in their type
   lambdas.forEach((lambda) => {
     if (lambda.environment[DD_TAGS] !== undefined) {
       lambda.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
     } else {
-      lambda.addEnvironment(DD_TAGS, "git.commit.sha:" + hash);
+      lambda.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
     }
   });
 }
 
-export function applyEnvVariables(
-  lambdas: ILambdaFunction[],
-  baseProps: DatadogStrictProps
-) {
+export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: DatadogStrictProps) {
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
-    lam.addEnvironment(
-      ENABLE_DD_TRACING_ENV_VAR,
-      baseProps.enableDatadogTracing.toString().toLowerCase()
-    );
-    lam.addEnvironment(
-      INJECT_LOG_CONTEXT_ENV_VAR,
-      baseProps.injectLogContext.toString().toLowerCase()
-    );
-    lam.addEnvironment(
-      ENABLE_DD_LOGS_ENV_VAR,
-      baseProps.enableDatadogLogs.toString().toLowerCase()
-    );
-    lam.addEnvironment(
-      CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
-      baseProps.captureLambdaPayload.toString().toLowerCase()
-    );
+    lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
+    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+    lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
+    lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
     if (baseProps.logLevel) {
       lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
     }
   });
 }
 
-export function setDDEnvVariables(
-  lambdas: ILambdaFunction[],
-  props: DatadogProps
-) {
+export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProps) {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
       if (props.env) {
