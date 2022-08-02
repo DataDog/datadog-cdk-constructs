@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/DataDog/datadog-cdk-constructs/compare/v0.8.1...v0.8.2) (2022-08-02)
+
+
+### Bug Fixes
+
+* ensure addLayers=false prevents layers being added ([#116](https://github.com/DataDog/datadog-cdk-constructs/issues/116)) ([3d3d88e](https://github.com/DataDog/datadog-cdk-constructs/commit/3d3d88e44bcd9db0d31c04bd5d42df5507cc8c95))
+
 ### [0.8.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v0.8.0...v0.8.1) (2022-07-20)
 
 ## [0.8.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v0.7.2...v0.8.0) (2022-06-15)
