@@ -6,6 +6,9 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import { Construct } from 'constructs';
+import { FargateTaskDefinition } from 'aws-cdk-lib/aws-ecs';
+
 export interface DatadogProps {
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
@@ -61,4 +64,23 @@ export interface ILambdaFunction {
   runtime: Runtime;
   node: Node;
   addEnvironment(key: string, value: string, options?: Record<string, unknown>): void;
+}
+
+export interface EcsOptions {
+  /* Construct Scope */
+  readonly scope: Construct;
+  /* Fargate Task Defintiion */
+  readonly taskDefinition: FargateTaskDefinition;
+  /* Secret Manager ARN that contains the Datadog API Key */
+  readonly ddApiSecretArn: string;
+  /* (Optional) KMS Key used to encrypt the Datadog API Secret */
+  readonly kmsKeyArn?: string;
+  /* Service name */
+  readonly service: string;
+  /* Application version */
+  readonly version: string;
+  /* Environment name */
+  readonly envName: string;
+  /* (Optional) additional tags for querying in Datadog */
+  readonly tags?: { [key: string]: string };
 }

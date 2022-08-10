@@ -8,6 +8,7 @@
 
 import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
 import { Tags } from "aws-cdk-lib";
+import { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -51,6 +52,10 @@ export class Datadog extends Construct {
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
     );
+  }
+
+  public addFargateTask(taskDefinition: FargateTaskDefinition) {
+    
   }
 
   public addLambdaFunctions(
