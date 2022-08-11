@@ -346,10 +346,10 @@ describe("DD_TAGS_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       captureLambdaPayload: true,
-      tags: 'key:value',
+      tags: "key:value",
       // the below fields are needed or DD_TAGS won't get set
       extensionLayerVersion: 10,
-      apiKey: 'test',
+      apiKey: "test",
     });
     datadogCDK.addLambdaFunctions([hello]);
     datadogCDK.addGitCommitMetadata([hello], "1234");
