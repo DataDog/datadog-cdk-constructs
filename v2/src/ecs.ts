@@ -1,6 +1,4 @@
 import { EcsOptions } from "./common/interfaces";
-import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import {
     LogDrivers,
@@ -10,36 +8,12 @@ import {
     ContainerDefinition,
     FirelensLogRouterType,
     ContainerDependencyCondition,
-    FargateTaskDefinition,
     CfnTaskDefinition
 } from 'aws-cdk-lib/aws-ecs'
-import { PublicGalleryAuthorizationToken } from "aws-cdk-lib/aws-ecr";
 import { Aws, Duration } from "aws-cdk-lib/core";
 
-const addFargateTask = (options: EcsOptions) => { 
-    const { ddApiSecretArn, kmsKeyArn } = options;
-    const datadogApiSecret =
-    options.scope.node.tryFindChild("DatadogApiSecret") as Secret ||
-        Secret.fromSecretCompleteArn(options.scope, "DatadogApiSecret", ddApiSecretArn);
-    const datadogKmsKey = kmsKeyArn ?
-    options.scope.node.tryFindChild("DatadogKmsKey") as Key ||
-        Key.fromKeyArn(options.scope, "DatadogKmsKey", kmsKeyArn) : undefined;
-    const taskExecutionRole = options.taskDefinition.obtainExecutionRole()
-    datadogApiSecret.grantRead(taskExecutionRole);
-    !datadogKmsKey || datadogKmsKey.grantDecrypt(taskExecutionRole);
-    const datadogEcsSecret = EcsSecret.fromSecretsManager(datadogApiSecret)
-    const taskAuxLogGroup = new LogGroup(options.scope, "TaskAuxContainersLogGroup")
-    const ddAgentContainer = addDatadogAgentContainer(options, taskAuxLogGroup, datadogEcsSecret);
-    const fluentBitContainer = addFluentBitRouter(options, taskAuxLogGroup, datadogEcsSecret)
-    ddAgentContainer.addContainerDependencies({
-        container: fluentBitContainer,
-        condition: ContainerDependencyCondition.HEALTHY
-    })
-    PublicGalleryAuthorizationToken.grantRead(taskExecutionRole)
-}
 
-
-function addDatadogAgentContainer(containerOptions: EcsOptions, logGroup: LogGroup, ddSecret: EcsSecret): ContainerDefinition {
+export function addDatadogAgentContainer(containerOptions: EcsOptions, logGroup: LogGroup, ddSecret: EcsSecret): ContainerDefinition {
     const datadogAgentContainer = containerOptions.taskDefinition.addContainer(
         `datadog-agent-${containerOptions.taskDefinition.family}`, { // Adding a suffix to the container name to improve discoverability in infra monitoring
         image: ContainerImage.fromRegistry("public.ecr.aws/datadog/agent:latest"),
@@ -75,7 +49,7 @@ function addDatadogAgentContainer(containerOptions: EcsOptions, logGroup: LogGro
     return datadogAgentContainer
 }
 
-function addFluentBitRouter(options: EcsOptions, logGroup: LogGroup, ddSecret: EcsSecret): ContainerDefinition {
+export function addFluentBitRouter(options: EcsOptions, logGroup: LogGroup, ddSecret: EcsSecret): ContainerDefinition {
 
     const fluentBitContainer = options.taskDefinition.addFirelensLogRouter(
         `fluentBit-${options.taskDefinition.family}`, { // Adding a suffix to the container name to improve discoverability in infra monitoring
@@ -108,14 +82,13 @@ function addFluentBitRouter(options: EcsOptions, logGroup: LogGroup, ddSecret: E
     return fluentBitContainer
 }
 
-function updateTaskContainers(
-    taskDefinition: FargateTaskDefinition,
+export function updateTaskContainers(
     ddAgentContainer: ContainerDefinition,
     fluentBitContainer: ContainerDefinition,
     options: EcsOptions
 ) {
-    const cfnTaskDefinition = taskDefinition.node.defaultChild as CfnTaskDefinition
-    const taskDefinitionChildren = taskDefinition.node.children
+    const cfnTaskDefinition = options.taskDefinition.node.defaultChild as CfnTaskDefinition
+    const taskDefinitionChildren = options.taskDefinition.node.children
     for (const [index, child] of taskDefinitionChildren.entries()) {
         if (child.constructor.name === ContainerDefinition.name) {
             const container = child as ContainerDefinition

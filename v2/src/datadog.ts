@@ -8,7 +8,6 @@
 
 import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
 import { Tags } from "aws-cdk-lib";
-import { FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -29,6 +28,16 @@ import {
   setGitCommitHashEnvironmentVariable,
   setDDEnvVariables,
 } from "./index";
+import { EcsOptions } from "./common/interfaces";
+import { Secret } from "aws-cdk-lib/aws-secretsmanager";
+import { Key } from "aws-cdk-lib/aws-kms";
+import { PublicGalleryAuthorizationToken } from "aws-cdk-lib/aws-ecr";
+import {
+  Secret as EcsSecret,
+  ContainerDependencyCondition,
+} from 'aws-cdk-lib/aws-ecs'
+import { LogGroup } from "aws-cdk-lib/aws-logs";
+import { addDatadogAgentContainer, addFluentBitRouter, updateTaskContainers} from "./ecs";
 
 const versionJson = require("../version.json");
 
@@ -54,8 +63,40 @@ export class Datadog extends Construct {
     );
   }
 
-  public addFargateTask(taskDefinition: FargateTaskDefinition) {
+  public addFargateTask(options: EcsOptions) {
+    const { ddApiSecretArn, kmsKeyArn } = options;
+    // We need to initialize constructs for the API secret and KMS key to use their methods.
+    // However we need to do this once and don't want to have ID collisions. The KMS key might be
+    // needed for cross account access to a Datadog API secret
+    const datadogApiSecret =
+    options.scope.node.tryFindChild("DatadogApiSecret") as Secret ||
+        Secret.fromSecretCompleteArn(options.scope, "DatadogApiSecret", ddApiSecretArn);
+    const datadogKmsKey = kmsKeyArn ?
+    options.scope.node.tryFindChild("DatadogKmsKey") as Key ||
+      Key.fromKeyArn(options.scope, "DatadogKmsKey", kmsKeyArn) : undefined;
     
+    // Grant permissions for the API secrets and KMS keys
+    const taskExecutionRole = options.taskDefinition.obtainExecutionRole()
+    datadogApiSecret.grantRead(taskExecutionRole);
+    !datadogKmsKey || datadogKmsKey.grantDecrypt(taskExecutionRole);
+    // Convert Secrets Manager secret to ECS Secret
+    const datadogEcsSecret = EcsSecret.fromSecretsManager(datadogApiSecret)
+    // Create new CloudWatch Log Group to be used by the Datadog Agent and Fluent Bit containers
+    const taskAuxLogGroup = new LogGroup(options.scope, "TaskAuxContainersLogGroup")
+    // Add the Datadog Agent container to the task definition
+    const ddAgentContainer = addDatadogAgentContainer(options, taskAuxLogGroup, datadogEcsSecret);
+    // Add the Fluent Bit container to the task definition
+    const fluentBitContainer = addFluentBitRouter(options, taskAuxLogGroup, datadogEcsSecret)
+    // Ensure that the Datadog agent doesn't start before the Fluentbit container has started
+    ddAgentContainer.addContainerDependencies({
+        container: fluentBitContainer,
+        condition: ContainerDependencyCondition.HEALTHY
+    })
+    // Granting ECR Public Gallery access will increase the number 
+    // of concurrent requests to the Public Gallery for the Fluentbit container and the Datadog Agent container
+    PublicGalleryAuthorizationToken.grantRead(taskExecutionRole)
+    // Update the task definition with Docker labels, env vars, tags, and dependencies
+    updateTaskContainers(ddAgentContainer, fluentBitContainer, options)
   }
 
   public addLambdaFunctions(
