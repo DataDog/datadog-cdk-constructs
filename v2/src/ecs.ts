@@ -1,13 +1,3 @@
-// TODO:
-
-// Update containers with:
-//  * environment variables
-//  * Docker labels
-//  * Log configurations
-// Add dependency on Fluentbit and Datadog Agent
-
-
-
 import { EcsOptions } from "./common/interfaces";
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Key } from 'aws-cdk-lib/aws-kms';
@@ -19,10 +9,12 @@ import {
     Protocol,
     ContainerDefinition,
     FirelensLogRouterType,
-    ContainerDependencyCondition
+    ContainerDependencyCondition,
+    FargateTaskDefinition,
+    CfnTaskDefinition
 } from 'aws-cdk-lib/aws-ecs'
 import { PublicGalleryAuthorizationToken } from "aws-cdk-lib/aws-ecr";
-import { Duration } from "aws-cdk-lib/core";
+import { Aws, Duration } from "aws-cdk-lib/core";
 
 const addFargateTask = (options: EcsOptions) => { 
     const { ddApiSecretArn, kmsKeyArn } = options;
@@ -114,4 +106,67 @@ function addFluentBitRouter(options: EcsOptions, logGroup: LogGroup, ddSecret: E
         secrets: { "DD_API_KEY": ddSecret }
     })
     return fluentBitContainer
+}
+
+function updateTaskContainers(
+    taskDefinition: FargateTaskDefinition,
+    ddAgentContainer: ContainerDefinition,
+    fluentBitContainer: ContainerDefinition,
+    options: EcsOptions
+) {
+    const cfnTaskDefinition = taskDefinition.node.defaultChild as CfnTaskDefinition
+    const taskDefinitionChildren = taskDefinition.node.children
+    for (const [index, child] of taskDefinitionChildren.entries()) {
+        if (child.constructor.name === ContainerDefinition.name) {
+            const container = child as ContainerDefinition
+            container.addContainerDependencies(
+                {
+                    container: ddAgentContainer,
+                    condition: ContainerDependencyCondition.HEALTHY
+                },
+                {
+                    container: fluentBitContainer,
+                    condition: ContainerDependencyCondition.HEALTHY
+                }
+            )
+            const datadogEnvVars = {
+                "DD_ENV": options.envName,
+                "DD_SERVICE": options.service,
+                "DD_VERSION": options.version || container.imageName,
+            }
+        
+            for (const [key, value] of Object.entries(datadogEnvVars)) {
+                container.addEnvironment(key, value)
+            }
+            cfnTaskDefinition.addPropertyOverride(
+                `ContainerDefinitions.${index}.LogConfiguration.Options`,
+                {
+                    "Name": "datadog",
+                    "Host": "http-intake.logs.datadoghq.com",
+                    "dd_service": options.service,
+                    "dd_source": container.containerName,
+                    "dd_message_key": "log",
+                    "dd_tags": `env:${options.envName},aws_region:${Aws.REGION}`, //TODO: Add tags from options.tags
+                    "TLS": "on",
+                    "compress": "gzip",
+                    "provider": "ecs",
+                }
+            )
+
+            cfnTaskDefinition.addPropertyOverride(
+                `ContainerDefinitions.${index}.LogConfiguration.SecretOptions`,
+                [{"Name": "apikey", "ValueFrom": options.ddApiSecretArn}]
+            )
+
+            cfnTaskDefinition.addPropertyOverride(
+                `ContainerDefinitions.${index}.DockerLabels`,
+                {
+                    "com.datadoghq.tags.env": options.envName,
+                    "com.datadoghq.tags.service": options.service,
+                    "com.datadoghq.tags.version": container.imageName,
+                    // TODO: Add tags from options.tags
+                }
+            )
+        }
+    }
 }
