@@ -9,7 +9,6 @@
 import log from "loglevel";
 import { DefaultDatadogProps } from "./constants";
 import { DatadogProps, DatadogStrictProps } from "./interfaces";
-import { Token } from "aws-cdk-lib";
 
 export function validateProps(props: DatadogProps) {
   log.debug("Validating props...");
@@ -25,7 +24,7 @@ export function validateProps(props: DatadogProps) {
   if (
     props.site !== undefined &&
     !siteList.includes(props.site.toLowerCase()) &&
-    !Token.isUnresolved(props.site)
+    !(props.site.startsWith("${Token[") && props.site.endsWith("]}"))
   ) {
     throw new Error(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
