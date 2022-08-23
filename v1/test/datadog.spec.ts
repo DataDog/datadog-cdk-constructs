@@ -1,8 +1,8 @@
 import "@aws-cdk/assert/jest";
-import * as ssm from "@aws-cdk/aws-ssm";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
+import { Token } from "@aws-cdk/core";
 import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
@@ -59,7 +59,7 @@ describe("validateProps", () => {
     });
     let threwError = false;
     let thrownError: Error | undefined;
-    const datadogSite = ssm.StringParameter.fromStringParameterName(stack, `$service-datadog-site`, "/datadog/site");
+    const datadogSite = "${Token[TOKEN.100]}" as Token;
     try {
       const datadogCdk = new Datadog(stack, "Datadog", {
         nodeLayerVersion: NODE_LAYER_VERSION,
@@ -67,7 +67,7 @@ describe("validateProps", () => {
         apiKey: "1234",
         enableDatadogTracing: false,
         flushMetricsToLogs: false,
-        site: datadogSite.stringValue,
+        site: `${datadogSite}`,
       });
       datadogCdk.addLambdaFunctions([hello]);
     } catch (e) {

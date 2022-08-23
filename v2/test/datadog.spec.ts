@@ -1,4 +1,4 @@
-import { App, Stack } from "aws-cdk-lib";
+import { App, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
@@ -42,6 +42,41 @@ describe("validateProps", () => {
     expect(thrownError?.message).toEqual(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
     );
+  });
+
+  it("doesn't throw an error when the site is set as a cdk token", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    const datadogSite = "${Token[TOKEN.100]}" as Token;
+    try {
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        enableDatadogTracing: false,
+        flushMetricsToLogs: false,
+        site: `${datadogSite}`,
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(false);
+    expect(thrownError?.message).toEqual(undefined);
   });
 
   it("throws error if flushMetricsToLogs is false and both API key and KMS API key are undefined", () => {
