@@ -1,7 +1,7 @@
+import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import {
   Datadog,
   DD_ACCOUNT_ID,
