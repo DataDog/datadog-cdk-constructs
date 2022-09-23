@@ -26,6 +26,7 @@ export interface DatadogProps {
   readonly service?: string;
   readonly version?: string;
   readonly tags?: string;
+  readonly createForwarderPermissions?: boolean;
 }
 
 /*
