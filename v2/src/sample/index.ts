@@ -80,6 +80,7 @@ export class ExampleStack extends Stack {
       pythonLayerVersion: 46,
       extensionLayerVersion: 10,
       // forwarderArn: "<forwarder_ARN>",
+      // createForwarderPermissions: false,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       apiKey: process.env.API_KEY,
