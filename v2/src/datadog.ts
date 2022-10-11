@@ -80,7 +80,7 @@ export class Datadog extends Construct {
           log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
         } else {
           log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
-          addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn);
+          addForwarder(this.scope, lambdaFunctions, this.props.forwarderArn, this.props.createForwarderPermissions === true);
         }
       } else {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
@@ -105,7 +105,7 @@ export class Datadog extends Construct {
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
     if (this.props.forwarderArn !== undefined) {
-      addForwarderToLogGroups(this.scope, logGroups, this.props.forwarderArn);
+      addForwarderToLogGroups(this.scope, logGroups, this.props.forwarderArn, this.props.createForwarderPermissions === true);
     } else {
       log.debug("Forwarder ARN not provided, no non lambda log group subscriptions will be added");
     }
