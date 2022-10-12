@@ -25,6 +25,7 @@ export enum RuntimeType {
 export const DefaultDatadogProps = {
   addLayers: true,
   enableDatadogTracing: true,
+  enableMergeXrayTraces: false,
   injectLogContext: true,
   enableDatadogLogs: true,
   architecture: "X86_64",

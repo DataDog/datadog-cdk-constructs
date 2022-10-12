@@ -64,6 +64,7 @@ export function checkForMultipleApiKeys(props: DatadogProps) {
 export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictProps {
   let addLayers = props.addLayers;
   let enableDatadogTracing = props.enableDatadogTracing;
+  let enableMergeXrayTraces = props.enableMergeXrayTraces;
   let injectLogContext = props.injectLogContext;
   const logLevel = props.logLevel;
   let enableDatadogLogs = props.enableDatadogLogs;
@@ -76,6 +77,12 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   if (enableDatadogTracing === undefined) {
     log.debug(`No value provided for enableDatadogTracing, defaulting to ${DefaultDatadogProps.enableDatadogTracing}`);
     enableDatadogTracing = DefaultDatadogProps.enableDatadogTracing;
+  }
+  if (enableMergeXrayTraces === undefined) {
+    log.debug(
+      `No value provided for enableMergeXrayTraces, defaulting to ${DefaultDatadogProps.enableMergeXrayTraces}`,
+    );
+    enableMergeXrayTraces = DefaultDatadogProps.enableMergeXrayTraces;
   }
   if (injectLogContext === undefined) {
     log.debug(`No value provided for injectLogContext, defaulting to ${DefaultDatadogProps.injectLogContext}`);
@@ -96,6 +103,7 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   return {
     addLayers: addLayers,
     enableDatadogTracing: enableDatadogTracing,
+    enableMergeXrayTraces: enableMergeXrayTraces,
     injectLogContext: injectLogContext,
     logLevel: logLevel,
     enableDatadogLogs: enableDatadogLogs,
