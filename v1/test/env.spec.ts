@@ -12,6 +12,7 @@ import {
   ENABLE_DD_LOGS_ENV_VAR,
   CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
   DD_HANDLER_ENV_VAR,
+  ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
 } from "../src/index";
 
 describe("applyEnvVariables", () => {
@@ -37,6 +38,7 @@ describe("applyEnvVariables", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: transportDefaults.flushMetricsToLogs.toString(),
           [ENABLE_DD_TRACING_ENV_VAR]: DefaultDatadogProps.enableDatadogTracing.toString(),
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: DefaultDatadogProps.enableMergeXrayTraces.toString(),
           [ENABLE_DD_LOGS_ENV_VAR]: DefaultDatadogProps.enableDatadogLogs.toString(),
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: DefaultDatadogProps.captureLambdaPayload.toString(),
           [INJECT_LOG_CONTEXT_ENV_VAR]: DefaultDatadogProps.injectLogContext.toString(),
@@ -69,6 +71,7 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
           ["DD_TRACE_ENABLED"]: DefaultDatadogProps.enableDatadogTracing.toString(),
+          ["DD_MERGE_XRAY_TRACES"]: DefaultDatadogProps.enableMergeXrayTraces.toString(),
           ["DD_SERVERLESS_LOGS_ENABLED"]: DefaultDatadogProps.enableDatadogLogs.toString(),
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: DefaultDatadogProps.captureLambdaPayload.toString(),
           ["DD_LOGS_INJECTION"]: DefaultDatadogProps.injectLogContext.toString(),
@@ -103,6 +106,7 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
           ["DD_TRACE_ENABLED"]: DefaultDatadogProps.enableDatadogTracing.toString(),
+          ["DD_MERGE_XRAY_TRACES"]: DefaultDatadogProps.enableMergeXrayTraces.toString(),
           ["DD_SERVERLESS_LOGS_ENABLED"]: DefaultDatadogProps.enableDatadogLogs.toString(),
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: DefaultDatadogProps.captureLambdaPayload.toString(),
           ["DD_LOGS_INJECTION"]: DefaultDatadogProps.injectLogContext.toString(),
@@ -137,6 +141,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "false",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -165,6 +170,69 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+});
+
+describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
+  it("enables Datadog xray trace merging when set to true", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      enableMergeXrayTraces: true,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+
+  it("disables Datadog xray trace merging by default if value is undefined", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {});
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -199,6 +267,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -229,6 +298,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -263,6 +333,7 @@ describe("LOG_LEVEL_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [LOG_LEVEL_ENV_VAR]: "debug",
@@ -296,6 +367,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "false",
@@ -324,6 +396,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -356,6 +429,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -386,6 +460,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",

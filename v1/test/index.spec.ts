@@ -1,7 +1,7 @@
+import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
-import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import {
   Datadog,
   DD_ACCOUNT_ID,
@@ -14,6 +14,7 @@ import {
   DD_HANDLER_ENV_VAR,
   PYTHON_HANDLER,
   JS_HANDLER,
+  ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
 } from "../src/index";
 import { findDatadogSubscriptionFilters } from "./test-utils";
 
@@ -179,6 +180,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
@@ -239,6 +241,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
@@ -286,6 +289,7 @@ describe("applyLayers", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
