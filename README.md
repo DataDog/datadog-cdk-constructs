@@ -78,6 +78,7 @@ const datadog = new Datadog(this, "Datadog", {
   apiKeySecretArn: "{Secret_ARN_Datadog_API_Key}",
   apiKmsKey: "{Encrypted_Datadog_API_Key}",
   enableDatadogTracing: <BOOLEAN>,
+  enableMergeXrayTraces: <BOOLEAN>,
   enableDatadogLogs: <BOOLEAN>,
   injectLogContext: <BOOLEAN>,
   logLevel: <STRING>,
@@ -138,6 +139,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `apiKeySecretArn` | `api_key_secret_arn` | The ARN of the secret storing the Datadog API key in AWS Secrets Manager. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayer` is set. Remember to add the `secretsmanager:GetSecretValue` permission to the Lambda execution role. |
 | `apiKmsKey` | `api_kms_key` | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
+| `enableMergeXrayTraces` | `enable_merge_xray_traces` | Enable merging X-Ray traces on your Lambda functions. Defaults to `false`. |
 | `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
@@ -187,6 +189,7 @@ class RootStack extends cdk.Stack {
       apiKeySecretArn: "{Secret_ARN_Datadog_API_Key}",
       apiKmsKey: "{Encrypted_Datadog_API_Key}",
       enableDatadogTracing: <BOOLEAN>,
+      enableMergeXrayTraces: <BOOLEAN>,
       enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
@@ -210,6 +213,7 @@ class NestedStack extends cdk.NestedStack {
       apiKeySecretArn: "{Secret_ARN_Datadog_API_Key}",
       apiKmsKey: "{Encrypted_Datadog_API_Key}",
       enableDatadogTracing: <BOOLEAN>,
+      enableMergeXrayTraces: <BOOLEAN>,
       enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
