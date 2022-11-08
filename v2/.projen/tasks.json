@@ -136,6 +136,14 @@
         }
       ]
     },
+    "preinstall": {
+      "name": "preinstall",
+      "steps": [
+        {
+          "exec": "cd .. && yarn install"
+        }
+      ]
+    },
     "test": {
       "name": "test",
       "description": "Run tests",
