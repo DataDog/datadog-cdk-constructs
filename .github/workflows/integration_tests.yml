@@ -38,9 +38,6 @@ jobs:
       - name: Install Packages
         run: npx projen
 
-      - name: Acknowledge CDK v1 deprecation message
-        run: npx cdk acknowledge 19836
-
       - name: Run tests
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
