@@ -57,7 +57,7 @@ fi
 # Make sure dependencies are installed before proceeding
 yarn
 
-read -p "Do you have the PyPI and npm login credentials for the Datadog account (y/n)?" CONT
+read -p "Do you have access to PyPI (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
@@ -119,7 +119,8 @@ echo "Publishing to npm"
 yarn publish $JS_TARBALL --new-version "$VERSION"
 
 echo "Publishing to PyPI"
-python3 -m twine upload ./dist/python/*
+echo "Please enter the token (password) for datadog-cdk-constructs-v2 PyPI"
+python3 -m twine upload -u __token__ ./dist/python/* 
 
 echo 'Pushing updates to github'
 git push origin main
