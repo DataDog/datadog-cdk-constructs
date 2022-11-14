@@ -57,7 +57,7 @@ fi
 # Make sure dependencies are installed before proceeding
 yarn
 
-read -p "Do you have access to the serverless shared vault in 1Password?" CONT
+read -p "Do you have access to PyPI? (y/n)?" CONT
 if [ "$CONT" != "y" ]; then
     echo "Exiting"
     exit 1
