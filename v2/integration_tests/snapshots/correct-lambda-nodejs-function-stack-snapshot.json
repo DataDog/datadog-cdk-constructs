@@ -63,10 +63,10 @@
     },
     "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
     "Layers": [
-     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node18-x:XXX",
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
     ],
-    "Runtime": "nodejs14.x",
+    "Runtime": "nodejs18.x",
     "Tags": [
      {
       "Key": "dd_cdk_construct",
@@ -134,6 +134,8 @@
      }
     ]
    },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "lambda-nodejs-function-stack/rest-test/CloudWatchRole/Resource"
    }
@@ -151,6 +153,8 @@
    "DependsOn": [
     "resttestXXXXXXXX"
    ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "lambda-nodejs-function-stack/rest-test/Account"
    }
