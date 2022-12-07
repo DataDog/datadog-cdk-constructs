@@ -4,7 +4,7 @@
 
 "@aws-cdk/asset-awscli-v1@^2.2.16":
   version "2.2.30"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.30.tgz"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.30.tgz#68bcbeacce590fcc0570c9e3cfc48b2ec6de9a9f"
   integrity sha512-mFRF5n1jxjKpX8ZZSCRhJc6Hj8BkeZFUPwK0j6jRcouQQZHsZyydbf4UuzMYQ4SZU6cCLM7DKmWO0Kx156ZSnw==
 
 "@aws-cdk/asset-kubectl-v20@^2.1.1":
@@ -14,13 +14,13 @@
 
 "@aws-cdk/asset-node-proxy-agent-v5@^2.0.21":
   version "2.0.36"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-node-proxy-agent-v5/-/asset-node-proxy-agent-v5-2.0.36.tgz"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v5/-/asset-node-proxy-agent-v5-2.0.36.tgz#2a6b24a31779d54a8e4e4e0b1cca41dc5d572baa"
   integrity sha512-acG7qHXrLXGVsOnkHNrNfzGaMtONZ+2nsjhUXhCRf9zQZMzs7lzkv9dTUaHJywAABR9DaRRUFMpUytJDqvN8Ew==
 
-"@aws-cdk/aws-lambda-python-alpha@2.24.0-alpha.0":
-  version "2.24.0-alpha.0"
-  resolved "https://registry.npmjs.org/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.24.0-alpha.0.tgz"
-  integrity sha512-cfFjC7/SXgCmHhMUmKZ5z2Bkm7PX3QxRtwGP/iMSac5NLBlIoGFbplB2lljbPskxuz8FPVuesCMtXTt2IaE92g==
+"@aws-cdk/aws-lambda-python-alpha@2.54.0-alpha.0":
+  version "2.54.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.54.0-alpha.0.tgz#0ca8a97d36dbf245b70324fee155e5b3cbd994f1"
+  integrity sha512-03LftLqnhfMHDBn3391skdR+1FVqO3eIk6nTSwiPUGtxKqJ13vVn/wke69ZbcwnKIa9wDjiRIho4MEUEe8/5+Q==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.7":
   version "7.16.7"
