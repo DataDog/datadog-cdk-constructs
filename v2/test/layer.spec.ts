@@ -25,7 +25,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
@@ -44,7 +44,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
@@ -74,7 +74,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
@@ -167,7 +167,7 @@ describe("applyLayers", () => {
       },
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
@@ -223,7 +223,7 @@ describe("applyLayers", () => {
       },
     });
     const hello1 = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -252,7 +252,7 @@ describe("isGovCloud", () => {
       },
     });
     const pythonLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -289,7 +289,7 @@ describe("isGovCloud", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
