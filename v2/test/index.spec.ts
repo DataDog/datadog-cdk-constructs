@@ -143,7 +143,7 @@ describe("addLambdaFunctions", () => {
 
     Template.fromStack(NestStack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:20`,
+        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:20`,
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
       ],
     });

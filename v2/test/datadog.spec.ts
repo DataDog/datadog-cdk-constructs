@@ -160,7 +160,7 @@ describe("addCdkConstructVersionTag", () => {
     });
     addCdkConstructVersionTag([hello1, hello2]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs12.x",
+      Runtime: "nodejs18.x",
       Tags: [
         {
           Key: "dd_cdk_construct",
@@ -308,7 +308,7 @@ describe("setTags", () => {
     datadogCdk.addLambdaFunctions([hello1, hello2]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs12.x",
+      Runtime: "nodejs18.x",
       Tags: [
         {
           Key: "dd_cdk_construct",
@@ -400,7 +400,7 @@ describe("setTags", () => {
     datadogCdk.addLambdaFunctions([hello1, hello2]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs12.x",
+      Runtime: "nodejs18.x",
       Tags: [
         {
           Key: "dd_cdk_construct",
