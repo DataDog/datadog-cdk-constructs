@@ -51,8 +51,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   ],
   scripts: {
     "check-formatting": "prettier --check src/**",
-    // prettier-ignore
-    "preinstall": "cd .. && yarn install",
   },
   pullRequestTemplate: false,
   dependabot: false,
