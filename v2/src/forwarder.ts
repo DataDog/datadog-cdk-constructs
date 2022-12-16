@@ -23,9 +23,14 @@ function getForwarder(scope: Construct, forwarderArn: string) {
   }
 }
 
-export function addForwarder(scope: Construct, lambdaFunctions: lambda.Function[], forwarderArn: string, createForwarderPermissions: boolean) {
+export function addForwarder(
+  scope: Construct,
+  lambdaFunctions: lambda.Function[],
+  forwarderArn: string,
+  createForwarderPermissions: boolean,
+) {
   const forwarder = getForwarder(scope, forwarderArn);
-  const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions, });
+  const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
   lambdaFunctions.forEach((lam) => {
     const subscriptionFilterName = generateSubscriptionFilterName(Names.uniqueId(lam), forwarderArn);
     log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
@@ -36,9 +41,14 @@ export function addForwarder(scope: Construct, lambdaFunctions: lambda.Function[
   });
 }
 
-export function addForwarderToLogGroups(scope: Construct, logGroups: ILogGroup[], forwarderArn: string, createForwarderPermissions: boolean) {
+export function addForwarderToLogGroups(
+  scope: Construct,
+  logGroups: ILogGroup[],
+  forwarderArn: string,
+  createForwarderPermissions: boolean,
+) {
   const forwarder = getForwarder(scope, forwarderArn);
-  const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions, });
+  const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
   logGroups.forEach((group) => {
     const subscriptionFilterName = generateSubscriptionFilterName(Names.nodeUniqueId(group.node), forwarderArn);
     group.addSubscriptionFilter(subscriptionFilterName, {
