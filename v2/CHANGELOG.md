@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.0.0...v2-1.1.0) (2022-12-16)
+
+
+### Features
+
+* add node 18 ([#132](https://github.com/DataDog/datadog-cdk-constructs/issues/132)) ([ae79f98](https://github.com/DataDog/datadog-cdk-constructs/commit/ae79f9865719ef0ef0f4ac88c326acca0099e721))
+* allow xray traces to be merged ([#127](https://github.com/DataDog/datadog-cdk-constructs/issues/127)) ([b44d00a](https://github.com/DataDog/datadog-cdk-constructs/commit/b44d00ac14197fbdc3f6757d2236b1c9929e2e89))
+
+
+### Bug Fixes
+
+* isARM object comparison ([#123](https://github.com/DataDog/datadog-cdk-constructs/issues/123)) ([5deb1c6](https://github.com/DataDog/datadog-cdk-constructs/commit/5deb1c61e3166a859e3baf91009138010dde32cb))
+
 ## [1.0.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-0.3.6...v2-1.0.0) (2022-10-11)
 
 ## [1.0.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-0.3.6...v2-1.0.0) (2022-10-11)
