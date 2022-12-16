@@ -86,6 +86,7 @@
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
             "DD_LAMBDA_HANDLER": "index.handler",
             "DD_TRACE_ENABLED": "true",
+            "DD_MERGE_XRAY_TRACES": "false",
             "DD_LOGS_INJECTION": "true",
             "DD_SERVERLESS_LOGS_ENABLED": "true",
             "DD_CAPTURE_LAMBDA_PAYLOAD": "false",
