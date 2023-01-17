@@ -398,7 +398,7 @@ describe("DD_TAGS_ENV_VAR", () => {
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
-          [DD_TAGS]: "git.commit.sha:1234",
+          [DD_TAGS]: "git.commit.sha:1234,git.repository_url:5432",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
         },
       },
