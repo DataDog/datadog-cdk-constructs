@@ -120,12 +120,12 @@ export class ExampleStack extends cdk.Stack {
 ```
 
 ### Legacy Source Code Integration
-If your following dependencies are old:
+If you are using older versions of the following dependencies:
 - @datadog/datadog-ci < v2.4.0
 - datadog-cdk-constructs-v2 < v2-1.3.0
 - datadog-cdk-constructs < 0.8.4
 
-We highly encourage you to upgrade to the latest version. Otherwise, refer to the legacy documentation below.
+We highly encourage you to upgrade to the latest version. Otherwise, refer to the legacy documentation for enabling source code integration below.
 
 <details>
   <summary>Legacy Source Code Integration</summary>
