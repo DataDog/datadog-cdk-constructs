@@ -76,7 +76,10 @@
       "description": "Creates the distribution package",
       "steps": [
         {
-          "exec": "if [ ! -z ${CI} ]; then mkdir -p dist && rsync -a . dist --exclude .git --exclude node_modules; else npx projen package-all; fi"
+          "exec": "mkdir -p dist"
+        },
+        {
+          "exec": "rsync -a . dist --exclude .git --exclude node_modules"
         }
       ]
     },
@@ -97,7 +100,10 @@
       "description": "Create js language bindings",
       "steps": [
         {
-          "exec": "jsii-pacmak -v --target js"
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+        },
+        {
+          "exec": "npx jsii-pacmak@$jsii_version -v --target js"
         }
       ]
     },
@@ -106,7 +112,10 @@
       "description": "Create python language bindings",
       "steps": [
         {
-          "exec": "jsii-pacmak -v --target python"
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+        },
+        {
+          "exec": "npx jsii-pacmak@$jsii_version -v --target python"
         }
       ]
     },
@@ -167,25 +176,25 @@
       },
       "steps": [
         {
-          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='@aws-cdk/aws-lambda-python-alpha,aws-cdk-lib,constructs,projen'"
+          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='projen'"
         },
         {
-          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='@aws-cdk/aws-lambda-python-alpha,aws-cdk-lib,constructs,projen'"
+          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='projen'"
         },
         {
-          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='@aws-cdk/aws-lambda-python-alpha,aws-cdk-lib,constructs,projen'"
+          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='projen'"
         },
         {
-          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='@aws-cdk/aws-lambda-python-alpha,aws-cdk-lib,constructs,projen'"
+          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='projen'"
         },
         {
-          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='@aws-cdk/aws-lambda-python-alpha,aws-cdk-lib,constructs,projen'"
+          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='projen'"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-cdk/aws-lambda-python-alpha @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk-lib constructs eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit jsii jsii-diff jsii-pacmak json-schema npm-check-updates prettier standard-version ts-jest ts-node typescript loglevel @aws-cdk/aws-lambda-python-alpha aws-cdk-lib constructs loglevel"
+          "exec": "yarn upgrade @aws-cdk/aws-lambda-python-alpha @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk-lib constructs eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit jsii jsii-diff json-schema npm-check-updates prettier standard-version ts-jest ts-node typescript loglevel @aws-cdk/aws-lambda-python-alpha aws-cdk-lib constructs loglevel"
         },
         {
           "exec": "npx projen"
