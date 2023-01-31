@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "@aws-cdk/aws-lambda-python-alpha",
-      "version": "2.24.0-alpha.0",
+      "version": "2.62.2-alpha.0",
       "type": "build"
     },
     {
@@ -77,6 +77,10 @@
       "type": "build"
     },
     {
+      "name": "jsii-pacmak",
+      "type": "build"
+    },
+    {
       "name": "json-schema",
       "type": "build"
     },
@@ -115,7 +119,7 @@
     },
     {
       "name": "@aws-cdk/aws-lambda-python-alpha",
-      "version": "^2.24.0-alpha.0",
+      "version": "^2.62.2-alpha.0",
       "type": "peer"
     },
     {
