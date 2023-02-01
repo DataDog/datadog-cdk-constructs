@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.2.0...v2-1.3.0) (2023-02-01)
+
+
+### Features
+
+* bump lambda python alpha ([#143](https://github.com/DataDog/datadog-cdk-constructs/issues/143)) ([fe5be40](https://github.com/DataDog/datadog-cdk-constructs/commit/fe5be40973587d23de68dea7179f70f0ddc979ee))
+
 ## [1.2.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.1.0...v2-1.2.0) (2022-12-16)
 
 ## [1.1.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.0.0...v2-1.1.0) (2022-12-16)
