@@ -4,8 +4,8 @@ import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigatewa
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 
-import { addForwarder, addForwarderToLogGroups } from "../src/forwarder";
 import { findDatadogSubscriptionFilters } from "./test-utils";
+import { addForwarder, addForwarderToLogGroups } from "../src/forwarder";
 
 describe("Forwarder", () => {
   it("applies the subscription filter correctly", () => {

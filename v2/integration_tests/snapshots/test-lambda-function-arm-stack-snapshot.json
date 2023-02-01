@@ -132,6 +132,8 @@
      }
     ]
    },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "lambda-function-arm-stack/rest-test/CloudWatchRole/Resource"
    }
@@ -149,6 +151,8 @@
    "DependsOn": [
     "resttestXXXXXXXX"
    ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "lambda-function-arm-stack/rest-test/Account"
    }
