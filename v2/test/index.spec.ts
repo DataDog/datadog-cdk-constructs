@@ -1,6 +1,7 @@
 import { App, Stack, NestedStack } from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { findDatadogSubscriptionFilters } from "./test-utils";
 import {
   Datadog,
   DD_ACCOUNT_ID,
@@ -14,7 +15,6 @@ import {
   PYTHON_HANDLER,
   JS_HANDLER,
 } from "../src/index";
-import { findDatadogSubscriptionFilters } from "./test-utils";
 
 describe("addLambdaFunctions", () => {
   it("Subscribes the same forwarder to two different lambda functions via separate addLambdaFunctions function calls", () => {

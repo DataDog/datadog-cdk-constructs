@@ -13,15 +13,15 @@ const project = new awscdk.AwsCdkConstructLibrary({
   packageManager: javascript.NodePackageManager.YARN,
   minNodeVersion: "14.15.0",
 
-  jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
   releaseEveryCommit: false,
   publishToPypi: {
     distName: "datadog-cdk-constructs-v2",
     module: "datadog_cdk_constructs_v2",
   },
-  peerDeps: ["@aws-cdk/aws-lambda-python-alpha@^2.62.2-alpha.0"],
-  cdkVersion: "2.62.2",
+  peerDeps: ["@aws-cdk/aws-lambda-python-alpha@^2.63.0-alpha.0"],
+  cdkVersion: "2.63.0",
+  jsiiVersion: "^1.62.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: ["ts-node", "prettier", "eslint-config-prettier", "eslint-plugin-prettier", "standard-version"],
