@@ -3,8 +3,6 @@ import * as cdk from "@aws-cdk/core";
 import "@aws-cdk/assert/jest";
 import {
   Datadog,
-  DefaultDatadogProps,
-  transportDefaults,
   ENABLE_DD_TRACING_ENV_VAR,
   INJECT_LOG_CONTEXT_ENV_VAR,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
@@ -13,6 +11,9 @@ import {
   CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
   DD_HANDLER_ENV_VAR,
   ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
+  DD_TAGS,
+  SITE_URL_ENV_VAR,
+  API_KEY_ENV_VAR,
 } from "../src/index";
 
 describe("applyEnvVariables", () => {
@@ -36,12 +37,12 @@ describe("applyEnvVariables", () => {
       Environment: {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: transportDefaults.flushMetricsToLogs.toString(),
-          [ENABLE_DD_TRACING_ENV_VAR]: DefaultDatadogProps.enableDatadogTracing.toString(),
-          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: DefaultDatadogProps.enableMergeXrayTraces.toString(),
-          [ENABLE_DD_LOGS_ENV_VAR]: DefaultDatadogProps.enableDatadogLogs.toString(),
-          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: DefaultDatadogProps.captureLambdaPayload.toString(),
-          [INJECT_LOG_CONTEXT_ENV_VAR]: DefaultDatadogProps.injectLogContext.toString(),
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
     });
@@ -69,49 +70,13 @@ describe("applyEnvVariables", () => {
       Environment: {
         Variables: {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
-          ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
-          ["DD_TRACE_ENABLED"]: DefaultDatadogProps.enableDatadogTracing.toString(),
-          ["DD_MERGE_XRAY_TRACES"]: DefaultDatadogProps.enableMergeXrayTraces.toString(),
-          ["DD_SERVERLESS_LOGS_ENABLED"]: DefaultDatadogProps.enableDatadogLogs.toString(),
-          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: DefaultDatadogProps.captureLambdaPayload.toString(),
-          ["DD_LOGS_INJECTION"]: DefaultDatadogProps.injectLogContext.toString(),
-          ["DD_LOG_LEVEL"]: EXAMPLE_LOG_LEVEL,
-        },
-      },
-    });
-  });
-
-  it("adds git hash to environment", () => {
-    const EXAMPLE_LOG_LEVEL = "debug";
-    const app = new cdk.App();
-    const stack = new cdk.Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromInline("test"),
-      handler: "hello.handler",
-    });
-    const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
-      logLevel: EXAMPLE_LOG_LEVEL,
-    });
-    datadogCDK.addLambdaFunctions([hello]);
-    datadogCDK.addGitCommitMetadata([hello], "1234");
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
-      Environment: {
-        Variables: {
-          ["DD_LAMBDA_HANDLER"]: "hello.handler",
-          ["DD_FLUSH_TO_LOG"]: transportDefaults.flushMetricsToLogs.toString(),
-          ["DD_TRACE_ENABLED"]: DefaultDatadogProps.enableDatadogTracing.toString(),
-          ["DD_MERGE_XRAY_TRACES"]: DefaultDatadogProps.enableMergeXrayTraces.toString(),
-          ["DD_SERVERLESS_LOGS_ENABLED"]: DefaultDatadogProps.enableDatadogLogs.toString(),
-          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: DefaultDatadogProps.captureLambdaPayload.toString(),
-          ["DD_LOGS_INJECTION"]: DefaultDatadogProps.injectLogContext.toString(),
-          ["DD_LOG_LEVEL"]: EXAMPLE_LOG_LEVEL,
-          ["DD_TAGS"]: "git.commit.sha:1234",
+          ["DD_FLUSH_TO_LOG"]: "true",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_LOGS_INJECTION"]: "true",
+          ["DD_LOG_LEVEL"]: "debug",
         },
       },
     });
@@ -400,6 +365,80 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+});
+
+describe("DD_TAGS_ENV_VAR", () => {
+  it("sets git.commit.sha and git.repository_url in DD_TAGS when addGitCommitMetadata is called", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      captureLambdaPayload: true,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addGitCommitMetadata([hello], "1234", "5432");
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [DD_TAGS]: "git.commit.sha:1234,git.repository_url:5432",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+        },
+      },
+    });
+  });
+
+  it("doesn't overwrite DD_TAGS when addGitCommitMetadata is called", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      captureLambdaPayload: true,
+      tags: "key:value",
+      // the below fields are needed or DD_TAGS won't get set
+      extensionLayerVersion: 10,
+      apiKey: "test",
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    datadogCDK.addGitCommitMetadata([hello], "1234", "5432");
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:5432",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [API_KEY_ENV_VAR]: "test",
         },
       },
     });
