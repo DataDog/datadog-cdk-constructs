@@ -107,6 +107,8 @@ async function main() {
 }
 ```
 
+Ensure you call this function to initialize your stack.
+
 In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
 
 ```typescript
