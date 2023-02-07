@@ -107,7 +107,10 @@ async function main() {
 }
 ```
 
-In your stack constructor, change to add optional `gitHash` and `gitRepoUrl` parameters, and call `addGitCommitMetadata()`:
+
+Ensure you call this function to initialize your stack.
+
+In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
 
 ```typescript
 export class ExampleStack extends cdk.Stack {

@@ -20,13 +20,16 @@ export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
 export const DD_VERSION_ENV_VAR = "DD_VERSION";
 export const DD_TAGS = "DD_TAGS";
 
-export function setGitCommitHashEnvironmentVariable(lambdas: any[], hash: string) {
+export function setGitCommitEnvironmentVariables(lambdas: any[], hash: string, gitRepoUrl: string | undefined) {
   // We're using an any type here because AWS does not expose the `environment` field in their type
   lambdas.forEach((lambda) => {
     if (lambda.environment[DD_TAGS] !== undefined) {
       lambda.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
     } else {
       lambda.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
+    }
+    if (gitRepoUrl) {
+      lambda.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
     }
   });
 }
