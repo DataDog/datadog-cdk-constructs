@@ -90,47 +90,56 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
-Optionally, if you'd like to enable [source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) (Typescript only), you'll need to make a few changes to your stack setup since the AWS CDK does not support async functions.
+## Source Code Integration
+Optionally, if you'd like to enable [source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) (Typescript only), you'll need to make a few changes to your stack setup since the AWS CDK does not support async functions. Please follow one of the two following guides, depending on your scenario.
 
-Change your initialization function as follows (note: we're changing this to pass the `gitHash` and `gitRepoUrl` values to the CDK):
+### Preferred Method
 
-```typescript
-async function main() {
-  // Make sure to add @datadog/datadog-ci via your package manager
-  const datadogCi = require("@datadog/datadog-ci");
-  const [gitRepoUrl, gitHash] = await datadogCi.gitMetadata.getGitCommitInfo();
-
-  const app = new cdk.App();
-  // Pass in the hash and repo url to the ExampleStack constructor
-  new ExampleStack(app, "ExampleStack", {}, gitHash, gitRepoUrl);
-}
-```
-
-
-Ensure you call this function to initialize your stack.
-
-In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
-
-```typescript
-export class ExampleStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string, gitRepoUrl?:string) {
-    ...
-    ...
-    datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash, gitRepoUrl);
-  }
-}
-```
-
-### Legacy Source Code Integration
-If you are using older versions of the following dependencies:
-- @datadog/datadog-ci < v2.4.0
-- datadog-cdk-constructs-v2 < v2-1.3.0
-- datadog-cdk-constructs < 0.8.4
-
-We highly encourage you to upgrade to the latest version. Otherwise, refer to the legacy documentation for enabling source code integration below.
+If you have the Github Integration installed or are able to install it and your dependencies satisfy the below versions, use the preferred method.
+  - @datadog/datadog-ci < v2.4.0
+  - datadog-cdk-constructs-v2 < v2-1.3.0
+  - datadog-cdk-constructs < 0.8.4
 
 <details>
-  <summary>Legacy Source Code Integration</summary>
+  <summary>Preferred method</summary>
+
+  Change your initialization function as follows (note: we're changing this to pass the `gitHash` and `gitRepoUrl` values to the CDK):
+
+  ```typescript
+  async function main() {
+    // Make sure to add @datadog/datadog-ci via your package manager
+    const datadogCi = require("@datadog/datadog-ci");
+    const [gitRepoUrl, gitHash] = await datadogCi.gitMetadata.getGitCommitInfo();
+
+    const app = new cdk.App();
+    // Pass in the hash and repo url to the ExampleStack constructor
+    new ExampleStack(app, "ExampleStack", {}, gitHash, gitRepoUrl);
+  }
+  ```
+
+
+  Ensure you call this function to initialize your stack.
+
+  In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
+
+  ```typescript
+  export class ExampleStack extends cdk.Stack {
+    constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string, gitRepoUrl?:string) {
+      ...
+      ...
+      datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash, gitRepoUrl);
+    }
+  }
+  ```
+</details>
+<br>
+
+### Alternative Method
+
+Otherwise, you can use this alternative method which sends your Git Metadata directly to Datadog.
+
+<details>
+  <summary>Alternative method using Git Metadata Uploading</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
@@ -158,6 +167,7 @@ We highly encourage you to upgrade to the latest version. Otherwise, refer to th
   }
   ```
 </details>
+<br>
 
 ## Configuration
 
