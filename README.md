@@ -132,7 +132,6 @@ If you have the Github Integration installed or are able to install it and your 
   }
   ```
 </details>
-<br>
 
 ### Alternative Method
 
@@ -167,7 +166,6 @@ Otherwise, you can use this alternative method which sends your Git Metadata dir
   }
   ```
 </details>
-<br>
 
 ## Configuration
 
