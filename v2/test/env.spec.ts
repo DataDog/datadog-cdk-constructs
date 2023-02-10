@@ -16,6 +16,12 @@ import {
   API_KEY_ENV_VAR,
 } from "../src/index";
 
+jest.mock("child_process", () => {
+  return {
+    execSync: () => "1234",
+  };
+});
+
 describe("applyEnvVariables", () => {
   it("applies default values correctly", () => {
     const app = new App();
@@ -365,7 +371,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
 });
 
 describe("DD_TAGS_ENV_VAR", () => {
-  it("sets git.commit.sha and git.repository_url in DD_TAGS when addGitCommitMetadata is called", () => {
+  it("sets git.commit.sha and git.repository_url in DD_TAGS by default", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -381,7 +387,6 @@ describe("DD_TAGS_ENV_VAR", () => {
       captureLambdaPayload: true,
     });
     datadogCDK.addLambdaFunctions([hello]);
-    datadogCDK.addGitCommitMetadata([hello], "1234", "5432");
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -391,13 +396,13 @@ describe("DD_TAGS_ENV_VAR", () => {
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
-          [DD_TAGS]: "git.commit.sha:1234,git.repository_url:5432",
+          [DD_TAGS]: "git.commit.sha:1234,git.repository_url:1234",
         },
       },
     });
   });
 
-  it("doesn't overwrite DD_TAGS when addGitCommitMetadata is called", () => {
+  it("doesn't overwrite DD_TAGS when adding source code integration data", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -417,7 +422,6 @@ describe("DD_TAGS_ENV_VAR", () => {
       apiKey: "test",
     });
     datadogCDK.addLambdaFunctions([hello]);
-    datadogCDK.addGitCommitMetadata([hello], "1234", "5432");
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -427,10 +431,41 @@ describe("DD_TAGS_ENV_VAR", () => {
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
-          [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:5432",
+          [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [SITE_URL_ENV_VAR]: "datadoghq.com",
           [API_KEY_ENV_VAR]: "test",
+        },
+      },
+    });
+  });
+
+  it("doesnt add source code integration when config is set to false", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      captureLambdaPayload: true,
+      sourceCodeIntegration: false,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
       },
     });

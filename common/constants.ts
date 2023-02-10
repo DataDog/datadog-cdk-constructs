@@ -30,6 +30,7 @@ export const DefaultDatadogProps = {
   enableDatadogLogs: true,
   architecture: "X86_64",
   captureLambdaPayload: false,
+  sourceCodeIntegration: true,
 };
 
 export enum TagKeys {

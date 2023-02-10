@@ -25,7 +25,7 @@ import {
   DatadogProps,
   DatadogStrictProps,
   handleSettingPropDefaults,
-  setGitCommitEnvironmentVariables,
+  setGitEnvironmentVariables,
   setDDEnvVariables,
 } from "./index";
 
@@ -98,15 +98,11 @@ export class Datadog extends Construct {
       setTags(lambdaFunctions, this.props);
 
       this.transport.applyEnvVars(lambdaFunctions);
-    }
-  }
 
-  public addGitCommitMetadata(
-    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
-    gitCommitSha: string,
-    gitRepoUrl?: string,
-  ) {
-    setGitCommitEnvironmentVariables(lambdaFunctions, gitCommitSha, gitRepoUrl);
+      if (baseProps.sourceCodeIntegration) {
+        setGitEnvironmentVariables(lambdaFunctions);
+      }
+    }
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
