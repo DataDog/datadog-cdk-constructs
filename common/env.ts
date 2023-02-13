@@ -41,7 +41,7 @@ export function setGitEnvironmentVariables(lambdas: any[]) {
   });
 }
 
-export function getGitData() {
+function getGitData() {
   let hash: string;
   let gitRepoUrl: string;
 
