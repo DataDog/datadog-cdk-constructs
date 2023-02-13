@@ -26,7 +26,7 @@ const URL = require("url").URL;
 
 export function setGitEnvironmentVariables(lambdas: any[]) {
   log.debug("Adding source code integration...");
-  const [hash, gitRepoUrl] = getGitData();
+  const { hash, gitRepoUrl } = getGitData();
 
   if (hash == "" || gitRepoUrl == "") return;
 
@@ -50,9 +50,9 @@ export function getGitData() {
     gitRepoUrl = execSync("git config --get remote.origin.url").toString().trim();
   } catch (e) {
     log.debug(`Failed to add source code integration. Error: ${e}`);
-    return ["", ""];
+    return { hash: "", gitRepoUrl: "" };
   }
-  return [hash, filterAndFormatGithubRemote(gitRepoUrl)];
+  return { hash, gitRepoUrl: filterAndFormatGithubRemote(gitRepoUrl) };
 }
 
 // Removes sensitive info from the given git remote url and normalizes the url prefix.
