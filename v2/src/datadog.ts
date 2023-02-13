@@ -100,9 +100,21 @@ export class Datadog extends Construct {
       this.transport.applyEnvVars(lambdaFunctions);
 
       if (baseProps.sourceCodeIntegration) {
-        setGitEnvironmentVariables(lambdaFunctions);
+        this.addGitCommitMetadata(lambdaFunctions);
       }
     }
+  }
+
+  public addGitCommitMetadata(
+    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    gitCommitSha?: string,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    gitRepoUrl?: string,
+  ) {
+    setGitEnvironmentVariables(lambdaFunctions);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {

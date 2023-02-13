@@ -97,8 +97,15 @@ export class Datadog extends cdk.Construct {
     }
   }
 
+  // unused parameters gitCommitSha and gitRepoUrl are kept for backwards compatibility
   public addGitCommitMetadata(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    gitCommitSha?: string,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    gitRepoUrl?: string,
   ) {
     setGitEnvironmentVariables(lambdaFunctions);
   }
