@@ -36,6 +36,7 @@ export class ExampleStack extends Stack {
       extensionLayerVersion: 10,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
+      sourceCodeIntegration: false,
       apiKey: "1234",
       site: "datadoghq.com",
     });
