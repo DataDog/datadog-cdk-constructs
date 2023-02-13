@@ -105,6 +105,7 @@ export class Datadog extends Construct {
     }
   }
 
+  // unused parameters gitCommitSha and gitRepoUrl are kept for backwards compatibility
   public addGitCommitMetadata(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
