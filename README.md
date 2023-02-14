@@ -99,7 +99,7 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
   - `datadog-cdk-constructs` >= 0.8.5
 
 ### Alternative Methods to Enable Source Code Integration
-If the automatic implementation doesn't work for your case, please follow one of the two guides below. Note: the two alternate methods only work for Typescript.
+If the automatic implementation doesn't work for your case, please follow one of the two guides below. Note: the two alternate guides only work for Typescript.
 <details>
   <summary>datadog-cdk version satisfied, but Datadog Github Integration NOT installed</summary>
 
