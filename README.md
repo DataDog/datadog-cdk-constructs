@@ -101,7 +101,7 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ### Alternative Methods to Enable Source Code Integration
 If the automatic implementation doesn't work for your case, please follow one of the two guides below:
 <details>
-  <summary>datadog-cdk-constructs version satisfied, but Datadog Github Integration NOT installed</summary>
+  <summary>datadog-cdk version satisfied, but Datadog Github Integration NOT installed</summary>
 
   If the Datadog Github Integration is not installed, you need to import the `datadog-ci` package and manually upload your Git metadata to Datadog.
   We recommend you do this where your CDK Stack is initialized.
@@ -121,7 +121,7 @@ If the automatic implementation doesn't work for your case, please follow one of
   ```
 </details>
 <details>
-  <summary>datadog-cdk-constructs version NOT satisfied</summary>
+  <summary>datadog-cdk version NOT satisfied</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
