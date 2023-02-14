@@ -119,18 +119,6 @@ If the automatic implementation doesn't work for your case, please follow one of
 
   app.synth();
   ```
-
-  In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
-
-  ```typescript
-  export class ExampleStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string) {
-      ...
-      ...
-      datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash)
-    }
-  }
-  ```
 </details>
 <details>
   <summary>datadog-cdk-constructs version NOT satisfied</summary>
