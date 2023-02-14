@@ -169,6 +169,7 @@ describe("applyLayers", () => {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderArn: "forwarder-arn",
+      sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -230,6 +231,7 @@ describe("applyLayers", () => {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderArn: "forwarder-arn",
+      sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -277,6 +279,7 @@ describe("applyLayers", () => {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderArn: "forwarder-arn",
+      sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter");

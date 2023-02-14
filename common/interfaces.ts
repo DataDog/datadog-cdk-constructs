@@ -28,6 +28,7 @@ export interface DatadogProps {
   readonly version?: string;
   readonly tags?: string;
   readonly createForwarderPermissions?: boolean;
+  readonly sourceCodeIntegration?: boolean;
 }
 
 /*
@@ -50,6 +51,7 @@ export interface DatadogStrictProps {
   readonly apiKeySecretArn?: string;
   readonly apiKmsKey?: string;
   readonly logLevel?: string;
+  readonly sourceCodeIntegration?: boolean;
 }
 
 export interface Runtime {

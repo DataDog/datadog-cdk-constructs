@@ -20,7 +20,16 @@ export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
 export const DD_VERSION_ENV_VAR = "DD_VERSION";
 export const DD_TAGS = "DD_TAGS";
 
-export function setGitCommitEnvironmentVariables(lambdas: any[], hash: string, gitRepoUrl: string | undefined) {
+const execSync = require("child_process").execSync;
+
+const URL = require("url").URL;
+
+export function setGitEnvironmentVariables(lambdas: any[]) {
+  log.debug("Adding source code integration...");
+  const { hash, gitRepoUrl } = getGitData();
+
+  if (hash == "" || gitRepoUrl == "") return;
+
   // We're using an any type here because AWS does not expose the `environment` field in their type
   lambdas.forEach((lambda) => {
     if (lambda.environment[DD_TAGS] !== undefined) {
@@ -28,10 +37,53 @@ export function setGitCommitEnvironmentVariables(lambdas: any[], hash: string, g
     } else {
       lambda.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
     }
-    if (gitRepoUrl) {
-      lambda.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
-    }
+    lambda.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
   });
+}
+
+function getGitData() {
+  let hash: string;
+  let gitRepoUrl: string;
+
+  try {
+    hash = execSync("git rev-parse HEAD").toString().trim();
+    gitRepoUrl = execSync("git config --get remote.origin.url").toString().trim();
+  } catch (e) {
+    log.debug(`Failed to add source code integration. Error: ${e}`);
+    return { hash: "", gitRepoUrl: "" };
+  }
+  return { hash, gitRepoUrl: filterAndFormatGithubRemote(gitRepoUrl) };
+}
+
+// Removes sensitive info from the given git remote url and normalizes the url prefix.
+// "git@github.com:" and "https://github.com/" prefixes will be normalized into "github.com/"
+function filterAndFormatGithubRemote(rawRemote: string) {
+  rawRemote = filterSensitiveInfoFromRepository(rawRemote);
+  if (!rawRemote) {
+    return rawRemote;
+  }
+  rawRemote = rawRemote.replace(/git@github\.com:|https:\/\/github\.com\//, "github.com/");
+
+  return rawRemote;
+}
+
+function filterSensitiveInfoFromRepository(repositoryUrl: string) {
+  try {
+    if (!repositoryUrl) {
+      return repositoryUrl;
+    }
+    if (repositoryUrl.startsWith("git@")) {
+      return repositoryUrl;
+    }
+    const { protocol, hostname, pathname } = new URL(repositoryUrl);
+    if (!protocol || !hostname) {
+      return repositoryUrl;
+    }
+
+    return `${protocol}//${hostname}${pathname}`;
+  } catch (e) {
+    return repositoryUrl;
+  }
 }
 
 export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: DatadogStrictProps) {

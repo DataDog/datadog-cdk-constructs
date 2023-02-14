@@ -23,7 +23,7 @@ import {
   handleSettingPropDefaults,
   redirectHandlers,
   setDDEnvVariables,
-  setGitCommitEnvironmentVariables,
+  setGitEnvironmentVariables,
   TagKeys,
   validateProps,
 } from "./index";
@@ -90,15 +90,24 @@ export class Datadog extends cdk.Construct {
       setTags(lambdaFunctions, this.props);
 
       this.transport.applyEnvVars(lambdaFunctions);
+
+      if (baseProps.sourceCodeIntegration) {
+        this.addGitCommitMetadata(lambdaFunctions);
+      }
     }
   }
 
+  // unused parameters gitCommitSha and gitRepoUrl are kept for backwards compatibility
   public addGitCommitMetadata(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
-    gitCommitSha: string,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    gitCommitSha?: string,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     gitRepoUrl?: string,
   ) {
-    setGitCommitEnvironmentVariables(lambdaFunctions, gitCommitSha, gitRepoUrl);
+    setGitEnvironmentVariables(lambdaFunctions);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {

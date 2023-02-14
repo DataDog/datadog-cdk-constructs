@@ -73,6 +73,7 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   const logLevel = props.logLevel;
   let enableDatadogLogs = props.enableDatadogLogs;
   let captureLambdaPayload = props.captureLambdaPayload;
+  let sourceCodeIntegration = props.sourceCodeIntegration;
 
   if (addLayers === undefined) {
     log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
@@ -103,6 +104,10 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
     log.debug(`No value provided for captureLambdaPayload, default to ${DefaultDatadogProps.captureLambdaPayload}`);
     captureLambdaPayload = DefaultDatadogProps.captureLambdaPayload;
   }
+  if (sourceCodeIntegration === undefined) {
+    log.debug(`No value provided for sourceCodeIntegration, default to ${DefaultDatadogProps.sourceCodeIntegration}`);
+    sourceCodeIntegration = DefaultDatadogProps.sourceCodeIntegration;
+  }
 
   return {
     addLayers: addLayers,
@@ -112,5 +117,6 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
     logLevel: logLevel,
     enableDatadogLogs: enableDatadogLogs,
     captureLambdaPayload: captureLambdaPayload,
+    sourceCodeIntegration: sourceCodeIntegration,
   };
 }
