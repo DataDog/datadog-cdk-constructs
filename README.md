@@ -101,10 +101,10 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 
   - `datadog-cdk-constructs` >= 0.8.4
 
-Follow the legacy guide below if you don't have the Github Integration installed or if your dependencies don't satisfy the previously listed versions.
-
+### Alternative Method to Enable Source Code Integration
+Follow this guide if you don't have the Github Integration installed or if your dependencies don't satisfy the previously listed versions.
 <details>
-  <summary>Legacy Guide</summary>
+  <summary>Source Code Integration Through Git Metadata Uploading</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
@@ -155,7 +155,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
 | `enableMergeXrayTraces` | `enable_merge_xray_traces` | Enable merging X-Ray traces on your Lambda functions. Defaults to `false`. |
 | `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
-| `enableSourceCodeIntegration` | `enable_source_code_integration` | Enable Datadog Source Code Integration, connecting your telemetry with application code in your Git repositories. Learn more [here](https://docs.datadoghq.com/integrations/guide/source-code-integration/). Defaults to `true`. |
+| `enableSourceCodeIntegration` | `enable_source_code_integration` | Enable Datadog Source Code Integration, connecting your telemetry with application code in your Git repositories. This requires the Datadog Github Integration to work, otherwise please follow the [alternative method](#alternative-method-to-enable-source-code-integration). Learn more [here](https://docs.datadoghq.com/integrations/guide/source-code-integration/). Defaults to `true`. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
 | `env` | `env` | When set along with `extensionLayerVersion`, a `DD_ENV` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, an `env` tag is added to all Lambda functions with the provided value. |
