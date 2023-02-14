@@ -91,54 +91,20 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
 ## Source Code Integration
-Optionally, if you'd like to enable [source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) (Typescript only), you'll need to make a few changes to your stack setup since the AWS CDK does not support async functions. Please follow one of the two following guides, depending on your scenario.
+[Source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) is enabled by default through automatic lambda tagging, and will work if:
 
-### Preferred Method
+- The Datadog Github Integration is installed.
+- Your datadog-cdk dependency satisfies the below versions:
+  - `datadog-cdk-constructs-v2` >= v2-1.3.0
 
-If you have the Github Integration installed or are able to install it and your dependencies satisfy the below versions, use the preferred method.
-  - @datadog/datadog-ci < v2.4.0
-  - datadog-cdk-constructs-v2 < v2-1.3.0
-  - datadog-cdk-constructs < 0.8.4
+    or
 
-<details>
-  <summary>Preferred method</summary>
+  - `datadog-cdk-constructs` >= 0.8.4
 
-  Change your initialization function as follows (note: we're changing this to pass the `gitHash` and `gitRepoUrl` values to the CDK):
-
-  ```typescript
-  async function main() {
-    // Make sure to add @datadog/datadog-ci via your package manager
-    const datadogCi = require("@datadog/datadog-ci");
-    const [gitRepoUrl, gitHash] = await datadogCi.gitMetadata.getGitCommitInfo();
-
-    const app = new cdk.App();
-    // Pass in the hash and repo url to the ExampleStack constructor
-    new ExampleStack(app, "ExampleStack", {}, gitHash, gitRepoUrl);
-  }
-  ```
-
-
-  Ensure you call this function to initialize your stack.
-
-  In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
-
-  ```typescript
-  export class ExampleStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string, gitRepoUrl?:string) {
-      ...
-      ...
-      datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash, gitRepoUrl);
-    }
-  }
-  ```
-</details>
-
-### Alternative Method
-
-Otherwise, you can use this alternative method which sends your Git Metadata directly to Datadog.
+Follow the legacy guide below if you don't have the Github Integration installed or if your dependencies don't satisfy the previously listed versions.
 
 <details>
-  <summary>Alternative method using Git Metadata Uploading</summary>
+  <summary>Legacy Guide</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
@@ -189,6 +155,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
 | `enableMergeXrayTraces` | `enable_merge_xray_traces` | Enable merging X-Ray traces on your Lambda functions. Defaults to `false`. |
 | `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
+| `enableSourceCodeIntegration` | `enable_source_code_integration` | Enable Datadog Source Code Integration, connecting your telemetry with application code in your Git repositories. Learn more [here](https://docs.datadoghq.com/integrations/guide/source-code-integration/). Defaults to `true`. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
 | `env` | `env` | When set along with `extensionLayerVersion`, a `DD_ENV` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, an `env` tag is added to all Lambda functions with the provided value. |
