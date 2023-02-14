@@ -94,17 +94,46 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 [Source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) is enabled by default through automatic lambda tagging, and will work if:
 
 - The Datadog Github Integration is installed.
-- Your datadog-cdk dependency satisfies the below versions:
-  - `datadog-cdk-constructs-v2` >= v2-1.3.0
+- Your datadog-cdk dependency satisfies either of the below versions:
+  - `datadog-cdk-constructs-v2` >= 1.4.0
+  - `datadog-cdk-constructs` >= 0.8.5
 
-    or
-
-  - `datadog-cdk-constructs` >= 0.8.4
-
-### Alternative Method to Enable Source Code Integration
-Follow this guide if you don't have the Github Integration installed or if your dependencies don't satisfy the previously listed versions.
+### Alternative Methods to Enable Source Code Integration
+If the automatic implementation doesn't work for your case, please follow one of the two guides below:
 <details>
-  <summary>Source Code Integration Through Git Metadata Uploading</summary>
+  <summary>datadog-cdk-constructs version satisfied, but Datadog Github Integration NOT installed</summary>
+
+  If the Datadog Github Integration is not installed, you need to import the `datadog-ci` package and manually upload your Git metadata to Datadog.
+  We recommend you do this where your CDK Stack is initialized.
+
+  ```typescript
+  const app = new cdk.App();
+
+  // Make sure to add @datadog/datadog-ci via your package manager
+  const datadogCi = require("@datadog/datadog-ci");
+  // Manually uploading Git metadata to Datadog.
+  datadogCi.gitMetadata.uploadGitCommitHash('{Datadog_API_Key}', '<SITE>')
+
+  const app = new cdk.App();
+  new ExampleStack(app, "ExampleStack", {});
+
+  app.synth();
+  ```
+
+  In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
+
+  ```typescript
+  export class ExampleStack extends cdk.Stack {
+    constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string) {
+      ...
+      ...
+      datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash)
+    }
+  }
+  ```
+</details>
+<details>
+  <summary>datadog-cdk-constructs version not satisfied</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
