@@ -133,7 +133,7 @@ If the automatic implementation doesn't work for your case, please follow one of
   ```
 </details>
 <details>
-  <summary>datadog-cdk-constructs version not satisfied</summary>
+  <summary>datadog-cdk-constructs version NOT satisfied</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
