@@ -90,47 +90,40 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
-Optionally, if you'd like to enable [source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) (Typescript only), you'll need to make a few changes to your stack setup since the AWS CDK does not support async functions.
+## Source Code Integration
+[Source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) is enabled by default through automatic lambda tagging, and will work if:
 
-Change your initialization function as follows (note: we're changing this to pass the `gitHash` and `gitRepoUrl` values to the CDK):
+- The Datadog Github Integration is installed.
+- Your datadog-cdk dependency satisfies either of the below versions:
+  - `datadog-cdk-constructs-v2` >= 1.4.0
+  - `datadog-cdk-constructs` >= 0.8.5
 
-```typescript
-async function main() {
+### Alternative Methods to Enable Source Code Integration
+If the automatic implementation doesn't work for your case, please follow one of the two guides below. 
+
+**Note: these alternate guides only work for Typescript.**
+<details>
+  <summary>datadog-cdk version satisfied, but Datadog Github Integration NOT installed</summary>
+
+  If the Datadog Github Integration is not installed, you need to import the `datadog-ci` package and manually upload your Git metadata to Datadog.
+  We recommend you do this where your CDK Stack is initialized.
+
+  ```typescript
+  const app = new cdk.App();
+
   // Make sure to add @datadog/datadog-ci via your package manager
   const datadogCi = require("@datadog/datadog-ci");
-  const [gitRepoUrl, gitHash] = await datadogCi.gitMetadata.getGitCommitInfo();
+  // Manually uploading Git metadata to Datadog.
+  datadogCi.gitMetadata.uploadGitCommitHash('{Datadog_API_Key}', '<SITE>')
 
   const app = new cdk.App();
-  // Pass in the hash and repo url to the ExampleStack constructor
-  new ExampleStack(app, "ExampleStack", {}, gitHash, gitRepoUrl);
-}
-```
+  new ExampleStack(app, "ExampleStack", {});
 
-
-Ensure you call this function to initialize your stack.
-
-In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
-
-```typescript
-export class ExampleStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string, gitRepoUrl?:string) {
-    ...
-    ...
-    datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash, gitRepoUrl);
-  }
-}
-```
-
-### Legacy Source Code Integration
-If you are using older versions of the following dependencies:
-- @datadog/datadog-ci < v2.4.0
-- datadog-cdk-constructs-v2 < v2-1.3.0
-- datadog-cdk-constructs < 0.8.4
-
-We highly encourage you to upgrade to the latest version. Otherwise, refer to the legacy documentation for enabling source code integration below.
-
+  app.synth();
+  ```
+</details>
 <details>
-  <summary>Legacy Source Code Integration</summary>
+  <summary>datadog-cdk version NOT satisfied</summary>
 
   Change your initialization function as follows (note: we're changing this to pass just the `gitHash` value to the CDK):
 
@@ -145,6 +138,7 @@ We highly encourage you to upgrade to the latest version. Otherwise, refer to th
     new ExampleStack(app, "ExampleStack", {}, gitHash);
   }
   ```
+  Ensure you call this function to initialize your stack.
 
   In your stack constructor, change to add an optional `gitHash` parameter, and call `addGitCommitMetadata()`:
 
@@ -181,6 +175,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
 | `enableMergeXrayTraces` | `enable_merge_xray_traces` | Enable merging X-Ray traces on your Lambda functions. Defaults to `false`. |
 | `enableDatadogLogs` | `enable_datadog_logs` | Send Lambda function logs to Datadog via the Datadog Lambda Extension.  Defaults to `true`. Note: This setting has no effect on logs sent via the Datadog Forwarder. |
+| `enableSourceCodeIntegration` | `enable_source_code_integration` | Enable Datadog Source Code Integration, connecting your telemetry with application code in your Git repositories. This requires the Datadog Github Integration to work, otherwise please follow the [alternative method](#alternative-methods-to-enable-source-code-integration). Learn more [here](https://docs.datadoghq.com/integrations/guide/source-code-integration/). Defaults to `true`. |
 | `injectLogContext` | `inject_log_context` | When set, the Lambda layer will automatically patch console.log with Datadog's tracing ids. Defaults to `true`. |
 | `logLevel` | `log_level` | When set to `debug`, the Datadog Lambda Library and Extension will log additional information to help troubleshoot issues. |
 | `env` | `env` | When set along with `extensionLayerVersion`, a `DD_ENV` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, an `env` tag is added to all Lambda functions with the provided value. |
