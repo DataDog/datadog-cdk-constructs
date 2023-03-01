@@ -17,8 +17,8 @@ export class ExampleStack extends cdk.Stack {
     super(scope, id, props);
 
     const lambdaJavaFunction = new lambda.Function(this, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset( __dirname + "/../lambda"),
+      runtime: lambda.Runtime.JAVA_11,
+      code: lambda.Code.fromAsset(__dirname + "/../lambda"),
       handler: "handleRequest",
     });
 
