@@ -78,10 +78,10 @@ describe("redirectHandlers", () => {
       handler: "handleRequest",
     });
     redirectHandlers([hello], true);
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: "handleRequest",
     });
-    expect(stack).toHaveResource("AWS::Lambda::Function", {
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
           [AWS_JAVA_WRAPPER_ENV_VAR]: AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
