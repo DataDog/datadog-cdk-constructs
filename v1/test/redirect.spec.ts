@@ -97,4 +97,26 @@ describe("redirectHandlers", () => {
       },
     });
   });
+
+  it("doesn't set env vars for function with unsupported java version", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.JAVA_8,
+      code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
+      handler: "handleRequest",
+    });
+    redirectHandlers([hello], true);
+    expect(stack).not.toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [AWS_JAVA_WRAPPER_ENV_VAR]: AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
+        },
+      },
+    });
+  });
 });
