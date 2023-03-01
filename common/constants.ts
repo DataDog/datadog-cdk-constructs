@@ -53,7 +53,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "python3.8": RuntimeType.PYTHON,
   "python3.9": RuntimeType.PYTHON,
   "java8.al2": RuntimeType.JAVA,
-  java11: RuntimeType.JAVA,
+  "java11": RuntimeType.JAVA,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
@@ -66,7 +66,7 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "python3.8": "Datadog-Python38",
   "python3.9": "Datadog-Python39",
   "java8.al2": "dd-trace-java",
-  java11: "dd-trace-java",
+  "java11": "dd-trace-java",
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];
