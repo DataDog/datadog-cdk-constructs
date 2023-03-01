@@ -67,6 +67,7 @@ export class Datadog extends cdk.Construct {
           lambdaFunctions,
           this.props.pythonLayerVersion,
           this.props.nodeLayerVersion,
+          this.props.javaLayerVersion,
           this.props.extensionLayerVersion,
         );
       }

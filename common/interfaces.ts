@@ -9,6 +9,7 @@
 export interface DatadogProps {
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
+  readonly javaLayerVersion?: number;
   readonly extensionLayerVersion?: number;
   readonly addLayers?: boolean;
   readonly forwarderArn?: string;
@@ -43,6 +44,7 @@ export interface DatadogStrictProps {
   readonly enableMergeXrayTraces: boolean;
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
+  readonly javaLayerVersion?: number;
   readonly extensionLayerVersion?: number;
   readonly forwarderArn?: string;
   readonly flushMetricsToLogs?: boolean;

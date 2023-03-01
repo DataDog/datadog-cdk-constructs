@@ -11,6 +11,8 @@ import {
   RuntimeType,
   runtimeLookup,
   DD_HANDLER_ENV_VAR,
+  AWS_JAVA_WRAPPER_ENV_VAR,
+  AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
   JS_HANDLER_WITH_LAYERS,
   JS_HANDLER,
   PYTHON_HANDLER,
@@ -28,21 +30,25 @@ import { ILambdaFunction } from "./interfaces";
 export function redirectHandlers(lambdas: ILambdaFunction[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
-    const cfnFunction = lam.node.defaultChild;
-    const originalHandler = cfnFunction.handler as string;
-    lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
-    const handler = getDDHandler(lam, addLayers);
-    if (handler === undefined) {
-      log.debug("Unable to get Datadog handler");
-      return;
+    const runtime: string = lam.runtime.name;
+    const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
+    if (lambdaRuntime === RuntimeType.JAVA) {
+      lam.addEnvironment(AWS_JAVA_WRAPPER_ENV_VAR, AWS_JAVA_WRAPPER_ENV_VAR_VALUE);
+    } else {
+      const cfnFunction = lam.node.defaultChild;
+      const originalHandler = cfnFunction.handler as string;
+      lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
+      const handler = getDDHandler(lambdaRuntime, addLayers);
+      if (handler === undefined) {
+        log.debug("Unable to get Datadog handler");
+        return;
+      }
+      cfnFunction.handler = handler;
     }
-    cfnFunction.handler = handler;
   });
 }
 
-function getDDHandler(lam: ILambdaFunction, addLayers: boolean) {
-  const runtime: string = lam.runtime.name;
-  const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
+function getDDHandler(lambdaRuntime: RuntimeType, addLayers: boolean) {
   if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
     log.debug("Unsupported/undefined Lambda runtime");
     return;
@@ -52,5 +58,7 @@ function getDDHandler(lam: ILambdaFunction, addLayers: boolean) {
       return addLayers ? JS_HANDLER_WITH_LAYERS : JS_HANDLER;
     case RuntimeType.PYTHON:
       return PYTHON_HANDLER;
+    case RuntimeType.JAVA:
+      return null;
   }
 }

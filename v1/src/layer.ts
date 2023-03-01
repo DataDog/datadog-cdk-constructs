@@ -27,6 +27,7 @@ export function applyLayers(
   lambdas: lambda.Function[],
   pythonLayerVersion?: number,
   nodeLayerVersion?: number,
+  javaLayerVersion?: number,
   extensionLayerVersion?: number,
 ) {
   // TODO: check region availability
@@ -65,6 +66,18 @@ export function applyLayers(
       }
       lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode);
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+    }
+
+    if (lambdaRuntimeType === RuntimeType.JAVA) {
+      if (javaLayerVersion === undefined) {
+        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, "Java", "java");
+        log.error(errorMessage);
+        errors.push(errorMessage);
+        return;
+      }
+      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, isARM, isNode);
+      log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
