@@ -4,14 +4,14 @@
 # To check if new changes to the library cause changes to any snapshots:
 #   ./scripts/run_integration_tests.sh
 # To regenerate snapshots:
-#   UPDATE_SNAPSHOTS=true aws-vault exec sandbox-account-admin -- ./scripts/run_integration_tests.sh
+#   UPDATE_SNAPSHOTS=true aws-vault exec serverless-sandbox-account-admin -- ./scripts/run_integration_tests.sh
 
 set -e
 
 # To add new tests create a new ts file in the 'integration_tests/stacks' directory, append its file name to the STACK_CONFIGS array.
 # Note: Each ts file will have its respective snapshot built in the snapshots directory, e.g. lambda-function-stack.ts
 #       will generate both snapshots/test-lambda-function-stack-snapshot.json and snapshots/correct-lambda-function-stack-snapshot.json
-STACK_CONFIGS=("lambda-function-arm-stack" "lambda-function-stack" "lambda-nodejs-function-stack" "lambda-python-function-stack")
+STACK_CONFIGS=("lambda-function-arm-stack" "lambda-function-stack" "lambda-nodejs-function-stack" "lambda-python-function-stack" "lambda-java-function-stack")
 
 SCRIPT_PATH=${BASH_SOURCE[0]}
 SCRIPTS_DIR=$(dirname $SCRIPT_PATH)

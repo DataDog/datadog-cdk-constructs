@@ -11,6 +11,8 @@ export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
 export const DD_ACCOUNT_ID = "464622532012";
 export const DD_GOV_ACCOUNT_ID = "002406178527";
 export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
+export const AWS_JAVA_WRAPPER_ENV_VAR = "AWS_LAMBDA_EXEC_WRAPPER";
+export const AWS_JAVA_WRAPPER_ENV_VAR_VALUE = "/opt/datadog_wrapper";
 export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
 export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
 export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
@@ -19,6 +21,7 @@ export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 export enum RuntimeType {
   NODE,
   PYTHON,
+  JAVA,
   UNSUPPORTED,
 }
 
@@ -49,6 +52,8 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "python3.7": RuntimeType.PYTHON,
   "python3.8": RuntimeType.PYTHON,
   "python3.9": RuntimeType.PYTHON,
+  "java8.al2": RuntimeType.JAVA,
+  "java11": RuntimeType.JAVA,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
@@ -60,6 +65,8 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "python3.7": "Datadog-Python37",
   "python3.8": "Datadog-Python38",
   "python3.9": "Datadog-Python39",
+  "java8.al2": "dd-trace-java",
+  "java11": "dd-trace-java",
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];
