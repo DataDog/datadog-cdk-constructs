@@ -1,0 +1,764 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "@aws-cdk/core.Construct",
+          "version": "1.95.0"
+        }
+      },
+      "CDK-Demo-Typescript": {
+        "id": "CDK-Demo-Typescript",
+        "path": "CDK-Demo-Typescript",
+        "children": {
+          "hello": {
+            "id": "hello",
+            "path": "CDK-Demo-Typescript/hello",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CDK-Demo-Typescript/hello/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CDK-Demo-Typescript/hello/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-iam.CfnRole",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-iam.Role",
+                  "version": "1.95.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CDK-Demo-Typescript/hello/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CDK-Demo-Typescript/hello/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.AssetStaging",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CDK-Demo-Typescript/hello/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.Resource",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-s3-assets.Asset",
+                  "version": "1.95.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CDK-Demo-Typescript/hello/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Ref": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3Bucket9B4C166F"
+                      },
+                      "s3Key": {
+                        "Fn::Join": [
+                          "",
+                          [
+                            {
+                              "Fn::Select": [
+                                0,
+                                {
+                                  "Fn::Split": [
+                                    "||",
+                                    {
+                                      "Ref": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3VersionKeyF14A2292"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Fn::Select": [
+                                1,
+                                {
+                                  "Fn::Split": [
+                                    "||",
+                                    {
+                                      "Ref": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3VersionKeyF14A2292"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        ]
+                      }
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "helloServiceRole353607D3",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "DD_LAMBDA_HANDLER": "hello.handler",
+                        "DD_TRACE_ENABLED": "true",
+                        "DD_LOG_INJECTION": "true",
+                        "DD_FLUSH_TO_LOG": "true"
+                      }
+                    },
+                    "handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
+                    "layers": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:aws:lambda:",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            ":464622532012:layer:Datadog-Node10-x:85"
+                          ]
+                        ]
+                      }
+                    ],
+                    "runtime": "nodejs10.x"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-lambda.CfnFunction",
+                  "version": "1.95.0"
+                }
+              },
+              "LogRetention": {
+                "id": "LogRetention",
+                "path": "CDK-Demo-Typescript/hello/LogRetention",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CDK-Demo-Typescript/hello/LogRetention/Resource",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnResource",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-logs.LogRetention",
+                  "version": "1.95.0"
+                }
+              },
+              "hello-LogGroup": {
+                "id": "hello-LogGroup",
+                "path": "CDK-Demo-Typescript/hello/hello-LogGroup",
+                "children": {
+                  "DatadogSubscriptionFilterd4e81ca9": {
+                    "id": "DatadogSubscriptionFilterd4e81ca9",
+                    "path": "CDK-Demo-Typescript/hello/hello-LogGroup/DatadogSubscriptionFilterd4e81ca9",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CDK-Demo-Typescript/hello/hello-LogGroup/DatadogSubscriptionFilterd4e81ca9/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Logs::SubscriptionFilter",
+                          "aws:cdk:cloudformation:props": {
+                            "destinationArn": {
+                              "Ref": "datadogForwarderArn"
+                            },
+                            "filterPattern": "",
+                            "logGroupName": {
+                              "Fn::GetAtt": [
+                                "helloLogRetention8A8F51D9",
+                                "LogGroupName"
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/aws-logs.CfnSubscriptionFilter",
+                          "version": "1.95.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-logs.SubscriptionFilter",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.Resource",
+                  "version": "1.95.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda.Function",
+              "version": "1.95.0"
+            }
+          },
+          "AssetParameters": {
+            "id": "AssetParameters",
+            "path": "CDK-Demo-Typescript/AssetParameters",
+            "children": {
+              "b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff": {
+                "id": "b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff",
+                "path": "CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff",
+                "children": {
+                  "S3Bucket": {
+                    "id": "S3Bucket",
+                    "path": "CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff/S3Bucket",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnParameter",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "S3VersionKey": {
+                    "id": "S3VersionKey",
+                    "path": "CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff/S3VersionKey",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnParameter",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "ArtifactHash": {
+                    "id": "ArtifactHash",
+                    "path": "CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff/ArtifactHash",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnParameter",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.Construct",
+                  "version": "1.95.0"
+                }
+              },
+              "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24": {
+                "id": "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24",
+                "path": "CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24",
+                "children": {
+                  "S3Bucket": {
+                    "id": "S3Bucket",
+                    "path": "CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24/S3Bucket",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnParameter",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "S3VersionKey": {
+                    "id": "S3VersionKey",
+                    "path": "CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24/S3VersionKey",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnParameter",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "ArtifactHash": {
+                    "id": "ArtifactHash",
+                    "path": "CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24/ArtifactHash",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnParameter",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.Construct",
+                  "version": "1.95.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/core.Construct",
+              "version": "1.95.0"
+            }
+          },
+          "hello1": {
+            "id": "hello1",
+            "path": "CDK-Demo-Typescript/hello1",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CDK-Demo-Typescript/hello1/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CDK-Demo-Typescript/hello1/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-iam.CfnRole",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-iam.Role",
+                  "version": "1.95.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CDK-Demo-Typescript/hello1/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CDK-Demo-Typescript/hello1/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.AssetStaging",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CDK-Demo-Typescript/hello1/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.Resource",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-s3-assets.Asset",
+                  "version": "1.95.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CDK-Demo-Typescript/hello1/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Ref": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3Bucket9B4C166F"
+                      },
+                      "s3Key": {
+                        "Fn::Join": [
+                          "",
+                          [
+                            {
+                              "Fn::Select": [
+                                0,
+                                {
+                                  "Fn::Split": [
+                                    "||",
+                                    {
+                                      "Ref": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3VersionKeyF14A2292"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Fn::Select": [
+                                1,
+                                {
+                                  "Fn::Split": [
+                                    "||",
+                                    {
+                                      "Ref": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3VersionKeyF14A2292"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        ]
+                      }
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "hello1ServiceRoleB9E5813B",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "DD_LAMBDA_HANDLER": "hello_py.lambda_handler",
+                        "DD_TRACE_ENABLED": "true",
+                        "DD_LOG_INJECTION": "true",
+                        "DD_FLUSH_TO_LOG": "true"
+                      }
+                    },
+                    "handler": "datadog_lambda.handler.handler",
+                    "layers": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:aws:lambda:",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            ":464622532012:layer:Datadog-Python37:65"
+                          ]
+                        ]
+                      }
+                    ],
+                    "runtime": "python3.7"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-lambda.CfnFunction",
+                  "version": "1.95.0"
+                }
+              },
+              "LogRetention": {
+                "id": "LogRetention",
+                "path": "CDK-Demo-Typescript/hello1/LogRetention",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CDK-Demo-Typescript/hello1/LogRetention/Resource",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.CfnResource",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-logs.LogRetention",
+                  "version": "1.95.0"
+                }
+              },
+              "hello1-LogGroup": {
+                "id": "hello1-LogGroup",
+                "path": "CDK-Demo-Typescript/hello1/hello1-LogGroup",
+                "children": {
+                  "DatadogSubscriptionFilter158298d6": {
+                    "id": "DatadogSubscriptionFilter158298d6",
+                    "path": "CDK-Demo-Typescript/hello1/hello1-LogGroup/DatadogSubscriptionFilter158298d6",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CDK-Demo-Typescript/hello1/hello1-LogGroup/DatadogSubscriptionFilter158298d6/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Logs::SubscriptionFilter",
+                          "aws:cdk:cloudformation:props": {
+                            "destinationArn": {
+                              "Ref": "datadogForwarderArn"
+                            },
+                            "filterPattern": "",
+                            "logGroupName": {
+                              "Fn::GetAtt": [
+                                "hello1LogRetention32B2181E",
+                                "LogGroupName"
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/aws-logs.CfnSubscriptionFilter",
+                          "version": "1.95.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-logs.SubscriptionFilter",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.Resource",
+                  "version": "1.95.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda.Function",
+              "version": "1.95.0"
+            }
+          },
+          "datadogForwarderArn": {
+            "id": "datadogForwarderArn",
+            "path": "CDK-Demo-Typescript/datadogForwarderArn",
+            "constructInfo": {
+              "fqn": "@aws-cdk/core.CfnParameter",
+              "version": "1.95.0"
+            }
+          },
+          "Datadog": {
+            "id": "Datadog",
+            "path": "CDK-Demo-Typescript/Datadog",
+            "constructInfo": {
+              "fqn": "datadog-cdk-constructs.Datadog",
+              "version": "0.2.0"
+            }
+          },
+          "DatadogLayer-nodejs10.x-e582ed5e83506876642f0494accfa973a62308b4c8ea1ee66afb3e849bad3e5a": {
+            "id": "DatadogLayer-nodejs10.x-e582ed5e83506876642f0494accfa973a62308b4c8ea1ee66afb3e849bad3e5a",
+            "path": "CDK-Demo-Typescript/DatadogLayer-nodejs10.x-e582ed5e83506876642f0494accfa973a62308b4c8ea1ee66afb3e849bad3e5a",
+            "constructInfo": {
+              "fqn": "@aws-cdk/core.Resource",
+              "version": "1.95.0"
+            }
+          },
+          "DatadogLayer-python3.7-17004e32dc8add3df878e174e04d345d040d54353691e4478347268874949731": {
+            "id": "DatadogLayer-python3.7-17004e32dc8add3df878e174e04d345d040d54353691e4478347268874949731",
+            "path": "CDK-Demo-Typescript/DatadogLayer-python3.7-17004e32dc8add3df878e174e04d345d040d54353691e4478347268874949731",
+            "constructInfo": {
+              "fqn": "@aws-cdk/core.Resource",
+              "version": "1.95.0"
+            }
+          },
+          "forwarder2dd9d4c647b4225d699cfcdb64d6d191c064cd834ab298c54e6d989451fbcc61": {
+            "id": "forwarder2dd9d4c647b4225d699cfcdb64d6d191c064cd834ab298c54e6d989451fbcc61",
+            "path": "CDK-Demo-Typescript/forwarder2dd9d4c647b4225d699cfcdb64d6d191c064cd834ab298c54e6d989451fbcc61",
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda.FunctionBase",
+              "version": "1.95.0"
+            }
+          },
+          "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a": {
+            "id": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a",
+            "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.AssetStaging",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/core.Resource",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-s3-assets.Asset",
+                  "version": "1.95.0"
+                }
+              },
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-iam.CfnRole",
+                      "version": "1.95.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "logs:PutRetentionPolicy",
+                                    "logs:DeleteRetentionPolicy"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+                            "roles": [
+                              {
+                                "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/aws-iam.CfnPolicy",
+                          "version": "1.95.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-iam.Policy",
+                      "version": "1.95.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-iam.Role",
+                  "version": "1.95.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.CfnResource",
+                  "version": "1.95.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/core.Construct",
+              "version": "1.95.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "CDK-Demo-Typescript/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "CDK-Demo-Typescript/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.CfnResource",
+                  "version": "1.95.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "CDK-Demo-Typescript/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "@aws-cdk/core.CfnCondition",
+                  "version": "1.95.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/core.Construct",
+              "version": "1.95.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "@aws-cdk/core.Stack",
+          "version": "1.95.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "@aws-cdk/core.App",
+      "version": "1.95.0"
+    }
+  }
+}

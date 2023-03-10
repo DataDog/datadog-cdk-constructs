@@ -1,0 +1,543 @@
+{
+  "version": "9.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "CDK-Demo-Typescript": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "CDK-Demo-Typescript.template.json"
+      },
+      "metadata": {
+        "/CDK-Demo-Typescript": [
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff",
+              "id": "b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff",
+              "packaging": "zip",
+              "sourceHash": "b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff",
+              "s3BucketParameter": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3Bucket9B4C166F",
+              "s3KeyParameter": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3VersionKeyF14A2292",
+              "artifactHashParameter": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffArtifactHash3CAC2DCC"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/construct-compat.js:399:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:18:23)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24",
+              "id": "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24",
+              "packaging": "zip",
+              "sourceHash": "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24",
+              "s3BucketParameter": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
+              "s3KeyParameter": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
+              "artifactHashParameter": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/construct-compat.js:399:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:83:23)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "helloServiceRole353607D3",
+            "trace": [
+              "new Role (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:18:23)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "hello26396490",
+            "trace": [
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:18:23)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello/LogRetention/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "helloLogRetention8A8F51D9",
+            "trace": [
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:36:26)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello/hello-LogGroup/DatadogSubscriptionFilterd4e81ca9/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "hellohelloLogGroupDatadogSubscriptionFilterd4e81ca9E1BC8F5E",
+            "trace": [
+              "new SubscriptionFilter (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/subscription-filter.js:20:9)",
+              "Import.addSubscriptionFilter (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-group.js:39:16)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:22",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3Bucket9B4C166F",
+            "trace": [
+              "new FileAssetParameters (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:18:23)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffS3VersionKeyF14A2292",
+            "trace": [
+              "new FileAssetParameters (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:18:23)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/AssetParameters/b2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ff/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersb2dddea9113a82a569eab248c42bfed3c4083d0e66cc51cb39c3ff30469322ffArtifactHash3CAC2DCC",
+            "trace": [
+              "new FileAssetParameters (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:18:23)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
+            "trace": [
+              "new FileAssetParameters (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:83:23)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
+            "trace": [
+              "new FileAssetParameters (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:83:23)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/AssetParameters/67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F",
+            "trace": [
+              "new FileAssetParameters (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "ExampleStack.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack.js:402:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:83:23)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello1/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "hello1ServiceRoleB9E5813B",
+            "trace": [
+              "new Role (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:23:24)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello1/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "hello1759309C7",
+            "trace": [
+              "new Function (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:23:24)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello1/LogRetention/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "hello1LogRetention32B2181E",
+            "trace": [
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:36:26)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/hello1/hello1-LogGroup/DatadogSubscriptionFilter158298d6/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "hello1hello1LogGroupDatadogSubscriptionFilter158298d6C62896F3",
+            "trace": [
+              "new SubscriptionFilter (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/subscription-filter.js:20:9)",
+              "Import.addSubscriptionFilter (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-group.js:39:16)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:22",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/datadogForwarderArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "datadogForwarderArn",
+            "trace": [
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:28:37)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "trace": [
+              "new Role (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:87:36)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+            "trace": [
+              "new Policy (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-iam/lib/role.js:205:34)",
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:92:14)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "trace": [
+              "new LogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:100:26)",
+              "LogRetention.ensureSingletonLogRetentionFunction (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:70:16)",
+              "new LogRetention (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-logs/lib/log-retention.js:32:31)",
+              "Function.get logGroup [as logGroup] (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/aws-lambda/lib/function.js:432:34)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:45:13",
+              "Array.forEach (<anonymous>)",
+              "Object.addForwarder (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/forwarder.js:42:21)",
+              "Datadog.addLambdaFunctions (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/datadog-cdk-constructs/lib/datadog.js:52:25)",
+              "new ExampleStack (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:41:20)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:46:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata",
+            "trace": [
+              "new MetadataResource (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:22:30)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:128:9",
+              "visit (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:184:9)",
+              "visit (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:181:9)",
+              "injectMetadataResources (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:117:5)",
+              "Object.synthesize (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:47:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/CDK-Demo-Typescript/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable",
+            "trace": [
+              "new MetadataResource (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:30:35)",
+              "/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:128:9",
+              "visit (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:184:9)",
+              "visit (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:181:9)",
+              "injectMetadataResources (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:117:5)",
+              "Object.synthesize (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "Object.<anonymous> (/Users/stephen.firrincieli/dev/cloud-integrations-lambdas/lambda-cdk-constructs-demo/Typescript/dist/index.js:47:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
