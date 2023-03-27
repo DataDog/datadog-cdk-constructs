@@ -24,22 +24,11 @@ export class TypescriptV2Stack extends Stack {
       handler: "hello_py.lambda_handler",
     });
 
-    const datadogForwarderArn = new cdk.CfnParameter(
-      this,
-      "datadogForwarderArn",
-      {
-        type: "String",
-        description:
-          "The Arn of the Datadog AWS Lambda forwarder function which will send data to Datadog.",
-      }
-    );
-
     const DatadogCDK = new Datadog(this as any, "Datadog", {
-      nodeLayerVersion: 85,
-      pythonLayerVersion: 65,
-
+      nodeLayerVersion: 87,
+      pythonLayerVersion: 69,
+      extensionLayerVersion: 41,
       addLayers: true,
-      forwarderArn: datadogForwarderArn.valueAsString,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
