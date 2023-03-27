@@ -3,7 +3,6 @@
     "outDir": "testlib",
     "rootDirs": ["stacks", "lambda", "../src"],
     "alwaysStrict": true,
-    "charset": "utf8",
     "declaration": true,
     "experimentalDecorators": true,
     "incremental": true,
