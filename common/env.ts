@@ -129,10 +129,7 @@ export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProp
       lam.addEnvironment(DD_MIN_COLD_START_DURATION, props.minColdStartTraceDuration.toString().toLowerCase());
     }
     if (props.coldStartTraceSkipLibs !== undefined) {
-      lam.addEnvironment(
-        DD_COLD_START_TRACE_SKIP_LIB,
-        props.coldStartTraceSkipLibs
-      ); // coldStartTraceSkipLibs is case-sensitive
+      lam.addEnvironment(DD_COLD_START_TRACE_SKIP_LIB, props.coldStartTraceSkipLibs);
     }
     if (props.enableProfiling !== undefined) {
       lam.addEnvironment(DD_PROFILING_ENABLED, props.enableProfiling.toString().toLowerCase());
