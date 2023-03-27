@@ -91,6 +91,55 @@ describe("applyEnvVariables", () => {
   });
 });
 
+describe("setDDEnvVariables", () => {
+  it("sets additional DD env variables if provided", () => {
+    const EXAMPLE_LOG_LEVEL = "debug";
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      forwarderArn: "forwarder-arn",
+      logLevel: EXAMPLE_LOG_LEVEL,
+      enableColdStartTracing: false,
+      minColdStartTraceDuration: 80,
+      coldStartTraceSkipLibs: "skipLib1,skipLib2",
+      enableProfiling: true,
+      encodeAuthorizerContext: false,
+      decodeAuthorizerContext: false,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_FLUSH_TO_LOG"]: "true",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_LOGS_INJECTION"]: "true",
+          ["DD_LOG_LEVEL"]: "debug",
+          ["DD_TAGS"]: "git.commit.sha:1234,git.repository_url:1234",
+          ["DD_COLD_START_TRACING"]: "false",
+          ["DD_MIN_COLD_START_DURATION"]: "80",
+          ["DD_COLD_START_TRACE_SKIP_LIB"]: "skipLib1,skipLib2",
+          ["DD_PROFILING_ENABLED"]: "true",
+          ["DD_ENCODE_AUTHORIZER_CONTEXT"]: "false",
+          ["DD_DECODE_AUTHORIZER_CONTEXT"]: "false",
+        },
+      },
+    });
+  });
+});
+
 describe("ENABLE_DD_TRACING_ENV_VAR", () => {
   it("disables Datadog tracing when set to false", () => {
     const app = new cdk.App();
