@@ -30,6 +30,12 @@ export interface DatadogProps {
   readonly tags?: string;
   readonly createForwarderPermissions?: boolean;
   readonly sourceCodeIntegration?: boolean;
+  readonly enableColdStartTracing?: boolean;
+  readonly minColdStartTraceDuration?: number;
+  readonly coldStartTraceSkipLibs?: string;
+  readonly enableProfiling?: boolean;
+  readonly encodeAuthorizerContext?: boolean;
+  readonly decodeAuthorizerContext?: boolean;
 }
 
 /*

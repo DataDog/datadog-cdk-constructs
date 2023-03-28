@@ -19,6 +19,12 @@ export const DD_ENV_ENV_VAR = "DD_ENV";
 export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
 export const DD_VERSION_ENV_VAR = "DD_VERSION";
 export const DD_TAGS = "DD_TAGS";
+export const DD_COLD_START_TRACING = "DD_COLD_START_TRACING";
+export const DD_MIN_COLD_START_DURATION = "DD_MIN_COLD_START_DURATION";
+export const DD_COLD_START_TRACE_SKIP_LIB = "DD_COLD_START_TRACE_SKIP_LIB";
+export const DD_PROFILING_ENABLED = "DD_PROFILING_ENABLED";
+export const DD_ENCODE_AUTHORIZER_CONTEXT = "DD_ENCODE_AUTHORIZER_CONTEXT";
+export const DD_DECODE_AUTHORIZER_CONTEXT = "DD_DECODE_AUTHORIZER_CONTEXT";
 
 const execSync = require("child_process").execSync;
 
@@ -115,6 +121,24 @@ export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProp
       if (props.tags) {
         lam.addEnvironment(DD_TAGS, props.tags);
       }
+    }
+    if (props.enableColdStartTracing !== undefined) {
+      lam.addEnvironment(DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());
+    }
+    if (props.minColdStartTraceDuration !== undefined) {
+      lam.addEnvironment(DD_MIN_COLD_START_DURATION, props.minColdStartTraceDuration.toString().toLowerCase());
+    }
+    if (props.coldStartTraceSkipLibs !== undefined) {
+      lam.addEnvironment(DD_COLD_START_TRACE_SKIP_LIB, props.coldStartTraceSkipLibs);
+    }
+    if (props.enableProfiling !== undefined) {
+      lam.addEnvironment(DD_PROFILING_ENABLED, props.enableProfiling.toString().toLowerCase());
+    }
+    if (props.encodeAuthorizerContext !== undefined) {
+      lam.addEnvironment(DD_ENCODE_AUTHORIZER_CONTEXT, props.encodeAuthorizerContext.toString().toLowerCase());
+    }
+    if (props.decodeAuthorizerContext !== undefined) {
+      lam.addEnvironment(DD_DECODE_AUTHORIZER_CONTEXT, props.decodeAuthorizerContext.toString().toLowerCase());
     }
   });
 }
