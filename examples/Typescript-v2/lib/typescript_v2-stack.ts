@@ -10,7 +10,7 @@ export class TypescriptV2Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    console.log("LOG LINE ADDED FOR TESTING");
+    console.log("Log line added for testing");
 
     const hello = new Function(this, "cdk-v2-hello-node", {
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -29,6 +29,7 @@ export class TypescriptV2Stack extends Stack {
       pythonLayerVersion: 69,
       extensionLayerVersion: 41,
       addLayers: true,
+      apiKey: process.env.DD_API_KEY,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
