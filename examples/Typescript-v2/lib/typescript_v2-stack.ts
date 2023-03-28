@@ -16,12 +16,20 @@ export class TypescriptV2Stack extends Stack {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello.handler",
+      environment: {
+        DD_LOG_LEVEL: "debug",
+        DD_TRACE_DEBUG: "true",
+      },
     });
 
     const hello1 = new Function(this, "cdk-v2-hello-python", {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello_py.lambda_handler",
+      environment: {
+        DD_LOG_LEVEL: "debug",
+        DD_TRACE_DEBUG: "true",
+      },
     });
 
     const DatadogCDK = new Datadog(this as any, "Datadog", {

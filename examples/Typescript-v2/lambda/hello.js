@@ -43,7 +43,7 @@ exports.handler = async (event) => {
 
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ message: "Hello from CDK Node!" }),
+    body: JSON.stringify({ message: "Hello from CDK Node!", another: "field" }),
   };
   return response;
 };
