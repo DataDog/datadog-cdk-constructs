@@ -10,27 +10,21 @@ export class TypescriptV2Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    console.log("Log line added for testing");
+    console.log("Creating Hello World stack");
 
-    const hello = new Function(this, "cdk-v2-hello-node", {
+    const helloNode = new Function(this, "cdk-v2-hello-node", {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello.handler",
-      environment: {
-        DD_LOG_LEVEL: "debug",
-        DD_TRACE_DEBUG: "true",
-      },
     });
 
-    const hello1 = new Function(this, "cdk-v2-hello-python", {
+    const helloPython = new Function(this, "cdk-v2-hello-python", {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("lambda"),
       handler: "hello_py.lambda_handler",
-      environment: {
-        DD_LOG_LEVEL: "debug",
-        DD_TRACE_DEBUG: "true",
-      },
     });
+
+    console.log("Instrumenting with Datadog");
 
     const DatadogCDK = new Datadog(this as any, "Datadog", {
       nodeLayerVersion: 87,
@@ -41,9 +35,8 @@ export class TypescriptV2Stack extends Stack {
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      enableMergeXrayTraces: true,
     });
 
-    DatadogCDK.addLambdaFunctions([hello, hello1]);
+    DatadogCDK.addLambdaFunctions([helloNode, helloPython]);
   }
 }

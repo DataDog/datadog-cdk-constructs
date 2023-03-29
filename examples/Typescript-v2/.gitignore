@@ -1,6 +1,5 @@
 typescript_v2-stack.js
 typescript_v2.js
-typescript_v2.test.js
 !jest.config.js
 *.d.ts
 node_modules
