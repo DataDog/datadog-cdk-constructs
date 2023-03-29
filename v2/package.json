@@ -6,7 +6,7 @@
     "url": "https://github.com/DataDog/datadog-cdk-constructs"
   },
   "scripts": {
-    "build": "npx projen build", 
+    "build": "npx projen build",
     "check-formatting": "npx projen check-formatting",
     "compile": "npx projen compile",
     "default": "npx projen default",
