@@ -6,6 +6,11 @@ import { Function } from "aws-cdk-lib/aws-lambda";
 import { Datadog } from "datadog-cdk-constructs-v2";
 import { Stack, StackProps } from "aws-cdk-lib";
 
+/**
+ * Create a Python + Node Hello World stack and instrument with Datadog
+ *
+ * Gets the Datadog API key from the DD_API_KEY env variable
+ */
 export class TypescriptV2Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
