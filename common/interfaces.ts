@@ -36,6 +36,7 @@ export interface DatadogProps {
   readonly enableProfiling?: boolean;
   readonly encodeAuthorizerContext?: boolean;
   readonly decodeAuthorizerContext?: boolean;
+  readonly apmFlushDeadline?: string | number;
 }
 
 /*
