@@ -114,7 +114,6 @@ describe("setDDEnvVariables", () => {
       enableProfiling: true,
       encodeAuthorizerContext: false,
       decodeAuthorizerContext: false,
-      apmFlushDeadline: 20,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -135,7 +134,6 @@ describe("setDDEnvVariables", () => {
           ["DD_PROFILING_ENABLED"]: "true",
           ["DD_ENCODE_AUTHORIZER_CONTEXT"]: "false",
           ["DD_DECODE_AUTHORIZER_CONTEXT"]: "false",
-          ["DD_APM_FLUSH_DEADLINE_MILLISECONDS"]: "20",
         },
       },
     });

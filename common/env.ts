@@ -25,7 +25,6 @@ export const DD_COLD_START_TRACE_SKIP_LIB = "DD_COLD_START_TRACE_SKIP_LIB";
 export const DD_PROFILING_ENABLED = "DD_PROFILING_ENABLED";
 export const DD_ENCODE_AUTHORIZER_CONTEXT = "DD_ENCODE_AUTHORIZER_CONTEXT";
 export const DD_DECODE_AUTHORIZER_CONTEXT = "DD_DECODE_AUTHORIZER_CONTEXT";
-export const DD_APM_FLUSH_DEADLINE_MILLISECONDS = "DD_APM_FLUSH_DEADLINE_MILLISECONDS";
 
 const execSync = require("child_process").execSync;
 
@@ -140,9 +139,6 @@ export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProp
     }
     if (props.decodeAuthorizerContext !== undefined) {
       lam.addEnvironment(DD_DECODE_AUTHORIZER_CONTEXT, props.decodeAuthorizerContext.toString().toLowerCase());
-    }
-    if (props.apmFlushDeadline !== undefined) {
-      lam.addEnvironment(DD_APM_FLUSH_DEADLINE_MILLISECONDS, props.apmFlushDeadline.toString().toLowerCase());
     }
   });
 }
