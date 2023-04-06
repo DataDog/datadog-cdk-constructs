@@ -10,7 +10,7 @@ Use this Datadog CDK Construct Library to deploy serverless applications using A
 
 This CDK library automatically configures ingestion of metrics, traces, and logs from your serverless applications by:
 
-- Installing and configuring the Datadog Lambda layers for your [Python][1], [Node.js][2], and [Java][16] Lambda functions.
+- Installing and configuring the Datadog Lambda layers for your [Python][1], [Node.js][2], and [Java][15] Lambda functions.
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
@@ -275,7 +275,7 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 
 ## How it works
 
-The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Java][16], [Node.js][2], and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
+The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Java][15], [Node.js][2], and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
 While Lambda function based log groups are handled by the `addLambdaFunctions` method automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which subscribes the forwarder to any additional log groups of your choosing.
 
@@ -355,4 +355,3 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [13]: https://github.com/projen/projen
 [14]: https://cdkworkshop.com/15-prerequisites.html
 [15]: https://docs.datadoghq.com/serverless/installation/java/?tab=awscdk
-[16]: https://github.com/DataDog/datadog-lambda-java
