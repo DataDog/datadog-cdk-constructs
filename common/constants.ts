@@ -52,6 +52,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "python3.7": RuntimeType.PYTHON,
   "python3.8": RuntimeType.PYTHON,
   "python3.9": RuntimeType.PYTHON,
+  "python3.10": RuntimeType.PYTHON,
   "java8.al2": RuntimeType.JAVA,
   "java11": RuntimeType.JAVA,
 };
@@ -65,6 +66,7 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "python3.7": "Datadog-Python37",
   "python3.8": "Datadog-Python38",
   "python3.9": "Datadog-Python39",
+  "python3.10": "Datadog-Python310",
   "java8.al2": "dd-trace-java",
   "java11": "dd-trace-java",
 };
