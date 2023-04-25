@@ -125,4 +125,4 @@ python3 -m twine upload -u __token__ ./dist/python/*
 echo 'Pushing updates to github'
 git push origin main
 git push origin "refs/tags/v2-$VERSION"
-echo 'Please add release notes in GitHub!'
+echo 'Please create a release with notes from the new tag at GitHub https://github.com/DataDog/datadog-cdk-constructs/tags'
