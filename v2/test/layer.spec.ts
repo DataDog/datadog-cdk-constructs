@@ -159,6 +159,26 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds layer when architecture property is missing", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    (hello as any).architecture = undefined;
+    const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node12-x:${NODE_LAYER_VERSION}`],
+    });
+    expect(errors.length).toEqual(0);
+  });
+
   it("works with multiple lambda functions", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {

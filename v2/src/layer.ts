@@ -36,7 +36,9 @@ export function applyLayers(
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
-    const isARM = lam.architecture.dockerPlatform === Architecture.ARM_64.dockerPlatform;
+    const isARM =
+      lam.architecture?.dockerPlatform !== undefined &&
+      lam.architecture.dockerPlatform === Architecture.ARM_64.dockerPlatform;
     const isNode = lambdaRuntimeType === RuntimeType.NODE;
     if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);

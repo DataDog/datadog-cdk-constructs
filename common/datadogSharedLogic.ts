@@ -19,6 +19,7 @@ export function validateProps(props: DatadogProps) {
     "datadoghq.eu",
     "us3.datadoghq.com",
     "us5.datadoghq.com",
+    "ap1.datadoghq.com",
     "ddog-gov.com",
   ];
   if (
@@ -27,7 +28,7 @@ export function validateProps(props: DatadogProps) {
     !(props.site.startsWith("${Token[") && props.site.endsWith("]}"))
   ) {
     throw new Error(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, or ddog-gov.com.",
+      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, or ddog-gov.com.",
     );
   }
 

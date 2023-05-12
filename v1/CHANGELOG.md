@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v0.8.6...v0.9.0) (2023-04-19)
+
+
+### Features
+
+* add `CODEOWNERS` ([#162](https://github.com/DataDog/datadog-cdk-constructs/issues/162)) ([b5edabe](https://github.com/DataDog/datadog-cdk-constructs/commit/b5edabe7eaf855d001c19f1c8fb2709dc85f63bd))
+* python 3.10 support ([#170](https://github.com/DataDog/datadog-cdk-constructs/issues/170)) ([a79a4c9](https://github.com/DataDog/datadog-cdk-constructs/commit/a79a4c96b2424e664575ea52fc2df5e4a504e1a1))
+
+
+### Bug Fixes
+
+* grammar error for `apmFlushDeadline` description ([#161](https://github.com/DataDog/datadog-cdk-constructs/issues/161)) ([552d7ac](https://github.com/DataDog/datadog-cdk-constructs/commit/552d7ace2e0c9082e758690766a69dc6dc7dee82))
+
 ### [0.8.6](https://github.com/DataDog/datadog-cdk-constructs/compare/v0.8.5...v0.8.6) (2023-03-30)
 
 ### [0.8.5](https://github.com/DataDog/datadog-cdk-constructs/compare/v0.8.4...v0.8.5) (2023-02-14)
