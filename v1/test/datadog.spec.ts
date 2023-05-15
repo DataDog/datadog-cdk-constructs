@@ -3,7 +3,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import { Token } from "@aws-cdk/core";
-import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog } from "../src/index";
+import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER_ENV_VAR } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
@@ -419,3 +419,54 @@ describe("setTags", () => {
     });
   });
 });
+
+describe("redirectHandler", () => {
+  it("doesn't redirect handler when explicitly set to `false`", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      redirectHandler: false
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+
+    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+      Handler: "hello.handler"
+    });
+  });
+
+  it("redirects handler by default", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const datadogCdk = new Datadog(stack, "Datadog", {});
+    datadogCdk.addLambdaFunctions([hello]);
+
+    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler"
+        }
+      }
+    });
+  });
+});
+

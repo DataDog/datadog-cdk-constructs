@@ -2,7 +2,7 @@ import { App, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog } from "../src/index";
+import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER_ENV_VAR } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
@@ -416,6 +416,54 @@ describe("setTags", () => {
           Value: `v${versionJson.version}`,
         },
       ],
+    });
+  });
+});
+
+describe("redirectHandler", () => {
+  it("doesn't redirect handler when explicitly set to `false`", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      redirectHandler: false,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Handler: "hello.handler",
+    });
+  });
+
+  it("redirects handler by default", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {});
+    datadogCDK.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+        },
+      },
     });
   });
 });
