@@ -34,6 +34,7 @@ export const DefaultDatadogProps = {
   architecture: "X86_64",
   captureLambdaPayload: false,
   sourceCodeIntegration: true,
+  redirectHandler: true,
 };
 
 export enum TagKeys {
