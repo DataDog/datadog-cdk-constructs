@@ -55,7 +55,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "python3.10": RuntimeType.PYTHON,
   "java8.al2": RuntimeType.JAVA,
   "java11": RuntimeType.JAVA,
-  "java17": RuntimeType.JAVA
+  "java17": RuntimeType.JAVA,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
