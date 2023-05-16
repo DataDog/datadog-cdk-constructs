@@ -11,6 +11,7 @@ import { Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
+import { ISecret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { Transport } from "./common/transport";
@@ -22,7 +23,7 @@ import {
   applyEnvVariables,
   validateProps,
   TagKeys,
-  DatadogProps,
+  IDatadogProps,
   DatadogStrictProps,
   handleSettingPropDefaults,
   setGitEnvironmentVariables,
@@ -31,17 +32,22 @@ import {
 
 const versionJson = require("../version.json");
 
-export class Datadog extends Construct {
+type IDatadogPropsV2 = IDatadogProps & { apiKeySecret?: ISecret };
+
+class Datadog extends Construct {
   scope: Construct;
-  props: DatadogProps;
+  props: IDatadogPropsV2;
   transport: Transport;
-  constructor(scope: Construct, id: string, props: DatadogProps) {
+  constructor(scope: Construct, id: string, props: IDatadogPropsV2) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
       log.setLevel("debug");
     }
     super(scope, id);
     this.scope = scope;
     this.props = props;
+    if (this.props.apiKeySecret !== undefined) {
+      this.props.apiKeySecretArn = this.props.apiKeySecret.secretArn;
+    }
     validateProps(this.props);
     this.transport = new Transport(
       this.props.flushMetricsToLogs,
@@ -61,6 +67,10 @@ export class Datadog extends Construct {
     const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
 
     if (this.props !== undefined && lambdaFunctions.length > 0) {
+      if (this.props.apiKeySecret !== undefined) {
+        grantReadLambdas(this.props.apiKeySecret, lambdaFunctions);
+      }
+
       const region = `${lambdaFunctions[0].env.region}`;
       log.debug(`Using region: ${region}`);
       if (baseProps.addLayers) {
@@ -142,7 +152,7 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
+function setTags(lambdaFunctions: lambda.Function[], props: IDatadogProps) {
   log.debug(`Adding datadog tags`);
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
@@ -167,3 +177,11 @@ function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
     }
   });
 }
+
+function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]) {
+  lambdaFunctions.forEach((functionName) => {
+    secret.grantRead(functionName);
+  });
+}
+
+export { Datadog, IDatadogPropsV2 };

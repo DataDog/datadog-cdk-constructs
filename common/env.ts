@@ -7,7 +7,7 @@
  */
 
 import log from "loglevel";
-import { DatadogProps, DatadogStrictProps, ILambdaFunction } from "./interfaces";
+import { IDatadogProps, DatadogStrictProps, ILambdaFunction } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const ENABLE_XRAY_TRACE_MERGING_ENV_VAR = "DD_MERGE_XRAY_TRACES";
@@ -107,7 +107,7 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
   });
 }
 
-export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProps) {
+export function setDDEnvVariables(lambdas: ILambdaFunction[], props: IDatadogProps) {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
       if (props.env) {

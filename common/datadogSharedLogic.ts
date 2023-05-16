@@ -8,9 +8,9 @@
 
 import log from "loglevel";
 import { DefaultDatadogProps } from "./constants";
-import { DatadogProps, DatadogStrictProps } from "./interfaces";
+import { IDatadogProps, DatadogStrictProps } from "./interfaces";
 
-export function validateProps(props: DatadogProps) {
+export function validateProps(props: IDatadogProps) {
   log.debug("Validating props...");
 
   checkForMultipleApiKeys(props);
@@ -49,7 +49,7 @@ export function validateProps(props: DatadogProps) {
   }
 }
 
-export function checkForMultipleApiKeys(props: DatadogProps) {
+export function checkForMultipleApiKeys(props: IDatadogProps) {
   let multipleApiKeysMessage;
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
     multipleApiKeysMessage = "`apiKey`, `apiKmsKey`, and `apiKeySecretArn`";
@@ -66,7 +66,7 @@ export function checkForMultipleApiKeys(props: DatadogProps) {
   }
 }
 
-export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictProps {
+export function handleSettingPropDefaults(props: IDatadogProps): DatadogStrictProps {
   let addLayers = props.addLayers;
   let enableDatadogTracing = props.enableDatadogTracing;
   let enableMergeXrayTraces = props.enableMergeXrayTraces;
