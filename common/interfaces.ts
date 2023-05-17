@@ -37,6 +37,7 @@ export interface IDatadogProps {
   readonly encodeAuthorizerContext?: boolean;
   readonly decodeAuthorizerContext?: boolean;
   readonly apmFlushDeadline?: string | number;
+  readonly redirectHandler?: boolean;
 }
 
 /*
@@ -61,6 +62,7 @@ export interface DatadogStrictProps {
   readonly apiKmsKey?: string;
   readonly logLevel?: string;
   readonly sourceCodeIntegration?: boolean;
+  readonly redirectHandler?: boolean;
 }
 
 export interface Runtime {

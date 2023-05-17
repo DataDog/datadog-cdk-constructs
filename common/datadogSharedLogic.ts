@@ -75,6 +75,7 @@ export function handleSettingPropDefaults(props: IDatadogProps): DatadogStrictPr
   let enableDatadogLogs = props.enableDatadogLogs;
   let captureLambdaPayload = props.captureLambdaPayload;
   let sourceCodeIntegration = props.sourceCodeIntegration;
+  let redirectHandler = props.redirectHandler;
 
   if (addLayers === undefined) {
     log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
@@ -110,6 +111,11 @@ export function handleSettingPropDefaults(props: IDatadogProps): DatadogStrictPr
     sourceCodeIntegration = DefaultDatadogProps.sourceCodeIntegration;
   }
 
+  if (redirectHandler === undefined) {
+    log.debug(`No value provided for redirectHandler, default to ${DefaultDatadogProps.redirectHandler}`);
+    redirectHandler = DefaultDatadogProps.redirectHandler;
+  }
+
   return {
     addLayers: addLayers,
     enableDatadogTracing: enableDatadogTracing,
@@ -119,5 +125,6 @@ export function handleSettingPropDefaults(props: IDatadogProps): DatadogStrictPr
     enableDatadogLogs: enableDatadogLogs,
     captureLambdaPayload: captureLambdaPayload,
     sourceCodeIntegration: sourceCodeIntegration,
+    redirectHandler: redirectHandler,
   };
 }
