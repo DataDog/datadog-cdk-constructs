@@ -3,6 +3,7 @@ import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER_ENV_VAR } from "../src/index";
+const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
@@ -67,6 +68,43 @@ describe("validateProps", () => {
         enableDatadogTracing: false,
         flushMetricsToLogs: false,
         site: `${datadogSite}`,
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(false);
+    expect(thrownError?.message).toEqual(undefined);
+  });
+
+  it("doesn't throw an error if an apiKeySecret is set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const secret: typeof ISecret = {
+      secretArn: "dummy-arn",
+      grantRead() {
+        return;
+      },
+    };
+
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKeySecret: secret,
+        enableDatadogTracing: false,
+        flushMetricsToLogs: false,
       });
       datadogCdk.addLambdaFunctions([hello]);
     } catch (e) {
@@ -417,6 +455,58 @@ describe("setTags", () => {
         },
       ],
     });
+  });
+});
+
+describe("apiKeySecret", () => {
+  it("sets apiKeySecretArn", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const secret: typeof ISecret = {
+      secretArn: "dummy-arn",
+      grantRead() {
+        return;
+      },
+    };
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKeySecret: secret,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn");
+  });
+  it("overrides apiKeySecretArn", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const secret: typeof ISecret = {
+      secretArn: "dummy-arn-from-isecret",
+      grantRead() {
+        return;
+      },
+    };
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKeySecret: secret,
+      apiKeySecretArn: "dummy-arn",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn-from-isecret");
   });
 });
 

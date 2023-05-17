@@ -18,7 +18,7 @@ import {
   addForwarderToLogGroups,
   applyEnvVariables,
   applyLayers,
-  DatadogProps,
+  IDatadogProps,
   DatadogStrictProps,
   handleSettingPropDefaults,
   redirectHandlers,
@@ -32,9 +32,9 @@ const versionJson = require("../version.json");
 
 export class Datadog extends cdk.Construct {
   scope: cdk.Construct;
-  props: DatadogProps;
+  props: IDatadogProps;
   transport: Transport;
-  constructor(scope: cdk.Construct, id: string, props: DatadogProps) {
+  constructor(scope: cdk.Construct, id: string, props: IDatadogProps) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
       log.setLevel("debug");
     }
@@ -132,7 +132,7 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
+function setTags(lambdaFunctions: lambda.Function[], props: IDatadogProps) {
   log.debug(`Adding datadog tags`);
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
