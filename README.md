@@ -293,7 +293,7 @@ const datadog = new Datadog(scope, 'Datadog', {
 });
 ```
 
-When `addLambdaFunctions` is called, the Datadog CDK construct will give all your given lambda functions read access to the given AWS secret.
+When `addLambdaFunctions` is called, the Datadog CDK construct will grant all your given lambda functions read access to the given AWS secret.
 
 ## How it works
 
