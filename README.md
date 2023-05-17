@@ -287,7 +287,7 @@ const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
 
 const secret = Secret.fromSecretPartialArn(this, 'DatadogApiKeySecret' 'arn:aws:secretsmanager:us-west-1:123:secret:DATADOG_API_KEY');
 
-const datadog = new Datadog(scope, 'Datadog', {
+const datadog = new Datadog(this, 'Datadog', {
   ...
   apiKeySecret: secret
   ...
