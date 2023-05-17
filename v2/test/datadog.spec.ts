@@ -467,7 +467,6 @@ describe("apiKeySecret", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-
     const secret: typeof ISecret = {
       secretArn: "dummy-arn",
       grantRead() {
@@ -482,9 +481,8 @@ describe("apiKeySecret", () => {
       flushMetricsToLogs: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
-
     expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn");
-  }),
+  });
   it("overrides apiKeySecretArn", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
@@ -493,7 +491,6 @@ describe("apiKeySecret", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-
     const secret: typeof ISecret = {
       secretArn: "dummy-arn-from-isecret",
       grantRead() {
@@ -509,7 +506,6 @@ describe("apiKeySecret", () => {
       flushMetricsToLogs: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
-
     expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn-from-isecret");
   });
 });
