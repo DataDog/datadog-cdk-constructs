@@ -507,8 +507,8 @@ describe("apiKeySecret", () => {
     });
     datadogCdk.addLambdaFunctions([hello]);
     expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn-from-isecret");
-  })
-})
+  });
+});
 
 describe("redirectHandler", () => {
   it("doesn't redirect handler when explicitly set to `false`", () => {
