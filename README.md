@@ -76,6 +76,7 @@ const datadog = new Datadog(this, "Datadog", {
   site: "<SITE>",
   apiKey: "{Datadog_API_Key}",
   apiKeySecretArn: "{Secret_ARN_Datadog_API_Key}",
+  apiKeySecret: <AWS_CDK_ISECRET>, //Only available in datadog-cdk-constructs-v2
   apiKmsKey: "{Encrypted_Datadog_API_Key}",
   enableDatadogTracing: <BOOLEAN>,
   enableMergeXrayTraces: <BOOLEAN>,
@@ -173,6 +174,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `site` | `site` | Set which Datadog site to send data. This is only used when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com`, `us5.datadoghq.com`, `ap1.datadoghq.com`, and `ddog-gov.com`. The default is `datadoghq.com`. |
 | `apiKey` | `api_key` | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8]. |
 | `apiKeySecretArn` | `api_key_secret_arn` | The ARN of the secret storing the Datadog API key in AWS Secrets Manager. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayer` is set. Remember to add the `secretsmanager:GetSecretValue` permission to the Lambda execution role. |
+| `apiKeySecret` | `api_key_secret` | An AWS CDK ISecret representing a secret storing the Datadog API key in AWS Secrets Manager. Use this parameter in place of `apiKeySecretArn` to automatically grant your functions read access to the given secret. [See here](#automatically-grant-aws-secret-read-access-to-lambda-functions) for an example. **Only available in datadog-cdk-constructs-v2**. |
 | `apiKmsKey` | `api_kms_key` | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
 | `enableMergeXrayTraces` | `enable_merge_xray_traces` | Enable merging X-Ray traces on your Lambda functions. Defaults to `false`. |
@@ -273,6 +275,25 @@ class NestedStack extends cdk.NestedStack {
 ### Tags
 
 Add tags to your constructs. We recommend setting an `env` and `service` tag to tie Datadog telemetry together. For more information see [official AWS documentation][10] and [CDK documentation][11].
+
+## Automatically Grant AWS Secret Read Access to Lambda Functions
+**Only Available in datadog-cdk-constructs-v2**
+
+To automatically grant your lambdas read access to a given secret, please pass in `apiKeySecret` in place of `apiKeySecretArn` when initializing the Datadog construct.
+
+```
+const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
+
+const secret = Secret.fromSecretPartialArn(this, 'DatadogApiKeySecret' 'arn:aws:secretsmanager:us-west-1:123:secret:DATADOG_API_KEY');
+
+const datadog = new Datadog(scope, 'Datadog', {
+  ...
+  apiKeySecret: secret
+  ...
+});
+```
+
+When `addLambdaFunctions` is called, the Datadog CDK construct will give all your given lambda functions read access to the given AWS secret.
 
 ## How it works
 
