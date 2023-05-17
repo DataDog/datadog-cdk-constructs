@@ -17,7 +17,8 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 ## AWS CDK v1 vs AWS CDK v2
 Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
 
-- `datadog-cdk-constructs-v2` requires Node 14+, while `datadog-cdk-constructs-v1` supports Node 12+.
+- `datadog-cdk-constructs-v2` requires Node 14+, while `datadog-cdk-constructs` supports Node 12+.
+- `datadog-cdk-constructs-v2` contains more features.
 - Otherwise, the use of the two packages is identical.
 
 ## npm Package Installation:
@@ -174,7 +175,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `site` | `site` | Set which Datadog site to send data. This is only used when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com`, `us5.datadoghq.com`, `ap1.datadoghq.com`, and `ddog-gov.com`. The default is `datadoghq.com`. |
 | `apiKey` | `api_key` | Datadog API Key, only needed when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set. For more information about getting a Datadog API key, see the [API key documentation][8]. |
 | `apiKeySecretArn` | `api_key_secret_arn` | The ARN of the secret storing the Datadog API key in AWS Secrets Manager. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayer` is set. Remember to add the `secretsmanager:GetSecretValue` permission to the Lambda execution role. |
-| `apiKeySecret` | `api_key_secret` | An AWS CDK ISecret representing a secret storing the Datadog API key in AWS Secrets Manager. Use this parameter in place of `apiKeySecretArn` to automatically grant your functions read access to the given secret. [See here](#automatically-grant-aws-secret-read-access-to-lambda-functions) for an example. **Only available in datadog-cdk-constructs-v2**. |
+| `apiKeySecret` | `api_key_secret` | An [AWS CDK ISecret][16] representing a secret storing the Datadog API key in AWS Secrets Manager. Use this parameter in place of `apiKeySecretArn` to automatically grant your functions read access to the given secret. [See here](#automatically-grant-aws-secret-read-access-to-lambda-functions) for an example. **Only available in datadog-cdk-constructs-v2**. |
 | `apiKmsKey` | `api_kms_key` | Datadog API Key encrypted using KMS. Use this parameter in place of `apiKey` when `flushMetricsToLogs` is `false` or `extensionLayerVersion` is set, and you are using KMS encryption. |
 | `enableDatadogTracing` | `enable_datadog_tracing` | Enable Datadog tracing on your Lambda functions. Defaults to `true`. |
 | `enableMergeXrayTraces` | `enable_merge_xray_traces` | Enable merging X-Ray traces on your Lambda functions. Defaults to `false`. |
@@ -293,7 +294,7 @@ const datadog = new Datadog(scope, 'Datadog', {
 });
 ```
 
-When `addLambdaFunctions` is called, the Datadog CDK construct will grant all your given lambda functions read access to the given AWS secret.
+When `addLambdaFunctions` is called, the Datadog CDK construct will grant all your specified lambda functions read access to the given AWS secret.
 
 ## How it works
 
@@ -377,3 +378,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [13]: https://github.com/projen/projen
 [14]: https://cdkworkshop.com/15-prerequisites.html
 [15]: https://docs.datadoghq.com/serverless/installation/java/?tab=awscdk
+[16]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_secretsmanager.ISecret.html
