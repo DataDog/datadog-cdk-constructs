@@ -74,7 +74,10 @@ export class Datadog extends Construct {
           this.props.extensionLayerVersion,
         );
       }
-      redirectHandlers(lambdaFunctions, baseProps.addLayers);
+
+      if (baseProps.redirectHandler) {
+        redirectHandlers(lambdaFunctions, baseProps.addLayers);
+      }
 
       if (this.props.forwarderArn !== undefined) {
         if (this.props.extensionLayerVersion !== undefined) {
