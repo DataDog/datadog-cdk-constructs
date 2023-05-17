@@ -280,7 +280,7 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 ## Automatically Grant AWS Secret Read Access to Lambda Execution Role
 **Only Available in datadog-cdk-constructs-v2**
 
-To automatically grant your lambda's execution role read access to a given secret, please pass in `apiKeySecret` in place of `apiKeySecretArn` when initializing the Datadog construct.
+To automatically grant your lambda execution roles read access to a given secret, please pass in `apiKeySecret` in place of `apiKeySecretArn` when initializing the Datadog construct.
 
 ```
 const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
