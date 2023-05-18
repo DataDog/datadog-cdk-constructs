@@ -481,7 +481,7 @@ describe("apiKeySecret", () => {
       flushMetricsToLogs: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn");
+    expect(datadogCdk.transport.apiKeySecretArn).toEqual("dummy-arn");
   });
   it("overrides apiKeySecretArn", () => {
     const app = new App();
@@ -506,7 +506,7 @@ describe("apiKeySecret", () => {
       flushMetricsToLogs: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(datadogCdk.props.apiKeySecretArn).toEqual("dummy-arn-from-isecret");
+    expect(datadogCdk.transport.apiKeySecretArn).toEqual("dummy-arn-from-isecret");
   });
 });
 

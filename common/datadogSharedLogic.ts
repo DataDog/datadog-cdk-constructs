@@ -10,10 +10,10 @@ import log from "loglevel";
 import { DefaultDatadogProps } from "./constants";
 import { IDatadogProps, DatadogStrictProps } from "./interfaces";
 
-export function validateProps(props: IDatadogProps) {
+export function validateProps(props: IDatadogProps, apiKeyArnOverride = false) {
   log.debug("Validating props...");
 
-  checkForMultipleApiKeys(props);
+  checkForMultipleApiKeys(props, apiKeyArnOverride);
   const siteList: string[] = [
     "datadoghq.com",
     "datadoghq.eu",
@@ -36,28 +36,35 @@ export function validateProps(props: IDatadogProps) {
     props.apiKey === undefined &&
     props.apiKmsKey === undefined &&
     props.apiKeySecretArn === undefined &&
-    props.flushMetricsToLogs === false
+    props.flushMetricsToLogs === false &&
+    !apiKeyArnOverride
   ) {
     throw new Error(
       "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   }
   if (props.extensionLayerVersion !== undefined) {
-    if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined) {
+    if (
+      props.apiKey === undefined &&
+      props.apiKeySecretArn === undefined &&
+      props.apiKmsKey === undefined &&
+      !apiKeyArnOverride
+    ) {
       throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
     }
   }
 }
 
-export function checkForMultipleApiKeys(props: IDatadogProps) {
+export function checkForMultipleApiKeys(props: IDatadogProps, apiKeyArnOverride = false) {
   let multipleApiKeysMessage;
-  if (props.apiKey !== undefined && props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
+  const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
+  if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
     multipleApiKeysMessage = "`apiKey`, `apiKmsKey`, and `apiKeySecretArn`";
   } else if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
     multipleApiKeysMessage = "`apiKey` and `apiKmsKey`";
-  } else if (props.apiKey !== undefined && props.apiKeySecretArn !== undefined) {
+  } else if (props.apiKey !== undefined && apiKeyArnOrOverride) {
     multipleApiKeysMessage = "`apiKey` and `apiKeySecretArn`";
-  } else if (props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
+  } else if (props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
     multipleApiKeysMessage = "`apiKmsKey` and `apiKeySecretArn`";
   }
 
