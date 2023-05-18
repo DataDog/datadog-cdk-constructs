@@ -10,7 +10,7 @@ import log from "loglevel";
 import { DefaultDatadogProps } from "./constants";
 import { IDatadogProps, DatadogStrictProps } from "./interfaces";
 
-export function validateProps(props: IDatadogProps, apiKeyArnOverride?: boolean) {
+export function validateProps(props: IDatadogProps, apiKeyArnOverride = false) {
   log.debug("Validating props...");
 
   checkForMultipleApiKeys(props, apiKeyArnOverride);
@@ -55,7 +55,7 @@ export function validateProps(props: IDatadogProps, apiKeyArnOverride?: boolean)
   }
 }
 
-export function checkForMultipleApiKeys(props: IDatadogProps, apiKeyArnOverride?: boolean) {
+export function checkForMultipleApiKeys(props: IDatadogProps, apiKeyArnOverride = false) {
   let multipleApiKeysMessage;
   const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
