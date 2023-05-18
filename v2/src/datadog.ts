@@ -23,7 +23,7 @@ import {
   applyEnvVariables,
   validateProps,
   TagKeys,
-  IDatadogProps,
+  DatadogPropsV2,
   DatadogStrictProps,
   handleSettingPropDefaults,
   setGitEnvironmentVariables,
@@ -32,28 +32,27 @@ import {
 
 const versionJson = require("../version.json");
 
-type IDatadogPropsV2 = IDatadogProps & { apiKeySecret?: ISecret };
-
-class Datadog extends Construct {
+export class Datadog extends Construct {
   scope: Construct;
-  props: IDatadogPropsV2;
+  props: DatadogPropsV2;
   transport: Transport;
-  constructor(scope: Construct, id: string, props: IDatadogPropsV2) {
+  constructor(scope: Construct, id: string, props: DatadogPropsV2) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
       log.setLevel("debug");
     }
     super(scope, id);
     this.scope = scope;
     this.props = props;
+    let apiKeySecretArn = this.props.apiKeySecretArn;
     if (this.props.apiKeySecret !== undefined) {
-      this.props.apiKeySecretArn = this.props.apiKeySecret.secretArn;
+      apiKeySecretArn = this.props.apiKeySecret.secretArn;
     }
-    validateProps(this.props);
+    validateProps(this.props, this.props.apiKeySecret !== undefined);
     this.transport = new Transport(
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
-      this.props.apiKeySecretArn,
+      apiKeySecretArn,
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
     );
@@ -155,7 +154,7 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: IDatadogProps) {
+function setTags(lambdaFunctions: lambda.Function[], props: DatadogPropsV2) {
   log.debug(`Adding datadog tags`);
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
@@ -186,5 +185,3 @@ function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]) {
     secret.grantRead(functionName);
   });
 }
-
-export { Datadog, IDatadogPropsV2 };
