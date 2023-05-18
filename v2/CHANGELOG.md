@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.7.0...v2-1.7.1) (2023-05-18)
+
+
+### Bug Fixes
+
+* auto grant secret read permissions python package bug ([#181](https://github.com/DataDog/datadog-cdk-constructs/issues/181)) ([dec8ead](https://github.com/DataDog/datadog-cdk-constructs/commit/dec8ead28d8c8f262508d9896159a746b0fc7dd1))
+
 ## [1.7.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.6.1...v2-1.7.0) (2023-05-17)
 
 
