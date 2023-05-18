@@ -17,7 +17,7 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 ## AWS CDK v1 vs AWS CDK v2
 Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
 
-- `datadog-cdk-constructs-v2` requires Node 14+, while `datadog-cdk-constructs` supports Node 12+.
+- `datadog-cdk-constructs-v2` requires Node >= 14, while `datadog-cdk-constructs` supports Node >= 12.
 - `datadog-cdk-constructs-v2` contains more features.
 - Otherwise, the use of the two packages is identical.
 
@@ -77,7 +77,7 @@ const datadog = new Datadog(this, "Datadog", {
   site: "<SITE>",
   apiKey: "{Datadog_API_Key}",
   apiKeySecretArn: "{Secret_ARN_Datadog_API_Key}",
-  apiKeySecret: <AWS_CDK_ISECRET>, //Only available in datadog-cdk-constructs-v2
+  apiKeySecret: <AWS_CDK_ISECRET>, // Only available in datadog-cdk-constructs-v2
   apiKmsKey: "{Encrypted_Datadog_API_Key}",
   enableDatadogTracing: <BOOLEAN>,
   enableMergeXrayTraces: <BOOLEAN>,
@@ -277,10 +277,10 @@ class NestedStack extends cdk.NestedStack {
 
 Add tags to your constructs. We recommend setting an `env` and `service` tag to tie Datadog telemetry together. For more information see [official AWS documentation][10] and [CDK documentation][11].
 
-## Automatically Grant AWS Secret Read Access to Lambda Execution Role
-**Only Available in datadog-cdk-constructs-v2**
+## Automatically grant AWS secret read access to Lambda execution role
+**Only available in datadog-cdk-constructs-v2**
 
-To automatically grant your lambda execution roles read access to a given secret, please pass in `apiKeySecret` in place of `apiKeySecretArn` when initializing the Datadog construct.
+To automatically grant your Lambda execution roles read access to a given secret, pass in `apiKeySecret` in place of `apiKeySecretArn` when initializing the Datadog construct.
 
 ```
 const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
@@ -294,7 +294,7 @@ const datadog = new Datadog(this, 'Datadog', {
 });
 ```
 
-When `addLambdaFunctions` is called, the Datadog CDK construct will grant your lambda execution roles read access to the given AWS secret. This is done through the [AWS ISecret's grantRead function][17].
+When `addLambdaFunctions` is called, the Datadog CDK construct grants your Lambda execution roles read access to the given AWS secret. This is done through the [AWS ISecret's grantRead function][17].
 
 ## How it works
 
