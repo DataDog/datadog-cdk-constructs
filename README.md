@@ -285,7 +285,7 @@ To automatically grant your Lambda execution roles read access to a given secret
 ```
 const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
 
-const secret = Secret.fromSecretPartialArn(this, 'DatadogApiKeySecret' 'arn:aws:secretsmanager:us-west-1:123:secret:DATADOG_API_KEY');
+const secret = Secret.fromSecretPartialArn(this, 'DatadogApiKeySecret', 'arn:aws:secretsmanager:us-west-1:123:secret:DATADOG_API_KEY');
 
 const datadog = new Datadog(this, 'Datadog', {
   ...
