@@ -11,7 +11,7 @@ import { Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
-import { ISecret } from "aws-cdk-lib/aws-secretsmanager";
+import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { Transport } from "./common/transport";
@@ -60,6 +60,7 @@ export class Datadog extends Construct {
 
   public addLambdaFunctions(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    construct?: Construct,
   ) {
     // baseProps contains all properties set by the user, with default values for properties
     // defined in DefaultDatadogProps (if not set by user)
@@ -68,6 +69,9 @@ export class Datadog extends Construct {
     if (this.props !== undefined && lambdaFunctions.length > 0) {
       if (this.props.apiKeySecret !== undefined) {
         grantReadLambdas(this.props.apiKeySecret, lambdaFunctions);
+      } else if (this.props.apiKeySecretArn !== undefined && construct !== undefined) {
+        log.debug("Automatically granting read access to the provided Secret ARN for all your lambda functions.");
+        grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunctions);
       }
 
       const region = `${lambdaFunctions[0].env.region}`;
@@ -181,6 +185,13 @@ function setTags(lambdaFunctions: lambda.Function[], props: DatadogPropsV2) {
 }
 
 function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]) {
+  lambdaFunctions.forEach((functionName) => {
+    secret.grantRead(functionName);
+  });
+}
+
+function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambdaFunctions: lambda.Function[]) {
+  const secret = Secret.fromSecretPartialArn(construct, "DatadogApiKeySecret", arn);
   lambdaFunctions.forEach((functionName) => {
     secret.grantRead(functionName);
   });
