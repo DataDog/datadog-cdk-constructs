@@ -6,7 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-export interface IDatadogProps {
+export interface DatadogProps {
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
   readonly javaLayerVersion?: number;
@@ -16,7 +16,7 @@ export interface IDatadogProps {
   readonly flushMetricsToLogs?: boolean;
   readonly site?: string;
   readonly apiKey?: string;
-  apiKeySecretArn?: string;
+  readonly apiKeySecretArn?: string;
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
   readonly enableMergeXrayTraces?: boolean;
