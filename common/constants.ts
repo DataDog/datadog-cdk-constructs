@@ -35,6 +35,7 @@ export const DefaultDatadogProps = {
   captureLambdaPayload: false,
   sourceCodeIntegration: true,
   redirectHandler: true,
+  grantSecretReadAccess: true,
 };
 
 export enum TagKeys {
