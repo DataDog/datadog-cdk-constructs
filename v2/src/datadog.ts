@@ -74,7 +74,7 @@ export class Datadog extends Construct {
         construct !== undefined &&
         baseProps.grantSecretReadAccess
       ) {
-        log.debug("Automatically granting read access to the provided Secret ARN for all your lambda functions.");
+        log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
         grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunctions);
       }
 
