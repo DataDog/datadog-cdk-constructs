@@ -36,7 +36,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -69,7 +69,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       logLevel: EXAMPLE_LOG_LEVEL,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -106,7 +106,7 @@ describe("setDDEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       logLevel: EXAMPLE_LOG_LEVEL,
       enableColdStartTracing: false,
       minColdStartTraceDuration: 80,
@@ -286,7 +286,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       injectLogContext: false,
       sourceCodeIntegration: false,
     });
@@ -320,7 +320,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -354,7 +354,7 @@ describe("LOG_LEVEL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       logLevel: "debug",
       sourceCodeIntegration: false,
     });

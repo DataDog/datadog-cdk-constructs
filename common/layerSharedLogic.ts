@@ -17,29 +17,38 @@ import {
   EXTENSION_LAYER_PREFIX,
 } from "./constants";
 
-export function getLambdaLayerArn(region: string, version: number, runtime: string, isArm: boolean, isNode: boolean) {
+export function getLambdaLayerArn(
+  region: string,
+  version: number,
+  runtime: string,
+  isArm: boolean,
+  isNode: boolean,
+  accountId?: string,
+) {
   const baseLayerName = runtimeToLayerName[runtime];
   const layerName = isArm && !isNode ? `${baseLayerName}-ARM` : baseLayerName;
+  const partition = getAWSPartitionFromRegion(region);
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = govCloudRegions.includes(region);
 
   // if this is a GovCloud region, use the GovCloud lambda layer
   if (isGovCloud) {
     log.debug("GovCloud region detected, using the GovCloud lambda layer");
-    return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
+    return `arn:${partition}:lambda:${region}:${accountId ?? DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
   }
-  return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
+  return `arn:${partition}:lambda:${region}:${accountId ?? DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-export function getExtensionLayerArn(region: string, version: number, isArm: boolean) {
+export function getExtensionLayerArn(region: string, version: number, isArm: boolean, accountId?: string) {
   const baseLayerName = "Datadog-Extension";
   const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
+  const partition = getAWSPartitionFromRegion(region);
   const isGovCloud = govCloudRegions.includes(region);
   if (isGovCloud) {
     log.debug("GovCloud region detected, using the GovCloud extension layer");
-    return `arn:aws-us-gov:lambda:${region}:${DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
+    return `arn:${partition}:lambda:${region}:${accountId ?? DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
   }
-  return `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
+  return `arn:${partition}:lambda:${region}:${accountId ?? DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
 export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
@@ -66,4 +75,14 @@ export function generateLayerId(isExtensionLayer: boolean, functionArn: string, 
     return generateExtensionLayerId(functionArn);
   }
   return generateLambdaLayerId(functionArn, runtime);
+}
+
+function getAWSPartitionFromRegion(region: string) {
+  if (region.startsWith("us-gov-")) {
+    return "aws-us-gov";
+  }
+  if (region.startsWith("cn-")) {
+    return "aws-cn";
+  }
+  return "aws";
 }

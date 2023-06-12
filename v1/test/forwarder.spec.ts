@@ -20,9 +20,9 @@ describe("Forwarder", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    addForwarder(stack, [pythonLambda], "forwarder-arn");
+    addForwarder(stack, [pythonLambda], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
+      DestinationArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       FilterPattern: "",
     });
   });
@@ -45,7 +45,7 @@ describe("Forwarder", () => {
       handler: "hello.handler",
     });
 
-    addForwarder(stack, [nodeLambda, pythonLambda], "forwarder-arn");
+    addForwarder(stack, [nodeLambda, pythonLambda], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
 
     const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
     const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
@@ -72,8 +72,8 @@ describe("Forwarder", () => {
       handler: "hello.handler",
     });
 
-    addForwarder(stack, [nodeLambda], "forwarder-arn");
-    addForwarder(stack, [pythonLambda], "forwarder-arn-2");
+    addForwarder(stack, [nodeLambda], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
+    addForwarder(stack, [pythonLambda], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn-2");
 
     const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
     const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
@@ -97,7 +97,7 @@ describe("Forwarder", () => {
         code: lambda.Code.fromAsset("test"),
         handler: "hello.handler",
       });
-      addForwarder(stack, [pythonLambda], "forwarder-arn");
+      addForwarder(stack, [pythonLambda], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
 
       return stack;
     };
@@ -137,8 +137,8 @@ describe("Forwarder", () => {
       return stack;
     };
 
-    const stackOne = createStack("forwarder-arn");
-    const stackTwo = createStack("forwarder-arn-2");
+    const stackOne = createStack("arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
+    const stackTwo = createStack("arn:aws:lambda:sa-east-1:123:function:forwarder-arn-2");
 
     const stackOneSubscriptions = findDatadogSubscriptionFilters(stackOne);
     const stackTwoSubscriptions = findDatadogSubscriptionFilters(stackTwo);
@@ -174,9 +174,9 @@ describe("Forwarder", () => {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
-    addForwarderToLogGroups(stack, [restLogGroup], "forwarder-arn");
+    addForwarderToLogGroups(stack, [restLogGroup], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
+      DestinationArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       FilterPattern: "",
     });
   });
@@ -188,9 +188,9 @@ describe("Forwarder", () => {
       },
     });
     const logGroup = LogGroup.fromLogGroupName(stack, "LogGroup", "logGroupName");
-    addForwarderToLogGroups(stack, [logGroup], "forwarder-arn");
+    addForwarderToLogGroups(stack, [logGroup], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
+      DestinationArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       FilterPattern: "",
     });
   });
@@ -226,7 +226,11 @@ describe("Forwarder", () => {
       },
     });
 
-    addForwarderToLogGroups(stack, [nodeLogGroup, pythonLogGroup], "forwarder-arn");
+    addForwarderToLogGroups(
+      stack,
+      [nodeLogGroup, pythonLogGroup],
+      "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+    );
     const stackSubcriptions = findDatadogSubscriptionFilters(stack);
 
     expect(stackSubcriptions).toHaveLength(2);
@@ -250,14 +254,14 @@ describe("Forwarder", () => {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
-    addForwarder(stack, [pythonLambda], "forwarder-arn");
-    addForwarderToLogGroups(stack, [restLogGroup], "forwarder-arn-rest");
+    addForwarder(stack, [pythonLambda], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn");
+    addForwarderToLogGroups(stack, [restLogGroup], "arn:aws:lambda:sa-east-1:123:function:forwarder-arn-rest");
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn",
+      DestinationArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       FilterPattern: "",
     });
     expect(stack).toHaveResource("AWS::Logs::SubscriptionFilter", {
-      DestinationArn: "forwarder-arn-rest",
+      DestinationArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn-rest",
       FilterPattern: "",
     });
   });

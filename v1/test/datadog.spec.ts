@@ -7,6 +7,7 @@ import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
+const PYTHON_LAYER_VERSION = 2;
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -94,7 +95,7 @@ describe("validateProps", () => {
     });
     expect(() => {
       const datadogCDK = new Datadog(stack, "Datadog", {
-        forwarderArn: "forwarder-arn",
+        forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
       });
@@ -199,7 +200,7 @@ describe("addCdkConstructVersionTag", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       apiKey: "1234",
     });
 
@@ -224,7 +225,7 @@ describe("addCdkConstructVersionTag", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       apiKey: "1234",
     });
 
@@ -294,12 +295,13 @@ describe("setTags", () => {
 
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       addLayers: true,
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       apiKey: "1234",
       env: "test-env",
       service: "test-service",
@@ -435,12 +437,12 @@ describe("redirectHandler", () => {
     });
 
     const datadogCdk = new Datadog(stack, "Datadog", {
-      redirectHandler: false
+      redirectHandler: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
 
     expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
-      Handler: "hello.handler"
+      Handler: "hello.handler",
     });
   });
 
@@ -457,16 +459,15 @@ describe("redirectHandler", () => {
       handler: "hello.handler",
     });
 
-    const datadogCdk = new Datadog(stack, "Datadog", {});
+    const datadogCdk = new Datadog(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
     datadogCdk.addLambdaFunctions([hello]);
 
     expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler"
-        }
-      }
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+        },
+      },
     });
   });
 });
-

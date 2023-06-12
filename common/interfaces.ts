@@ -38,6 +38,7 @@ export interface DatadogProps {
   readonly decodeAuthorizerContext?: boolean;
   readonly apmFlushDeadline?: string | number;
   readonly redirectHandler?: boolean;
+  readonly useLayersFromAccount?: string;
 }
 
 /*
