@@ -492,7 +492,7 @@ describe("apiKeySecret", () => {
       handler: "hello.handler",
     });
     const secret: typeof ISecret = {
-      secretArn: "dummy-arn-from-isecret",
+      secretArn: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key-from-isecret",
       grantRead() {
         return;
       },
@@ -501,12 +501,65 @@ describe("apiKeySecret", () => {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKeySecret: secret,
-      apiKeySecretArn: "dummy-arn",
+      apiKeySecretArn: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key",
       enableDatadogTracing: false,
       flushMetricsToLogs: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
-    expect(datadogCdk.transport.apiKeySecretArn).toEqual("dummy-arn-from-isecret");
+    expect(datadogCdk.transport.apiKeySecretArn).toEqual(
+      "arn:aws:secretsmanager:sa-east-1:123:secret:test-key-from-isecret",
+    );
+  });
+});
+
+describe("addLambdaFunctions", () => {
+  it("automatically gives lambdas secret read access to the given apiKeySecretArn by default", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKeySecretArn: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogCdk.addLambdaFunctions([hello], stack);
+    Template.fromStack(stack).hasResourceProperties("AWS::IAM::Policy", {
+      PolicyDocument: {
+        Statement: [
+          {
+            Action: ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"],
+            Resource: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key-??????",
+          },
+        ],
+      },
+    });
+  });
+  it("doesn't give lambdas secret read access to the given apiKeySecretArn if grantSecretReadAccess is false", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKeySecretArn: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+      grantSecretReadAccess: false,
+    });
+    datadogCdk.addLambdaFunctions([hello], stack);
+    Template.fromStack(stack).resourceCountIs("AWS::IAM::Policy", 0);
   });
 });
 

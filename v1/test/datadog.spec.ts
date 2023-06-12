@@ -435,12 +435,12 @@ describe("redirectHandler", () => {
     });
 
     const datadogCdk = new Datadog(stack, "Datadog", {
-      redirectHandler: false
+      redirectHandler: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
 
     expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
-      Handler: "hello.handler"
+      Handler: "hello.handler",
     });
   });
 
@@ -463,10 +463,9 @@ describe("redirectHandler", () => {
     expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler"
-        }
-      }
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+        },
+      },
     });
   });
 });
-
