@@ -38,6 +38,7 @@ export interface DatadogProps {
   readonly decodeAuthorizerContext?: boolean;
   readonly apmFlushDeadline?: string | number;
   readonly redirectHandler?: boolean;
+  readonly grantSecretReadAccess?: boolean;
   readonly useLayersFromAccount?: string;
 }
 
@@ -51,6 +52,7 @@ export interface DatadogStrictProps {
   readonly injectLogContext: boolean;
   readonly enableDatadogTracing: boolean;
   readonly enableMergeXrayTraces: boolean;
+  readonly grantSecretReadAccess: boolean;
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
   readonly javaLayerVersion?: number;
