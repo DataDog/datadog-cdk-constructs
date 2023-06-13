@@ -6,7 +6,8 @@ import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
-const NODE_LAYER_VERSION = 1;
+const NODE_LAYER_VERSION = 91;
+const PYTHON_LAYER_VERSION = 73;
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -331,6 +332,7 @@ describe("setTags", () => {
 
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       addLayers: true,
       enableDatadogTracing: false,
@@ -424,6 +426,7 @@ describe("setTags", () => {
 
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       addLayers: true,
       enableDatadogTracing: false,
@@ -578,6 +581,7 @@ describe("redirectHandler", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       redirectHandler: false,
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
 
@@ -598,7 +602,7 @@ describe("redirectHandler", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {});
+    const datadogCDK = new Datadog(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
     datadogCDK.addLambdaFunctions([hello]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {

@@ -3,6 +3,7 @@ import { App, Stack } from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
+import log from "loglevel";
 import {
   Datadog,
   applyLayers,
@@ -12,8 +13,8 @@ import {
   generateLambdaLayerId,
   generateExtensionLayerId,
 } from "../src/index";
-const NODE_LAYER_VERSION = 1;
-const PYTHON_LAYER_VERSION = 2;
+const NODE_LAYER_VERSION = 91;
+const PYTHON_LAYER_VERSION = 73;
 const EXTENSION_LAYER_VERSION = 5;
 
 describe("applyLayers", () => {
@@ -236,6 +237,7 @@ describe("applyLayers", () => {
   });
 
   it("returns errors if layer versions are not provided for corresponding Lambda runtimes", () => {
+    const logSpy = jest.spyOn(log, "error").mockImplementation(() => ({}));
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -260,6 +262,8 @@ describe("applyLayers", () => {
       getMissingLayerVersionErrorMsg("NodeHandler", "Node.js", "node"),
       getMissingLayerVersionErrorMsg("PythonHandler", "Python", "python"),
     ]);
+    expect(logSpy).toHaveBeenCalledTimes(2);
+    logSpy.mockRestore();
   });
 });
 
