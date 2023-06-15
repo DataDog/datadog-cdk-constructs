@@ -98,7 +98,13 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
   lambdas.forEach((lam) => {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
     lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
-    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+    // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
+    if (baseProps.extensionLayerVersion) {
+      console.log("extensionSet")
+      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
+    } else {
+      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+    }
     lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
     lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
     if (baseProps.logLevel) {
