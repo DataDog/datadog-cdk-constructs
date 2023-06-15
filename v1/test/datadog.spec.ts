@@ -95,6 +95,7 @@ describe("validateProps", () => {
     });
     expect(() => {
       const datadogCDK = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
         forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
@@ -388,6 +389,7 @@ describe("setTags", () => {
 
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       addLayers: true,
       enableDatadogTracing: false,
@@ -437,6 +439,7 @@ describe("redirectHandler", () => {
     });
 
     const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       redirectHandler: false,
     });
     datadogCdk.addLambdaFunctions([hello]);
