@@ -15,6 +15,8 @@ import {
   DD_HANDLER_ENV_VAR,
 } from "../src/index";
 const EXTENSION_LAYER_VERSION = 5;
+const NODE_LAYER_VERSION = 91;
+const PYTHON_LAYER_VERSION = 73;
 
 describe("SITE_URL_ENV_VAR", () => {
   it("applies site URL parameter correctly when flushMetricsToLogs is false", () => {
@@ -34,6 +36,7 @@ describe("SITE_URL_ENV_VAR", () => {
       site: "datadoghq.eu",
       flushMetricsToLogs: false,
       apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -68,6 +71,7 @@ describe("SITE_URL_ENV_VAR", () => {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -101,6 +105,7 @@ describe("SITE_URL_ENV_VAR", () => {
     const datadogCDK = new Datadog(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -135,6 +140,7 @@ describe("SITE_URL_ENV_VAR", () => {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       site: "datadoghq.eu",
       apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -169,6 +175,7 @@ describe("SITE_URL_ENV_VAR", () => {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: true,
       site: "datadoghq.eu",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -204,6 +211,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       apiKey: "1234",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -236,6 +244,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -268,6 +277,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
       flushMetricsToLogs: true,
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -305,6 +315,7 @@ describe("API_KEY_ENV_VAR", () => {
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -342,6 +353,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -377,6 +389,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
         flushMetricsToLogs: false,
         site: "datadoghq.com",
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+        nodeLayerVersion: NODE_LAYER_VERSION,
       });
       datadogCDK.addLambdaFunctions([hello]);
     }).toThrowError(
@@ -400,6 +413,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -436,6 +450,7 @@ describe("apiKMSKeyEnvVar", () => {
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKmsKey: "5678",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
