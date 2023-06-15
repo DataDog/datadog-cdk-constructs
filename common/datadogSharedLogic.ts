@@ -84,7 +84,7 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   let sourceCodeIntegration = props.sourceCodeIntegration;
   let redirectHandler = props.redirectHandler;
   let grantSecretReadAccess = props.grantSecretReadAccess;
-  let extensionLayerVersion = props.extensionLayerVersion;
+  const extensionLayerVersion = props.extensionLayerVersion;
 
   if (addLayers === undefined) {
     log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
@@ -141,6 +141,6 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
     sourceCodeIntegration: sourceCodeIntegration,
     redirectHandler: redirectHandler,
     grantSecretReadAccess: grantSecretReadAccess,
-    extensionLayerVersion: extensionLayerVersion
+    extensionLayerVersion: extensionLayerVersion,
   };
 }
