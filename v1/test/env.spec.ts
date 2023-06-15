@@ -16,6 +16,8 @@ import {
   API_KEY_ENV_VAR,
 } from "../src/index";
 
+const NODE_LAYER_VERSION = 91;
+
 jest.mock("child_process", () => {
   return {
     execSync: () => "1234",
@@ -37,6 +39,7 @@ describe("applyEnvVariables", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -70,6 +73,7 @@ describe("applyEnvVariables", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       logLevel: EXAMPLE_LOG_LEVEL,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -107,6 +111,7 @@ describe("setDDEnvVariables", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       logLevel: EXAMPLE_LOG_LEVEL,
       enableColdStartTracing: false,
       minColdStartTraceDuration: 80,
@@ -156,6 +161,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       enableDatadogTracing: false,
       sourceCodeIntegration: false,
     });
@@ -188,6 +194,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -221,6 +228,7 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       enableMergeXrayTraces: true,
       sourceCodeIntegration: false,
     });
@@ -254,6 +262,7 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       sourceCodeIntegration: false,
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogCDK.addLambdaFunctions([hello]);
     expect(stack).toHaveResource("AWS::Lambda::Function", {
@@ -287,6 +296,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       injectLogContext: false,
       sourceCodeIntegration: false,
     });
@@ -321,6 +331,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -334,6 +345,46 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+
+  it("disables log injection when extensionVersion is provided", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      captureLambdaPayload: true,
+      tags: "key:value",
+      // the below fields are needed or DD_TAGS won't get set
+      extensionLayerVersion: 10,
+      nodeLayerVersion: 15,
+      apiKey: "test",
+      sourceCodeIntegration: true,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    expect(stack).toHaveResource("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [API_KEY_ENV_VAR]: "test",
         },
       },
     });
@@ -355,6 +406,7 @@ describe("LOG_LEVEL_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       logLevel: "debug",
       sourceCodeIntegration: false,
     });
@@ -391,6 +443,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       enableDatadogLogs: false,
       sourceCodeIntegration: false,
     });
@@ -423,6 +476,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -456,6 +510,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureLambdaPayload: true,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -488,6 +543,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureLambdaPayload: true,
       tags: "key:value",
       // the below fields are needed or DD_TAGS won't get set
@@ -503,7 +559,7 @@ describe("DD_TAGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
@@ -527,6 +583,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureLambdaPayload: true,
       sourceCodeIntegration: false,
     });
@@ -561,6 +618,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureLambdaPayload: true,
       sourceCodeIntegration: false,
     });
@@ -593,6 +651,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureLambdaPayload: undefined,
       sourceCodeIntegration: false,
     });

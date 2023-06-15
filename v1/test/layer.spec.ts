@@ -3,6 +3,7 @@ import { ABSENT } from "@aws-cdk/assert/lib/assertions/have-resource";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { Architecture } from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
+import log from "loglevel";
 import "@aws-cdk/assert/jest";
 import {
   Datadog,
@@ -210,6 +211,7 @@ describe("applyLayers", () => {
   });
 
   it("returns errors if layer versions are not provided for corresponding Lambda runtimes", () => {
+    const logSpy = jest.spyOn(log, "error").mockImplementation(() => ({}));
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "stack", {
       env: {
@@ -234,6 +236,8 @@ describe("applyLayers", () => {
       getMissingLayerVersionErrorMsg("NodeHandler", "Node.js", "node"),
       getMissingLayerVersionErrorMsg("PythonHandler", "Python", "python"),
     ]);
+    expect(logSpy).toHaveBeenCalledTimes(2);
+    logSpy.mockRestore();
   });
 });
 
