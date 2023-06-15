@@ -492,7 +492,7 @@ describe("DD_TAGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
