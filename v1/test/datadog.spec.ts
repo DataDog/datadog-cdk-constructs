@@ -79,7 +79,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(false);
     expect(thrownError?.message).toEqual(undefined);
-    process.env.DD_CDK_BYPASS_SITE_VALIDATION = "undefined";
+    process.env.DD_CDK_BYPASS_SITE_VALIDATION = undefined;
   });
 
   it("doesn't throw an error when the site is set as a cdk token", () => {
