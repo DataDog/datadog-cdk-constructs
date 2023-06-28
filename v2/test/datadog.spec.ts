@@ -46,6 +46,42 @@ describe("validateProps", () => {
     );
   });
 
+  it("doesn't throw an error when the site is invalid and DD_CDK_BYPASS_SITE_VALIDATION is true", () => {
+    process.env.DD_CDK_BYPASS_SITE_VALIDATION = "true";
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        enableDatadogTracing: false,
+        flushMetricsToLogs: false,
+        site: "dataDOGEhq.com",
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(false);
+    expect(thrownError?.message).toEqual(undefined);
+    process.env.DD_CDK_BYPASS_SITE_VALIDATION = undefined;
+  });
+
   it("doesn't throw an error when the site is set as a cdk token", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
