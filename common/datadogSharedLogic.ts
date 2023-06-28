@@ -26,7 +26,7 @@ export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
     props.site !== undefined &&
     !siteList.includes(props.site.toLowerCase()) &&
     !(props.site.startsWith("${Token[") && props.site.endsWith("]}")) &&
-    process.env.DD_CDK_BYPASS_SITE_VALIDATION !== "true"
+    !process.env.DD_CDK_BYPASS_SITE_VALIDATION
   ) {
     throw new Error(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, or ddog-gov.com.",
