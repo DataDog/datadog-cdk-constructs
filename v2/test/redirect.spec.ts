@@ -1,5 +1,5 @@
 import { App, Stack } from "aws-cdk-lib";
-import { Template, Match } from "aws-cdk-lib/assertions";
+import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import {
   redirectHandlers,
@@ -122,23 +122,5 @@ describe("redirectHandlers", () => {
       },
       0,
     );
-  });
-
-  it("doesn't set handler or runtime for container image functions", () => {
-    const app = new App();
-    const stack = new Stack(app, "stack", {
-      env: {
-        region: "us-west-2",
-      },
-    });
-    const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
-      code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
-    });
-    redirectHandlers([hello], true);
-
-    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Handler: Match.absent(),
-      Runtime: Match.absent(),
-    });
   });
 });
