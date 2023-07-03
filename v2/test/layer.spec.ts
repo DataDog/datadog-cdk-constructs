@@ -273,6 +273,7 @@ describe("applyLayers", () => {
       functionName: "container-lambda",
       code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
     });
+
     const datadogCdk = new Datadog(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
@@ -283,6 +284,7 @@ describe("applyLayers", () => {
       site: "datadoghq.com",
     });
     datadogCdk.addLambdaFunctions([hello]);
+
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
       Runtime: Match.absent(),

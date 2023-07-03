@@ -41,7 +41,10 @@ export function applyLayers(
       lam.architecture?.dockerPlatform !== undefined &&
       lam.architecture.dockerPlatform === Architecture.ARM_64.dockerPlatform;
     const isNode = lambdaRuntimeType === RuntimeType.NODE;
-    if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
+
+    // console.log({ lam });
+
+    if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
       return;
     }
