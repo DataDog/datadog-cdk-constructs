@@ -236,6 +236,62 @@ describe("applyLayers", () => {
     expect(errors.length).toEqual(0);
   });
 
+  it("doesn't add layer to container image Lambda without extension or layer versions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
+      functionName: "container-lambda",
+      code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.absent(),
+      Runtime: Match.absent(),
+      Handler: Match.absent(),
+    });
+  });
+
+  it("doesn't add layer to container image Lambda with extension and layer versions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
+      functionName: "container-lambda",
+      code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
+    });
+
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.absent(),
+      Runtime: Match.absent(),
+      Handler: Match.absent(),
+    });
+  });
+
   it("returns errors if layer versions are not provided for corresponding Lambda runtimes", () => {
     const logSpy = jest.spyOn(log, "error").mockImplementation(() => ({}));
     const app = new App();
