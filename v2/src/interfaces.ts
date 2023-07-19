@@ -6,6 +6,9 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
 export interface DatadogProps {
@@ -79,3 +82,9 @@ export interface Runtime {
 export interface Node {
   readonly defaultChild: any;
 }
+
+export type LambdaFunction =
+  | lambda.Function
+  | lambdaNodejs.NodejsFunction
+  | lambdaPython.PythonFunction
+  | lambda.SingletonFunction;

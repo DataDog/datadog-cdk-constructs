@@ -3,7 +3,16 @@ import { Construct } from "constructs";
 import { SUBSCRIPTION_FILTER_PREFIX } from "../src/index";
 
 export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
-  return baseConstruct.node
+  // extract lambdaFunction property from Singleton Function
+  // using any here since lambdaFunction is a private property
+  let baseConstructModified: Construct;
+  if (baseConstruct.hasOwnProperty("lambdaFunction")) {
+    baseConstructModified = (baseConstruct as any).lambdaFunction as Construct;
+  } else {
+    baseConstructModified = baseConstruct;
+  }
+
+  return baseConstructModified.node
     .findAll()
     .filter((construct) => construct.node.id.startsWith(SUBSCRIPTION_FILTER_PREFIX))
     .map((construct) => {
