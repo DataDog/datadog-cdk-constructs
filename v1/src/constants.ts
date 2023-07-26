@@ -5,9 +5,6 @@
  * This product includes software developed at Datadog (https://www.datadoghq.com/).
  * Copyright 2021 Datadog, Inc.
  */
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as lambdaNodejs from "@aws-cdk/aws-lambda-nodejs";
-import * as lambdaPython from "@aws-cdk/aws-lambda-python";
 
 export const LAYER_PREFIX = "DatadogLayer";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
@@ -79,5 +76,3 @@ export const runtimeToLayerName: { [key: string]: string } = {
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];
-
-export type LambdaFunction = lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction;

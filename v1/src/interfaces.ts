@@ -67,11 +67,3 @@ export interface DatadogStrictProps {
   readonly sourceCodeIntegration?: boolean;
   readonly redirectHandler?: boolean;
 }
-
-export interface Runtime {
-  readonly name: string;
-}
-
-export interface Node {
-  readonly defaultChild: any;
-}

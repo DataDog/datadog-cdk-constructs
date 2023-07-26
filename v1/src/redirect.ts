@@ -6,6 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
 import {
   RuntimeType,
@@ -16,7 +17,6 @@ import {
   JS_HANDLER_WITH_LAYERS,
   JS_HANDLER,
   PYTHON_HANDLER,
-  LambdaFunction,
 } from "./index";
 
 /**
@@ -27,7 +27,7 @@ import {
  *
  * Unchanged aside from parameter type
  */
-export function redirectHandlers(lambdas: LambdaFunction[], addLayers: boolean) {
+export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
@@ -35,7 +35,7 @@ export function redirectHandlers(lambdas: LambdaFunction[], addLayers: boolean) 
     if (lambdaRuntime === RuntimeType.JAVA) {
       lam.addEnvironment(AWS_JAVA_WRAPPER_ENV_VAR, AWS_JAVA_WRAPPER_ENV_VAR_VALUE);
     } else {
-      const cfnFunction = lam.node.defaultChild;
+      const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
       if (cfnFunction === undefined) {
         log.debug("Unable to get Lambda Function handler");
         return;
@@ -43,7 +43,7 @@ export function redirectHandlers(lambdas: LambdaFunction[], addLayers: boolean) 
       const originalHandler = cfnFunction.handler as string;
       lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
       const handler = getDDHandler(lambdaRuntime, addLayers);
-      if (handler === undefined) {
+      if (handler === null) {
         log.debug("Unable to get Datadog handler");
         return;
       }
