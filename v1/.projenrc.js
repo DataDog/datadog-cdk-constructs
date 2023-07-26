@@ -125,7 +125,7 @@ projenTasks.addOverride("tasks.build.steps", [
 ]);
 projenTasks.addOverride("tasks.pre-compile.steps", [
   {
-    exec: "node ./src/scripts/fix-version.js v1",
+    exec: "node ./scripts/fix-version.js v1",
   },
 ]);
 projenTasks.addDeletionOverride("tasks.clobber");
