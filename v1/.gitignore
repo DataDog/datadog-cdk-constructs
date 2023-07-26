@@ -53,3 +53,4 @@ junit.xml
 .jsii
 tsconfig.json
 !/.github/workflows/upgrade.yml
+!fix-version.js
