@@ -204,7 +204,7 @@ function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
   }
 }
 
-function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false) {
+export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false) {
   let multipleApiKeysMessage;
   const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {

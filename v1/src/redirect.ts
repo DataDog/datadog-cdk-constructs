@@ -36,6 +36,10 @@ export function redirectHandlers(lambdas: LambdaFunction[], addLayers: boolean) 
       lam.addEnvironment(AWS_JAVA_WRAPPER_ENV_VAR, AWS_JAVA_WRAPPER_ENV_VAR_VALUE);
     } else {
       const cfnFunction = lam.node.defaultChild;
+      if (cfnFunction === undefined) {
+        log.debug("Unable to get Lambda Function handler");
+        return;
+      }
       const originalHandler = cfnFunction.handler as string;
       lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
       const handler = getDDHandler(lambdaRuntime, addLayers);

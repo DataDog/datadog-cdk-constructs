@@ -148,20 +148,20 @@ function getExtensionLayerArn(region: string, version: number, isArm: boolean, a
   return `arn:${partition}:lambda:${region}:${accountId ?? DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
+export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
   return (
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
     `Please add the '${paramRuntime}LayerVersion' parameter for the Datadog serverless macro.`
   );
 }
 
-function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
+export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
   log.debug("Generating construct Id for Datadog Lambda layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return `${LAYER_PREFIX}-${runtime}-${layerValue}`;
 }
 
-function generateExtensionLayerId(lambdaFunctionArn: string) {
+export function generateExtensionLayerId(lambdaFunctionArn: string) {
   log.debug("Generating construct Id for Datadog Extension layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return `${EXTENSION_LAYER_PREFIX}-${layerValue}`;
