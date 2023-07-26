@@ -77,7 +77,7 @@
       "description": "Prepare the project for compilation",
       "steps": [
         {
-          "exec": "node ./src/common/scripts/fix-version.js v1"
+          "exec": "node ./src/scripts/fix-version.js v1"
         }
       ]
     },
