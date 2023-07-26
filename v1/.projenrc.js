@@ -45,6 +45,7 @@ const project = new AwsCdkConstructLibrary({
     ".DS_Store",
     "integration_tests/cdk.out",
     "integration_tests/testlib",
+    "!fix-version.js",
   ],
   npmignore: [
     "!LICENSE",

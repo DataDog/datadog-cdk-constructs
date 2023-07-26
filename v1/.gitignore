@@ -40,6 +40,7 @@ test/__snapshots__
 .DS_Store
 integration_tests/cdk.out
 integration_tests/testlib
+!fix-version.js
 !/.projenrc.js
 /test-reports/
 junit.xml
@@ -53,4 +54,3 @@ junit.xml
 .jsii
 tsconfig.json
 !/.github/workflows/upgrade.yml
-!fix-version.js
