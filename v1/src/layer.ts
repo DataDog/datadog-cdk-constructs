@@ -12,6 +12,7 @@ import { Architecture } from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
 import {
+  runtimeLookup,
   runtimeToLayerName,
   govCloudRegions,
   DD_GOV_ACCOUNT_ID,
@@ -19,7 +20,6 @@ import {
   LAYER_PREFIX,
   EXTENSION_LAYER_PREFIX,
   RuntimeType,
-  runtimeLookup,
 } from "./index";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
