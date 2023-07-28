@@ -12,7 +12,7 @@ import { FilterPattern, ILogGroup } from "@aws-cdk/aws-logs";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
-import { SUBSCRIPTION_FILTER_PREFIX } from "./constants";
+import { SUBSCRIPTION_FILTER_PREFIX } from "./index";
 
 function getForwarder(scope: cdk.Construct, forwarderArn: string) {
   const forwarderConstructId = generateForwarderConstructId(forwarderArn);

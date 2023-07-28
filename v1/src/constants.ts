@@ -17,6 +17,11 @@ export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
 export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
 export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
+export const API_KEY_ENV_VAR = "DD_API_KEY";
+export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
+export const KMS_API_KEY_ENV_VAR = "DD_KMS_API_KEY";
+export const SITE_URL_ENV_VAR = "DD_SITE";
+export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
 
 export enum RuntimeType {
   NODE,

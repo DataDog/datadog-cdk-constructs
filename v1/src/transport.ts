@@ -8,13 +8,15 @@
 
 import * as lambda from "@aws-cdk/aws-lambda";
 import log from "loglevel";
-import { runtimeLookup, RuntimeType } from "./index";
-
-export const API_KEY_ENV_VAR = "DD_API_KEY";
-export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
-export const KMS_API_KEY_ENV_VAR = "DD_KMS_API_KEY";
-export const SITE_URL_ENV_VAR = "DD_SITE";
-export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
+import {
+  runtimeLookup,
+  RuntimeType,
+  API_KEY_ENV_VAR,
+  API_KEY_SECRET_ARN_ENV_VAR,
+  KMS_API_KEY_ENV_VAR,
+  SITE_URL_ENV_VAR,
+  FLUSH_METRICS_TO_LOGS_ENV_VAR,
+} from "./index";
 
 export const transportDefaults = {
   site: "datadoghq.com",

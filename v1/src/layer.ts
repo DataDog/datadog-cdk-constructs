@@ -18,8 +18,9 @@ import {
   DD_ACCOUNT_ID,
   LAYER_PREFIX,
   EXTENSION_LAYER_PREFIX,
-} from "./constants";
-import { runtimeLookup, RuntimeType } from "./index";
+  RuntimeType,
+  runtimeLookup,
+} from "./index";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
 
