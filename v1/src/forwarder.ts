@@ -6,12 +6,13 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import * as crypto from "crypto";
 import * as lambda from "@aws-cdk/aws-lambda";
 import { FilterPattern, ILogGroup } from "@aws-cdk/aws-logs";
 import { LambdaDestination } from "@aws-cdk/aws-logs-destinations";
 import * as cdk from "@aws-cdk/core";
 import log from "loglevel";
-import { generateForwarderConstructId, generateSubscriptionFilterName } from "./index";
+import { SUBSCRIPTION_FILTER_PREFIX } from "./index";
 
 function getForwarder(scope: cdk.Construct, forwarderArn: string) {
   const forwarderConstructId = generateForwarderConstructId(forwarderArn);
@@ -45,4 +46,23 @@ export function addForwarderToLogGroups(scope: cdk.Construct, logGroups: ILogGro
       filterPattern: FilterPattern.allEvents(),
     });
   });
+}
+
+function generateForwarderConstructId(forwarderArn: string) {
+  log.debug("Generating construct Id for Datadog Lambda Forwarder");
+  return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
+}
+
+function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: string) {
+  const subscriptionFilterValue: string = crypto
+    .createHash("sha256")
+    .update(functionUniqueId)
+    .update(forwarderArn)
+    .digest("hex");
+  const subscriptionFilterValueLength = subscriptionFilterValue.length;
+  const subscriptionFilterName =
+    SUBSCRIPTION_FILTER_PREFIX +
+    subscriptionFilterValue.substring(subscriptionFilterValueLength - 8, subscriptionFilterValueLength);
+
+  return subscriptionFilterName;
 }
