@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.4](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.7.3...v2-1.7.4) (2023-07-05)
+
+### [1.7.3](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.7.1...v2-1.7.3) (2023-06-13)
+
+### [1.7.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.7.0...v2-1.7.1) (2023-05-18)
+
+
+### Bug Fixes
+
+* auto grant secret read permissions python package bug ([#181](https://github.com/DataDog/datadog-cdk-constructs/issues/181)) ([dec8ead](https://github.com/DataDog/datadog-cdk-constructs/commit/dec8ead28d8c8f262508d9896159a746b0fc7dd1))
+
+## [1.7.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.6.1...v2-1.7.0) (2023-05-17)
+
+
+### Features
+
+* add `redirectHandler` option ([#176](https://github.com/DataDog/datadog-cdk-constructs/issues/176)) ([4173cc4](https://github.com/DataDog/datadog-cdk-constructs/commit/4173cc40165d789b3abd62f277664bc11de6e4c5))
+* add java17 in runtimeLookup ([#177](https://github.com/DataDog/datadog-cdk-constructs/issues/177)) ([ae3bb8b](https://github.com/DataDog/datadog-cdk-constructs/commit/ae3bb8b323e0d9843a968ebac7ce187b7956f3df))
+
 ### [1.6.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.6.0...v2-1.6.1) (2023-04-25)
 
 ## [1.6.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.5.0...v2-1.6.0) (2023-04-19)

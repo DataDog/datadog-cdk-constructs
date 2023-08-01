@@ -16,6 +16,8 @@ import {
   ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
 } from "../src/index";
 const EXTENSION_LAYER_VERSION = 5;
+const NODE_LAYER_VERSION = 91;
+const PYTHON_LAYER_VERSION = 73;
 
 describe("SITE_URL_ENV_VAR", () => {
   it("applies site URL parameter correctly when flushMetricsToLogs is false", () => {
@@ -31,10 +33,11 @@ describe("SITE_URL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       site: "datadoghq.eu",
       flushMetricsToLogs: false,
       apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -68,7 +71,8 @@ describe("SITE_URL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       flushMetricsToLogs: false,
       apiKey: "1234",
       sourceCodeIntegration: false,
@@ -105,6 +109,7 @@ describe("SITE_URL_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       apiKey: "1234",
       sourceCodeIntegration: false,
     });
@@ -120,7 +125,7 @@ describe("SITE_URL_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
         },
       },
     });
@@ -140,6 +145,7 @@ describe("SITE_URL_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       site: "datadoghq.eu",
       apiKey: "1234",
       sourceCodeIntegration: false,
@@ -156,7 +162,7 @@ describe("SITE_URL_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
         },
       },
     });
@@ -175,7 +181,8 @@ describe("SITE_URL_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       flushMetricsToLogs: true,
       site: "datadoghq.eu",
       sourceCodeIntegration: false,
@@ -211,7 +218,8 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       apiKey: "1234",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
@@ -248,7 +256,8 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       sourceCodeIntegration: false,
     });
     datadogCDK.addLambdaFunctions([hello]);
@@ -281,6 +290,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       apiKey: "1234",
       flushMetricsToLogs: true,
       sourceCodeIntegration: false,
@@ -295,7 +305,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [SITE_URL_ENV_VAR]: "datadoghq.com",
           [API_KEY_ENV_VAR]: "1234",
         },
@@ -318,7 +328,8 @@ describe("API_KEY_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKey: "1234",
@@ -358,6 +369,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
       extensionLayerVersion: 13,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
@@ -374,7 +386,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [API_KEY_SECRET_ARN_ENV_VAR]: "some-resource:from:aws:secrets-manager:arn",
         },
       },
@@ -396,6 +408,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
     expect(() => {
       const datadogCDK = new Datadog(stack, "Datadog", {
         flushMetricsToLogs: false,
+        nodeLayerVersion: NODE_LAYER_VERSION,
         site: "datadoghq.com",
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       });
@@ -418,6 +431,8 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
@@ -455,7 +470,8 @@ describe("apiKMSKeyEnvVar", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKmsKey: "5678",

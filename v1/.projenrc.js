@@ -45,6 +45,7 @@ const project = new AwsCdkConstructLibrary({
     ".DS_Store",
     "integration_tests/cdk.out",
     "integration_tests/testlib",
+    "!fix-version.js",
   ],
   npmignore: [
     "!LICENSE",
@@ -125,7 +126,7 @@ projenTasks.addOverride("tasks.build.steps", [
 ]);
 projenTasks.addOverride("tasks.pre-compile.steps", [
   {
-    exec: "node ./src/common/scripts/fix-version.js v1",
+    exec: "node ./scripts/fix-version.js v1",
   },
 ]);
 projenTasks.addDeletionOverride("tasks.clobber");

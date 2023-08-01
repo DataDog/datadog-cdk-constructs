@@ -29,6 +29,7 @@ export function applyLayers(
   nodeLayerVersion?: number,
   javaLayerVersion?: number,
   extensionLayerVersion?: number,
+  useLayersFromAccount?: string,
 ) {
   // TODO: check region availability
   const errors: string[] = [];
@@ -40,11 +41,13 @@ export function applyLayers(
       lam.architecture?.dockerPlatform !== undefined &&
       lam.architecture.dockerPlatform === Architecture.ARM_64.dockerPlatform;
     const isNode = lambdaRuntimeType === RuntimeType.NODE;
-    if (lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
+
+    if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
       return;
     }
 
+    const accountId = useLayersFromAccount;
     let lambdaLayerArn;
     let extensionLayerArn;
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
@@ -54,7 +57,7 @@ export function applyLayers(
         errors.push(errorMessage);
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, isNode);
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, isNode, accountId);
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -66,7 +69,7 @@ export function applyLayers(
         errors.push(errorMessage);
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode);
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, isNode, accountId);
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -78,13 +81,13 @@ export function applyLayers(
         errors.push(errorMessage);
         return;
       }
-      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, isARM, isNode);
+      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, isARM, isNode, accountId);
       log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (extensionLayerVersion !== undefined) {
-      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM);
+      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM, accountId);
       log.debug(`Using extension layer: ${extensionLayerArn}`);
       addLayer(extensionLayerArn, true, scope, lam, runtime);
     }

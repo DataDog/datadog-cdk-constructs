@@ -3,10 +3,11 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import * as cdk from "@aws-cdk/core";
 import { Token } from "@aws-cdk/core";
-import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog } from "../src/index";
+import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER_ENV_VAR } from "../src/index";
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 1;
+const PYTHON_LAYER_VERSION = 2;
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -43,6 +44,42 @@ describe("validateProps", () => {
     expect(thrownError?.message).toEqual(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, or ddog-gov.com.",
     );
+  });
+
+  it("doesn't throw an error when the site is invalid and DD_CDK_BYPASS_SITE_VALIDATION is true", () => {
+    process.env.DD_CDK_BYPASS_SITE_VALIDATION = "true";
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogCdk = new Datadog(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        enableDatadogTracing: false,
+        flushMetricsToLogs: false,
+        site: "dataDOGEhq.com",
+      });
+      datadogCdk.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(false);
+    expect(thrownError?.message).toEqual(undefined);
+    process.env.DD_CDK_BYPASS_SITE_VALIDATION = undefined;
   });
 
   it("doesn't throw an error when the site is set as a cdk token", () => {
@@ -94,7 +131,8 @@ describe("validateProps", () => {
     });
     expect(() => {
       const datadogCDK = new Datadog(stack, "Datadog", {
-        forwarderArn: "forwarder-arn",
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
         flushMetricsToLogs: false,
         site: "datadoghq.com",
       });
@@ -199,7 +237,7 @@ describe("addCdkConstructVersionTag", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       apiKey: "1234",
     });
 
@@ -224,7 +262,7 @@ describe("addCdkConstructVersionTag", () => {
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       apiKey: "1234",
     });
 
@@ -294,12 +332,13 @@ describe("setTags", () => {
 
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       addLayers: true,
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
-      forwarderArn: "forwarder-arn",
+      forwarderArn: "arn:aws:lambda:sa-east-1:123:function:forwarder-arn",
       apiKey: "1234",
       env: "test-env",
       service: "test-service",
@@ -386,6 +425,7 @@ describe("setTags", () => {
 
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       addLayers: true,
       enableDatadogTracing: false,
@@ -416,6 +456,57 @@ describe("setTags", () => {
           Value: `v${versionJson.version}`,
         },
       ],
+    });
+  });
+});
+
+describe("redirectHandler", () => {
+  it("doesn't redirect handler when explicitly set to `false`", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      redirectHandler: false,
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+
+    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+      Handler: "hello.handler",
+    });
+  });
+
+  it("redirects handler by default", () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const datadogCdk = new Datadog(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
+    datadogCdk.addLambdaFunctions([hello]);
+
+    expect(stack).toHaveResourceLike("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+        },
+      },
     });
   });
 });

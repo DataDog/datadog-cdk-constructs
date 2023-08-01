@@ -10,6 +10,7 @@ export * from "./datadog";
 export * from "./layer";
 export * from "./common/redirect";
 export * from "./forwarder";
+export * from "./interfacesV2";
 export * from "./common/env";
 export * from "./common/transport";
 export * from "./common/constants";

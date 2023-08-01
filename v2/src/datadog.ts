@@ -11,6 +11,7 @@ import { Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
+import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { Transport } from "./common/transport";
@@ -22,7 +23,7 @@ import {
   applyEnvVariables,
   validateProps,
   TagKeys,
-  DatadogProps,
+  DatadogPropsV2,
   DatadogStrictProps,
   handleSettingPropDefaults,
   setGitEnvironmentVariables,
@@ -33,21 +34,25 @@ const versionJson = require("../version.json");
 
 export class Datadog extends Construct {
   scope: Construct;
-  props: DatadogProps;
+  props: DatadogPropsV2;
   transport: Transport;
-  constructor(scope: Construct, id: string, props: DatadogProps) {
+  constructor(scope: Construct, id: string, props: DatadogPropsV2) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
       log.setLevel("debug");
     }
     super(scope, id);
     this.scope = scope;
     this.props = props;
-    validateProps(this.props);
+    let apiKeySecretArn = this.props.apiKeySecretArn;
+    if (this.props.apiKeySecret !== undefined) {
+      apiKeySecretArn = this.props.apiKeySecret.secretArn;
+    }
+    validateProps(this.props, this.props.apiKeySecret !== undefined);
     this.transport = new Transport(
       this.props.flushMetricsToLogs,
       this.props.site,
       this.props.apiKey,
-      this.props.apiKeySecretArn,
+      apiKeySecretArn,
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
     );
@@ -55,12 +60,24 @@ export class Datadog extends Construct {
 
   public addLambdaFunctions(
     lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    construct?: Construct,
   ) {
     // baseProps contains all properties set by the user, with default values for properties
     // defined in DefaultDatadogProps (if not set by user)
     const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
 
     if (this.props !== undefined && lambdaFunctions.length > 0) {
+      if (this.props.apiKeySecret !== undefined) {
+        grantReadLambdas(this.props.apiKeySecret, lambdaFunctions);
+      } else if (
+        this.props.apiKeySecretArn !== undefined &&
+        construct !== undefined &&
+        baseProps.grantSecretReadAccess
+      ) {
+        log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
+        grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunctions);
+      }
+
       const region = `${lambdaFunctions[0].env.region}`;
       log.debug(`Using region: ${region}`);
       if (baseProps.addLayers) {
@@ -72,9 +89,13 @@ export class Datadog extends Construct {
           this.props.nodeLayerVersion,
           this.props.javaLayerVersion,
           this.props.extensionLayerVersion,
+          this.props.useLayersFromAccount,
         );
       }
-      redirectHandlers(lambdaFunctions, baseProps.addLayers);
+
+      if (baseProps.redirectHandler) {
+        redirectHandlers(lambdaFunctions, baseProps.addLayers);
+      }
 
       if (this.props.forwarderArn !== undefined) {
         if (this.props.extensionLayerVersion !== undefined) {
@@ -142,7 +163,7 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
+function setTags(lambdaFunctions: lambda.Function[], props: DatadogPropsV2) {
   log.debug(`Adding datadog tags`);
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
@@ -165,5 +186,18 @@ function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
         });
       }
     }
+  });
+}
+
+function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]) {
+  lambdaFunctions.forEach((functionName) => {
+    secret.grantRead(functionName);
+  });
+}
+
+function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambdaFunctions: lambda.Function[]) {
+  const secret = Secret.fromSecretPartialArn(construct, "DatadogApiKeySecret", arn);
+  lambdaFunctions.forEach((functionName) => {
+    secret.grantRead(functionName);
   });
 }

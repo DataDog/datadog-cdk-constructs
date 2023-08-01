@@ -40,6 +40,7 @@ test/__snapshots__
 .DS_Store
 integration_tests/cdk.out
 integration_tests/testlib
+!fix-version.js
 !/.projenrc.js
 /test-reports/
 junit.xml

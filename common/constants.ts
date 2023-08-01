@@ -34,6 +34,8 @@ export const DefaultDatadogProps = {
   architecture: "X86_64",
   captureLambdaPayload: false,
   sourceCodeIntegration: true,
+  redirectHandler: true,
+  grantSecretReadAccess: true,
 };
 
 export enum TagKeys {
@@ -53,8 +55,10 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "python3.8": RuntimeType.PYTHON,
   "python3.9": RuntimeType.PYTHON,
   "python3.10": RuntimeType.PYTHON,
+  "python3.11": RuntimeType.PYTHON,
   "java8.al2": RuntimeType.JAVA,
   "java11": RuntimeType.JAVA,
+  "java17": RuntimeType.JAVA,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
@@ -67,8 +71,10 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "python3.8": "Datadog-Python38",
   "python3.9": "Datadog-Python39",
   "python3.10": "Datadog-Python310",
+  "python3.11": "Datadog-Python311",
   "java8.al2": "dd-trace-java",
   "java11": "dd-trace-java",
+  "java17": "dd-trace-java",
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];

@@ -10,10 +10,10 @@ import log from "loglevel";
 import { DefaultDatadogProps } from "./constants";
 import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
-export function validateProps(props: DatadogProps) {
+export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
   log.debug("Validating props...");
 
-  checkForMultipleApiKeys(props);
+  checkForMultipleApiKeys(props, apiKeyArnOverride);
   const siteList: string[] = [
     "datadoghq.com",
     "datadoghq.eu",
@@ -25,7 +25,8 @@ export function validateProps(props: DatadogProps) {
   if (
     props.site !== undefined &&
     !siteList.includes(props.site.toLowerCase()) &&
-    !(props.site.startsWith("${Token[") && props.site.endsWith("]}"))
+    !(props.site.startsWith("${Token[") && props.site.endsWith("]}")) &&
+    !process.env.DD_CDK_BYPASS_SITE_VALIDATION
   ) {
     throw new Error(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, or ddog-gov.com.",
@@ -36,28 +37,35 @@ export function validateProps(props: DatadogProps) {
     props.apiKey === undefined &&
     props.apiKmsKey === undefined &&
     props.apiKeySecretArn === undefined &&
-    props.flushMetricsToLogs === false
+    props.flushMetricsToLogs === false &&
+    !apiKeyArnOverride
   ) {
     throw new Error(
       "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   }
   if (props.extensionLayerVersion !== undefined) {
-    if (props.apiKey === undefined && props.apiKeySecretArn === undefined && props.apiKmsKey === undefined) {
+    if (
+      props.apiKey === undefined &&
+      props.apiKeySecretArn === undefined &&
+      props.apiKmsKey === undefined &&
+      !apiKeyArnOverride
+    ) {
       throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
     }
   }
 }
 
-export function checkForMultipleApiKeys(props: DatadogProps) {
+export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false) {
   let multipleApiKeysMessage;
-  if (props.apiKey !== undefined && props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
+  const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
+  if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
     multipleApiKeysMessage = "`apiKey`, `apiKmsKey`, and `apiKeySecretArn`";
   } else if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
     multipleApiKeysMessage = "`apiKey` and `apiKmsKey`";
-  } else if (props.apiKey !== undefined && props.apiKeySecretArn !== undefined) {
+  } else if (props.apiKey !== undefined && apiKeyArnOrOverride) {
     multipleApiKeysMessage = "`apiKey` and `apiKeySecretArn`";
-  } else if (props.apiKmsKey !== undefined && props.apiKeySecretArn !== undefined) {
+  } else if (props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
     multipleApiKeysMessage = "`apiKmsKey` and `apiKeySecretArn`";
   }
 
@@ -75,6 +83,9 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   let enableDatadogLogs = props.enableDatadogLogs;
   let captureLambdaPayload = props.captureLambdaPayload;
   let sourceCodeIntegration = props.sourceCodeIntegration;
+  let redirectHandler = props.redirectHandler;
+  let grantSecretReadAccess = props.grantSecretReadAccess;
+  const extensionLayerVersion = props.extensionLayerVersion;
 
   if (addLayers === undefined) {
     log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
@@ -110,6 +121,16 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
     sourceCodeIntegration = DefaultDatadogProps.sourceCodeIntegration;
   }
 
+  if (redirectHandler === undefined) {
+    log.debug(`No value provided for redirectHandler, default to ${DefaultDatadogProps.redirectHandler}`);
+    redirectHandler = DefaultDatadogProps.redirectHandler;
+  }
+
+  if (grantSecretReadAccess === undefined) {
+    log.debug(`No value provided for grantSecretReadAccess, default to ${DefaultDatadogProps.grantSecretReadAccess}`);
+    grantSecretReadAccess = DefaultDatadogProps.grantSecretReadAccess;
+  }
+
   return {
     addLayers: addLayers,
     enableDatadogTracing: enableDatadogTracing,
@@ -119,5 +140,8 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
     enableDatadogLogs: enableDatadogLogs,
     captureLambdaPayload: captureLambdaPayload,
     sourceCodeIntegration: sourceCodeIntegration,
+    redirectHandler: redirectHandler,
+    grantSecretReadAccess: grantSecretReadAccess,
+    extensionLayerVersion: extensionLayerVersion,
   };
 }
