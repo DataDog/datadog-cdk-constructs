@@ -7,6 +7,7 @@
  */
 
 export const LAYER_PREFIX = "DatadogLayer";
+export const LAYER_PREFIX_TEST = "test";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
 export const DD_ACCOUNT_ID = "464622532012";
 export const DD_GOV_ACCOUNT_ID = "002406178527";
