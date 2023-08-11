@@ -1,6 +1,6 @@
 import { CfnSubscriptionFilter } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
-import { SUBSCRIPTION_FILTER_PREFIX } from "../src/common/constants";
+import { SUBSCRIPTION_FILTER_PREFIX } from "../src/index";
 
 export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
   return baseConstruct.node
