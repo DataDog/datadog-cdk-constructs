@@ -6,26 +6,27 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
-import { DatadogProps, DatadogStrictProps, ILambdaFunction } from "./interfaces";
+import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
-export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
-export const ENABLE_XRAY_TRACE_MERGING_ENV_VAR = "DD_MERGE_XRAY_TRACES";
-export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
-export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
-export const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
-export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
-export const DD_ENV_ENV_VAR = "DD_ENV";
-export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
-export const DD_VERSION_ENV_VAR = "DD_VERSION";
-export const DD_TAGS = "DD_TAGS";
-export const DD_COLD_START_TRACING = "DD_COLD_START_TRACING";
-export const DD_MIN_COLD_START_DURATION = "DD_MIN_COLD_START_DURATION";
-export const DD_COLD_START_TRACE_SKIP_LIB = "DD_COLD_START_TRACE_SKIP_LIB";
-export const DD_PROFILING_ENABLED = "DD_PROFILING_ENABLED";
-export const DD_ENCODE_AUTHORIZER_CONTEXT = "DD_ENCODE_AUTHORIZER_CONTEXT";
-export const DD_DECODE_AUTHORIZER_CONTEXT = "DD_DECODE_AUTHORIZER_CONTEXT";
-export const DD_APM_FLUSH_DEADLINE_MILLISECONDS = "DD_APM_FLUSH_DEADLINE_MILLISECONDS";
+const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
+const ENABLE_XRAY_TRACE_MERGING_ENV_VAR = "DD_MERGE_XRAY_TRACES";
+const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
+const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
+const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
+const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
+const DD_ENV_ENV_VAR = "DD_ENV";
+const DD_SERVICE_ENV_VAR = "DD_SERVICE";
+const DD_VERSION_ENV_VAR = "DD_VERSION";
+const DD_TAGS = "DD_TAGS";
+const DD_COLD_START_TRACING = "DD_COLD_START_TRACING";
+const DD_MIN_COLD_START_DURATION = "DD_MIN_COLD_START_DURATION";
+const DD_COLD_START_TRACE_SKIP_LIB = "DD_COLD_START_TRACE_SKIP_LIB";
+const DD_PROFILING_ENABLED = "DD_PROFILING_ENABLED";
+const DD_ENCODE_AUTHORIZER_CONTEXT = "DD_ENCODE_AUTHORIZER_CONTEXT";
+const DD_DECODE_AUTHORIZER_CONTEXT = "DD_DECODE_AUTHORIZER_CONTEXT";
+const DD_APM_FLUSH_DEADLINE_MILLISECONDS = "DD_APM_FLUSH_DEADLINE_MILLISECONDS";
 
 const execSync = require("child_process").execSync;
 
@@ -38,13 +39,13 @@ export function setGitEnvironmentVariables(lambdas: any[]) {
   if (hash == "" || gitRepoUrl == "") return;
 
   // We're using an any type here because AWS does not expose the `environment` field in their type
-  lambdas.forEach((lambda) => {
-    if (lambda.environment[DD_TAGS] !== undefined) {
-      lambda.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
+  lambdas.forEach((lam) => {
+    if (lam.environment[DD_TAGS] !== undefined) {
+      lam.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
     } else {
-      lambda.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
+      lam.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
     }
-    lambda.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
+    lam.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
   });
 }
 
@@ -93,7 +94,7 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string) {
   }
 }
 
-export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: DatadogStrictProps) {
+export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogStrictProps) {
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
@@ -112,7 +113,7 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
   });
 }
 
-export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProps) {
+export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogProps) {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
       if (props.env) {

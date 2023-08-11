@@ -79,9 +79,3 @@ export interface Runtime {
 export interface Node {
   readonly defaultChild: any;
 }
-
-export interface ILambdaFunction {
-  runtime: Runtime;
-  node: Node;
-  addEnvironment(key: string, value: string, options?: Record<string, unknown>): void;
-}
