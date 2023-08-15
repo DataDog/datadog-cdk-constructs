@@ -99,9 +99,7 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
     lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
     // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
-    if (baseProps.extensionLayerVersion) {
-      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
-    } else {
+    if (!baseProps.extensionLayerVersion) {
       lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
     }
     lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());

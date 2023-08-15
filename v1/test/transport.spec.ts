@@ -125,7 +125,6 @@ describe("SITE_URL_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
         },
       },
     });
@@ -162,7 +161,6 @@ describe("SITE_URL_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
         },
       },
     });
@@ -305,7 +303,6 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [SITE_URL_ENV_VAR]: "datadoghq.com",
           [API_KEY_ENV_VAR]: "1234",
         },
@@ -386,7 +383,6 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [API_KEY_SECRET_ARN_ENV_VAR]: "some-resource:from:aws:secrets-manager:arn",
         },
       },
