@@ -6,8 +6,9 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
-import { DatadogProps, DatadogStrictProps, ILambdaFunction } from "./interfaces";
+import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
 export const ENABLE_XRAY_TRACE_MERGING_ENV_VAR = "DD_MERGE_XRAY_TRACES";
@@ -38,13 +39,13 @@ export function setGitEnvironmentVariables(lambdas: any[]) {
   if (hash == "" || gitRepoUrl == "") return;
 
   // We're using an any type here because AWS does not expose the `environment` field in their type
-  lambdas.forEach((lambda) => {
-    if (lambda.environment[DD_TAGS] !== undefined) {
-      lambda.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
+  lambdas.forEach((lam) => {
+    if (lam.environment[DD_TAGS] !== undefined) {
+      lam.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
     } else {
-      lambda.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
+      lam.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
     }
-    lambda.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
+    lam.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
   });
 }
 
@@ -93,7 +94,7 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string) {
   }
 }
 
-export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: DatadogStrictProps) {
+export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogStrictProps) {
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
@@ -112,7 +113,7 @@ export function applyEnvVariables(lambdas: ILambdaFunction[], baseProps: Datadog
   });
 }
 
-export function setDDEnvVariables(lambdas: ILambdaFunction[], props: DatadogProps) {
+export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogProps) {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
       if (props.env) {
