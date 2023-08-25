@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "@aws-cdk/aws-lambda-python-alpha",
-      "version": "2.63.0-alpha.0",
+      "version": "2.93.0-alpha.0",
       "type": "build"
     },
     {
@@ -128,7 +128,7 @@
     },
     {
       "name": "@aws-cdk/aws-lambda-python-alpha",
-      "version": "^2.63.0-alpha.0",
+      "version": "^2.93.0-alpha.0",
       "type": "peer"
     },
     {
