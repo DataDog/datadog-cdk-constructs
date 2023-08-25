@@ -35,7 +35,7 @@
     "@types/node": "^14",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "aws-cdk-lib": "2.71.0",
+    "aws-cdk-lib": "2.93.0",
     "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-config-prettier": "^8.6.0",
@@ -58,7 +58,7 @@
   },
   "peerDependencies": {
     "@aws-cdk/aws-lambda-python-alpha": "^2.93.0-alpha.0",
-    "aws-cdk-lib": "^2.71.0",
+    "aws-cdk-lib": "^2.93.0",
     "constructs": "^10.0.5"
   },
   "dependencies": {
@@ -75,7 +75,7 @@
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",
-  "version": "0.0.0",
+  "version": "1.7.4",
   "jest": {
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
