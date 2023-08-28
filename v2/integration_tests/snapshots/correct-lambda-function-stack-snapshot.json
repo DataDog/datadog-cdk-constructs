@@ -40,12 +40,6 @@
     "Code": {
      "ZipFile": "test"
     },
-    "Role": {
-     "Fn::GetAtt": [
-      "HelloHandlerServiceRoleXXXXXXXX",
-      "Arn"
-     ]
-    },
     "Environment": {
      "Variables": {
       "DD_LAMBDA_HANDLER": "lambdaFunction.handler",
@@ -64,6 +58,12 @@
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
     ],
+    "Role": {
+     "Fn::GetAtt": [
+      "HelloHandlerServiceRoleXXXXXXXX",
+      "Arn"
+     ]
+    },
     "Runtime": "nodejs14.x",
     "Tags": [
      {
@@ -157,10 +157,10 @@
   "resttestDeploymentXXXXXXXX": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
+    "Description": "Automatically created by the RestApi construct",
     "RestApiId": {
      "Ref": "resttestXXXXXXXX"
-    },
-    "Description": "Automatically created by the RestApi construct"
+    }
    },
    "DependsOn": [
     "resttestproxyANYXXXXXXXX",
@@ -174,9 +174,6 @@
   "resttestDeploymentStageprodXXXXXXXX": {
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
-    "RestApiId": {
-     "Ref": "resttestXXXXXXXX"
-    },
     "AccessLogSetting": {
      "DestinationArn": {
       "Fn::GetAtt": [
@@ -188,6 +185,9 @@
     },
     "DeploymentId": {
      "Ref": "resttestDeploymentXXXXXXXX"
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
     },
     "StageName": "prod"
    },
@@ -287,14 +287,8 @@
   "resttestproxyANYXXXXXXXX": {
    "Type": "AWS::ApiGateway::Method",
    "Properties": {
-    "HttpMethod": "ANY",
-    "ResourceId": {
-     "Ref": "resttestproxyXXXXXXXX"
-    },
-    "RestApiId": {
-     "Ref": "resttestXXXXXXXX"
-    },
     "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
     "Integration": {
      "IntegrationHttpMethod": "POST",
      "Type": "AWS_PROXY",
@@ -317,6 +311,12 @@
        ]
       ]
      }
+    },
+    "ResourceId": {
+     "Ref": "resttestproxyXXXXXXXX"
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
     }
    },
    "Metadata": {
@@ -394,17 +394,8 @@
   "resttestANYXXXXXXXX": {
    "Type": "AWS::ApiGateway::Method",
    "Properties": {
-    "HttpMethod": "ANY",
-    "ResourceId": {
-     "Fn::GetAtt": [
-      "resttestXXXXXXXX",
-      "RootResourceId"
-     ]
-    },
-    "RestApiId": {
-     "Ref": "resttestXXXXXXXX"
-    },
     "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
     "Integration": {
      "IntegrationHttpMethod": "POST",
      "Type": "AWS_PROXY",
@@ -427,6 +418,15 @@
        ]
       ]
      }
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "resttestXXXXXXXX",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
     }
    },
    "Metadata": {
