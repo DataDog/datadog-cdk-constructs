@@ -17,7 +17,7 @@ This CDK library automatically configures ingestion of metrics, traces, and logs
 ## AWS CDK v1 vs AWS CDK v2
 
 > [!WARNING]  
-> AWS CDK v1 has reached end-of-support and the Datadog CDK Construct version supporting v1 (`datadog-cdk-constructs`) will no longer be receiving updates. It's strongly recommended to upgrade to CDK v2 ([see this official guide from AWS](https://docs.aws.amazon.com/cdk/v2/guide/migrating-v2.html)), and switch to using `datadog-cdk-constructs-v2`.
+> `AWS CDK v1` has reached end-of-support and `datadog-cdk-constructs` will no longer be receiving updates. It's strongly recommended to upgrade to CDK v2 ([official upgrade guide](https://docs.aws.amazon.com/cdk/v2/guide/migrating-v2.html)) and switch to using `datadog-cdk-constructs-v2`.
 
 Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` and `datadog-cdk-constructs-v2`. These are designed to work with `AWS CDK v1` and `AWS CDK v2` respectively.
 
