@@ -203,9 +203,9 @@ function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambda
 function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]) {
   // extract lambdaFunction property from Singleton Function
   // using any here since lambdaFunction is a private property
-  const extractedLambdaFunctions: lambda.Function[] = lambdaFunctions.map((fn: any) => {
+  const extractedLambdaFunctions: lambda.Function[] = lambdaFunctions.map((fn) => {
     if (fn.hasOwnProperty("lambdaFunction")) {
-      return fn.lambdaFunction;
+      return (fn as any).lambdaFunction;
     }
     return fn;
   });
