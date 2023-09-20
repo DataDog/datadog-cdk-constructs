@@ -204,13 +204,15 @@ function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]) {
   // extract lambdaFunction property from Singleton Function
   // using bracket notation here since lambdaFunction is a private property
   const extractedLambdaFunctions: lambda.Function[] = lambdaFunctions.map((fn) => {
-    if (fn.hasOwnProperty("lambdaFunction")) {
-      return (fn as lambda.SingletonFunction)["lambdaFunction"]; // eslint-disable-line dot-notation
-    }
-    return fn;
+    // eslint-disable-next-line dot-notation
+    return isSingletonFunction(fn) ? fn["lambdaFunction"] : fn;
   });
 
   return extractedLambdaFunctions;
+}
+
+function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction {
+  return fn.hasOwnProperty("lambdaFunction");
 }
 
 export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {

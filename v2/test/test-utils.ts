@@ -6,12 +6,9 @@ import { SUBSCRIPTION_FILTER_PREFIX } from "../src/index";
 export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
   // extract lambdaFunction property from Singleton Function
   // using bracket notation here since lambdaFunction is a private property
-  let baseConstructModified: Construct;
-  if (baseConstruct.hasOwnProperty("lambdaFunction")) {
-    baseConstructModified = (baseConstruct as lambda.SingletonFunction)["lambdaFunction"] as Construct; // eslint-disable-line dot-notation
-  } else {
-    baseConstructModified = baseConstruct;
-  }
+  const baseConstructModified: Construct = isSingletonFunction(baseConstruct)
+    ? baseConstruct["lambdaFunction"] // eslint-disable-line dot-notation
+    : baseConstruct;
 
   return baseConstructModified.node
     .findAll()
@@ -30,3 +27,7 @@ export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
     })
     .reduce((acc, subscriptionFilters) => acc.concat(subscriptionFilters), []);
 };
+
+function isSingletonFunction(fn: Construct): fn is lambda.SingletonFunction {
+  return fn.hasOwnProperty("lambdaFunction");
+}
