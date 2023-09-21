@@ -6,10 +6,8 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
 import { Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
@@ -28,6 +26,7 @@ import {
   DatadogProps,
   Transport,
 } from "./index";
+import { LambdaFunction } from "./interfaces";
 
 const versionJson = require("../version.json");
 
@@ -57,33 +56,32 @@ export class Datadog extends Construct {
     );
   }
 
-  public addLambdaFunctions(
-    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
-    construct?: Construct,
-  ) {
+  public addLambdaFunctions(lambdaFunctions: LambdaFunction[], construct?: Construct) {
     // baseProps contains all properties set by the user, with default values for properties
     // defined in DefaultDatadogProps (if not set by user)
     const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
 
-    if (this.props !== undefined && lambdaFunctions.length > 0) {
+    const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
+
+    if (this.props !== undefined && extractedLambdaFunctions.length > 0) {
       if (this.props.apiKeySecret !== undefined) {
-        grantReadLambdas(this.props.apiKeySecret, lambdaFunctions);
+        grantReadLambdas(this.props.apiKeySecret, extractedLambdaFunctions);
       } else if (
         this.props.apiKeySecretArn !== undefined &&
         construct !== undefined &&
         baseProps.grantSecretReadAccess
       ) {
         log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
-        grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunctions);
+        grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, extractedLambdaFunctions);
       }
 
-      const region = `${lambdaFunctions[0].env.region}`;
+      const region = `${extractedLambdaFunctions[0].env.region}`;
       log.debug(`Using region: ${region}`);
       if (baseProps.addLayers) {
         applyLayers(
           this.scope,
           region,
-          lambdaFunctions,
+          extractedLambdaFunctions,
           this.props.pythonLayerVersion,
           this.props.nodeLayerVersion,
           this.props.javaLayerVersion,
@@ -93,7 +91,7 @@ export class Datadog extends Construct {
       }
 
       if (baseProps.redirectHandler) {
-        redirectHandlers(lambdaFunctions, baseProps.addLayers);
+        redirectHandlers(extractedLambdaFunctions, baseProps.addLayers);
       }
 
       if (this.props.forwarderArn !== undefined) {
@@ -103,7 +101,7 @@ export class Datadog extends Construct {
           log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
           addForwarder(
             this.scope,
-            lambdaFunctions,
+            extractedLambdaFunctions,
             this.props.forwarderArn,
             this.props.createForwarderPermissions === true,
           );
@@ -112,23 +110,23 @@ export class Datadog extends Construct {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
 
-      addCdkConstructVersionTag(lambdaFunctions);
+      addCdkConstructVersionTag(extractedLambdaFunctions);
 
-      applyEnvVariables(lambdaFunctions, baseProps);
-      setDDEnvVariables(lambdaFunctions, this.props);
-      setTags(lambdaFunctions, this.props);
+      applyEnvVariables(extractedLambdaFunctions, baseProps);
+      setDDEnvVariables(extractedLambdaFunctions, this.props);
+      setTags(extractedLambdaFunctions, this.props);
 
-      this.transport.applyEnvVars(lambdaFunctions);
+      this.transport.applyEnvVars(extractedLambdaFunctions);
 
       if (baseProps.sourceCodeIntegration) {
-        this.addGitCommitMetadata(lambdaFunctions);
+        this.addGitCommitMetadata(extractedLambdaFunctions);
       }
     }
   }
 
   // unused parameters gitCommitSha and gitRepoUrl are kept for backwards compatibility
   public addGitCommitMetadata(
-    lambdaFunctions: (lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction)[],
+    lambdaFunctions: LambdaFunction[],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     gitCommitSha?: string,
@@ -136,7 +134,8 @@ export class Datadog extends Construct {
     // @ts-ignore
     gitRepoUrl?: string,
   ) {
-    setGitEnvironmentVariables(lambdaFunctions);
+    const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
+    setGitEnvironmentVariables(extractedLambdaFunctions);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
@@ -199,6 +198,21 @@ function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambda
   lambdaFunctions.forEach((functionName) => {
     secret.grantRead(functionName);
   });
+}
+
+function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]) {
+  // extract lambdaFunction property from Singleton Function
+  // using bracket notation here since lambdaFunction is a private property
+  const extractedLambdaFunctions: lambda.Function[] = lambdaFunctions.map((fn) => {
+    // eslint-disable-next-line dot-notation
+    return isSingletonFunction(fn) ? fn["lambdaFunction"] : fn;
+  });
+
+  return extractedLambdaFunctions;
+}
+
+function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction {
+  return fn.hasOwnProperty("lambdaFunction");
 }
 
 export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {

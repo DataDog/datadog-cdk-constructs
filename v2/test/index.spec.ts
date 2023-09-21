@@ -34,6 +34,12 @@ describe("addLambdaFunctions", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
+    const singletonLambda = new lambda.SingletonFunction(stack, "SingletonHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+      uuid: "be308085-96c4-4208-9092-560d9d79e2c5",
+    });
     const datadogCdk = new Datadog(stack, "Datadog", {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
@@ -46,11 +52,14 @@ describe("addLambdaFunctions", () => {
     });
     datadogCdk.addLambdaFunctions([nodeLambda]);
     datadogCdk.addLambdaFunctions([pythonLambda]);
+    datadogCdk.addLambdaFunctions([singletonLambda]);
 
     const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
     const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
+    const singletonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(singletonLambda);
     expect(nodeLambdaSubscriptionFilters).toHaveLength(1);
     expect(pythonLambdaSubscriptionFilters).toHaveLength(1);
+    expect(singletonLambdaSubscriptionFilters).toHaveLength(1);
     expect(nodeLambdaSubscriptionFilters[0].destinationArn).toEqual(pythonLambdaSubscriptionFilters[0].destinationArn);
   });
 
