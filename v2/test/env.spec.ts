@@ -82,11 +82,44 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: "true",
           ["DD_TRACE_ENABLED"]: "true",
+          ["DD_APPSEC_ENABLED"]: "false",
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
           ["DD_LOGS_INJECTION"]: "true",
           ["DD_LOG_LEVEL"]: "debug",
+        },
+      },
+    });
+  });
+
+  it("correctly enables AppSec", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      enableDatadogApplicationSecurity: true,
+    });
+    datadogCDK.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_FLUSH_TO_LOG"]: "true",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_LOGS_INJECTION"]: "true",
         },
       },
     });

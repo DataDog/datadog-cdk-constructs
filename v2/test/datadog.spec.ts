@@ -213,6 +213,22 @@ describe("validateProps", () => {
       "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   });
+
+  it("throws an error if enableDatadogApplicationSecurity is enabled and enableDatadogTracing is not", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    expect(
+      () =>
+        new Datadog(stack, "Datadog", {
+          enableDatadogTracing: false,
+          enableDatadogApplicationSecurity: true,
+        }),
+    ).toThrow("When `enableDatadogApplicationSecurity` is enabled, `enableDatadogTracing` must also be enabled.");
+  });
 });
 
 describe("addCdkConstructVersionTag", () => {

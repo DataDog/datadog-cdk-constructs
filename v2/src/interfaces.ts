@@ -25,6 +25,7 @@ export interface DatadogProps {
   readonly apiKeySecret?: secrets.ISecret;
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
+  readonly enableDatadogApplicationSecurity?: boolean;
   readonly enableMergeXrayTraces?: boolean;
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
@@ -57,6 +58,7 @@ export interface DatadogStrictProps {
   readonly captureLambdaPayload: boolean;
   readonly injectLogContext: boolean;
   readonly enableDatadogTracing: boolean;
+  readonly enableDatadogApplicationSecurity: boolean;
   readonly enableMergeXrayTraces: boolean;
   readonly grantSecretReadAccess: boolean;
   readonly pythonLayerVersion?: number;

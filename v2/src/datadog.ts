@@ -259,6 +259,9 @@ export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
       throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
     }
   }
+  if (props.enableDatadogTracing === false && props.enableDatadogApplicationSecurity === true) {
+    throw new Error("When `enableDatadogApplicationSecurity` is enabled, `enableDatadogTracing` must also be enabled.");
+  }
 }
 
 export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false) {
@@ -282,6 +285,7 @@ export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride =
 export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictProps {
   let addLayers = props.addLayers;
   let enableDatadogTracing = props.enableDatadogTracing;
+  let enableDatadogApplicationSecurity = props.enableDatadogApplicationSecurity;
   let enableMergeXrayTraces = props.enableMergeXrayTraces;
   let injectLogContext = props.injectLogContext;
   const logLevel = props.logLevel;
@@ -299,6 +303,12 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   if (enableDatadogTracing === undefined) {
     log.debug(`No value provided for enableDatadogTracing, defaulting to ${DefaultDatadogProps.enableDatadogTracing}`);
     enableDatadogTracing = DefaultDatadogProps.enableDatadogTracing;
+  }
+  if (enableDatadogApplicationSecurity === undefined) {
+    log.debug(
+      `No value provided for enableDatadogApplicationSecurity, defaulting to ${DefaultDatadogProps.enableDatadogApplicationSecurity}`,
+    );
+    enableDatadogApplicationSecurity = DefaultDatadogProps.enableDatadogApplicationSecurity;
   }
   if (enableMergeXrayTraces === undefined) {
     log.debug(
@@ -339,6 +349,7 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   return {
     addLayers: addLayers,
     enableDatadogTracing: enableDatadogTracing,
+    enableDatadogApplicationSecurity,
     enableMergeXrayTraces: enableMergeXrayTraces,
     injectLogContext: injectLogContext,
     logLevel: logLevel,
