@@ -106,7 +106,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogCDK = new Datadog(stack, "Datadog", {
-      enableDatadogApplicationSecurity: true,
+      enableDatadogASM: true,
     });
     datadogCDK.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {

@@ -32,12 +32,13 @@ export class TypescriptV2Stack extends Stack {
     console.log("Instrumenting with Datadog");
 
     const DatadogCDK = new Datadog(this as any, "Datadog", {
-      nodeLayerVersion: 87,
-      pythonLayerVersion: 69,
-      extensionLayerVersion: 41,
+      nodeLayerVersion: 98,
+      pythonLayerVersion: 80,
+      extensionLayerVersion: 49,
       addLayers: true,
       apiKey: process.env.DD_API_KEY,
       enableDatadogTracing: true,
+      enableDatadogASM: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });

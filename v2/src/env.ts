@@ -11,7 +11,7 @@ import log from "loglevel";
 import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
-export const ENABLE_DD_APPSEC_ENV_VAR = "DD_APPSEC_ENABLED";
+export const ENABLE_DD_ASM_ENV_VAR = "DD_APPSEC_ENABLED";
 export const ENABLE_XRAY_TRACE_MERGING_ENV_VAR = "DD_MERGE_XRAY_TRACES";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
 export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
@@ -99,7 +99,7 @@ export function applyEnvVariables(lambdas: lambda.Function[], baseProps: Datadog
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
-    lam.addEnvironment(ENABLE_DD_APPSEC_ENV_VAR, baseProps.enableDatadogApplicationSecurity.toString().toLowerCase());
+    lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
     lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
     // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
     if (baseProps.extensionLayerVersion) {

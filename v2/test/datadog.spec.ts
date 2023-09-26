@@ -214,7 +214,7 @@ describe("validateProps", () => {
     );
   });
 
-  it("throws an error if enableDatadogApplicationSecurity is enabled and enableDatadogTracing is not", () => {
+  it("throws an error if enableDatadogASM is enabled and enableDatadogTracing is not", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -225,9 +225,9 @@ describe("validateProps", () => {
       () =>
         new Datadog(stack, "Datadog", {
           enableDatadogTracing: false,
-          enableDatadogApplicationSecurity: true,
+          enableDatadogASM: true,
         }),
-    ).toThrow("When `enableDatadogApplicationSecurity` is enabled, `enableDatadogTracing` must also be enabled.");
+    ).toThrow("When `enableDatadogASM` is enabled, `enableDatadogTracing` must also be enabled.");
   });
 });
 
