@@ -1052,12 +1052,12 @@ cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-datadog-cdk-constructs-v2@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/datadog-cdk-constructs-v2/-/datadog-cdk-constructs-v2-1.2.0.tgz"
-  integrity sha512-HL1jxlXg5wQGufFCJceUn4NSToNgRfvCIqwSo/fmEFsbKjqOobAT5PxxJ72GY5y3kFJSIG++tO4eOiceZ4fhwQ==
+datadog-cdk-constructs-v2@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/datadog-cdk-constructs-v2/-/datadog-cdk-constructs-v2-1.8.0.tgz#218b4f49e8091dd557e99188d91006eb89daa14c"
+  integrity sha512-j5Txef0knxKm4GhNKBtyZIOyvKNafYdhput4aL0aoeoidI3/R03krH8G/Pav/oAbnWZY0ODD62suyJCWcCqp1A==
   dependencies:
-    loglevel "^1.8.0"
+    loglevel "^1.8.1"
 
 debug@^4.1.0, debug@^4.1.1:
   version "4.3.4"
@@ -1830,7 +1830,7 @@ lodash.memoize@4.x:
   resolved "https://registry.npmjs.org/lodash.memoize/-/lodash.memoize-4.1.2.tgz"
   integrity sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==
 
-loglevel@^1.8.0:
+loglevel@^1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.1.tgz#5c621f83d5b48c54ae93b6156353f555963377b4"
   integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==

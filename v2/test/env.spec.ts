@@ -82,7 +82,7 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: "true",
           ["DD_TRACE_ENABLED"]: "true",
-          ["DD_APPSEC_ENABLED"]: "false",
+          ["DD_SERVERLESS_APPSEC_ENABLED"]: "false",
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
@@ -112,10 +112,11 @@ describe("applyEnvVariables", () => {
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
+          ["AWS_LAMBDA_EXEC_WRAPPER"]: "/opt/datadog_wrapper",
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: "true",
           ["DD_TRACE_ENABLED"]: "true",
-          ["DD_APPSEC_ENABLED"]: "true",
+          ["DD_SERVERLESS_APPSEC_ENABLED"]: "true",
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
