@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.8.0...v2-1.8.1) (2023-10-02)
+
+
+### Features
+
+* ASM for Lambda configuration ([#212](https://github.com/DataDog/datadog-cdk-constructs/issues/212)) ([7d6327b](https://github.com/DataDog/datadog-cdk-constructs/commit/7d6327b21e718217fd4646da952267027f13ce0b))
+
 ## [1.8.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.7.4...v2-1.8.0) (2023-08-29)
 
 ### [1.7.4](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.7.3...v2-1.7.4) (2023-07-05)
