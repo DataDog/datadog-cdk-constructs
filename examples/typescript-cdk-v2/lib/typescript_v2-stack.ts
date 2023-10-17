@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Function } from "aws-cdk-lib/aws-lambda";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
 
 import { Datadog } from "datadog-cdk-constructs-v2";
 import { Stack, StackProps } from "aws-cdk-lib";
@@ -29,15 +30,26 @@ export class TypescriptV2Stack extends Stack {
       handler: "hello_py.lambda_handler",
     });
 
+    const apig = new apigateway.RestApi(this, "RestAPI").root;
+    apig.addResource('node').addProxy({
+      anyMethod: true,
+      defaultIntegration: new apigateway.LambdaIntegration(helloNode),
+    });
+    apig.addResource('python').addProxy({
+      anyMethod: true,
+      defaultIntegration: new apigateway.LambdaIntegration(helloPython),
+    });
+
     console.log("Instrumenting with Datadog");
 
     const DatadogCDK = new Datadog(this as any, "Datadog", {
-      nodeLayerVersion: 87,
-      pythonLayerVersion: 69,
-      extensionLayerVersion: 41,
+      nodeLayerVersion: 98,
+      pythonLayerVersion: 80,
+      extensionLayerVersion: 49,
       addLayers: true,
       apiKey: process.env.DD_API_KEY,
       enableDatadogTracing: true,
+      enableDatadogASM: true,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });

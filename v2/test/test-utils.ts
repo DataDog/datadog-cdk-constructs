@@ -1,9 +1,16 @@
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import { CfnSubscriptionFilter } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
-import { SUBSCRIPTION_FILTER_PREFIX } from "../src/common/constants";
+import { SUBSCRIPTION_FILTER_PREFIX } from "../src/index";
 
 export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
-  return baseConstruct.node
+  // extract lambdaFunction property from Singleton Function
+  // using bracket notation here since lambdaFunction is a private property
+  const baseConstructModified: Construct = isSingletonFunction(baseConstruct)
+    ? baseConstruct["lambdaFunction"] // eslint-disable-line dot-notation
+    : baseConstruct;
+
+  return baseConstructModified.node
     .findAll()
     .filter((construct) => construct.node.id.startsWith(SUBSCRIPTION_FILTER_PREFIX))
     .map((construct) => {
@@ -20,3 +27,7 @@ export const findDatadogSubscriptionFilters = (baseConstruct: Construct) => {
     })
     .reduce((acc, subscriptionFilters) => acc.concat(subscriptionFilters), []);
 };
+
+function isSingletonFunction(fn: Construct): fn is lambda.SingletonFunction {
+  return fn.hasOwnProperty("lambdaFunction");
+}

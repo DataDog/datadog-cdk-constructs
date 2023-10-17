@@ -41,17 +41,12 @@
      "S3Bucket": "cdk-hnb659fds-assets-601427279990-sa-east-1",
      "S3Key": "serverless/dd-cdk-construct-integration-test/dev/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX/dd-cdk-construct-integration-test.zip"
     },
-    "Role": {
-     "Fn::GetAtt": [
-      "HelloHandlerServiceRoleXXXXXXXX",
-      "Arn"
-     ]
-    },
     "Environment": {
      "Variables": {
       "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
       "DD_LAMBDA_HANDLER": "index.handler",
       "DD_TRACE_ENABLED": "true",
+      "DD_SERVERLESS_APPSEC_ENABLED": "false",
       "DD_MERGE_XRAY_TRACES": "false",
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",
@@ -66,6 +61,12 @@
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
     ],
+    "Role": {
+     "Fn::GetAtt": [
+      "HelloHandlerServiceRoleXXXXXXXX",
+      "Arn"
+     ]
+    },
     "Runtime": "nodejs14.x",
     "Tags": [
      {
@@ -162,10 +163,10 @@
   "resttestDeploymentXXXXXXXX": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
+    "Description": "Automatically created by the RestApi construct",
     "RestApiId": {
      "Ref": "resttestXXXXXXXX"
-    },
-    "Description": "Automatically created by the RestApi construct"
+    }
    },
    "DependsOn": [
     "resttestproxyANYXXXXXXXX",
@@ -179,9 +180,6 @@
   "resttestDeploymentStageprodXXXXXXXX": {
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
-    "RestApiId": {
-     "Ref": "resttestXXXXXXXX"
-    },
     "AccessLogSetting": {
      "DestinationArn": {
       "Fn::GetAtt": [
@@ -193,6 +191,9 @@
     },
     "DeploymentId": {
      "Ref": "resttestDeploymentXXXXXXXX"
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
     },
     "StageName": "prod"
    },
@@ -292,14 +293,8 @@
   "resttestproxyANYXXXXXXXX": {
    "Type": "AWS::ApiGateway::Method",
    "Properties": {
-    "HttpMethod": "ANY",
-    "ResourceId": {
-     "Ref": "resttestproxyXXXXXXXX"
-    },
-    "RestApiId": {
-     "Ref": "resttestXXXXXXXX"
-    },
     "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
     "Integration": {
      "IntegrationHttpMethod": "POST",
      "Type": "AWS_PROXY",
@@ -322,6 +317,12 @@
        ]
       ]
      }
+    },
+    "ResourceId": {
+     "Ref": "resttestproxyXXXXXXXX"
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
     }
    },
    "Metadata": {
@@ -399,17 +400,8 @@
   "resttestANYXXXXXXXX": {
    "Type": "AWS::ApiGateway::Method",
    "Properties": {
-    "HttpMethod": "ANY",
-    "ResourceId": {
-     "Fn::GetAtt": [
-      "resttestXXXXXXXX",
-      "RootResourceId"
-     ]
-    },
-    "RestApiId": {
-     "Ref": "resttestXXXXXXXX"
-    },
     "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
     "Integration": {
      "IntegrationHttpMethod": "POST",
      "Type": "AWS_PROXY",
@@ -432,6 +424,15 @@
        ]
       ]
      }
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "resttestXXXXXXXX",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
     }
    },
    "Metadata": {

@@ -6,9 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
-export interface DatadogPropsV2 {
+export interface DatadogProps {
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
   readonly javaLayerVersion?: number;
@@ -22,6 +25,7 @@ export interface DatadogPropsV2 {
   readonly apiKeySecret?: secrets.ISecret;
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
+  readonly enableDatadogASM?: boolean;
   readonly enableMergeXrayTraces?: boolean;
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
@@ -44,3 +48,45 @@ export interface DatadogPropsV2 {
   readonly grantSecretReadAccess?: boolean;
   readonly useLayersFromAccount?: string;
 }
+
+/*
+ * Makes fields shared with DefaultDatadogProps (in constants file) required.
+ */
+export interface DatadogStrictProps {
+  readonly addLayers: boolean;
+  readonly enableDatadogLogs: boolean;
+  readonly captureLambdaPayload: boolean;
+  readonly injectLogContext: boolean;
+  readonly enableDatadogTracing: boolean;
+  readonly enableDatadogASM: boolean;
+  readonly enableMergeXrayTraces: boolean;
+  readonly grantSecretReadAccess: boolean;
+  readonly pythonLayerVersion?: number;
+  readonly nodeLayerVersion?: number;
+  readonly javaLayerVersion?: number;
+  readonly extensionLayerVersion?: number;
+  readonly forwarderArn?: string;
+  readonly flushMetricsToLogs?: boolean;
+  readonly site?: string;
+  readonly apiKey?: string;
+  readonly apiKeySecretArn?: string;
+  readonly apiKeySecret?: secrets.ISecret;
+  readonly apiKmsKey?: string;
+  readonly logLevel?: string;
+  readonly sourceCodeIntegration?: boolean;
+  readonly redirectHandler?: boolean;
+}
+
+export interface Runtime {
+  readonly name: string;
+}
+
+export interface Node {
+  readonly defaultChild: any;
+}
+
+export type LambdaFunction =
+  | lambda.Function
+  | lambdaNodejs.NodejsFunction
+  | lambdaPython.PythonFunction
+  | lambda.SingletonFunction;

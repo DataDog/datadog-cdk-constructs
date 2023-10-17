@@ -1,6 +1,6 @@
 {
  "Resources": {
-  "HelloHandlerServiceRoleXXXXXXXX": {
+  "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1ServiceRole5C6B0587": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -31,15 +31,12 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/HelloHandler/ServiceRole/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/SingletonLambdab55587fe69854c28ab514d0edb1ba8a1/ServiceRole/Resource"
    }
   },
-  "HelloHandlerXXXXXXXX": {
+  "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
-    "Architectures": [
-     "arm64"
-    ],
     "Code": {
      "ZipFile": "test"
     },
@@ -60,11 +57,11 @@
     "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
     "Layers": [
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
-     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension-ARM:10"
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
     ],
     "Role": {
      "Fn::GetAtt": [
-      "HelloHandlerServiceRoleXXXXXXXX",
+      "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1ServiceRole5C6B0587",
       "Arn"
      ]
     },
@@ -77,10 +74,10 @@
     ]
    },
    "DependsOn": [
-    "HelloHandlerServiceRoleXXXXXXXX"
+    "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1ServiceRole5C6B0587"
    ],
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/HelloHandler/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/SingletonLambdab55587fe69854c28ab514d0edb1ba8a1/Resource"
    }
   },
   "restLogGroupXXXXXXXX": {
@@ -91,7 +88,7 @@
    "UpdateReplacePolicy": "Retain",
    "DeletionPolicy": "Retain",
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/restLogGroup/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/restLogGroup/Resource"
    }
   },
   "resttestXXXXXXXX": {
@@ -100,7 +97,7 @@
     "Name": "rest-test"
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Resource"
    }
   },
   "resttestCloudWatchRoleXXXXXXXX": {
@@ -136,7 +133,7 @@
    "UpdateReplacePolicy": "Retain",
    "DeletionPolicy": "Retain",
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/CloudWatchRole/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/CloudWatchRole/Resource"
    }
   },
   "resttestAccountXXXXXXXX": {
@@ -155,7 +152,7 @@
    "UpdateReplacePolicy": "Retain",
    "DeletionPolicy": "Retain",
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Account"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Account"
    }
   },
   "resttestDeploymentXXXXXXXX": {
@@ -172,7 +169,7 @@
     "resttestANYXXXXXXXX"
    ],
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Deployment/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Deployment/Resource"
    }
   },
   "resttestDeploymentStageprodXXXXXXXX": {
@@ -199,7 +196,7 @@
     "resttestAccountXXXXXXXX"
    ],
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/DeploymentStage.prod/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/DeploymentStage.prod/Resource"
    }
   },
   "resttestproxyXXXXXXXX": {
@@ -217,16 +214,16 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/{proxy+}/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/{proxy+}/Resource"
    }
   },
-  "resttestXXXXXXXX": {
+  "resttestproxyANYApiPermissionlambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "HelloHandlerXXXXXXXX",
+      "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02",
       "Arn"
      ]
     },
@@ -253,16 +250,16 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.lambdafunctionarmstackresttest5EE8FF87.ANY..{proxy+}"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.lambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
    }
   },
-  "resttestXXXXXXXX": {
+  "resttestproxyANYApiPermissionTestlambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "HelloHandlerXXXXXXXX",
+      "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02",
       "Arn"
      ]
     },
@@ -285,7 +282,7 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.Test.lambdafunctionarmstackresttest5EE8FF87.ANY..{proxy+}"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.Test.lambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
    }
   },
   "resttestproxyANYXXXXXXXX": {
@@ -307,7 +304,7 @@
         ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
         {
          "Fn::GetAtt": [
-          "HelloHandlerXXXXXXXX",
+          "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02",
           "Arn"
          ]
         },
@@ -324,16 +321,16 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/{proxy+}/ANY/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/{proxy+}/ANY/Resource"
    }
   },
-  "resttestXXXXXXXX": {
+  "resttestANYApiPermissionlambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "HelloHandlerXXXXXXXX",
+      "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02",
       "Arn"
      ]
     },
@@ -360,16 +357,16 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/ANY/ApiPermission.lambdafunctionarmstackresttest5EE8FF87.ANY.."
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/ANY/ApiPermission.lambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
    }
   },
-  "resttestXXXXXXXX": {
+  "resttestANYApiPermissionTestlambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX": {
    "Type": "AWS::Lambda::Permission",
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "HelloHandlerXXXXXXXX",
+      "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02",
       "Arn"
      ]
     },
@@ -392,7 +389,7 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/ANY/ApiPermission.Test.lambdafunctionarmstackresttest5EE8FF87.ANY.."
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/ANY/ApiPermission.Test.lambdasingletonfunctionstackresttestXXXXXXXXANYXXXXXXXX"
    }
   },
   "resttestANYXXXXXXXX": {
@@ -414,7 +411,7 @@
         ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
         {
          "Fn::GetAtt": [
-          "HelloHandlerXXXXXXXX",
+          "SingletonLambdab55587fe69854c28ab514d0edb1ba8a1E1AFAB02",
           "Arn"
          ]
         },
@@ -434,7 +431,7 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/rest-test/Default/ANY/Resource"
+    "aws:cdk:path": "lambda-singleton-function-stack/rest-test/Default/ANY/Resource"
    }
   },
   "CDKMetadata": {
@@ -443,7 +440,7 @@
     "Analytics": "vX:XXXXXX:XXXXXX"
    },
    "Metadata": {
-    "aws:cdk:path": "lambda-function-arm-stack/CDKMetadata/Default"
+    "aws:cdk:path": "lambda-singleton-function-stack/CDKMetadata/Default"
    }
   }
  },
