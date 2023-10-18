@@ -62,6 +62,8 @@ function getDDHandler(lambdaRuntime: RuntimeType, addLayers: boolean) {
       return addLayers ? JS_HANDLER_WITH_LAYERS : JS_HANDLER;
     case RuntimeType.PYTHON:
       return PYTHON_HANDLER;
+    case RuntimeType.CUSTOM:
+      return null;
     case RuntimeType.JAVA:
       return null;
   }
