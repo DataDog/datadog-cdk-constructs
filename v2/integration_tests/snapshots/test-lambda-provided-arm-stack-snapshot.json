@@ -1,0 +1,583 @@
+{
+ "Resources": {
+  "exampleBucketB33BA2C4": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "OwnershipControls": {
+     "Rules": [
+      {
+       "ObjectOwnership": "BucketOwnerEnforced"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/exampleBucket/Resource"
+   }
+  },
+  "HelloHandlerServiceRoleXXXXXXXX": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/HelloHandler/ServiceRole/Resource"
+   }
+  },
+  "HelloHandlerServiceRoleXXXXXXXX": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "exampleBucketB33BA2C4",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "exampleBucketB33BA2C4",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "HelloHandlerServiceRoleXXXXXXXX",
+    "Roles": [
+     {
+      "Ref": "HelloHandlerServiceRoleXXXXXXXX"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/HelloHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "HelloHandlerXXXXXXXX": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Ref": "exampleBucketB33BA2C4"
+     },
+     "S3Key": "serverless/dd-cdk-construct-integration-test/dev/XXXXXXXXXXXXX-XXXX-XX-XXXXX:XX:XX.XXXX/dd-cdk-construct-integration-test.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "DD_LAMBDA_HANDLER": "handler.handler",
+      "DD_TRACE_ENABLED": "true",
+      "DD_SERVERLESS_APPSEC_ENABLED": "false",
+      "DD_MERGE_XRAY_TRACES": "false",
+      "DD_LOGS_INJECTION": "false",
+      "DD_SERVERLESS_LOGS_ENABLED": "true",
+      "DD_CAPTURE_LAMBDA_PAYLOAD": "false",
+      "DD_FLUSH_TO_LOG": "false",
+      "DD_SITE": "datadoghq.com",
+      "DD_API_KEY": "1234"
+     }
+    },
+    "Handler": "handler.handler",
+    "Layers": [
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension-ARM:49"
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "HelloHandlerServiceRoleXXXXXXXX",
+      "Arn"
+     ]
+    },
+    "Runtime": "provided.al2",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ]
+   },
+   "DependsOn": [
+    "HelloHandlerServiceRoleXXXXXXXX",
+    "HelloHandlerServiceRoleXXXXXXXX"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/HelloHandler/Resource"
+   }
+  },
+  "restLogGroupXXXXXXXX": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/restLogGroup/Resource"
+   }
+  },
+  "resttestXXXXXXXX": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "rest-test"
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Resource"
+   }
+  },
+  "resttestCloudWatchRoleXXXXXXXX": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/CloudWatchRole/Resource"
+   }
+  },
+  "resttestAccountXXXXXXXX": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "resttestCloudWatchRoleXXXXXXXX",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "resttestXXXXXXXX"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Account"
+   }
+  },
+  "resttestDeploymentXXXXXXXX": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Automatically created by the RestApi construct",
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
+    }
+   },
+   "DependsOn": [
+    "resttestproxyANYXXXXXXXX",
+    "resttestproxyXXXXXXXX",
+    "resttestANYXXXXXXXX"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Deployment/Resource"
+   }
+  },
+  "resttestDeploymentStageprodXXXXXXXX": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "AccessLogSetting": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "restLogGroupXXXXXXXX",
+       "Arn"
+      ]
+     },
+     "Format": "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.resourcePath $context.protocol\" $context.status $context.responseLength $context.requestId"
+    },
+    "DeploymentId": {
+     "Ref": "resttestDeploymentXXXXXXXX"
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "resttestAccountXXXXXXXX"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/DeploymentStage.prod/Resource"
+   }
+  },
+  "resttestproxyXXXXXXXX": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "resttestXXXXXXXX",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "{proxy+}",
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/{proxy+}/Resource"
+   }
+  },
+  "resttestXXXXXXXX": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHandlerXXXXXXXX",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:sa-east-1:601427279990:",
+       {
+        "Ref": "resttestXXXXXXXX"
+       },
+       "/",
+       {
+        "Ref": "resttestDeploymentStageprodXXXXXXXX"
+       },
+       "/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.lambdaprovidedarmstackresttest0907B3D2.ANY..{proxy+}"
+   }
+  },
+  "resttestXXXXXXXX": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHandlerXXXXXXXX",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:sa-east-1:601427279990:",
+       {
+        "Ref": "resttestXXXXXXXX"
+       },
+       "/test-invoke-stage/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/{proxy+}/ANY/ApiPermission.Test.lambdaprovidedarmstackresttest0907B3D2.ANY..{proxy+}"
+   }
+  },
+  "resttestproxyANYXXXXXXXX": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "HelloHandlerXXXXXXXX",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "resttestproxyXXXXXXXX"
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/{proxy+}/ANY/Resource"
+   }
+  },
+  "resttestXXXXXXXX": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHandlerXXXXXXXX",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:sa-east-1:601427279990:",
+       {
+        "Ref": "resttestXXXXXXXX"
+       },
+       "/",
+       {
+        "Ref": "resttestDeploymentStageprodXXXXXXXX"
+       },
+       "/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/ANY/ApiPermission.lambdaprovidedarmstackresttest0907B3D2.ANY.."
+   }
+  },
+  "resttestXXXXXXXX": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloHandlerXXXXXXXX",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:sa-east-1:601427279990:",
+       {
+        "Ref": "resttestXXXXXXXX"
+       },
+       "/test-invoke-stage/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/ANY/ApiPermission.Test.lambdaprovidedarmstackresttest0907B3D2.ANY.."
+   }
+  },
+  "resttestANYXXXXXXXX": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "HelloHandlerXXXXXXXX",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "resttestXXXXXXXX",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "resttestXXXXXXXX"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/rest-test/Default/ANY/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "vX:XXXXXX:XXXXXX"
+   },
+   "Metadata": {
+    "aws:cdk:path": "lambda-provided-arm-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "resttestEndpointXXXXXXXX": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "resttestXXXXXXXX"
+      },
+      ".execute-api.sa-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "resttestDeploymentStageprodXXXXXXXX"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

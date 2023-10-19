@@ -262,6 +262,63 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds extension layer to provided runtime", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PROVIDED_AL2,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`],
+    });
+  });
+
+  it("adds extension ARM layer to provided runtime using ARM", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PROVIDED_AL2,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+      architecture: lambda.Architecture.ARM_64,
+    });
+    const datadogCdk = new Datadog(stack, "Datadog", {
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogCdk.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
   it("doesn't add layer to container image Lambda with extension and layer versions", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
