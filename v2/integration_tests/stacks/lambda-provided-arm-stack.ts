@@ -18,6 +18,7 @@ export class ExampleStack extends Stack {
       runtime: lambda.Runtime.PROVIDED_AL2,
       code: lambda.Code.fromBucket(s3Bucket, "fake-key-for-test"),
       handler: "handler.handler",
+      architecture: lambda.Architecture.ARM_64,
     });
 
     s3Bucket.grantRead(providedLambda);
@@ -43,6 +44,6 @@ export class ExampleStack extends Stack {
 
 const app = new App();
 const env = { account: "601427279990", region: "sa-east-1" };
-const stack = new ExampleStack(app, "lambda-provided-stack", { env: env });
+const stack = new ExampleStack(app, "lambda-provided-arm-stack", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();
