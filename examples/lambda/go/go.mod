@@ -1,4 +1,4 @@
-module example.com/cdk-ts-al2-arm-go
+module example.com/cdk-example
 
 go 1.19
 

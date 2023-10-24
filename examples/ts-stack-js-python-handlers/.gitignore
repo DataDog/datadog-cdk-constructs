@@ -1,9 +1,0 @@
-typescript_v2-stack.js
-typescript_v2.js
-!jest.config.js
-*.d.ts
-node_modules
-
-# CDK asset staging directory
-.cdk.staging
-cdk.out

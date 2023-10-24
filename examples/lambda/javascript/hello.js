@@ -9,7 +9,7 @@ const sleep = tracer.wrap("sleep", (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 });
 
-exports.handler = async (event) => {
+exports.lambda_handler = async (event) => {
   // add custom tags to the lambda function span,
   // does NOT work when X-Ray tracing is enabled
   const span = tracer.scope().active();
