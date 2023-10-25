@@ -285,7 +285,7 @@ Add tags to your constructs. We recommend setting an `env` and `service` tag to 
 
 To automatically grant your Lambda execution roles read access to a given secret, pass in `apiKeySecret` in place of `apiKeySecretArn` when initializing the Datadog construct.
 
-```
+```typescript
 const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
 
 const secret = Secret.fromSecretPartialArn(this, 'DatadogApiKeySecret', 'arn:aws:secretsmanager:us-west-1:123:secret:DATADOG_API_KEY');
