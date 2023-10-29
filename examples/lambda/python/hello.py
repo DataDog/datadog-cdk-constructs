@@ -1,9 +1,5 @@
-# Unless explicitly stated otherwise all files in this repository are licensed
-# under the Apache License Version 2.0.
-# This product includes software developed at Datadog (https://www.datadoghq.com/).
-# Copyright 2021 Datadog, Inc.
-
 import time
+import httpx
 from ddtrace import tracer
 from datadog_lambda.metric import lambda_metric
 
@@ -26,6 +22,8 @@ def lambda_handler(event, context):
         timestamp=int(time.time()),  # optional, must be within last 20 mins
         tags=["product:latte", "order:online"],
     )
+
+    httpx.get("https://www.datadoghq.com")
 
     return {"statusCode": 200, "body": get_message()}
 

@@ -12,14 +12,35 @@ export class CdkTypeScriptStack extends Stack {
     console.log("Creating Hello World TypeScript stack");
 
     const helloNode = new Function(this, "hello-node", {
-      runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("../lambda/javascript"),
+      runtime: lambda.Runtime.NODEJS_18_X,
+      timeout: Duration.seconds(10),
+      code: lambda.Code.fromAsset("../lambda/node", {
+        bundling: {
+          image: lambda.Runtime.NODEJS_18_X.bundlingImage,
+          command: [
+            "bash",
+            "-c",
+            "cp -aT . /asset-output && npm install --prefix /asset-output",
+          ],
+          user: "root",
+        },
+      }),
       handler: "hello.lambda_handler",
     });
 
     const helloPython = new Function(this, "hello-python", {
-      runtime: lambda.Runtime.PYTHON_3_7,
-      code: lambda.Code.fromAsset("../lambda/python"),
+      runtime: lambda.Runtime.PYTHON_3_11,
+      timeout: Duration.seconds(10),
+      code: lambda.Code.fromAsset("../lambda/python", {
+        bundling: {
+          image: lambda.Runtime.PYTHON_3_11.bundlingImage,
+          command: [
+            "bash",
+            "-c",
+            "pip install -r requirements.txt -t /asset-output && cp -aT . /asset-output",
+          ],
+        },
+      }),
       handler: "hello.lambda_handler",
     });
 
@@ -27,7 +48,7 @@ export class CdkTypeScriptStack extends Stack {
       entry: "../lambda/go/hello.go",
       architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.PROVIDED_AL2,
-      timeout: Duration.seconds(30),
+      timeout: Duration.seconds(10),
       bundling: {
         goBuildFlags: ['-ldflags "-s -w"'],
       },

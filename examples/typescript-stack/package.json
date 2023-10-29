@@ -4,11 +4,6 @@
   "bin": {
     "cdk-typescript": "bin/index.js"
   },
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "cdk": "cdk"
-  },
   "devDependencies": {
     "@types/node": "^20.8.8",
     "aws-cdk": "^2.102.0",
