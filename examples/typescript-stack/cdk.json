@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/typescript_v2.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/index.ts",
   "watch": {
     "include": [
       "**"
@@ -12,8 +12,7 @@
       "tsconfig.json",
       "package*.json",
       "yarn.lock",
-      "node_modules",
-      "test"
+      "node_modules"
     ]
   },
   "context": {
