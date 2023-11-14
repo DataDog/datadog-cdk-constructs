@@ -29,6 +29,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "*.js",
     "!jest.config.js",
     "!src/sample",
+    "!src/sample/lambda_nodejs/hello_node.js",
     "*.d.ts",
     ".cdk.staging",
     "cdk.out/",
