@@ -19,12 +19,12 @@ class CdkPythonStack(Stack):
         hello_node = _lambda.Function(
             self,
             "hello-node",
-            runtime=_lambda.Runtime.NODEJS_18_X,
+            runtime=_lambda.Runtime.NODEJS_20_X,
             timeout=Duration.seconds(10),
             code=_lambda.Code.from_asset(
                 "../lambda/node",
                 bundling=BundlingOptions(
-                    image=_lambda.Runtime.NODEJS_18_X.bundling_image,
+                    image=_lambda.Runtime.NODEJS_20_X.bundling_image,
                     command=[
                         "bash",
                         "-c",
@@ -69,9 +69,9 @@ class CdkPythonStack(Stack):
         datadog = Datadog(
             self,
             "Datadog",
-            node_layer_version=99,
-            python_layer_version=81,
-            extension_layer_version=49,
+            node_layer_version=100,
+            python_layer_version=83,
+            extension_layer_version=51,
             add_layers=True,
             api_key=os.getenv("DD_API_KEY"),
             enable_datadog_tracing=True,
