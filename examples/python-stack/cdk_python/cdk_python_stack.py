@@ -19,12 +19,12 @@ class CdkPythonStack(Stack):
         hello_node = _lambda.Function(
             self,
             "hello-node",
-            runtime=_lambda.Runtime.NODEJS_20_X,
+            runtime=_lambda.Runtime.NODEJS_18_X,
             timeout=Duration.seconds(10),
             code=_lambda.Code.from_asset(
                 "../lambda/node",
                 bundling=BundlingOptions(
-                    image=_lambda.Runtime.NODEJS_20_X.bundling_image,
+                    image=_lambda.Runtime.NODEJS_18_X.bundling_image,
                     command=[
                         "bash",
                         "-c",

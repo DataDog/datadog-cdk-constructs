@@ -12,11 +12,11 @@ export class CdkTypeScriptStack extends Stack {
     console.log("Creating Hello World TypeScript stack");
 
     const helloNode = new Function(this, "hello-node", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       timeout: Duration.seconds(10),
       code: lambda.Code.fromAsset("../lambda/node", {
         bundling: {
-          image: lambda.Runtime.NODEJS_20_X.bundlingImage,
+          image: lambda.Runtime.NODEJS_18_X.bundlingImage,
           command: [
             "bash",
             "-c",
