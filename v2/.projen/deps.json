@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "@aws-cdk/aws-lambda-python-alpha",
-      "version": "2.101.1-alpha.0",
+      "version": "2.110.1-alpha.0",
       "type": "build"
     },
     {
@@ -27,7 +27,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "2.101.1",
+      "version": "2.110.1",
       "type": "build"
     },
     {
@@ -128,12 +128,12 @@
     },
     {
       "name": "@aws-cdk/aws-lambda-python-alpha",
-      "version": "^2.101.1-alpha.0",
+      "version": "^2.110.1-alpha.0",
       "type": "peer"
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.101.1",
+      "version": "^2.110.1",
       "type": "peer"
     },
     {
