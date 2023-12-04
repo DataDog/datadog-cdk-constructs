@@ -34,7 +34,7 @@ export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean)
     const runtime: string = l.runtime.name;
     const runtimeType: RuntimeType = runtimeLookup[runtime];
 
-    if (runtimeType === RuntimeType.JAVA || RuntimeType.DOTNET) {
+    if (runtimeType === RuntimeType.JAVA || runtimeType === RuntimeType.DOTNET) {
       l.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR, AWS_LAMBDA_EXEC_WRAPPER);
       continue;
     }
