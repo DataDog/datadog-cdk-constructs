@@ -17,15 +17,15 @@
   resolved "https://registry.npmjs.org/@aws-cdk/asset-node-proxy-agent-v6/-/asset-node-proxy-agent-v6-2.0.1.tgz"
   integrity sha512-DDt4SLdLOwWCjGtltH4VCST7hpOI5DzieuhGZsBpZ+AgJdSI2GCjklCXm0GCTwJG/SolkL5dtQXyUKgg9luBDg==
 
-"@aws-cdk/aws-lambda-go-alpha@^2.110.1-alpha.0":
-  version "2.110.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-go-alpha/-/aws-lambda-go-alpha-2.110.1-alpha.0.tgz#fbc82337a4397d31d7787eda27d9d2bbbd9e8629"
-  integrity sha512-Q+fHdAolqAyN5TxYnOTQaGmKdfJ6w8r4cQ+8P56eN29jEwa20CsjaqlUNAH1YerpQknlmCijj9MUT3GWc9bZfw==
+"@aws-cdk/aws-lambda-go-alpha@^2.113.0-alpha.0":
+  version "2.113.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-go-alpha/-/aws-lambda-go-alpha-2.113.0-alpha.0.tgz#b8921720f8642f9081018a9f1b46456d13f545d3"
+  integrity sha512-om0ikpSX7cmpWfdgC85haRNIZO4A3iS2ReBZfMKVs4j8gfmsI9UK8PBHdRneS30wo3JoMUxCz9tkvNABr0Ie/Q==
 
-"@aws-cdk/aws-lambda-python-alpha@^2.110.1-alpha.0":
-  version "2.110.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.110.1-alpha.0.tgz#2acefb32b1cda6fb1a19b26f0c8ffb8daabd8273"
-  integrity sha512-kOg/2VqIr0UIGSjjM+8SzWYeFW5kmgI8INrlghUmRQ/ov1XfBxxEQoy/LlDWMtiHW1W9oLaUv525OUQ5XTMnnQ==
+"@aws-cdk/aws-lambda-python-alpha@^2.113.0-alpha.0":
+  version "2.113.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.113.0-alpha.0.tgz#adc39ce947128c7c447945ffbb70ed6a82368c5b"
+  integrity sha512-DXXR9khx9EmcSWMBoO9NGUOZUPDGeAYrMxYdqvFM9heKvDZ9jFQqK99bsG0lSMAUNqN+nevLjEvbt/JurFsi9Q==
 
 "@balena/dockerignore@^1.0.2":
   version "1.0.2"
@@ -145,10 +145,10 @@ aws-cdk-lib@^2.110.1:
     table "^6.8.1"
     yaml "1.10.2"
 
-aws-cdk@^2.110.1:
-  version "2.110.1"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.110.1.tgz#d7fee94aa311b163993c4a1febc7cf4a4b66206b"
-  integrity sha512-/V0FOgsvD/FkFANrYnSmyb+XK56tm2oE86pUCoEggQ2tka6Zm0z9blKZQV4euMErNSkWz4ReSAKenaqk86Fr5Q==
+aws-cdk@^2.113.0:
+  version "2.113.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.113.0.tgz#13a74953cc5ea42e1c7aa317a5b70428b71816ab"
+  integrity sha512-XEM8DSZpcMO1yXqozub8LiXK+3ihEqoWdeFDaIoMq0YmLspo9iAE3FPcKcIfv+ihRIEyvJLekGlxJPkx3+NOGA==
   optionalDependencies:
     fsevents "2.3.2"
 

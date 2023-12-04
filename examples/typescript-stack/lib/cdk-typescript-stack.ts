@@ -12,11 +12,11 @@ export class CdkTypeScriptStack extends Stack {
     console.log("Creating Hello World TypeScript stack");
 
     const helloNode = new Function(this, "hello-node", {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       timeout: Duration.seconds(10),
       code: lambda.Code.fromAsset("../lambda/node", {
         bundling: {
-          image: lambda.Runtime.NODEJS_18_X.bundlingImage,
+          image: lambda.Runtime.NODEJS_20_X.bundlingImage,
           command: [
             "bash",
             "-c",
@@ -63,8 +63,8 @@ export class CdkTypeScriptStack extends Stack {
     );
 
     const DatadogCDK = new Datadog(this, "Datadog", {
-      nodeLayerVersion: 100,
-      pythonLayerVersion: 83,
+      nodeLayerVersion: 101,
+      pythonLayerVersion: 84,
       extensionLayerVersion: 51,
       addLayers: true,
       apiKey: process.env.DD_API_KEY,
