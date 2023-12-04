@@ -20,7 +20,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -38,7 +38,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -56,7 +56,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_9,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -81,7 +81,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.JAVA_11,
+      runtime: lambda.Runtime.JAVA_21,
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
@@ -106,7 +106,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.JAVA_8,
+      runtime: lambda.Runtime.JAVA_21,
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });

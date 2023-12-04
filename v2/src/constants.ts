@@ -61,6 +61,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "java8.al2": RuntimeType.JAVA,
   "java11": RuntimeType.JAVA,
   "java17": RuntimeType.JAVA,
+  "java21": RuntimeType.JAVA,
   "provided": RuntimeType.CUSTOM,
   "provided.al2": RuntimeType.CUSTOM,
 };
@@ -79,6 +80,7 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "java8.al2": "dd-trace-java",
   "java11": "dd-trace-java",
   "java17": "dd-trace-java",
+  "java21": "dd-trace-java",
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];
