@@ -21,7 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     module: "datadog_cdk_constructs_v2",
   },
   peerDeps: [],
-  cdkVersion: "2.101.1",
+  cdkVersion: "2.113.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
@@ -51,6 +51,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "!LICENSE-3rdparty.csv",
     "!NOTICE",
     "/scripts",
+    "/integration_tests",
     ".prettierrc",
     "cdk.out/*",
     "yarn-error.log",

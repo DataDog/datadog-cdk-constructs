@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aws-cdk/asset-awscli-v1@^2.2.200":
-  version "2.2.200"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.200.tgz"
-  integrity sha512-Kf5J8DfJK4wZFWT2Myca0lhwke7LwHcHBo+4TvWOGJrFVVKVuuiLCkzPPRBQQVDj0Vtn2NBokZAz8pfMpAqAKg==
+"@aws-cdk/asset-awscli-v1@^2.2.201":
+  version "2.2.201"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.201.tgz#a7b51d3ecc8ff3ca9798269eda3a1db2400b506a"
+  integrity sha512-INZqcwDinNaIdb5CtW3ez5s943nX5stGBQS6VOP2JDlOFP81hM3fds/9NDknipqfUkZM43dx+HgVvkXYXXARCQ==
 
 "@aws-cdk/asset-kubectl-v20@^2.1.2":
   version "2.1.2"
@@ -17,15 +17,15 @@
   resolved "https://registry.npmjs.org/@aws-cdk/asset-node-proxy-agent-v6/-/asset-node-proxy-agent-v6-2.0.1.tgz"
   integrity sha512-DDt4SLdLOwWCjGtltH4VCST7hpOI5DzieuhGZsBpZ+AgJdSI2GCjklCXm0GCTwJG/SolkL5dtQXyUKgg9luBDg==
 
-"@aws-cdk/aws-lambda-go-alpha@^2.101.0-alpha.0":
-  version "2.101.0-alpha.0"
-  resolved "https://registry.npmjs.org/@aws-cdk/aws-lambda-go-alpha/-/aws-lambda-go-alpha-2.101.0-alpha.0.tgz"
-  integrity sha512-pENSsL0LaJ957UltgLrTvMCPe2YwRVI7gRjU2ktm0tF3fg12N/fYRS9zzXHgqK4WIH3QSVlOozaUkVOYMwPirg==
+"@aws-cdk/aws-lambda-go-alpha@^2.113.0-alpha.0":
+  version "2.113.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-go-alpha/-/aws-lambda-go-alpha-2.113.0-alpha.0.tgz#b8921720f8642f9081018a9f1b46456d13f545d3"
+  integrity sha512-om0ikpSX7cmpWfdgC85haRNIZO4A3iS2ReBZfMKVs4j8gfmsI9UK8PBHdRneS30wo3JoMUxCz9tkvNABr0Ie/Q==
 
-"@aws-cdk/aws-lambda-python-alpha@^2.102.0-alpha.0":
-  version "2.102.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.102.0-alpha.0.tgz#20f6145e8c99ee70254be79d74c6c401df980ea0"
-  integrity sha512-Or0w7lecc4ioLDXyE2e3DKbPKCeFj+lZnHMY3sHkYXR8Fiy+xyWrULi+Nrg8q8KI19lD6QT5mKZ3jAgjysKvlw==
+"@aws-cdk/aws-lambda-python-alpha@^2.113.0-alpha.0":
+  version "2.113.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.113.0-alpha.0.tgz#adc39ce947128c7c447945ffbb70ed6a82368c5b"
+  integrity sha512-DXXR9khx9EmcSWMBoO9NGUOZUPDGeAYrMxYdqvFM9heKvDZ9jFQqK99bsG0lSMAUNqN+nevLjEvbt/JurFsi9Q==
 
 "@balena/dockerignore@^1.0.2":
   version "1.0.2"
@@ -126,29 +126,29 @@ astral-regex@^2.0.0:
   resolved "https://registry.npmjs.org/astral-regex/-/astral-regex-2.0.0.tgz"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-aws-cdk-lib@^2.102.0:
-  version "2.102.0"
-  resolved "https://registry.npmjs.org/aws-cdk-lib/-/aws-cdk-lib-2.102.0.tgz"
-  integrity sha512-pYcKGlshU2j7n3f8TbJ1CCrwNnLsgGd17G7p/s9njIU8xakU4tIwuNyo4Q9HHQA7aUb3enPI/afAn1A6gp7TrA==
+aws-cdk-lib@^2.113.0:
+  version "2.113.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.113.0.tgz#dacc835f11c6df14bbe04746085f070bdde99eac"
+  integrity sha512-wZYooUd8nb3ADFtg1dSnsRt1MJmeqEK8cKOnPfCGCfm852YnVdb0qIEclURCQ4ygDJSuqiw9CE+xWVeTQTG6Dw==
   dependencies:
-    "@aws-cdk/asset-awscli-v1" "^2.2.200"
+    "@aws-cdk/asset-awscli-v1" "^2.2.201"
     "@aws-cdk/asset-kubectl-v20" "^2.1.2"
     "@aws-cdk/asset-node-proxy-agent-v6" "^2.0.1"
     "@balena/dockerignore" "^1.0.2"
     case "1.6.3"
     fs-extra "^11.1.1"
-    ignore "^5.2.4"
+    ignore "^5.3.0"
     jsonschema "^1.4.1"
     minimatch "^3.1.2"
-    punycode "^2.3.0"
+    punycode "^2.3.1"
     semver "^7.5.4"
     table "^6.8.1"
     yaml "1.10.2"
 
-aws-cdk@^2.102.0:
-  version "2.102.0"
-  resolved "https://registry.npmjs.org/aws-cdk/-/aws-cdk-2.102.0.tgz"
-  integrity sha512-q+FQSeX/25QvZ1/Fxjr7GydMY/WR/+iTif2EiaN7rUlEEZx27o0I5k1p9YmTNUGiBl13ZvggIJjwTRmnL7E/lg==
+aws-cdk@^2.113.0:
+  version "2.113.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.113.0.tgz#13a74953cc5ea42e1c7aa317a5b70428b71816ab"
+  integrity sha512-XEM8DSZpcMO1yXqozub8LiXK+3ihEqoWdeFDaIoMq0YmLspo9iAE3FPcKcIfv+ihRIEyvJLekGlxJPkx3+NOGA==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -238,10 +238,10 @@ graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
-ignore@^5.2.4:
-  version "5.2.4"
-  resolved "https://registry.npmjs.org/ignore/-/ignore-5.2.4.tgz"
-  integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
+ignore@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.0.tgz#67418ae40d34d6999c95ff56016759c718c82f78"
+  integrity sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==
 
 is-fullwidth-code-point@^3.0.0:
   version "3.0.0"
@@ -296,10 +296,15 @@ minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
-punycode@^2.1.0, punycode@^2.3.0:
+punycode@^2.1.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.3.0.tgz"
   integrity sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==
+
+punycode@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.3.1.tgz#027422e2faec0b25e1549c3e1bd8309b9133b6e5"
+  integrity sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==
 
 require-from-string@^2.0.2:
   version "2.0.2"
