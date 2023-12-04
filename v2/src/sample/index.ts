@@ -6,8 +6,9 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
-import { App, Stack, StackProps } from "aws-cdk-lib";
+import { App, Environment, Stack, StackProps } from "aws-cdk-lib";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
@@ -98,7 +99,10 @@ export class ExampleStack extends Stack {
 }
 
 const app = new App();
-const env = { account: process.env.CDK_DEFAULT_ACCOUNT, region: "sa-east-1" };
+const env: Environment = {
+  account: process.env.CDK_DEFAULT_ACCOUNT || process.env.AWS_ACCOUNT_ID,
+  region: process.env.CDK_DEFAULT_REGION || process.env.AWS_REGION,
+};
 const stack = new ExampleStack(app, "ExampleDatadogStack", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();
