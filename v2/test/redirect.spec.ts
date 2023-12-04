@@ -106,7 +106,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.JAVA_21,
+      runtime: lambda.Runtime.JAVA_8,
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
