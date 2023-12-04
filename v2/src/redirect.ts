@@ -12,8 +12,8 @@ import {
   RuntimeType,
   runtimeLookup,
   DD_HANDLER_ENV_VAR,
-  AWS_JAVA_WRAPPER_ENV_VAR,
-  AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
+  AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR,
+  AWS_LAMBDA_EXEC_WRAPPER,
   JS_HANDLER_WITH_LAYERS,
   JS_HANDLER,
   PYTHON_HANDLER,
@@ -29,42 +29,49 @@ import {
  */
 export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
-  lambdas.forEach((lam) => {
-    const runtime: string = lam.runtime.name;
-    const lambdaRuntime: RuntimeType = runtimeLookup[runtime];
-    if (lambdaRuntime === RuntimeType.JAVA) {
-      lam.addEnvironment(AWS_JAVA_WRAPPER_ENV_VAR, AWS_JAVA_WRAPPER_ENV_VAR_VALUE);
-    } else {
-      const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
-      if (cfnFunction === undefined) {
-        log.debug("Unable to get Lambda Function handler");
-        return;
-      }
-      const originalHandler = cfnFunction.handler as string;
-      lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
-      const handler = getDDHandler(lambdaRuntime, addLayers);
-      if (handler === null) {
-        log.debug("Unable to get Datadog handler");
-        return;
-      }
-      cfnFunction.handler = handler;
+
+  for (const l of lambdas) {
+    const runtime: string = l.runtime.name;
+    const runtimeType: RuntimeType = runtimeLookup[runtime];
+
+    if (runtimeType === RuntimeType.JAVA || RuntimeType.DOTNET) {
+      l.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR, AWS_LAMBDA_EXEC_WRAPPER);
+      continue;
     }
-  });
+
+    const cfnFuntion = l.node.defaultChild as lambda.CfnFunction;
+    if (cfnFuntion === undefined) {
+      log.debug("Unable to get Lambda Function handler");
+      continue;
+    }
+
+    const originalHandler = cfnFuntion.handler as string;
+    l.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
+
+    const handler = getDDHandler(runtimeType, addLayers);
+    if (handler === null) {
+      log.debug("Unable to get Datadog handler");
+      continue;
+    }
+
+    cfnFuntion.handler = handler;
+  }
 }
 
-function getDDHandler(lambdaRuntime: RuntimeType, addLayers: boolean) {
-  if (lambdaRuntime === undefined || lambdaRuntime === RuntimeType.UNSUPPORTED) {
+function getDDHandler(runtimeType: RuntimeType, addLayers: boolean) {
+  if (runtimeType === undefined || runtimeType === RuntimeType.UNSUPPORTED) {
     log.debug("Unsupported/undefined Lambda runtime");
     return;
   }
-  switch (lambdaRuntime) {
+  switch (runtimeType) {
     case RuntimeType.NODE:
       return addLayers ? JS_HANDLER_WITH_LAYERS : JS_HANDLER;
     case RuntimeType.PYTHON:
       return PYTHON_HANDLER;
     case RuntimeType.CUSTOM:
-      return null;
     case RuntimeType.JAVA:
+    case RuntimeType.DOTNET:
+    default:
       return null;
   }
 }
