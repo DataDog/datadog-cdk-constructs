@@ -1,7 +1,9 @@
 from aws_cdk import (
     aws_lambda as _lambda,
     aws_lambda_go_alpha as go,
+    aws_apigatewayv2 as apigwv2,
     BundlingOptions,
+    BundlingOutput,
     Duration,
     Stack,
 )
@@ -21,6 +23,7 @@ class CdkPythonStack(Stack):
             "hello-node",
             runtime=_lambda.Runtime.NODEJS_20_X,
             timeout=Duration.seconds(10),
+            memory_size=256,
             code=_lambda.Code.from_asset(
                 "../lambda/node",
                 bundling=BundlingOptions(
@@ -41,6 +44,7 @@ class CdkPythonStack(Stack):
             "hello-python",
             runtime=_lambda.Runtime.PYTHON_3_11,
             timeout=Duration.seconds(10),
+            memory_size=256,
             code=_lambda.Code.from_asset(
                 "../lambda/python",
                 bundling=BundlingOptions(
@@ -66,11 +70,37 @@ class CdkPythonStack(Stack):
             ),
         )
 
+        hello_dotnet = _lambda.Function(
+            self,
+            "hello-dotnet",
+            runtime=_lambda.Runtime.DOTNET_6,
+            handler="HelloWorld::HelloWorld.Handler::SayHi",
+            timeout=Duration.seconds(10),
+            memory_size=256,
+            code=_lambda.Code.from_asset(
+                "../lambda/dotnet",
+                bundling=BundlingOptions(
+                    image=_lambda.Runtime.DOTNET_6.bundling_image,
+                    command=[
+                        '/bin/sh',
+                        '-c',
+                        ' dotnet tool install -g Amazon.Lambda.Tools' +
+                        ' && dotnet build' +
+                        ' && dotnet lambda package --output-package /asset-output/function.zip'
+                    ],
+                    user="root",
+                    output_type=BundlingOutput.ARCHIVED
+                ),
+            ),
+
+        )
+
         datadog = Datadog(
             self,
             "Datadog",
+            dotnet_layer_version=13,
             node_layer_version=101,
-            python_layer_version=84,
+            python_layer_version=83,
             extension_layer_version=51,
             add_layers=True,
             api_key=os.getenv("DD_API_KEY"),
@@ -79,4 +109,4 @@ class CdkPythonStack(Stack):
             flush_metrics_to_logs=True,
             site="datadoghq.com",
         )
-        datadog.add_lambda_functions([hello_node, hello_python, hello_go])
+        datadog.add_lambda_functions([hello_node, hello_python, hello_go, hello_dotnet])
