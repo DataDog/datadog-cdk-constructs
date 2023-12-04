@@ -43,6 +43,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "!LICENSE-3rdparty.csv",
     "!NOTICE",
     "/scripts",
+    "/integration_tests",
     ".prettierrc",
     "cdk.out/*",
     "yarn-error.log",
