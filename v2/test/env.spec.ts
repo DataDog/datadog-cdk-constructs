@@ -33,7 +33,7 @@ describe("applyEnvVariables", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -66,7 +66,7 @@ describe("applyEnvVariables", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -101,7 +101,7 @@ describe("applyEnvVariables", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -137,7 +137,7 @@ describe("setDDEnvVariables", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -187,7 +187,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -218,7 +218,7 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -248,7 +248,7 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -280,7 +280,7 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -311,7 +311,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -344,7 +344,7 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -377,7 +377,7 @@ describe("LOG_LEVEL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -413,7 +413,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -444,7 +444,7 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -474,7 +474,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -506,7 +506,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -545,7 +545,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -579,7 +579,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -610,7 +610,7 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
