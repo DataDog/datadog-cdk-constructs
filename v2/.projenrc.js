@@ -30,7 +30,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "eslint-config-prettier",
     "eslint-plugin-prettier",
     "standard-version",
-    "@aws-cdk/aws-lambda-python-alpha@^2.101.1-alpha.0",
+    "@aws-cdk/aws-lambda-python-alpha@^2.113.0-alpha.0",
   ],
   gitignore: [
     "*.js",
