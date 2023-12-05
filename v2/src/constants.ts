@@ -11,14 +11,15 @@ export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
 export const DD_ACCOUNT_ID = "464622532012";
 export const DD_GOV_ACCOUNT_ID = "002406178527";
 export const DD_HANDLER_ENV_VAR = "DD_LAMBDA_HANDLER";
-export const AWS_JAVA_WRAPPER_ENV_VAR = "AWS_LAMBDA_EXEC_WRAPPER";
-export const AWS_JAVA_WRAPPER_ENV_VAR_VALUE = "/opt/datadog_wrapper";
+export const AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR = "AWS_LAMBDA_EXEC_WRAPPER";
+export const AWS_LAMBDA_EXEC_WRAPPER = "/opt/datadog_wrapper";
 export const PYTHON_HANDLER = "datadog_lambda.handler.handler";
 export const JS_HANDLER_WITH_LAYERS = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler";
 export const JS_HANDLER = "node_modules/datadog-lambda-js/dist/handler.handler";
 export const SUBSCRIPTION_FILTER_PREFIX = "DatadogSubscriptionFilter";
 
 export enum RuntimeType {
+  DOTNET,
   NODE,
   PYTHON,
   JAVA,
@@ -48,6 +49,7 @@ export enum TagKeys {
 }
 
 export const runtimeLookup: { [key: string]: RuntimeType } = {
+  "dotnet6": RuntimeType.DOTNET,
   "nodejs12.x": RuntimeType.NODE,
   "nodejs14.x": RuntimeType.NODE,
   "nodejs16.x": RuntimeType.NODE,
@@ -67,6 +69,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
+  "dotnet6": "dd-trace-dotnet",
   "nodejs12.x": "Datadog-Node12-x",
   "nodejs14.x": "Datadog-Node14-x",
   "nodejs16.x": "Datadog-Node16-x",

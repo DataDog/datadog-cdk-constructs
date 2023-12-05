@@ -7,12 +7,12 @@ import {
   JS_HANDLER,
   PYTHON_HANDLER,
   DD_HANDLER_ENV_VAR,
-  AWS_JAVA_WRAPPER_ENV_VAR,
-  AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
+  AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR,
+  AWS_LAMBDA_EXEC_WRAPPER,
 } from "../src/index";
 
 describe("redirectHandlers", () => {
-  it("redirects js handler correctly when addLayers is true", () => {
+  it("redirects NODEJS handler correctly when addLayers is true", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -20,7 +20,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -30,7 +30,7 @@ describe("redirectHandlers", () => {
     });
   });
 
-  it("redirects js handlers correctly when addLayers is false", () => {
+  it("redirects NODEJS handlers correctly when addLayers is false", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -38,7 +38,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -48,7 +48,7 @@ describe("redirectHandlers", () => {
     });
   });
 
-  it("redirects handler and sets env variable to original handler", () => {
+  it("redirects PYTHON handler correctly", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -56,7 +56,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_9,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -73,7 +73,10 @@ describe("redirectHandlers", () => {
     });
   });
 
-  it("sets correct env var for java functions", () => {
+  it.each([
+    ["JAVA", lambda.Runtime.JAVA_11],
+    ["DOTNET", lambda.Runtime.DOTNET_6],
+  ])("skips redirecting handler for '%s' and sets wrapper env var", (_text, runtime) => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -81,7 +84,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.JAVA_11,
+      runtime: runtime,
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
@@ -92,13 +95,13 @@ describe("redirectHandlers", () => {
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [AWS_JAVA_WRAPPER_ENV_VAR]: AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
+          [AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR]: AWS_LAMBDA_EXEC_WRAPPER,
         },
       },
     });
   });
 
-  it("doesn't set env vars for function with unsupported java version", () => {
+  it("doesn't set env vars for function with unsupported JAVA version", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -116,7 +119,7 @@ describe("redirectHandlers", () => {
       {
         Environment: {
           Variables: {
-            [AWS_JAVA_WRAPPER_ENV_VAR]: AWS_JAVA_WRAPPER_ENV_VAR_VALUE,
+            [AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR]: AWS_LAMBDA_EXEC_WRAPPER,
           },
         },
       },

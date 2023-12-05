@@ -85,6 +85,7 @@ export class Datadog extends Construct {
           this.props.pythonLayerVersion,
           this.props.nodeLayerVersion,
           this.props.javaLayerVersion,
+          this.props.dotnetLayerVersion,
           this.props.extensionLayerVersion,
           this.props.useLayersFromAccount,
         );
