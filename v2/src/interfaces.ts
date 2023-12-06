@@ -10,6 +10,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
 export interface DatadogProps {
+  readonly dotnetLayerVersion?: number;
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
   readonly javaLayerVersion?: number;

@@ -10,7 +10,7 @@ Use this Datadog CDK Construct Library to deploy serverless applications using A
 
 This CDK library automatically configures ingestion of metrics, traces, and logs from your serverless applications by:
 
-- Installing and configuring the Datadog Lambda layers for your [Python][1], [Node.js][2], and [Java][15] Lambda functions.
+- Installing and configuring the Datadog Lambda layers for your [.NET][19], [Java][15], [Node.js][2], and [Python][1] Lambda functions.
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
@@ -72,6 +72,7 @@ const datadog = new Datadog(this, "Datadog", {
   nodeLayerVersion: <LAYER_VERSION>,
   pythonLayerVersion: <LAYER_VERSION>,
   javaLayerVersion: <LAYER_VERSION>,
+  dotnetLayerVersion: <LAYER_VERSION>
   addLayers: <BOOLEAN>,
   extensionLayerVersion: "<EXTENSION_VERSION>",
   forwarderArn: "<FORWARDER_ARN>",
@@ -167,10 +168,11 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 
 | npm package parameter | PyPI package parameter | Description |
 | --- | --- | --- |
-| `addLayers` | `add_layers` | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to true. When true, the Lambda Library version variables are also required. When false, you must include the Datadog Lambda library in your functions' deployment packages. |
-| `pythonLayerVersion` | `python_layer_version` | Version of the Python Lambda layer to install, such as 21. Required if you are deploying at least one Lambda function written in Python and `addLayers` is true. Find the latest version number [here][5]. |
-| `nodeLayerVersion` | `node_layer_version` | Version of the Node.js Lambda layer to install, such as 29. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is true. Find the latest version number from [here][6]. |
-| `javaLayerVersion` | `java_layer_version` | Version of the Java layer to install, such as 8. Required if you are deploying at least one Lambda function written in Java and `addLayers` is true. Find the latest version number in the [Serverless Java installation documentation][15]. **Note**: `extensionLayerVersion >= 25` and `javaLayerVersion >= 5` are required for the Datadog construct to instrument your Java functions properly. |
+| `addLayers` | `add_layers` | Whether to add the Lambda Layers or expect the user to bring their own. Defaults to `true`. When `true`, the Lambda Library version variables are also required. When `false`, you must include the Datadog Lambda library in your functions' deployment packages. |
+| `pythonLayerVersion` | `python_layer_version` | Version of the Python Lambda layer to install, such as `83`. Required if you are deploying at least one Lambda function written in Python and `addLayers` is `true`. Find the latest version number [here][5]. |
+| `nodeLayerVersion` | `node_layer_version` | Version of the Node.js Lambda layer to install, such as `100`. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is `true`. Find the latest version number from [here][6]. |
+| `javaLayerVersion` | `java_layer_version` | Version of the Java layer to install, such as `8`. Required if you are deploying at least one Lambda function written in Java and `addLayers` is `true`. Find the latest version number in the [Serverless Java installation documentation][15]. **Note**: `extensionLayerVersion >= 25` and `javaLayerVersion >= 5` are required for the Datadog construct to instrument your Java functions properly. |
+| `dotnetLayerVersion` | `dotnet_layer_version` | Version of the .NET layer to install, such as `13`. Required if you are deploying at least one Lambda function written in .NET and `addLayers` is `true`. Find the latest version number from [here][18]. |
 | `extensionLayerVersion` | `extension_layer_version` | Version of the Datadog Lambda Extension layer to install, such as 5. When `extensionLayerVersion` is set, `apiKey` (or if encrypted, `apiKMSKey` or `apiKeySecretArn`) needs to be set as well. When enabled, lambda function log groups will not be subscribed by the forwarder. Learn more about the Lambda extension [here][12]. |
 | `forwarderArn` | `forwarder_arn` | When set, the plugin will automatically subscribe the Datadog Forwarder to the functions' log groups. Do not set `forwarderArn` when `extensionLayerVersion` is set. |
 | `createForwarderPermissions` | `createForwarderPermissions` | When set to `true`, creates a Lambda permission on the the Datadog Forwarder per log group. Since the Datadog Forwarder has permissions configured by default, this is unnecessary in most use cases. |
@@ -190,13 +192,13 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `service` | `service` | When set along with `extensionLayerVersion`, a `DD_SERVICE` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, a `service` tag is added to all Lambda functions with the provided value. |
 | `version` | `version` | When set along with `extensionLayerVersion`, a `DD_VERSION` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, a `version` tag is added to all Lambda functions with the provided value. |
 | `tags` | `tags` | A comma separated list of key:value pairs as a single string. When set along with `extensionLayerVersion`, a `DD_TAGS` environment variable is added to all Lambda functions with the provided value. When set along with `forwarderArn`, the cdk parses the string and sets each key:value pair as a tag to all Lambda functions. |
-| `enableColdStartTracing`      | `enable_cold_start_tracing` | Set to `false` to disable Cold Start Tracing. Used in NodeJS and Python. Defaults to `true`. |
+| `enableColdStartTracing`      | `enable_cold_start_tracing` | Set to `false` to disable Cold Start Tracing. Used in Node.js and Python. Defaults to `true`. |
 | `coldStartTraceMinDuration`   | `min_cold_start_trace_duration` | Sets the minimum duration (in milliseconds) for a module load event to be traced via Cold Start Tracing. Number. Defaults to `3`. |
 | `coldStartTraceSkipLibs`      | `cold_start_trace_skip_libs`| Optionally skip creating Cold Start Spans for a comma-separated list of libraries. Useful to limit depth or skip known libraries. Default depends on runtime. |
-| `enableProfiling`             | `enable_profiling` | Enable the Datadog Continuous Profiler with `true`. Supported in Beta for NodeJS and Python. Defaults to `false`. |
-| `encodeAuthorizerContext`     |`encode_authorizer_context` | When set to `true` for Lambda authorizers, the tracing context will be encoded into the response for propagation. Supported for NodeJS and Python. Defaults to `true`. |
-| `decodeAuthorizerContext`     |`decode_authorizer_context` | When set to `true` for Lambdas that are authorized via Lambda authorizers, it will parse and use the encoded tracing context (if found). Supported for NodeJS and Python. Defaults to `true`.                         |
-| `apmFlushDeadline` | Used to determine when to submit spans before a timeout occurs, in milliseconds. When the remaining time in an AWS Lambda invocation is less than the value set, the tracer attempts to submit the current active spans and all finished spans. Supported for NodeJS and Python. Defaults to `100` milliseconds. |
+| `enableProfiling`             | `enable_profiling` | Enable the Datadog Continuous Profiler with `true`. Supported in Beta for Node.js and Python. Defaults to `false`. |
+| `encodeAuthorizerContext`     |`encode_authorizer_context` | When set to `true` for Lambda authorizers, the tracing context will be encoded into the response for propagation. Supported for Node.js and Python. Defaults to `true`. |
+| `decodeAuthorizerContext`     |`decode_authorizer_context` | When set to `true` for Lambdas that are authorized via Lambda authorizers, it will parse and use the encoded tracing context (if found). Supported for Node.js and Python. Defaults to `true`.                         |
+| `apmFlushDeadline` | `apm_flush_deadline` | Used to determine when to submit spans before a timeout occurs, in milliseconds. When the remaining time in an AWS Lambda invocation is less than the value set, the tracer attempts to submit the current active spans and all finished spans. Supported for Node.js and Python. Defaults to `100` milliseconds. |
 | `redirectHandler` | `redirect_handler` | When set to `false`, skip redirecting handler to the Datadog Lambda Library's handler. Useful when only instrumenting with Datadog Lambda Extension. Defaults to `true`. |
 
 **Note**: Using the parameters above may override corresponding function level `DD_XXX` environment variables.
@@ -233,6 +235,7 @@ class RootStack extends cdk.Stack {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
       javaLayerVersion: <LAYER_VERSION>,
+      dotnetLayerVersion: <LAYER-VERSION>,
       addLayers: <BOOLEAN>,
       forwarderArn: "<FORWARDER_ARN>",
       flushMetricsToLogs: <BOOLEAN>,
@@ -258,6 +261,7 @@ class NestedStack extends cdk.NestedStack {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
       javaLayerVersion: <LAYER_VERSION>,
+      dotnetLayerVersion: <LAYER-VERSION>,
       addLayers: <BOOLEAN>,
       forwarderArn: "<FORWARDER_ARN>",
       flushMetricsToLogs: <BOOLEAN>,
@@ -301,7 +305,7 @@ When `addLambdaFunctions` is called, the Datadog CDK construct grants your Lambd
 
 ## How it works
 
-The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [Java][15], [Node.js][2], and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
+The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [.NET][19], [Java][15], [Node.js][2], and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
 While Lambda function based log groups are handled by the `addLambdaFunctions` method automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which subscribes the forwarder to any additional log groups of your choosing.
 
@@ -383,3 +387,5 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [15]: https://docs.datadoghq.com/serverless/installation/java/?tab=awscdk
 [16]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_secretsmanager.ISecret.html
 [17]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_secretsmanager.ISecret.html#grantwbrreadgrantee-versionstages
+[18]: https://github.com/DataDog/dd-trace-dotnet-aws-lambda-layer/releases
+[19]: https://docs.datadoghq.com/serverless/aws_lambda/installation/dotnet

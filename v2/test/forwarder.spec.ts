@@ -16,7 +16,7 @@ describe("Forwarder", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -35,7 +35,7 @@ describe("Forwarder", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -62,7 +62,7 @@ describe("Forwarder", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -128,7 +128,7 @@ describe("Forwarder", () => {
         handler: "hello.handler",
       });
       const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-        runtime: lambda.Runtime.NODEJS_12_X,
+        runtime: lambda.Runtime.NODEJS_16_X,
         code: lambda.Code.fromAsset("test"),
         handler: "hello.handler",
       });
@@ -163,7 +163,7 @@ describe("Forwarder", () => {
       },
     });
     const pythonLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -202,7 +202,7 @@ describe("Forwarder", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -239,7 +239,7 @@ describe("Forwarder", () => {
       },
     });
     const pythonLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });

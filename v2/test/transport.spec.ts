@@ -27,7 +27,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -63,7 +63,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -98,7 +98,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -132,7 +132,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -167,7 +167,7 @@ describe("SITE_URL_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -202,7 +202,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -238,7 +238,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -269,7 +269,7 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -306,7 +306,7 @@ describe("API_KEY_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -344,7 +344,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -380,7 +380,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -441,7 +441,7 @@ describe("apiKMSKeyEnvVar", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
