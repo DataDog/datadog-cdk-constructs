@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.9.0...v2-1.10.0) (2023-12-06)
+
+
+### Features
+
+* support `.NET` runtimes ([#236](https://github.com/DataDog/datadog-cdk-constructs/issues/236)) ([62c45a9](https://github.com/DataDog/datadog-cdk-constructs/commit/62c45a9880ae3e77eb1270608fe74d9771eb21f7))
+* Support java21 ([#235](https://github.com/DataDog/datadog-cdk-constructs/issues/235)) ([69038b6](https://github.com/DataDog/datadog-cdk-constructs/commit/69038b62477e433ac367b8cc0a513ea716c99629))
+
 ## [1.9.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.8.2...v2-1.9.0) (2023-10-19)
 
 ### [1.8.2](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.8.1...v2-1.8.2) (2023-10-18)
