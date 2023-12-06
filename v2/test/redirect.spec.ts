@@ -20,7 +20,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -38,7 +38,7 @@ describe("redirectHandlers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -74,7 +74,7 @@ describe("redirectHandlers", () => {
   });
 
   it.each([
-    ["JAVA", lambda.Runtime.JAVA_11],
+    ["JAVA", lambda.Runtime.JAVA_21],
     ["DOTNET", lambda.Runtime.DOTNET_6],
   ])("skips redirecting handler for '%s' and sets wrapper env var", (_text, runtime) => {
     const app = new App();

@@ -64,7 +64,7 @@ printOutputAndExit() {
 }
 
 for ((i = 0; i < ${#STACK_CONFIGS[@]}; i++)); do
-    tsc --project tsconfig.json
+    npx tsc --project tsconfig.json
     cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]}.js --json --quiet
 
     RAW_CFN_TEMPLATE="cdk.out/${STACK_CONFIGS[i]}.template.json"
