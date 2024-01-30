@@ -55,48 +55,36 @@ export function applyLayers(
     let extensionLayerArn;
     if (lambdaRuntimeType === RuntimeType.PYTHON) {
       if (pythonLayerVersion === undefined) {
-        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, "Python", "python");
-        log.error(errorMessage);
-        errors.push(errorMessage);
-        return;
+        return handleLayerError(errors, lam.node.id, "Python", "python");
       }
-      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, false, accountId);
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.NODE) {
       if (nodeLayerVersion === undefined) {
-        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, "Node.js", "node");
-        log.error(errorMessage);
-        errors.push(errorMessage);
-        return;
+        return handleLayerError(errors, lam.node.id, "Node.js", "node");
       }
-      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, isARM, true, accountId);
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.JAVA) {
       if (javaLayerVersion === undefined) {
-        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, "Java", "java");
-        log.error(errorMessage);
-        errors.push(errorMessage);
-        return;
+        return handleLayerError(errors, lam.node.id, "Java", "java");
       }
-      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, isARM, false, accountId);
+      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
       log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
 
     if (lambdaRuntimeType === RuntimeType.DOTNET) {
       if (dotnetLayerVersion === undefined) {
-        const errorMessage = getMissingLayerVersionErrorMsg(lam.node.id, ".NET", "dotnet");
-        log.error(errorMessage);
-        errors.push(errorMessage);
-        return;
+        return handleLayerError(errors, lam.node.id, ".NET", "dotnet");
       }
-      lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, false, accountId);
+      lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
       log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
     }
@@ -108,6 +96,12 @@ export function applyLayers(
     }
   });
   return errors;
+}
+
+function handleLayerError(errors: string[], nodeID: string, formalRuntime: string, paramRuntime: string) {
+  const errorMessage = getMissingLayerVersionErrorMsg(nodeID, formalRuntime, paramRuntime);
+  log.error(errorMessage);
+  errors.push(errorMessage);
 }
 
 function addLayer(
@@ -135,11 +129,10 @@ export function getLambdaLayerArn(
   version: number,
   runtime: string,
   isArm: boolean,
-  isNode: boolean,
   accountId?: string,
 ) {
   const baseLayerName = runtimeToLayerName[runtime];
-  const layerName = isArm && !isNode ? `${baseLayerName}-ARM` : baseLayerName;
+  const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
   const partition = getAWSPartitionFromRegion(region);
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = govCloudRegions.includes(region);
