@@ -6,11 +6,11 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { Tags } from "aws-cdk-lib";
+import { Tags, IAspect } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
-import { Construct } from "constructs";
+import { Construct, IConstruct } from "constructs";
 import log from "loglevel";
 import {
   applyLayers,
@@ -29,6 +29,24 @@ import {
 import { LambdaFunction } from "./interfaces";
 
 const versionJson = require("../version.json");
+
+interface DataDogAspectProps {
+  datadog: Datadog;
+}
+
+export class DatadogAspect implements IAspect {
+  constructor(private props: DataDogAspectProps) {}
+
+  visit(node: IConstruct): void {
+    if (node instanceof lambda.Function) {
+      this.props.datadog.addLambdaFunctions([node]);
+    }
+
+    if (node instanceof lambda.DockerImageFunction) {
+      this.props.datadog.addForwarderToNonLambdaLogGroups([(node as lambda.DockerImageFunction).logGroup]);
+    }
+  }
+}
 
 export class Datadog extends Construct {
   scope: Construct;
