@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.11.0...v2-1.12.0) (2024-02-02)
+
+
+### Features
+
+* Java doesn't have an arm layer, also clean up some code ([#246](https://github.com/DataDog/datadog-cdk-constructs/issues/246)) ([73a9b7b](https://github.com/DataDog/datadog-cdk-constructs/commit/73a9b7b98790628cbb982eb1b56dfaa21c3e326e))
+
 ## [1.11.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.10.0...v2-1.11.0) (2024-01-02)
 
 ## [1.10.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.9.0...v2-1.10.0) (2023-12-06)
