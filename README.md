@@ -97,6 +97,17 @@ datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
+Or you can use CDK Aspects:
+```
+import { Aspects } from "aws-cdk-lib";
+import { Datadog, DatadogAspect } from "datadog-cdk-constructs-v2";
+const datadog = new Datadog(this as any, "Datadog", {
+  // ... Same as above
+});
+
+Aspects.of(this).add(new DatadogAspect(datadog))
+```
+
 ## Source Code Integration
 [Source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) is enabled by default through automatic lambda tagging, and will work if:
 
