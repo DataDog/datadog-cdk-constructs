@@ -37,10 +37,6 @@ export class DatadogAspect implements IAspect {
     if (node.constructor.name === lambda.Function.name) {
       this.datadog.addLambdaFunctions([node as LambdaFunction]);
     }
-
-    if (node.constructor.name === lambda.DockerImageFunction.name && this.datadog.props.forwarderArn !== undefined) {
-      this.datadog.addForwarderToNonLambdaLogGroups([(node as lambda.DockerImageFunction).logGroup]);
-    }
   }
 }
 
