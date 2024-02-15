@@ -34,7 +34,7 @@ export class DatadogAspect implements IAspect {
   constructor(private datadog: Datadog) {}
 
   visit(node: IConstruct): void {
-    if (node.constructor.name === lambda.Function.name) {
+    if (node.constructor.name === lambda.Function.name || node.constructor.name === lambda.SingletonFunction.name) {
       this.datadog.addLambdaFunctions([node as LambdaFunction]);
     }
   }
