@@ -30,20 +30,16 @@ import { LambdaFunction } from "./interfaces";
 
 const versionJson = require("../version.json");
 
-interface DataDogAspectProps {
-  datadog: Datadog;
-}
-
 export class DatadogAspect implements IAspect {
-  constructor(private props: DataDogAspectProps) {}
+  constructor(private datadog: Datadog) {}
 
   visit(node: IConstruct): void {
-    if (node instanceof lambda.Function) {
-      this.props.datadog.addLambdaFunctions([node]);
+    if (node.constructor.name === lambda.Function.name) {
+      this.datadog.addLambdaFunctions([node as LambdaFunction]);
     }
 
-    if (node instanceof lambda.DockerImageFunction) {
-      this.props.datadog.addForwarderToNonLambdaLogGroups([(node as lambda.DockerImageFunction).logGroup]);
+    if (node.constructor.name === lambda.DockerImageFunction.name && this.datadog.props.forwarderArn !== undefined) {
+      this.datadog.addForwarderToNonLambdaLogGroups([(node as lambda.DockerImageFunction).logGroup]);
     }
   }
 }
