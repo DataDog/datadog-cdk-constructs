@@ -15,6 +15,6 @@
     "@aws-cdk/aws-lambda-python-alpha": "^2.113.0-alpha.0",
     "aws-cdk-lib": "^2.113.0",
     "constructs": "^10.3.0",
-    "datadog-cdk-constructs-v2": "^1.9.0"
+    "datadog-cdk-constructs-v2": "^1.12.0"
   }
 }

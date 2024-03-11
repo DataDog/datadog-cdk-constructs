@@ -197,10 +197,10 @@ create-require@^1.1.0:
   resolved "https://registry.npmjs.org/create-require/-/create-require-1.1.1.tgz"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-datadog-cdk-constructs-v2@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.npmjs.org/datadog-cdk-constructs-v2/-/datadog-cdk-constructs-v2-1.9.0.tgz"
-  integrity sha512-148XjCmdSujpGmhtSY1jn/R2DG5ENxv2tlFaOX4Er1YEBuzlAK0yn5F0TpKvBiZSsz+Rsc6VVS7E36EyRHhTVw==
+datadog-cdk-constructs-v2@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/datadog-cdk-constructs-v2/-/datadog-cdk-constructs-v2-1.12.0.tgz#78da4b874f7877ee7c5913ef3ccb2789ac642322"
+  integrity sha512-2t3IXEPfX+XRVLedDhqIewu3fxaJYVdnvWZZ3GQHJCZv7fG/lsPE0khRpW/FtKfGospEdF/nz8SSoAjC5gWK/Q==
   dependencies:
     loglevel "^1.8.1"
 

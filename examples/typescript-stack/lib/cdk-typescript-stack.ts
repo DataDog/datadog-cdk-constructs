@@ -95,10 +95,10 @@ export class CdkTypeScriptStack extends Stack {
     );
 
     const DatadogCDK = new Datadog(this, "Datadog", {
-      dotnetLayerVersion: 13,
-      nodeLayerVersion: 101,
-      pythonLayerVersion: 83,
-      extensionLayerVersion: 51,
+      dotnetLayerVersion: 15,
+      nodeLayerVersion: 107,
+      pythonLayerVersion: 89,
+      extensionLayerVersion: 55,
       addLayers: true,
       apiKey: process.env.DD_API_KEY,
       enableDatadogTracing: true,
