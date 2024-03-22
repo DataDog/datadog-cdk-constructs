@@ -1,8 +1,14 @@
-import { App, Stack, Token } from "aws-cdk-lib";
+import { App, Stack, Token, Aspects } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { addCdkConstructVersionTag, checkForMultipleApiKeys, Datadog, DD_HANDLER_ENV_VAR } from "../src/index";
+import {
+  addCdkConstructVersionTag,
+  checkForMultipleApiKeys,
+  Datadog,
+  DatadogAspect,
+  DD_HANDLER_ENV_VAR,
+} from "../src/index";
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
@@ -663,6 +669,40 @@ describe("redirectHandler", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
         },
       },
+    });
+  });
+});
+
+describe("DatadogAspect", () => {
+  it("redirects handler", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogCDK = new Datadog(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+    });
+
+    Aspects.of(stack).add(new DatadogAspect(datadogCDK));
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+        },
+      },
+      Layers: [
+        "arn:aws:lambda:us-west-2:464622532012:layer:Datadog-Node16-x:91",
+        "arn:aws:lambda:us-west-2:464622532012:layer:Datadog-Extension:5",
+      ],
     });
   });
 });
