@@ -75,7 +75,7 @@ describe("redirectHandlers", () => {
 
   it.each([
     ["JAVA", lambda.Runtime.JAVA_21],
-    ["DOTNET", lambda.Runtime.DOTNET_6],
+    ["DOTNET", lambda.Runtime.DOTNET_8],
   ])("skips redirecting handler for '%s' and sets wrapper env var", (_text, runtime) => {
     const app = new App();
     const stack = new Stack(app, "stack", {
