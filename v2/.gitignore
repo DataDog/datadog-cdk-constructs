@@ -42,7 +42,6 @@ test/__snapshots__
 .DS_Store
 integration_tests/cdk.out
 integration_tests/testlib
-!/.projenrc.js
 /test-reports/
 junit.xml
 /coverage/
@@ -56,3 +55,4 @@ junit.xml
 .jsii
 tsconfig.json
 !integration_tests/tsconfig.json
+!/.projenrc.js
