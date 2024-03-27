@@ -32,12 +32,12 @@ export class CdkTypeScriptStack extends Stack {
     });
 
     const helloPython = new Function(this, "hello-python", {
-      runtime: lambda.Runtime.PYTHON_3_11,
+      runtime: lambda.Runtime.PYTHON_3_12,
       timeout: Duration.seconds(10),
       memorySize: 256,
       code: lambda.Code.fromAsset("../lambda/python", {
         bundling: {
-          image: lambda.Runtime.PYTHON_3_11.bundlingImage,
+          image: lambda.Runtime.PYTHON_3_12.bundlingImage,
           command: [
             "bash",
             "-c",
@@ -63,12 +63,12 @@ export class CdkTypeScriptStack extends Stack {
     });
 
     const helloDotnet = new Function(this, "hello-dotnet", {
-      runtime: lambda.Runtime.DOTNET_6,
+      runtime: lambda.Runtime.DOTNET_8,
       handler: "HelloWorld::HelloWorld.Handler::SayHi",
       memorySize: 256,
       code: lambda.Code.fromAsset('../lambda/dotnet/', {
         bundling: {
-          image: lambda.Runtime.DOTNET_6.bundlingImage,
+          image: lambda.Runtime.DOTNET_8.bundlingImage,
           command: [
             '/bin/sh',
             '-c',
@@ -96,7 +96,7 @@ export class CdkTypeScriptStack extends Stack {
 
     const DatadogCDK = new Datadog(this, "Datadog", {
       dotnetLayerVersion: 15,
-      nodeLayerVersion: 107,
+      nodeLayerVersion: 108,
       pythonLayerVersion: 89,
       extensionLayerVersion: 55,
       addLayers: true,
