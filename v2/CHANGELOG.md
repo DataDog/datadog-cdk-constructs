@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.12.0...v2-1.13.0) (2024-03-28)
+
+
+### Features
+
+* support .NET 8 runtime ([#256](https://github.com/DataDog/datadog-cdk-constructs/issues/256)) ([d6093b5](https://github.com/DataDog/datadog-cdk-constructs/commit/d6093b5b6cd667d84e002969b1f0cfa2f65c6e60))
+
 ## [1.12.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.11.0...v2-1.12.0) (2024-02-02)
 
 
