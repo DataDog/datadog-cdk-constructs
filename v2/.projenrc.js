@@ -10,7 +10,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
-  packageManager: javascript.NodePackageManager.YARN,
+  packageManager: javascript.NodePackageManager.YARN_CLASSIC,
   minNodeVersion: "14.15.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
@@ -21,7 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     module: "datadog_cdk_constructs_v2",
   },
   peerDeps: [],
-  cdkVersion: "2.113.0",
+  cdkVersion: "2.134.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
@@ -30,7 +30,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "eslint-config-prettier",
     "eslint-plugin-prettier",
     "standard-version",
-    "@aws-cdk/aws-lambda-python-alpha@^2.113.0-alpha.0",
+    "@aws-cdk/aws-lambda-python-alpha@^2.134.0-alpha.0",
   ],
   gitignore: [
     "*.js",
