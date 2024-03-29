@@ -17,15 +17,15 @@
   resolved "https://registry.npmjs.org/@aws-cdk/asset-node-proxy-agent-v6/-/asset-node-proxy-agent-v6-2.0.1.tgz"
   integrity sha512-DDt4SLdLOwWCjGtltH4VCST7hpOI5DzieuhGZsBpZ+AgJdSI2GCjklCXm0GCTwJG/SolkL5dtQXyUKgg9luBDg==
 
-"@aws-cdk/aws-lambda-go-alpha@^2.113.0-alpha.0":
-  version "2.113.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-go-alpha/-/aws-lambda-go-alpha-2.113.0-alpha.0.tgz#b8921720f8642f9081018a9f1b46456d13f545d3"
-  integrity sha512-om0ikpSX7cmpWfdgC85haRNIZO4A3iS2ReBZfMKVs4j8gfmsI9UK8PBHdRneS30wo3JoMUxCz9tkvNABr0Ie/Q==
+"@aws-cdk/aws-lambda-go-alpha@^2.134.0-alpha.0":
+  version "2.134.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-go-alpha/-/aws-lambda-go-alpha-2.134.0-alpha.0.tgz#c0349ab10fb93c6bd8e0787775a915aa900ae290"
+  integrity sha512-SVB94DTd1S7NwWCMrPLfMbKUsm0XRqh2q1X+xim1fjLUhbM9p0uKY/whmQlgDxzvhhUvkE7JxsBVqJk6zQWYeQ==
 
-"@aws-cdk/aws-lambda-python-alpha@^2.113.0-alpha.0":
-  version "2.113.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.113.0-alpha.0.tgz#adc39ce947128c7c447945ffbb70ed6a82368c5b"
-  integrity sha512-DXXR9khx9EmcSWMBoO9NGUOZUPDGeAYrMxYdqvFM9heKvDZ9jFQqK99bsG0lSMAUNqN+nevLjEvbt/JurFsi9Q==
+"@aws-cdk/aws-lambda-python-alpha@^2.134.0-alpha.0":
+  version "2.134.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-lambda-python-alpha/-/aws-lambda-python-alpha-2.134.0-alpha.0.tgz#8a85a8f08a05f71f6fca55d14da6cb3116c3612d"
+  integrity sha512-St+Ej+Efm1+EPz5k1D+4ej8zod+1/ocK7hBsSPFI2hfnEfBPQci9Pkjr8qkNnU8ODB3ZJpL08r/ghi4XMTf0PQ==
 
 "@balena/dockerignore@^1.0.2":
   version "1.0.2"
@@ -198,12 +198,12 @@ create-require@^1.1.0:
   resolved "https://registry.npmjs.org/create-require/-/create-require-1.1.1.tgz"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-datadog-cdk-constructs-v2@^1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/datadog-cdk-constructs-v2/-/datadog-cdk-constructs-v2-1.12.0.tgz#78da4b874f7877ee7c5913ef3ccb2789ac642322"
-  integrity sha512-2t3IXEPfX+XRVLedDhqIewu3fxaJYVdnvWZZ3GQHJCZv7fG/lsPE0khRpW/FtKfGospEdF/nz8SSoAjC5gWK/Q==
+datadog-cdk-constructs-v2@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/datadog-cdk-constructs-v2/-/datadog-cdk-constructs-v2-1.13.0.tgz#4629f1bbf6f09facc62161462fa5ffd657595e1a"
+  integrity sha512-sJ2lLdnIMfQvLL8jUfVIBoZ2lLfJjNoCAy1P9J1XPxBd++MCSQfyScsjrt8PQG/0kz0LDmh9HCHp1QvG/k3vjw==
   dependencies:
-    loglevel "^1.8.1"
+    loglevel "^1.9.1"
 
 diff@^4.0.1:
   version "4.0.2"
@@ -273,10 +273,10 @@ lodash.truncate@^4.4.2:
   resolved "https://registry.npmjs.org/lodash.truncate/-/lodash.truncate-4.4.2.tgz"
   integrity sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==
 
-loglevel@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.npmjs.org/loglevel/-/loglevel-1.8.1.tgz"
-  integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==
+loglevel@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.9.1.tgz#d63976ac9bcd03c7c873116d41c2a85bafff1be7"
+  integrity sha512-hP3I3kCrDIMuRwAwHltphhDM1r8i55H33GgqjXbrisuJhF4kRhW1dNuxsRklp4bXl8DSdLaNLuiL4A/LWRfxvg==
 
 lru-cache@^6.0.0:
   version "6.0.0"
