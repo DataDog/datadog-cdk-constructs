@@ -227,7 +227,26 @@ describe("validateProps", () => {
           enableDatadogTracing: false,
           enableDatadogASM: true,
         }),
-    ).toThrow("When `enableDatadogASM` is enabled, `enableDatadogTracing` must also be enabled.");
+    ).toThrow(
+      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and `extensionLayerVersion` must also be enabled.",
+    );
+  });
+
+  it("throws an error if enableDatadogASM is enabled and extensionLayerVersion is not", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    expect(
+      () =>
+        new Datadog(stack, "Datadog", {
+          enableDatadogASM: true,
+        }),
+    ).toThrow(
+      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and `extensionLayerVersion` must also be enabled.",
+    );
   });
 });
 

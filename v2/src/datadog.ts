@@ -260,8 +260,13 @@ export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
       throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
     }
   }
-  if (props.enableDatadogTracing === false && props.enableDatadogASM === true) {
-    throw new Error("When `enableDatadogASM` is enabled, `enableDatadogTracing` must also be enabled.");
+  if (
+    (props.enableDatadogTracing === false && props.enableDatadogASM) ||
+    (props.extensionLayerVersion == undefined && props.enableDatadogASM)
+  ) {
+    throw new Error(
+      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and `extensionLayerVersion` must also be enabled.",
+    );
   }
 }
 
