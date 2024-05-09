@@ -11,7 +11,7 @@ _Please refer to the README.md for information about the structure of this repo 
     ```
 1. Install dependencies with `yarn install`.
 1. Make your changes.
-1. Run unit tests with `yarn test`:
+1. Run unit tests with `yarn test`.
 1. Manually test your changes using CDK commands such as `cdk synth`, `cdk diff`, and `cdk deploy`.
     - Please see the [README.md](README.md#testing) for instructions on how to manually test.
 1. Push to your fork and [submit a pull request][pr].
