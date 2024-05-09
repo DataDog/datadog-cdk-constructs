@@ -316,15 +316,9 @@ While Lambda function based log groups are handled by the `addLambdaFunctions` m
 - [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
 - [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
 
-## Repository Structure
-
-In this repository, the folders `v1` and `v2` correspond to the packages `datadog-cdk-constructs` and `datadog-cdk-contructs-v2`. Each can be treated as a separate project (they are separate projen projects with separate dependencies, config files, tests, and scripts).
-
-Additionally, there is a `common` folder that contains shared logic common to both `v1` and `v2` packages. This is done by soft-linking a `common` folder within `v1/src` and `v2/src` to the `common` folder in the root of the repository.
-
 ## Using Projen
 
-The `v1` and `v2` Datadog CDK Construct Libraries both use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file within `v1` or `v2` folders, then run `npx projen` (while in `v1` or `v2`) to synthesize the new changes. Check out [Projen][13] for more details.
+The Datadog CDK Construct Libraries use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file, then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
 
 ## Opening Issues
 
@@ -340,12 +334,12 @@ If you find an issue with this package and have a fix, please feel free to open 
 
 ## Testing
 
-If you contribute to this package you can run the tests using `yarn test` within the `v1` or `v2` folders. This package also includes a sample application for manual testing:
+If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing:
 
-1. Open a seperate terminal and `cd` into `v1` or `v2`.
+1. Open a seperate terminal.
 2. Run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
 3. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
-4. At the root of the `v1` or `v2` directory (whichever you are working on), run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
+4. At the root directory, run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
 - Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
 
@@ -354,7 +348,7 @@ If you contribute to this package you can run the tests using `yarn test` within
 To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output).
 
 Example:
-_Ensure you are at the root of the `v1` or `v2` directory_
+_Ensure you are at the root directory_
 
 ```
 DD_CONSTRUCT_DEBUG_LOGS=true npx cdk --app lib/sample/index.js synth --quiet
