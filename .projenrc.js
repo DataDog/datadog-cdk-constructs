@@ -21,7 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     module: "datadog_cdk_constructs_v2",
   },
   publishToGo: {
-    moduleName: "github.com/DataDog/datadog-cdk-constructs",
+    moduleName: "github.com/DataDog/datadog-cdk-constructs/dist/go",
     packageName: "ddcdkconstruct",
   },
   peerDeps: [],
