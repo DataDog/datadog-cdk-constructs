@@ -1,4 +1,4 @@
-module github.com/DataDog/datadog-cdk-constructs/ddcdkconstruct
+module github.com/DataDog/datadog-cdk-constructs/dist/go/ddcdkconstruct
 
 go 1.18
 

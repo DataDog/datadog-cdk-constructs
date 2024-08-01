@@ -129,7 +129,7 @@
         "module": "datadog_cdk_constructs_v2"
       },
       "go": {
-        "moduleName": "github.com/DataDog/datadog-cdk-constructs",
+        "moduleName": "github.com/DataDog/datadog-cdk-constructs/dist/go",
         "packageName": "ddcdkconstruct"
       }
     },

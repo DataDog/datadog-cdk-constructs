@@ -2,7 +2,7 @@ package ddcdkconstruct
 
 import (
 	_jsii_ "github.com/aws/jsii-runtime-go/runtime"
-	_init_ "github.com/DataDog/datadog-cdk-constructs/ddcdkconstruct/jsii"
+	_init_ "github.com/DataDog/datadog-cdk-constructs/dist/go/ddcdkconstruct/jsii"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 )
