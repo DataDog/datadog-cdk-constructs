@@ -60,4 +60,5 @@ tsconfig.json
 !integration_tests/tsconfig.json
 dist/*
 !dist/go
+!dist/go/ddcdkconstruct/jsii/*.tgz
 !/.projenrc.js

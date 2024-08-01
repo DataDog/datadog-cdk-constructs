@@ -114,7 +114,9 @@ project.gitignore.removePatterns("/dist/");
 // The two lines below makes git track "dist/go" and ignore all other folders
 // under "dist/"
 project.gitignore.addPatterns("dist/*");
-project.gitignore.include("!dist/go");
+project.gitignore.include("dist/go");
+
+project.gitignore.include("dist/go/ddcdkconstruct/jsii/*.tgz");
 
 // Collapse the generated Go package on GitHub
 project.gitattributes.addAttributes("/dist/go/** linguist-generated");
