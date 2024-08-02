@@ -1,10 +1,10 @@
 # Datadog CDK Python Example
 
-Use this example Python stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library. It contains Node, Python and Go Lambda functions.
+Use this example Python stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library. It contains Node, Python, and Go Lambda functions.
 
 ## Getting Started
 
-1. Get a Datadog API key to be used to send monitoring data ([Datadog API keys documentation](https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token)).
+1. Get a Datadog API key to send monitoring data ([Datadog API keys documentation](https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token)).
 1. Run `export DD_API_KEY=<DATADOG_API_KEY>` to set the Datadog API key in your shell session.
 1. Run `virtualenv env` to create a virtual environment.
 1. Run `source env/bin/activate` to activate the virtual environment.
