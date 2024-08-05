@@ -5,7 +5,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs-v2",
   description:
     "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog using AWS CDK v2",
-  author: "Datadog",
+  author: "Datadoge",
   authorOrganization: true,
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
