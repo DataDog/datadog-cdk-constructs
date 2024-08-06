@@ -21,7 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     module: "datadog_cdk_constructs_v2",
   },
   publishToGo: {
-    moduleName: "github.com/DataDog/datadog-cdk-constructs/dist/go",
+    moduleName: "github.com/DataDog/datadog-cdk-constructs-go",
     packageName: "ddcdkconstruct",
   },
   peerDeps: [],
@@ -108,13 +108,6 @@ eslintConfig.addOverride("rules", {
 });
 
 project.addGitIgnore("!integration_tests/tsconfig.json");
-
-// Remove the auto-added "dist" folder
-project.gitignore.removePatterns("/dist/");
-// The two lines below makes git track "dist/go" and ignore all other folders
-// under "dist/"
-project.gitignore.addPatterns("dist/*");
-project.gitignore.include("!dist/go");
 
 // Collapse the generated Go package on GitHub
 project.gitattributes.addAttributes("/dist/go/** linguist-generated");
