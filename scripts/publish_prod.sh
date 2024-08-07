@@ -122,6 +122,13 @@ echo "Publishing to PyPI"
 echo "Please enter the token (password) for datadog-cdk-constructs-v2 PyPI"
 python3 -m twine upload -u __token__ ./dist/python/* 
 
+echo "Publishing to datadog-cdk-constructs-go GitHub repo"
+echo "Please enter your GitHub username:"
+read GITHUB_TOKEN
+export GITHUB_TOKEN
+npx -p publib@latest publib-golang
+unset GITHUB_TOKEN
+
 echo 'Pushing updates to github'
 git push origin main
 git push origin "refs/tags/v2-$VERSION"
