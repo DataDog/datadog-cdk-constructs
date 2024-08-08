@@ -1,10 +1,10 @@
 # Datadog CDK TypeScript Example
 
-Use this example TypeScript stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library. It contains Node, Python and Go Lambda functions.
+Use this example TypeScript stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library. It contains Node, Python, and Go Lambda functions.
 
 ## Getting Started
 
-1. Get a Datadog API key to be used to send monitoring data ([Datadog API keys documentation](https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token)).
+1. Get a Datadog API key to send monitoring data ([Datadog API keys documentation](https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token)).
 1. Run `export DD_API_KEY=<DATADOG_API_KEY>` to set the Datadog API key in your shell session.
 1. Run `yarn` install dependencies.
 1. Update the layer versions in [lib/cdk-typescript-stack.ts](https://github.com/DataDog/datadog-cdk-constructs/blob/d2f1f60b7e0594ae77dd76a7f5964bee651e8022/examples/typescript-stack/lib/cdk-typescript-stack.ts#L66-L68) with the latest releases:
