@@ -54,10 +54,9 @@ junit.xml
 !/tsconfig.dev.json
 !/src/
 /lib
+/dist/
 !/.eslintrc.json
 .jsii
 tsconfig.json
 !integration_tests/tsconfig.json
-dist/*
-!dist/go
 !/.projenrc.js
