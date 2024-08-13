@@ -125,6 +125,10 @@ python3 -m twine upload -u __token__ ./dist/python/*
 echo "Publishing the Go package to datadog-cdk-constructs-go GitHub repo"
 read -p "Please enter your GitHub username: " GITHUB_TOKEN
 GITHUB_TOKEN=$GITHUB_TOKEN npx -p publib@latest publib-golang
+echo "Making pkg.go.dev pick up the new version from GitHub"
+# Note: the URL must be in lower case. Any upper case letter (like in "DataDog") would cause 
+# an error like: "bad request: invalid escaped module path "github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct""
+curl https://proxy.golang.org/github.com/datadog/datadog-cdk-constructs-go/ddcdkconstruct/@v/v$VERSION.info
 
 echo 'Pushing updates to github'
 git push origin main
