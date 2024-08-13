@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.13.0...v2-1.14.0) (2024-08-13)
+
+
+### Features
+
+* Add example Go stack ([#273](https://github.com/DataDog/datadog-cdk-constructs/issues/273)) ([71f5f4e](https://github.com/DataDog/datadog-cdk-constructs/commit/71f5f4e71235fa5af819563feb24c9703f4487a9))
+* Support Go ([#267](https://github.com/DataDog/datadog-cdk-constructs/issues/267)) ([12874d5](https://github.com/DataDog/datadog-cdk-constructs/commit/12874d50f8da0f2597ca3d2c56c1963dc850bc45))
+
+
+### Bug Fixes
+
+* add path to Go module name ([#269](https://github.com/DataDog/datadog-cdk-constructs/issues/269)) ([5bce51e](https://github.com/DataDog/datadog-cdk-constructs/commit/5bce51ed3d2526f4208a6e7fb43f2a070b5a06b8))
+* Ensure ASM does not apply when the extension is not present ([#258](https://github.com/DataDog/datadog-cdk-constructs/issues/258)) ([6cef564](https://github.com/DataDog/datadog-cdk-constructs/commit/6cef5640d788fc9f931697e379b4bf04d1b52db0))
+* Move Go module to another repo ([#274](https://github.com/DataDog/datadog-cdk-constructs/issues/274)) ([fa63451](https://github.com/DataDog/datadog-cdk-constructs/commit/fa63451cd6fed43543a623e70ca7272da52445bf))
+* Remove Go package from current repo ([#276](https://github.com/DataDog/datadog-cdk-constructs/issues/276)) ([8d0f92f](https://github.com/DataDog/datadog-cdk-constructs/commit/8d0f92f33b4e7da6abc8b667fa2ed26f6b5b691c))
+
 ## [1.13.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.12.0...v2-1.13.0) (2024-03-28)
 
 
