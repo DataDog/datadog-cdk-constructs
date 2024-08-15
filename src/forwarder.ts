@@ -29,7 +29,7 @@ export function addForwarder(
   lambdaFunctions: lambda.Function[],
   forwarderArn: string,
   createForwarderPermissions: boolean,
-) {
+): void {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
   lambdaFunctions.forEach((lam) => {
@@ -47,7 +47,7 @@ export function addForwarderToLogGroups(
   logGroups: ILogGroup[],
   forwarderArn: string,
   createForwarderPermissions: boolean,
-) {
+): void {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
   logGroups.forEach((group) => {
@@ -59,12 +59,12 @@ export function addForwarderToLogGroups(
   });
 }
 
-export function generateForwarderConstructId(forwarderArn: string) {
+export function generateForwarderConstructId(forwarderArn: string): string {
   log.debug("Generating construct Id for Datadog Lambda Forwarder");
   return "forwarder" + crypto.createHash("sha256").update(forwarderArn).digest("hex");
 }
 
-export function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: string) {
+export function generateSubscriptionFilterName(functionUniqueId: string, forwarderArn: string): string {
   const subscriptionFilterValue: string = crypto
     .createHash("sha256")
     .update(functionUniqueId)

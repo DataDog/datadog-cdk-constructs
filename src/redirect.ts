@@ -27,7 +27,7 @@ import {
  *
  * Unchanged aside from parameter type
  */
-export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean) {
+export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean): void {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
 
   for (const l of lambdas) {
@@ -58,7 +58,7 @@ export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean)
   }
 }
 
-function getDDHandler(runtimeType: RuntimeType, addLayers: boolean) {
+function getDDHandler(runtimeType: RuntimeType, addLayers: boolean): string | null {
   if (runtimeType === undefined || runtimeType === RuntimeType.UNSUPPORTED) {
     log.debug("Unsupported/undefined Lambda runtime");
     return null;

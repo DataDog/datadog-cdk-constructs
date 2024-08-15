@@ -34,7 +34,7 @@ export function applyLayers(
   dotnetLayerVersion?: number,
   extensionLayerVersion?: number,
   useLayersFromAccount?: string,
-) {
+): string[] {
   // TODO: check region availability
   const errors: string[] = [];
   log.debug("Applying layers to Lambda functions...");
@@ -98,7 +98,7 @@ export function applyLayers(
   return errors;
 }
 
-function handleLayerError(errors: string[], nodeID: string, formalRuntime: string, paramRuntime: string) {
+function handleLayerError(errors: string[], nodeID: string, formalRuntime: string, paramRuntime: string): void {
   const errorMessage = getMissingLayerVersionErrorMsg(nodeID, formalRuntime, paramRuntime);
   log.error(errorMessage);
   errors.push(errorMessage);
@@ -110,7 +110,7 @@ function addLayer(
   scope: Construct,
   lam: lambda.Function,
   runtime: string,
-) {
+): void {
   const layerId = generateLayerId(isExtensionLayer, lam.functionArn, runtime);
 
   if (layerArn !== undefined) {
@@ -130,7 +130,7 @@ export function getLambdaLayerArn(
   runtime: string,
   isArm: boolean,
   accountId?: string,
-) {
+): string {
   const baseLayerName = runtimeToLayerName[runtime];
   const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
   const partition = getAWSPartitionFromRegion(region);
@@ -145,7 +145,7 @@ export function getLambdaLayerArn(
   return `arn:${partition}:lambda:${region}:${accountId ?? DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-export function getExtensionLayerArn(region: string, version: number, isArm: boolean, accountId?: string) {
+export function getExtensionLayerArn(region: string, version: number, isArm: boolean, accountId?: string): string {
   const baseLayerName = "Datadog-Extension";
   const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
   const partition = getAWSPartitionFromRegion(region);
@@ -157,33 +157,37 @@ export function getExtensionLayerArn(region: string, version: number, isArm: boo
   return `arn:${partition}:lambda:${region}:${accountId ?? DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
 }
 
-export function getMissingLayerVersionErrorMsg(functionKey: string, formalRuntime: string, paramRuntime: string) {
+export function getMissingLayerVersionErrorMsg(
+  functionKey: string,
+  formalRuntime: string,
+  paramRuntime: string,
+): string {
   return (
     `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
     `Please add the '${paramRuntime}LayerVersion' parameter for the Datadog serverless macro.`
   );
 }
 
-export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string) {
+export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string): string {
   log.debug("Generating construct Id for Datadog Lambda layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return `${LAYER_PREFIX}-${runtime}-${layerValue}`;
 }
 
-export function generateExtensionLayerId(lambdaFunctionArn: string) {
+export function generateExtensionLayerId(lambdaFunctionArn: string): string {
   log.debug("Generating construct Id for Datadog Extension layer");
   const layerValue: string = crypto.createHash("sha256").update(lambdaFunctionArn).digest("hex");
   return `${EXTENSION_LAYER_PREFIX}-${layerValue}`;
 }
 
-export function generateLayerId(isExtensionLayer: boolean, functionArn: string, runtime: string) {
+export function generateLayerId(isExtensionLayer: boolean, functionArn: string, runtime: string): string {
   if (isExtensionLayer) {
     return generateExtensionLayerId(functionArn);
   }
   return generateLambdaLayerId(functionArn, runtime);
 }
 
-function getAWSPartitionFromRegion(region: string) {
+function getAWSPartitionFromRegion(region: string): string {
   if (region.startsWith("us-gov-")) {
     return "aws-us-gov";
   }
