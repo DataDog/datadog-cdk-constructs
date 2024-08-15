@@ -56,7 +56,7 @@ export class Datadog extends Construct {
     );
   }
 
-  public addLambdaFunctions(lambdaFunctions: LambdaFunction[], construct?: Construct) {
+  public addLambdaFunctions(lambdaFunctions: LambdaFunction[], construct?: Construct): void {
     // baseProps contains all properties set by the user, with default values for properties
     // defined in DefaultDatadogProps (if not set by user)
     const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
@@ -134,7 +134,7 @@ export class Datadog extends Construct {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     gitRepoUrl?: string,
-  ) {
+  ): void {
     const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
     setGitEnvironmentVariables(extractedLambdaFunctions);
   }
@@ -153,7 +153,7 @@ export class Datadog extends Construct {
   }
 }
 
-export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
+export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]): void {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
   lambdaFunctions.forEach((functionName) => {
     Tags.of(functionName).add(TagKeys.CDK, `v${versionJson.version}`, {
@@ -162,7 +162,7 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]) {
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
+function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps): void {
   log.debug(`Adding datadog tags`);
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
@@ -188,20 +188,20 @@ function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps) {
   });
 }
 
-function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]) {
+function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]): void {
   lambdaFunctions.forEach((functionName) => {
     secret.grantRead(functionName);
   });
 }
 
-function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambdaFunctions: lambda.Function[]) {
+function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambdaFunctions: lambda.Function[]): void {
   const secret = Secret.fromSecretPartialArn(construct, "DatadogApiKeySecret", arn);
   lambdaFunctions.forEach((functionName) => {
     secret.grantRead(functionName);
   });
 }
 
-function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]) {
+function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]): lambda.Function[] {
   // extract lambdaFunction property from Singleton Function
   // using bracket notation here since lambdaFunction is a private property
   const extractedLambdaFunctions: lambda.Function[] = lambdaFunctions.map((fn) => {
@@ -216,7 +216,7 @@ function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction
   return fn.hasOwnProperty("lambdaFunction");
 }
 
-export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
+export function validateProps(props: DatadogProps, apiKeyArnOverride = false): void {
   log.debug("Validating props...");
 
   checkForMultipleApiKeys(props, apiKeyArnOverride);
@@ -270,7 +270,7 @@ export function validateProps(props: DatadogProps, apiKeyArnOverride = false) {
   }
 }
 
-export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false) {
+export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false): void {
   let multipleApiKeysMessage;
   const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {

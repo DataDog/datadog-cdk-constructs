@@ -36,7 +36,7 @@ const execSync = require("child_process").execSync;
 
 const URL = require("url").URL;
 
-export function setGitEnvironmentVariables(lambdas: any[]) {
+export function setGitEnvironmentVariables(lambdas: any[]): void {
   log.debug("Adding source code integration...");
   const { hash, gitRepoUrl } = getGitData();
 
@@ -53,7 +53,7 @@ export function setGitEnvironmentVariables(lambdas: any[]) {
   });
 }
 
-function getGitData() {
+function getGitData(): { hash: string; gitRepoUrl: string } {
   let hash: string;
   let gitRepoUrl: string;
 
@@ -69,7 +69,7 @@ function getGitData() {
 
 // Removes sensitive info from the given git remote url and normalizes the url prefix.
 // "git@github.com:" and "https://github.com/" prefixes will be normalized into "github.com/"
-function filterAndFormatGithubRemote(rawRemote: string) {
+function filterAndFormatGithubRemote(rawRemote: string): string {
   rawRemote = filterSensitiveInfoFromRepository(rawRemote);
   if (!rawRemote) {
     return rawRemote;
@@ -79,7 +79,7 @@ function filterAndFormatGithubRemote(rawRemote: string) {
   return rawRemote;
 }
 
-function filterSensitiveInfoFromRepository(repositoryUrl: string) {
+function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
   try {
     if (!repositoryUrl) {
       return repositoryUrl;
@@ -98,7 +98,7 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string) {
   }
 }
 
-export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogStrictProps) {
+export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogStrictProps): void {
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
@@ -122,7 +122,7 @@ export function applyEnvVariables(lambdas: lambda.Function[], baseProps: Datadog
   });
 }
 
-export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogProps) {
+export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogProps): void {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
       if (props.env) {
