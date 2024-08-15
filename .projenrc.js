@@ -86,6 +86,7 @@ eslintConfig.addOverride("extends", [
 ]);
 
 eslintConfig.addOverride("rules", {
+  "@typescript-eslint/switch-exhaustiveness-check": "error",
   "@typescript-eslint/no-require-imports": "off",
   "@typescript-eslint/no-var-requires": "off",
   "@typescript-eslint/no-explicit-any": "off",

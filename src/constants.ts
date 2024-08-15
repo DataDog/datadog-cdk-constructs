@@ -34,7 +34,6 @@ export const DefaultDatadogProps = {
   enableMergeXrayTraces: false,
   injectLogContext: true,
   enableDatadogLogs: true,
-  architecture: "X86_64",
   captureLambdaPayload: false,
   sourceCodeIntegration: true,
   redirectHandler: true,
