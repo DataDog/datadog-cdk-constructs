@@ -69,6 +69,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "java21": RuntimeType.JAVA,
   "provided": RuntimeType.CUSTOM,
   "provided.al2": RuntimeType.CUSTOM,
+  "provided.al2023": RuntimeType.CUSTOM,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
