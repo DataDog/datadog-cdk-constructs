@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.14.1...v2-1.15.0) (2024-08-23)
+
+
+### Bug Fixes
+
+* add custom provided.al2023 to runtime lookup ([#284](https://github.com/DataDog/datadog-cdk-constructs/issues/284)) ([f72a797](https://github.com/DataDog/datadog-cdk-constructs/commit/f72a7972cc0d3870c7578d889da37fd7e1c6205b))
+
 ### [1.14.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.14.0...v2-1.14.1) (2024-08-14)
 
 ## [1.14.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.13.0...v2-1.14.0) (2024-08-13)
