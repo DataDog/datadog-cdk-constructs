@@ -63,65 +63,63 @@ export class Datadog extends Construct {
 
     const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
 
-    if (this.props !== undefined && extractedLambdaFunctions.length > 0) {
-      if (this.props.apiKeySecret !== undefined) {
-        grantReadLambdas(this.props.apiKeySecret, extractedLambdaFunctions);
-      } else if (
-        this.props.apiKeySecretArn !== undefined &&
-        construct !== undefined &&
-        baseProps.grantSecretReadAccess
-      ) {
-        log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
-        grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, extractedLambdaFunctions);
-      }
+    if (extractedLambdaFunctions.length === 0) {
+      return;
+    }
 
-      const region = `${extractedLambdaFunctions[0].env.region}`;
-      log.debug(`Using region: ${region}`);
-      if (baseProps.addLayers) {
-        applyLayers(
+    if (this.props.apiKeySecret !== undefined) {
+      grantReadLambdas(this.props.apiKeySecret, extractedLambdaFunctions);
+    } else if (this.props.apiKeySecretArn !== undefined && construct !== undefined && baseProps.grantSecretReadAccess) {
+      log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
+      grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, extractedLambdaFunctions);
+    }
+
+    const region = extractedLambdaFunctions[0].env.region;
+    log.debug(`Using region: ${region}`);
+    if (baseProps.addLayers) {
+      applyLayers(
+        this.scope,
+        region,
+        extractedLambdaFunctions,
+        this.props.pythonLayerVersion,
+        this.props.nodeLayerVersion,
+        this.props.javaLayerVersion,
+        this.props.dotnetLayerVersion,
+        this.props.extensionLayerVersion,
+        this.props.useLayersFromAccount,
+      );
+    }
+
+    if (baseProps.redirectHandler) {
+      redirectHandlers(extractedLambdaFunctions, baseProps.addLayers);
+    }
+
+    if (this.props.forwarderArn !== undefined) {
+      if (this.props.extensionLayerVersion !== undefined) {
+        log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
+      } else {
+        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
+        addForwarder(
           this.scope,
-          region,
           extractedLambdaFunctions,
-          this.props.pythonLayerVersion,
-          this.props.nodeLayerVersion,
-          this.props.javaLayerVersion,
-          this.props.dotnetLayerVersion,
-          this.props.extensionLayerVersion,
-          this.props.useLayersFromAccount,
+          this.props.forwarderArn,
+          this.props.createForwarderPermissions === true,
         );
       }
+    } else {
+      log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
+    }
 
-      if (baseProps.redirectHandler) {
-        redirectHandlers(extractedLambdaFunctions, baseProps.addLayers);
-      }
+    addCdkConstructVersionTag(extractedLambdaFunctions);
 
-      if (this.props.forwarderArn !== undefined) {
-        if (this.props.extensionLayerVersion !== undefined) {
-          log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
-        } else {
-          log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
-          addForwarder(
-            this.scope,
-            extractedLambdaFunctions,
-            this.props.forwarderArn,
-            this.props.createForwarderPermissions === true,
-          );
-        }
-      } else {
-        log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
-      }
+    applyEnvVariables(extractedLambdaFunctions, baseProps);
+    setDDEnvVariables(extractedLambdaFunctions, this.props);
+    setTags(extractedLambdaFunctions, this.props);
 
-      addCdkConstructVersionTag(extractedLambdaFunctions);
+    this.transport.applyEnvVars(extractedLambdaFunctions);
 
-      applyEnvVariables(extractedLambdaFunctions, baseProps);
-      setDDEnvVariables(extractedLambdaFunctions, this.props);
-      setTags(extractedLambdaFunctions, this.props);
-
-      this.transport.applyEnvVars(extractedLambdaFunctions);
-
-      if (baseProps.sourceCodeIntegration) {
-        this.addGitCommitMetadata(extractedLambdaFunctions);
-      }
+    if (baseProps.sourceCodeIntegration) {
+      this.addGitCommitMetadata(extractedLambdaFunctions);
     }
   }
 

@@ -41,9 +41,7 @@ export function applyLayers(
   lambdas.forEach((lam) => {
     const runtime: string = lam.runtime.name;
     const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
-    const isARM =
-      lam.architecture?.dockerPlatform !== undefined &&
-      lam.architecture.dockerPlatform === Architecture.ARM_64.dockerPlatform;
+    const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
 
     if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
       log.debug(`Unsupported runtime: ${runtime}`);
@@ -53,40 +51,45 @@ export function applyLayers(
     const accountId = useLayersFromAccount;
     let lambdaLayerArn;
     let extensionLayerArn;
-    if (lambdaRuntimeType === RuntimeType.PYTHON) {
-      if (pythonLayerVersion === undefined) {
-        return handleLayerError(errors, lam.node.id, "Python", "python");
-      }
-      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
-      log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
-      addLayer(lambdaLayerArn, false, scope, lam, runtime);
-    }
+    switch (lambdaRuntimeType) {
+      case RuntimeType.PYTHON:
+        if (pythonLayerVersion === undefined) {
+          return handleLayerError(errors, lam.node.id, "Python", "python");
+        }
+        lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
+        log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
+        addLayer(lambdaLayerArn, false, scope, lam, runtime);
+        break;
 
-    if (lambdaRuntimeType === RuntimeType.NODE) {
-      if (nodeLayerVersion === undefined) {
-        return handleLayerError(errors, lam.node.id, "Node.js", "node");
-      }
-      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
-      log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
-      addLayer(lambdaLayerArn, false, scope, lam, runtime);
-    }
+      case RuntimeType.NODE:
+        if (nodeLayerVersion === undefined) {
+          return handleLayerError(errors, lam.node.id, "Node.js", "node");
+        }
+        lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
+        log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
+        addLayer(lambdaLayerArn, false, scope, lam, runtime);
+        break;
 
-    if (lambdaRuntimeType === RuntimeType.JAVA) {
-      if (javaLayerVersion === undefined) {
-        return handleLayerError(errors, lam.node.id, "Java", "java");
-      }
-      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
-      log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
-      addLayer(lambdaLayerArn, false, scope, lam, runtime);
-    }
+      case RuntimeType.JAVA:
+        if (javaLayerVersion === undefined) {
+          return handleLayerError(errors, lam.node.id, "Java", "java");
+        }
+        lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
+        log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
+        addLayer(lambdaLayerArn, false, scope, lam, runtime);
+        break;
 
-    if (lambdaRuntimeType === RuntimeType.DOTNET) {
-      if (dotnetLayerVersion === undefined) {
-        return handleLayerError(errors, lam.node.id, ".NET", "dotnet");
-      }
-      lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
-      log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
-      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+      case RuntimeType.DOTNET:
+        if (dotnetLayerVersion === undefined) {
+          return handleLayerError(errors, lam.node.id, ".NET", "dotnet");
+        }
+        lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
+        log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
+        addLayer(lambdaLayerArn, false, scope, lam, runtime);
+        break;
+
+      case RuntimeType.CUSTOM:
+        break;
     }
 
     if (extensionLayerVersion !== undefined) {
