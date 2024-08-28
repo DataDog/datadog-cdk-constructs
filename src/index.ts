@@ -7,6 +7,7 @@
  */
 
 export * from "./datadog";
+export * from "./datadog-lambda";
 export * from "./layer";
 export * from "./redirect";
 export * from "./forwarder";

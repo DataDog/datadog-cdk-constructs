@@ -9,7 +9,7 @@
 import { App, Stack, StackProps } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
-import { Datadog } from "../index";
+import { DatadogLambda } from "../index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
@@ -21,14 +21,14 @@ export class ExampleStack extends Stack {
       handler: "handler",
     });
 
-    const datadogCDK = new Datadog(this, "Datadog", {
+    const datadogLambda = new DatadogLambda(this, "Datadog", {
       nodeLayerVersion: 67,
       extensionLayerVersion: 16,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       apiKey: process.env.API_KEY,
     });
-    datadogCDK.addLambdaFunctions([lambdaNodejsFunction]);
+    datadogLambda.addLambdaFunctions([lambdaNodejsFunction]);
   }
 }
 

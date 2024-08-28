@@ -2,7 +2,7 @@ import { App, Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import {
-  Datadog,
+  DatadogLambda,
   ENABLE_DD_TRACING_ENV_VAR,
   INJECT_LOG_CONTEXT_ENV_VAR,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
@@ -37,11 +37,11 @@ describe("applyEnvVariables", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -70,12 +70,12 @@ describe("applyEnvVariables", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       logLevel: EXAMPLE_LOG_LEVEL,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -105,12 +105,12 @@ describe("applyEnvVariables", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       enableDatadogASM: true,
       extensionLayerVersion: 50,
       apiKey: "test",
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -141,7 +141,7 @@ describe("setDDEnvVariables", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       logLevel: EXAMPLE_LOG_LEVEL,
       enableColdStartTracing: false,
@@ -153,7 +153,7 @@ describe("setDDEnvVariables", () => {
       apmFlushDeadline: "20",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -191,11 +191,11 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       enableDatadogTracing: false,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -222,8 +222,8 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
-    datadogCDK.addLambdaFunctions([hello]);
+    const datadogLambda = new DatadogLambda(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -252,11 +252,11 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       enableMergeXrayTraces: true,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -284,8 +284,8 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
-    datadogCDK.addLambdaFunctions([hello]);
+    const datadogLambda = new DatadogLambda(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -315,12 +315,12 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       injectLogContext: false,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
@@ -348,11 +348,11 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -381,12 +381,12 @@ describe("LOG_LEVEL_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       logLevel: "debug",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
@@ -417,11 +417,11 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       enableDatadogLogs: false,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -448,8 +448,8 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
-    datadogCDK.addLambdaFunctions([hello]);
+    const datadogLambda = new DatadogLambda(stack, "Datadog", { nodeLayerVersion: NODE_LAYER_VERSION });
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -478,11 +478,11 @@ describe("DD_TAGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       captureLambdaPayload: true,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -510,7 +510,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       captureLambdaPayload: true,
       tags: "key:value",
@@ -518,7 +518,7 @@ describe("DD_TAGS_ENV_VAR", () => {
       extensionLayerVersion: 10,
       apiKey: "test",
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -549,12 +549,12 @@ describe("DD_TAGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       captureLambdaPayload: true,
       sourceCodeIntegration: false,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -583,11 +583,11 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       captureLambdaPayload: true,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -614,11 +614,11 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       captureLambdaPayload: undefined,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {

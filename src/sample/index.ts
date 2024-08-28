@@ -13,7 +13,7 @@ import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigatewa
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { Datadog } from "../index";
+import { DatadogLambda } from "../index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
@@ -76,7 +76,7 @@ export class ExampleStack extends Stack {
       },
     });
 
-    const datadogCDK = new Datadog(this, "Datadog", {
+    const datadogLambda = new DatadogLambda(this, "Datadog", {
       nodeLayerVersion: 62,
       pythonLayerVersion: 46,
       extensionLayerVersion: 10,
@@ -87,14 +87,14 @@ export class ExampleStack extends Stack {
       apiKey: process.env.API_KEY,
       site: "datadoghq.com",
     });
-    datadogCDK.addLambdaFunctions([
+    datadogLambda.addLambdaFunctions([
       lambdaFunction,
       lambdaNodejsFunction,
       lambdaPythonFunction,
       lambdaFunction1,
       lambdaFunction2,
     ]);
-    datadogCDK.addForwarderToNonLambdaLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
+    datadogLambda.addForwarderToNonLambdaLogGroups([restLogGroup, restLogGroup1, restLogGroup2]);
   }
 }
 

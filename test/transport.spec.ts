@@ -2,7 +2,7 @@ import { App, Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import {
-  Datadog,
+  DatadogLambda,
   API_KEY_ENV_VAR,
   KMS_API_KEY_ENV_VAR,
   SITE_URL_ENV_VAR,
@@ -31,14 +31,14 @@ describe("SITE_URL_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       site: "datadoghq.eu",
       flushMetricsToLogs: false,
       apiKey: "1234",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -67,13 +67,13 @@ describe("SITE_URL_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       apiKey: "1234",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -102,12 +102,12 @@ describe("SITE_URL_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -136,13 +136,13 @@ describe("SITE_URL_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       site: "datadoghq.eu",
       apiKey: "1234",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -171,13 +171,13 @@ describe("SITE_URL_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: true,
       site: "datadoghq.eu",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -206,14 +206,14 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       apiKey: "1234",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -242,11 +242,11 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -273,13 +273,13 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
       flushMetricsToLogs: true,
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -310,14 +310,14 @@ describe("API_KEY_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKey: "1234",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -348,14 +348,14 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: 13,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -385,13 +385,13 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       handler: "hello.handler",
     });
     expect(() => {
-      const datadogCDK = new Datadog(stack, "Datadog", {
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
         flushMetricsToLogs: false,
         site: "datadoghq.com",
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         nodeLayerVersion: NODE_LAYER_VERSION,
       });
-      datadogCDK.addLambdaFunctions([hello]);
+      datadogLambda.addLambdaFunctions([hello]);
     }).toThrowError(
       `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
     );
@@ -409,13 +409,13 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       pythonLayerVersion: PYTHON_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
@@ -445,14 +445,14 @@ describe("apiKMSKeyEnvVar", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       flushMetricsToLogs: false,
       site: "datadoghq.com",
       apiKmsKey: "5678",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
