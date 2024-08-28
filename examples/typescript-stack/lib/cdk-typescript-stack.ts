@@ -20,11 +20,7 @@ export class CdkTypeScriptStack extends Stack {
       code: lambda.Code.fromAsset("../lambda/node", {
         bundling: {
           image: lambda.Runtime.NODEJS_20_X.bundlingImage,
-          command: [
-            "bash",
-            "-c",
-            "cp -aT . /asset-output && npm install --prefix /asset-output",
-          ],
+          command: ["bash", "-c", "cp -aT . /asset-output && npm install --prefix /asset-output"],
           user: "root",
         },
       }),
@@ -38,11 +34,7 @@ export class CdkTypeScriptStack extends Stack {
       code: lambda.Code.fromAsset("../lambda/python", {
         bundling: {
           image: lambda.Runtime.PYTHON_3_12.bundlingImage,
-          command: [
-            "bash",
-            "-c",
-            "pip install -r requirements.txt -t /asset-output && cp -aT . /asset-output",
-          ],
+          command: ["bash", "-c", "pip install -r requirements.txt -t /asset-output && cp -aT . /asset-output"],
         },
       }),
       handler: "hello.lambda_handler",
@@ -66,33 +58,31 @@ export class CdkTypeScriptStack extends Stack {
       runtime: lambda.Runtime.DOTNET_8,
       handler: "HelloWorld::HelloWorld.Handler::SayHi",
       memorySize: 256,
-      code: lambda.Code.fromAsset('../lambda/dotnet/', {
+      code: lambda.Code.fromAsset("../lambda/dotnet/", {
         bundling: {
           image: lambda.Runtime.DOTNET_8.bundlingImage,
           command: [
-            '/bin/sh',
-            '-c',
-            ' dotnet tool install -g Amazon.Lambda.Tools' +
-            ' && dotnet build' +
-            ' && dotnet lambda package --output-package /asset-output/function.zip'
+            "/bin/sh",
+            "-c",
+            " dotnet tool install -g Amazon.Lambda.Tools" +
+              " && dotnet build" +
+              " && dotnet lambda package --output-package /asset-output/function.zip",
           ],
-          user: 'root',
-          outputType: BundlingOutput.ARCHIVED
-        }
-      })
-    })
-
-    const dotnetHttpIntegration = new HttpLambdaIntegration('GetDotnetIntegration', helloDotnet);
-    const dotnetHttpApi = new apigwv2.HttpApi(this, "dotnetHttpApi")
-    dotnetHttpApi.addRoutes({
-      path: '/hello',
-      methods: [ apigwv2.HttpMethod.GET ],
-      integration:  dotnetHttpIntegration
+          user: "root",
+          outputType: BundlingOutput.ARCHIVED,
+        },
+      }),
     });
 
-    console.log(
-      "Instrumenting Lambda Functions in TypeScript stack with Datadog"
-    );
+    const dotnetHttpIntegration = new HttpLambdaIntegration("GetDotnetIntegration", helloDotnet);
+    const dotnetHttpApi = new apigwv2.HttpApi(this, "dotnetHttpApi");
+    dotnetHttpApi.addRoutes({
+      path: "/hello",
+      methods: [apigwv2.HttpMethod.GET],
+      integration: dotnetHttpIntegration,
+    });
+
+    console.log("Instrumenting Lambda Functions in TypeScript stack with Datadog");
 
     const DatadogCDK = new Datadog(this, "Datadog", {
       dotnetLayerVersion: 15,

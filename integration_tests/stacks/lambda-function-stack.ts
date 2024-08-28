@@ -7,7 +7,7 @@
  */
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Stack, StackProps, App } from "aws-cdk-lib"
+import { Stack, StackProps, App } from "aws-cdk-lib";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { Datadog } from "../../src/index";
@@ -29,7 +29,7 @@ export class ExampleStack extends Stack {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
-  
+
     const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 62,
       extensionLayerVersion: 10,

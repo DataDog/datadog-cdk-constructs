@@ -7,7 +7,7 @@
  */
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Stack, StackProps, App } from "aws-cdk-lib"
+import { Stack, StackProps, App } from "aws-cdk-lib";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { Datadog } from "../../src/index";
@@ -20,7 +20,7 @@ export class ExampleStack extends Stack {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromInline("test"),
       handler: "lambdaFunction.handler",
-      "uuid": "b55587fe-6985-4c28-ab51-4d0edb1ba8a1"
+      uuid: "b55587fe-6985-4c28-ab51-4d0edb1ba8a1",
     });
 
     const restLogGroup = new LogGroup(this, "restLogGroup");
@@ -30,7 +30,7 @@ export class ExampleStack extends Stack {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
-  
+
     const datadogCDK = new Datadog(this, "Datadog", {
       nodeLayerVersion: 62,
       extensionLayerVersion: 10,
