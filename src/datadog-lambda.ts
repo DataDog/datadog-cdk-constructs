@@ -28,14 +28,15 @@ import {
 } from "./index";
 import { LambdaFunction } from "./interfaces";
 
-const versionJson = require("../version.json");
+import * as versionJson from "../version.json";
+const version = versionJson.version;
 
 export class DatadogLambda extends Construct {
   scope: Construct;
   props: DatadogProps;
   transport: Transport;
   constructor(scope: Construct, id: string, props: DatadogProps) {
-    if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
+    if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() === "true") {
       log.setLevel("debug");
     }
     super(scope, id);
@@ -152,9 +153,9 @@ export class DatadogLambda extends Construct {
 }
 
 export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]): void {
-  log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
+  log.debug(`Adding CDK Construct version tag: ${version}`);
   lambdaFunctions.forEach((functionName) => {
-    Tags.of(functionName).add(TagKeys.CDK, `v${versionJson.version}`, {
+    Tags.of(functionName).add(TagKeys.CDK, `v${version}`, {
       includeResourceTypes: ["AWS::Lambda::Function"],
     });
   });
