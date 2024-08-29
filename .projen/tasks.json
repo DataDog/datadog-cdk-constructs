@@ -28,7 +28,7 @@
       "name": "check-formatting",
       "steps": [
         {
-          "exec": "prettier --check src/**"
+          "exec": "prettier --check src/** integration_tests/**/*.ts examples/**/*.ts"
         }
       ]
     },

@@ -67,7 +67,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "CONTRIBUTING.md",
   ],
   scripts: {
-    "check-formatting": "prettier --check src/**",
+    "check-formatting": "prettier --check src/** integration_tests/**/*.ts examples/**/*.ts",
   },
   pullRequestTemplate: false,
   dependabot: false,

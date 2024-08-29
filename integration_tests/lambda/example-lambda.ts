@@ -1,4 +1,3 @@
 export const handler = (): void => {
-    return;
+  return;
 };
-  

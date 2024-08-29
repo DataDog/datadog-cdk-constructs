@@ -7,7 +7,7 @@
  */
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Stack, StackProps, App } from "aws-cdk-lib"
+import { Stack, StackProps, App } from "aws-cdk-lib";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { Datadog } from "../../src/index";
@@ -21,7 +21,7 @@ export class ExampleStack extends Stack {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromInline("test"),
       handler: "lambdaFunction.handler",
-      architecture: Architecture.ARM_64
+      architecture: Architecture.ARM_64,
     });
 
     const restLogGroup = new LogGroup(this, "restLogGroup");
