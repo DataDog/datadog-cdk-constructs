@@ -3,7 +3,7 @@ import { Match, Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { findDatadogSubscriptionFilters } from "./test-utils";
 import {
-  Datadog,
+  DatadogLambda,
   DD_ACCOUNT_ID,
   FLUSH_METRICS_TO_LOGS_ENV_VAR,
   ENABLE_DD_TRACING_ENV_VAR,
@@ -40,7 +40,7 @@ describe("addLambdaFunctions", () => {
       handler: "hello.handler",
       uuid: "be308085-96c4-4208-9092-560d9d79e2c5",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
@@ -50,9 +50,9 @@ describe("addLambdaFunctions", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([nodeLambda]);
-    datadogCdk.addLambdaFunctions([pythonLambda]);
-    datadogCdk.addLambdaFunctions([singletonLambda]);
+    datadogLambda.addLambdaFunctions([nodeLambda]);
+    datadogLambda.addLambdaFunctions([pythonLambda]);
+    datadogLambda.addLambdaFunctions([singletonLambda]);
 
     const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
     const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
@@ -75,7 +75,7 @@ describe("addLambdaFunctions", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
@@ -85,10 +85,10 @@ describe("addLambdaFunctions", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([nodeLambda]);
+    datadogLambda.addLambdaFunctions([nodeLambda]);
     let throwsError;
     try {
-      datadogCdk.addLambdaFunctions([nodeLambda]);
+      datadogLambda.addLambdaFunctions([nodeLambda]);
     } catch (e) {
       throwsError = true;
     }
@@ -105,7 +105,7 @@ describe("addLambdaFunctions", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const NestedStackDatadogCdk = new Datadog(NestStack, "NestedStackDatadogCdk", {
+    const NestedStackDatadogCdk = new DatadogLambda(NestStack, "NestedStackDatadogCdk", {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
@@ -137,7 +137,7 @@ describe("addLambdaFunctions", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const NestedStackDatadogCdk = new Datadog(NestStack, "NestedStackDatadogCdk", {
+    const NestedStackDatadogCdk = new DatadogLambda(NestStack, "NestedStackDatadogCdk", {
       nodeLayerVersion: 20,
       pythonLayerVersion: 28,
       addLayers: true,
@@ -172,12 +172,12 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
@@ -207,13 +207,13 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 80,
       extensionLayerVersion: 23,
       apiKey: "1234",
       addLayers: false,
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER}`,
       Layers: Match.absent(),
@@ -232,12 +232,12 @@ describe("applyLayers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
-    datadogCDK.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
@@ -278,12 +278,12 @@ describe("applyLayers", () => {
       handler: "hello.handler",
     });
 
-    const datadogCDK = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 39,
       pythonLayerVersion: 24,
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
     });
-    datadogCDK.addLambdaFunctions([hello, hello1, hello2]);
+    datadogLambda.addLambdaFunctions([hello, hello1, hello2]);
     Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 3);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,

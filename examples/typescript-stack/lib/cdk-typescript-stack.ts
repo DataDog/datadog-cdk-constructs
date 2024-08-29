@@ -5,7 +5,7 @@ import { BundlingOutput, Duration, Stack, StackProps } from "aws-cdk-lib";
 import { Function } from "aws-cdk-lib/aws-lambda";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { Construct } from "constructs";
-import { Datadog } from "datadog-cdk-constructs-v2";
+import { DatadogLambda } from "datadog-cdk-constructs-v2";
 
 export class CdkTypeScriptStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -84,7 +84,7 @@ export class CdkTypeScriptStack extends Stack {
 
     console.log("Instrumenting Lambda Functions in TypeScript stack with Datadog");
 
-    const DatadogCDK = new Datadog(this, "Datadog", {
+    const datadogLambda = new DatadogLambda(this, "Datadog", {
       dotnetLayerVersion: 15,
       nodeLayerVersion: 108,
       pythonLayerVersion: 89,
@@ -97,6 +97,6 @@ export class CdkTypeScriptStack extends Stack {
       site: "datadoghq.com",
     });
 
-    DatadogCDK.addLambdaFunctions([helloNode, helloPython, helloGo, helloDotnet]);
+    datadogLambda.addLambdaFunctions([helloNode, helloPython, helloGo, helloDotnet]);
   }
 }

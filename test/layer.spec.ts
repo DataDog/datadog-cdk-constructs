@@ -5,7 +5,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import {
-  Datadog,
+  DatadogLambda,
   applyLayers,
   DD_ACCOUNT_ID,
   DD_GOV_ACCOUNT_ID,
@@ -50,7 +50,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
@@ -59,7 +59,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`,
@@ -82,7 +82,7 @@ describe("applyLayers", () => {
       architecture: Architecture.ARM_64,
     });
 
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
@@ -91,7 +91,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`,
@@ -112,7 +112,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
@@ -121,7 +121,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
@@ -143,7 +143,7 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
@@ -152,7 +152,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
@@ -248,14 +248,14 @@ describe("applyLayers", () => {
       functionName: "container-lambda",
       code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       apiKmsKey: "1234",
       addLayers: true,
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
       Runtime: Match.absent(),
@@ -275,7 +275,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
       addLayers: true,
@@ -283,7 +283,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`],
@@ -303,7 +303,7 @@ describe("applyLayers", () => {
       handler: "hello.handler",
       architecture: lambda.Architecture.ARM_64,
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
       addLayers: true,
@@ -311,7 +311,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
@@ -332,7 +332,7 @@ describe("applyLayers", () => {
       code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
     });
 
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
@@ -341,7 +341,7 @@ describe("applyLayers", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
@@ -431,7 +431,7 @@ describe("isGovCloud", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
@@ -440,7 +440,7 @@ describe("isGovCloud", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`,
@@ -461,7 +461,7 @@ describe("isGovCloud", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
@@ -470,7 +470,7 @@ describe("isGovCloud", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
@@ -492,7 +492,7 @@ describe("isGovCloud", () => {
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
@@ -501,7 +501,7 @@ describe("isGovCloud", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
@@ -523,7 +523,7 @@ describe("isGovCloud", () => {
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
@@ -532,7 +532,7 @@ describe("isGovCloud", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node20-x:${NODE_LAYER_VERSION}`,
@@ -554,7 +554,7 @@ describe("isGovCloud", () => {
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
     });
-    const datadogCdk = new Datadog(stack, "Datadog", {
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
       javaLayerVersion: JAVA_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKmsKey: "1234",
@@ -563,7 +563,7 @@ describe("isGovCloud", () => {
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     });
-    datadogCdk.addLambdaFunctions([hello]);
+    datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:dd-trace-java:${JAVA_LAYER_VERSION}`,
