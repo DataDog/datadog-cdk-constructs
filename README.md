@@ -83,9 +83,9 @@ Add this to your CDK stack:
 #### TypeScript
 
 ```typescript
-import { Datadog } from "datadog-cdk-constructs-v2";
+import { DatadogLambda } from "datadog-cdk-constructs-v2";
 
-const datadog = new Datadog(this, "Datadog", {
+const datadog = new DatadogLambda(this, "Datadog", {
   nodeLayerVersion: <LAYER_VERSION>,
   pythonLayerVersion: <LAYER_VERSION>,
   javaLayerVersion: <LAYER_VERSION>,
@@ -120,10 +120,10 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 import (
 	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
 )
-datadog := ddcdkconstruct.NewDatadog(
+datadog := ddcdkconstruct.NewDatadogLambda(
     stack,
     jsii.String("Datadog"),
-    &ddcdkconstruct.DatadogProps{
+    &ddcdkconstruct.DatadogLambdaProps{
         NodeLayerVersion:      jsii.Number(<LAYER_VERSION>),
         AddLayers:             jsii.Bool(<BOOLEAN>),
         Site:                  jsii.String(<SITE>),
