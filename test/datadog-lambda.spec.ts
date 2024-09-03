@@ -1,13 +1,46 @@
 import { App, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
+import { ISecret, RotationSchedule } from "aws-cdk-lib/aws-secretsmanager";
+import { SecretValue, ResourceEnvironment } from "aws-cdk-lib/core";
 import { addCdkConstructVersionTag, checkForMultipleApiKeys, DatadogLambda, DD_HANDLER_ENV_VAR } from "../src/index";
-const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
-const versionJson = require("../version.json");
+import versionJson from "../version.json";
 const EXTENSION_LAYER_VERSION = 5;
 const NODE_LAYER_VERSION = 91;
 const PYTHON_LAYER_VERSION = 73;
+
+function getDummySecret(secretArn: string): ISecret {
+  return {
+    secretArn: secretArn,
+    secretName: "dummy-name",
+    secretValue: new SecretValue("dummy-value"),
+    stack: null as unknown as Stack,
+    env: null as unknown as ResourceEnvironment,
+    node: new App().node,
+    secretValueFromJson(): SecretValue {
+      return null as unknown as SecretValue;
+    },
+    grantRead(): iam.Grant {
+      return null as unknown as iam.Grant;
+    },
+    grantWrite(): iam.Grant {
+      return null as unknown as iam.Grant;
+    },
+    addRotationSchedule(): RotationSchedule {
+      return null as unknown as RotationSchedule;
+    },
+    addToResourcePolicy(): iam.AddToResourcePolicyResult {
+      return null as unknown as iam.AddToResourcePolicyResult;
+    },
+    denyAccountRootDelete(): void {},
+    attach(): ISecret {
+      return this;
+    },
+    applyRemovalPolicy(): void {},
+  };
+}
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -126,12 +159,7 @@ describe("validateProps", () => {
       handler: "hello.handler",
     });
 
-    const secret: typeof ISecret = {
-      secretArn: "dummy-arn",
-      grantRead() {
-        return;
-      },
-    };
+    const secret = getDummySecret("dummy-arn");
 
     let threwError = false;
     let thrownError: Error | undefined;
@@ -541,12 +569,7 @@ describe("apiKeySecret", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const secret: typeof ISecret = {
-      secretArn: "dummy-arn",
-      grantRead() {
-        return;
-      },
-    };
+    const secret = getDummySecret("dummy-arn");
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
@@ -565,12 +588,7 @@ describe("apiKeySecret", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    const secret: typeof ISecret = {
-      secretArn: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key-from-isecret",
-      grantRead() {
-        return;
-      },
-    };
+    const secret = getDummySecret("arn:aws:secretsmanager:sa-east-1:123:secret:test-key-from-isecret");
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,

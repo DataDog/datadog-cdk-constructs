@@ -28,14 +28,14 @@ import {
 } from "./index";
 import { LambdaFunction } from "./interfaces";
 
-const versionJson = require("../version.json");
+import * as versionJson from "../version.json";
 
 export class DatadogLambda extends Construct {
   scope: Construct;
   props: DatadogProps;
   transport: Transport;
   constructor(scope: Construct, id: string, props: DatadogProps) {
-    if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
+    if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() === "true") {
       log.setLevel("debug");
     }
     super(scope, id);
