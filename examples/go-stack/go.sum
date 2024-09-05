@@ -1,5 +1,5 @@
-github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.13.0 h1:AOgs4MEGLb0gmkEdBx2HC7BrUtrpM46tyET+cJ7t80M=
-github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.13.0/go.mod h1:8Z+S8e9EMZov5IaSD06SqgjIQWvgTeQbfrG2zWZLXL8=
+github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.14.1 h1:dHnBQs1EsmQyFyRJTNz1Ge0H4yIYSEbT1K4xmeblID4=
+github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.14.1/go.mod h1:8Z+S8e9EMZov5IaSD06SqgjIQWvgTeQbfrG2zWZLXL8=
 github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0rYXWg0=
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
 github.com/aws/aws-cdk-go/awscdk/v2 v2.151.0 h1:VvUQxNej+CQRWJ4cNBRD74iM7h2zg2gz0bsrm+cSD+g=

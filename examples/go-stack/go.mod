@@ -3,7 +3,7 @@ module app
 go 1.18
 
 require (
-	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.13.0
+	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.14.1
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.151.0
 	github.com/aws/constructs-go/constructs/v10 v10.3.0
 	github.com/aws/jsii-runtime-go v1.102.0
