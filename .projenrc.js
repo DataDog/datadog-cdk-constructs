@@ -65,6 +65,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "yarn-error.log",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
+    "/examples",
   ],
   scripts: {
     "check-formatting": "prettier --check src/** integration_tests/**/*.ts examples/**/*.ts",
