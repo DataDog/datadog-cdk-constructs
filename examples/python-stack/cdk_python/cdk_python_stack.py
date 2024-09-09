@@ -8,7 +8,11 @@ from aws_cdk import (
     Stack,
 )
 from constructs import Construct
-from datadog_cdk_constructs_v2 import Datadog
+from datadog_cdk_constructs_v2 import (
+    Datadog,
+    DatadogProps,
+    DatadogLambdaProps,
+)
 import os
 
 
@@ -109,4 +113,6 @@ class CdkPythonStack(Stack):
             flush_metrics_to_logs=True,
             site="datadoghq.com",
         )
+        dd_props = DatadogProps();
+        dd_lambda_props = DatadogLambdaProps();
         datadog.add_lambda_functions([hello_node, hello_python, hello_go, hello_dotnet])
