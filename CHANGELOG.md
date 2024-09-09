@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.16.0...v2-1.16.1) (2024-09-09)
+
+
+### Bug Fixes
+
+* revert "chore: rename Lambda related interfaces ([#288](https://github.com/DataDog/datadog-cdk-constructs/issues/288))" ([#296](https://github.com/DataDog/datadog-cdk-constructs/issues/296)) ([0330420](https://github.com/DataDog/datadog-cdk-constructs/commit/0330420ad36360d4c842aa4b96da1d241d3e2fe5))
+
 ## [1.16.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.15.0...v2-1.16.0) (2024-09-09)
 
 
