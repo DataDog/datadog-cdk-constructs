@@ -9,6 +9,7 @@ cdk.out/*
 yarn-error.log
 CHANGELOG.md
 CONTRIBUTING.md
+/examples
 /.projen/
 /test-reports/
 junit.xml
