@@ -40,6 +40,12 @@ export const DatadogLambdaDefaultProps = {
   grantSecretReadAccess: true,
 };
 
+/**
+ * For backward compatibility. It's recommended to use DatadogLambdaDefaultProps for
+ * users who want to add Datadog monitoring for Lambda functions.
+ */
+export const DefaultDatadogProps = DatadogLambdaDefaultProps;
+
 export enum TagKeys {
   CDK = "dd_cdk_construct",
   ENV = "env",
