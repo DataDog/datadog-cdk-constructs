@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.15.0...v2-1.16.0) (2024-09-09)
+
+
+### Features
+
+* Rename: Datadog -> DatadogLambda ([#285](https://github.com/DataDog/datadog-cdk-constructs/issues/285)) ([44c50db](https://github.com/DataDog/datadog-cdk-constructs/commit/44c50dbff369e582beeee5ca40fb73ccedaeb580))
+
+
+### Bug Fixes
+
+* exclude example stacks from package ([#293](https://github.com/DataDog/datadog-cdk-constructs/issues/293)) ([a0748cc](https://github.com/DataDog/datadog-cdk-constructs/commit/a0748cc8963a11984c38ebde8e31230cde39789d))
+
 ## [1.15.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.14.1...v2-1.15.0) (2024-08-23)
 
 
