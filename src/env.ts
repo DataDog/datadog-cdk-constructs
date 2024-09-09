@@ -8,7 +8,7 @@
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
-import { DatadogLambdaProps, DatadogLambdaStrictProps } from "./interfaces";
+import { DatadogProps, DatadogStrictProps } from "./interfaces";
 
 export const AWS_LAMBDA_EXEC_WRAPPER_KEY = "AWS_LAMBDA_EXEC_WRAPPER";
 export const AWS_LAMBDA_EXEC_WRAPPER_VAL = "/opt/datadog_wrapper";
@@ -98,7 +98,7 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
   }
 }
 
-export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogLambdaStrictProps): void {
+export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogStrictProps): void {
   log.debug(`Setting environment variables...`);
   lambdas.forEach((lam) => {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
@@ -122,7 +122,7 @@ export function applyEnvVariables(lambdas: lambda.Function[], baseProps: Datadog
   });
 }
 
-export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogLambdaProps): void {
+export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogProps): void {
   lambdas.forEach((lam) => {
     if (props.extensionLayerVersion) {
       if (props.env) {
