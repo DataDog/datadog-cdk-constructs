@@ -7,11 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
-      matrix:
-        working-dir: [v1,v2]
-    defaults:
-      run:
-        working-directory: ${{ matrix.working-dir }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -53,11 +48,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        working-dir: [v1,v2]
-        node-version: [16,18]
-    defaults:
-      run:
-        working-directory: ${{ matrix.working-dir }}
+        node-version: [16, 18, 20]
 
     steps:
       - name: Checkout

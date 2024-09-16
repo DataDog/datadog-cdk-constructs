@@ -73,14 +73,14 @@ class CdkPythonStack(Stack):
         hello_dotnet = _lambda.Function(
             self,
             "hello-dotnet",
-            runtime=_lambda.Runtime.DOTNET_6,
+            runtime=_lambda.Runtime.DOTNET_8,
             handler="HelloWorld::HelloWorld.Handler::SayHi",
             timeout=Duration.seconds(10),
             memory_size=256,
             code=_lambda.Code.from_asset(
                 "../lambda/dotnet",
                 bundling=BundlingOptions(
-                    image=_lambda.Runtime.DOTNET_6.bundling_image,
+                    image=_lambda.Runtime.DOTNET_8.bundling_image,
                     command=[
                         '/bin/sh',
                         '-c',
@@ -98,10 +98,10 @@ class CdkPythonStack(Stack):
         datadog = Datadog(
             self,
             "Datadog",
-            dotnet_layer_version=13,
-            node_layer_version=101,
-            python_layer_version=83,
-            extension_layer_version=51,
+            dotnet_layer_version=15,
+            node_layer_version=107,
+            python_layer_version=89,
+            extension_layer_version=55,
             add_layers=True,
             api_key=os.getenv("DD_API_KEY"),
             enable_datadog_tracing=True,
