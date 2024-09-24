@@ -14,12 +14,13 @@ type AppStackProps struct {
 	awscdk.StackProps
 }
 
-func NewAppStack(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
+// Creates a stack without Datadog integration
+func NewAppStackWithoutDatadog(scope constructs.Construct, id *string, props *AppStackProps) (awscdk.Stack, awslambda.Function) {
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
 	}
-	stack := awscdk.NewStack(scope, &id, &sprops)
+	stack := awscdk.NewStack(scope, id, &sprops)
 
 	myFunction := awslambda.NewFunction(stack, jsii.String("HelloWorldFunction"), &awslambda.FunctionProps{
 		Runtime: awslambda.Runtime_NODEJS_20_X(), // Provide any supported Node.js runtime
@@ -44,6 +45,13 @@ func NewAppStack(scope constructs.Construct, id string, props *AppStackProps) aw
 		Value: myFunctionUrl.Url(),
 	})
 
+	return stack, myFunction
+}
+
+// Creates a stack with Datadog integration set up
+func NewAppStackWithDatadog(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
+	stack, lambdaFunction := NewAppStackWithoutDatadog(scope, &id, props)
+
 	// Set up Datadog integration
 	datadog := ddcdkconstruct.NewDatadog(
 		stack,
@@ -64,7 +72,7 @@ func NewAppStack(scope constructs.Construct, id string, props *AppStackProps) aw
 			InjectLogContext:      jsii.Bool(true),
 			LogLevel:              jsii.String("debug"),
 		})
-	datadog.AddLambdaFunctions(&[]interface{}{myFunction}, nil)
+	datadog.AddLambdaFunctions(&[]interface{}{lambdaFunction}, nil)
 
 	return stack
 }
@@ -74,7 +82,7 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	NewAppStack(app, "AppStack", &AppStackProps{
+	NewAppStackWithDatadog(app, "AppStack", &AppStackProps{
 		awscdk.StackProps{
 			Env: env(),
 		},
