@@ -32,7 +32,6 @@ export function applyLayers(
   nodeLayerVersion?: number,
   javaLayerVersion?: number,
   dotnetLayerVersion?: number,
-  extensionLayerVersion?: number,
   useLayersFromAccount?: string,
 ): string[] {
   // TODO: check region availability
@@ -50,7 +49,6 @@ export function applyLayers(
 
     const accountId = useLayersFromAccount;
     let lambdaLayerArn;
-    let extensionLayerArn;
     switch (lambdaRuntimeType) {
       case RuntimeType.PYTHON:
         if (pythonLayerVersion === undefined) {
@@ -91,12 +89,34 @@ export function applyLayers(
       case RuntimeType.CUSTOM:
         break;
     }
+  });
+  return errors;
+}
 
-    if (extensionLayerVersion !== undefined) {
-      extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM, accountId);
-      log.debug(`Using extension layer: ${extensionLayerArn}`);
-      addLayer(extensionLayerArn, true, scope, lam, runtime);
+export function applyExtensionLayer(
+  scope: Construct,
+  region: string,
+  lambdas: lambda.Function[],
+  extensionLayerVersion: number,
+  useLayersFromAccount?: string,
+): string[] {
+  // TODO: check region availability
+  const errors: string[] = [];
+  log.debug("Applying extension layer to Lambda functions...");
+  lambdas.forEach((lam) => {
+    const runtime: string = lam.runtime.name;
+    const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
+    const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
+    const accountId = useLayersFromAccount;
+
+    if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
+      log.debug(`Unsupported runtime: ${runtime}`);
+      return;
     }
+
+    const extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM, accountId);
+    log.debug(`Using extension layer: ${extensionLayerArn}`);
+    addLayer(extensionLayerArn, true, scope, lam, runtime);
   });
   return errors;
 }

@@ -25,6 +25,7 @@ import {
   DefaultDatadogProps,
   DatadogProps,
   Transport,
+  applyExtensionLayer,
 } from "./index";
 import { LambdaFunction } from "./interfaces";
 
@@ -85,7 +86,16 @@ export class DatadogLambda extends Construct {
         this.props.nodeLayerVersion,
         this.props.javaLayerVersion,
         this.props.dotnetLayerVersion,
-        this.props.extensionLayerVersion,
+        this.props.useLayersFromAccount,
+      );
+    }
+
+    if (baseProps.extensionLayerVersion !== undefined) {
+      applyExtensionLayer(
+        this.scope,
+        region,
+        extractedLambdaFunctions,
+        baseProps.extensionLayerVersion,
         this.props.useLayersFromAccount,
       );
     }
