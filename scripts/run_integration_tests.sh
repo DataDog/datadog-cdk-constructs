@@ -2,9 +2,9 @@
 
 # Usage - run commands from repo root:
 # To check if new changes to the library cause changes to any snapshots:
-#   ./scripts/run_integration_tests.sh
+#   aws-vault exec sso-serverless-sandbox-account-admin -- ./scripts/run_integration_tests.sh
 # To regenerate snapshots:
-#   UPDATE_SNAPSHOTS=true aws-vault exec serverless-sandbox-account-admin -- ./scripts/run_integration_tests.sh
+#   UPDATE_SNAPSHOTS=true aws-vault exec sso-serverless-sandbox-account-admin -- ./scripts/run_integration_tests.sh
 
 set -e
 
@@ -17,6 +17,7 @@ STACK_CONFIG_PATHS=(
     "typescript/lambda-singleton-function-stack.ts"
     "typescript/lambda-function-arm-stack.ts"
     "typescript/lambda-function-stack.ts"
+    "typescript/lambda-function-stack-legacy-datadog-api.ts"
     "typescript/lambda-nodejs-function-stack.ts"
     "typescript/lambda-python-function-stack.ts"
     "typescript/lambda-java-function-stack.ts"
