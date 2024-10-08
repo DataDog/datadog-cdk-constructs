@@ -7,45 +7,46 @@
  */
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { Stack, StackProps, App } from "aws-cdk-lib";
-import { DatadogLambda } from "../../src/index";
+import { DatadogLambda } from "../../../src/index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const lambdaJavaFunction = new lambda.Function(this, "HelloHandler", {
-      runtime: lambda.Runtime.JAVA_11,
-      code: lambda.Code.fromAsset(__dirname + "/../lambda"),
-      handler: "handleRequest",
+    const lambdaNodejsFunction = new NodejsFunction(this, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      entry: __dirname + "/../../lambda/example-lambda.js",
+      handler: "handler",
     });
 
     const restLogGroup = new LogGroup(this, "restLogGroup");
     new LambdaRestApi(this, "rest-test", {
-      handler: lambdaJavaFunction,
+      handler: lambdaNodejsFunction,
       deployOptions: {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
 
     const datadogLambda = new DatadogLambda(this, "Datadog", {
-      javaLayerVersion: 5,
-      extensionLayerVersion: 25,
+      nodeLayerVersion: 62,
+      extensionLayerVersion: 10,
       enableDatadogTracing: true,
       flushMetricsToLogs: true,
       sourceCodeIntegration: false,
       apiKey: "1234",
       site: "datadoghq.com",
     });
-    datadogLambda.addLambdaFunctions([lambdaJavaFunction]);
+    datadogLambda.addLambdaFunctions([lambdaNodejsFunction]);
     datadogLambda.addForwarderToNonLambdaLogGroups([restLogGroup]);
   }
 }
 
 const app = new App();
 const env = { account: "601427279990", region: "sa-east-1" };
-const stack = new ExampleStack(app, "lambda-java-function-stack", { env: env });
+const stack = new ExampleStack(app, "lambda-nodejs-function-stack", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();

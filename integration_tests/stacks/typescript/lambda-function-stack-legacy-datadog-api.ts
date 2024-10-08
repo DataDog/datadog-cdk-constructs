@@ -11,7 +11,7 @@ import { Stack, StackProps, App } from "aws-cdk-lib";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 // use the legacy Datadog class instead of the new DatadogLambda
-import { Datadog } from "../../src/index";
+import { Datadog } from "../../../src/index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
