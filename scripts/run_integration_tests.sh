@@ -21,6 +21,7 @@ STACK_CONFIG_PATHS=(
     "typescript/lambda-nodejs-function-stack.ts"
     "typescript/lambda-python-function-stack.ts"
     "typescript/lambda-java-function-stack.ts"
+    "python/lambda_python_stack.py"
 )
 
 SCRIPT_PATH=${BASH_SOURCE[0]}
@@ -73,21 +74,44 @@ printOutputAndExit() {
     fi
 }
 
+echo "Setting up for Python"
+VERSION=$(jq -r '.version' ../version.json)
+cp "$ROOT_DIR/dist/python/datadog-cdk-constructs-v2-$VERSION.tar.gz" stacks/python
+cd stacks/python
+virtualenv env && source env/bin/activate
+pip install -r requirements.txt
+pip install datadog-cdk-constructs-v2-$VERSION.tar.gz
+cd ../..
+
 for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     npx tsc --project tsconfig.json
     if [[ ${STACK_CONFIG_PATHS[i]} =~ ^typescript/ && ${STACK_CONFIG_PATHS[i]} =~ \.ts$ ]]; then
+        # Case 1. TypeScript
         # Strip the ".ts" suffix
         STACK_CONFIG_PATH_NO_EXT="${STACK_CONFIG_PATHS[i]%.ts}"
-        # Strip the "typescript/" suffix
+        # Strip the "typescript/" prefix
         STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#typescript/}"
         
         cdk synth --app testlib/integration_tests/stacks/$STACK_CONFIG_PATH_NO_EXT.js --json --quiet
+        RAW_CFN_TEMPLATE="cdk.out/$STACK_CONFIG_NAME.template.json"
+    elif [[ ${STACK_CONFIG_PATHS[i]} =~ ^python/ && ${STACK_CONFIG_PATHS[i]} =~ \.py$ ]]; then
+        # Case 2. Python
+        # Strip the ".py" suffix
+        STACK_CONFIG_PATH_NO_EXT="${STACK_CONFIG_PATHS[i]%.py}"
+        # Strip the "python/" prefix
+        STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#python/}"
+
+        cdk synth --app "python3 stacks/${STACK_CONFIG_PATHS[i]}" --json --quiet
+
+        # convert snake_case to PascalCase (e.g. lambda_python_stack to LambdaPythonStack) to match the 
+        # name of the generated json file for the Python stack
+        STACK_CONFIG_NAME_PASCAL_CASE=$(echo $STACK_CONFIG_NAME | perl -pe 's/(?:^|_)./uc($&)/ge;s/_//g')
+        RAW_CFN_TEMPLATE="cdk.out/$STACK_CONFIG_NAME_PASCAL_CASE.template.json"
     else
         echo "Invalid stack config path: ${STACK_CONFIG_PATHS[i]}"
         exit 1
     fi
 
-    RAW_CFN_TEMPLATE="cdk.out/$STACK_CONFIG_NAME.template.json"
     if [ ! -e "$RAW_CFN_TEMPLATE" ]; then
         touch "$RAW_CFN_TEMPLATE"
     fi
@@ -132,6 +156,12 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     perl -p -i -e 's/("resttestANY(?!Api).*")/"resttestANYXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
     perl -p -i -e 's/("resttest(?!.*(Deployment|Endpoint|Cloud|Account|XXXXXXXX)).*")/"resttestXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
     perl -p -i -e 's/("resttestEndpoint.*")/"resttestEndpointXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
+
+    # Normalize dd.commit.sha in DD_TAG
+    perl -p -i -e 's/(git.commit.sha:[a-f0-9]+)/git.commit.sha:XXXXXXXX/g' ${RAW_CFN_TEMPLATE}
+
+    # Normalize Git remote URL
+    perl -p -i -e 's/(github.com\/DataDog\/datadog-cdk-constructs.git)/github.com\/DataDog\/datadog-cdk-constructs/g' ${RAW_CFN_TEMPLATE}
 
     TEST_SNAPSHOT="snapshots/test-$STACK_CONFIG_NAME-snapshot.json"
     CORRECT_SNAPSHOT="snapshots/correct-$STACK_CONFIG_NAME-snapshot.json"
