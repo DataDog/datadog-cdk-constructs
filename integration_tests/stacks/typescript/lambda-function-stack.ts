@@ -10,7 +10,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Stack, StackProps, App } from "aws-cdk-lib";
 import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigateway";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { DatadogLambda } from "../../src/index";
+import { DatadogLambda } from "../../../src/index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {

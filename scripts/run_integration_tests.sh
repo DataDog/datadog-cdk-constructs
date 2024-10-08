@@ -8,10 +8,19 @@
 
 set -e
 
-# To add new tests create a new ts file in the 'integration_tests/stacks' directory, append its file name to the STACK_CONFIGS array.
+# To add new tests create a new ts file in the 'integration_tests/stacks' directory, append its file path to the STACK_CONFIG_PATHS array.
 # Note: Each ts file will have its respective snapshot built in the snapshots directory, e.g. lambda-function-stack.ts
 #       will generate both snapshots/test-lambda-function-stack-snapshot.json and snapshots/correct-lambda-function-stack-snapshot.json
-STACK_CONFIGS=("lambda-provided-stack" "lambda-provided-arm-stack" "lambda-singleton-function-stack" "lambda-function-arm-stack" "lambda-function-stack" "lambda-nodejs-function-stack" "lambda-python-function-stack" "lambda-java-function-stack")
+STACK_CONFIG_PATHS=(
+    "typescript/lambda-provided-stack.ts"
+    "typescript/lambda-provided-arm-stack.ts"
+    "typescript/lambda-singleton-function-stack.ts"
+    "typescript/lambda-function-arm-stack.ts"
+    "typescript/lambda-function-stack.ts"
+    "typescript/lambda-nodejs-function-stack.ts"
+    "typescript/lambda-python-function-stack.ts"
+    "typescript/lambda-java-function-stack.ts"
+)
 
 SCRIPT_PATH=${BASH_SOURCE[0]}
 SCRIPTS_DIR=$(dirname $SCRIPT_PATH)
@@ -54,20 +63,30 @@ printOutputAndExit() {
     done
 
     NEWLINE=$'\n'
-    if [ $ALL_TESTS_PASSED -eq ${#STACK_CONFIGS[@]} ]; then
-        echo "${NEWLINE}SUCCESS: ${ALL_TESTS_PASSED} out of ${#STACK_CONFIGS[@]} snapshot tests passed."
+    if [ $ALL_TESTS_PASSED -eq ${#STACK_CONFIG_PATHS[@]} ]; then
+        echo "${NEWLINE}SUCCESS: ${ALL_TESTS_PASSED} out of ${#STACK_CONFIG_PATHS[@]} snapshot tests passed."
         exit 0
     else
-        echo "${NEWLINE}FAIL: ${ALL_TESTS_PASSED} out of ${#STACK_CONFIGS[@]} snapshot tests passed."
+        echo "${NEWLINE}FAIL: ${ALL_TESTS_PASSED} out of ${#STACK_CONFIG_PATHS[@]} snapshot tests passed."
         exit 1
     fi
 }
 
-for ((i = 0; i < ${#STACK_CONFIGS[@]}; i++)); do
+for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     npx tsc --project tsconfig.json
-    cdk synth --app testlib/integration_tests/stacks/${STACK_CONFIGS[i]}.js --json --quiet
+    if [[ ${STACK_CONFIG_PATHS[i]} =~ ^typescript/ && ${STACK_CONFIG_PATHS[i]} =~ \.ts$ ]]; then
+        # Strip the ".ts" suffix
+        STACK_CONFIG_PATH_NO_EXT="${STACK_CONFIG_PATHS[i]%.ts}"
+        # Strip the "typescript/" suffix
+        STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#typescript/}"
+        
+        cdk synth --app testlib/integration_tests/stacks/$STACK_CONFIG_PATH_NO_EXT.js --json --quiet
+    else
+        echo "Invalid stack config path: ${STACK_CONFIG_PATHS[i]}"
+        exit 1
+    fi
 
-    RAW_CFN_TEMPLATE="cdk.out/${STACK_CONFIGS[i]}.template.json"
+    RAW_CFN_TEMPLATE="cdk.out/$STACK_CONFIG_NAME.template.json"
     if [ ! -e "$RAW_CFN_TEMPLATE" ]; then
         touch "$RAW_CFN_TEMPLATE"
     fi
@@ -113,8 +132,8 @@ for ((i = 0; i < ${#STACK_CONFIGS[@]}; i++)); do
     perl -p -i -e 's/("resttest(?!.*(Deployment|Endpoint|Cloud|Account|XXXXXXXX)).*")/"resttestXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
     perl -p -i -e 's/("resttestEndpoint.*")/"resttestEndpointXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
 
-    TEST_SNAPSHOT="snapshots/test-${STACK_CONFIGS[i]}-snapshot.json"
-    CORRECT_SNAPSHOT="snapshots/correct-${STACK_CONFIGS[i]}-snapshot.json"
+    TEST_SNAPSHOT="snapshots/test-$STACK_CONFIG_NAME-snapshot.json"
+    CORRECT_SNAPSHOT="snapshots/correct-$STACK_CONFIG_NAME-snapshot.json"
 
     cp ${RAW_CFN_TEMPLATE} ${TEST_SNAPSHOT}
     if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
@@ -127,7 +146,7 @@ for ((i = 0; i < ${#STACK_CONFIGS[@]}; i++)); do
     diff ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
     RETURN_CODE=$?
     set -e
-    compose_output $RETURN_CODE ${STACK_CONFIGS[i]}
+    compose_output $RETURN_CODE $STACK_CONFIG_NAME
 done
 
 printOutputAndExit
