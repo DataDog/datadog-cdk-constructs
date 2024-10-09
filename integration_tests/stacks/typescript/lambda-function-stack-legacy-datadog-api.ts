@@ -47,6 +47,6 @@ export class ExampleStack extends Stack {
 
 const app = new App();
 const env = { account: "601427279990", region: "sa-east-1" };
-const stack = new ExampleStack(app, "lambda-function-stack", { env: env });
+const stack = new ExampleStack(app, "lambda-function-stack-legacy-datadog-api", { env: env });
 console.log("Stack name: " + stack.stackName);
 app.synth();
