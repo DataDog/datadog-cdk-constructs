@@ -78,6 +78,9 @@ printOutputAndExit() {
     fi
 }
 
+echo "Setting up for TypeScript stacks"
+npx tsc --project tsconfig.json
+
 echo "Setting up for Python"
 VERSION=$(jq -r '.version' ../version.json)
 cp "$ROOT_DIR/dist/python/datadog-cdk-constructs-v2-$VERSION.tar.gz" stacks/python
@@ -88,7 +91,6 @@ pip install datadog-cdk-constructs-v2-$VERSION.tar.gz
 cd ../..
 
 for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
-    npx tsc --project tsconfig.json
     if [[ ${STACK_CONFIG_PATHS[i]} =~ ^typescript/ && ${STACK_CONFIG_PATHS[i]} =~ \.ts$ ]]; then
         # Case 1. TypeScript
         # Strip the ".ts" suffix
