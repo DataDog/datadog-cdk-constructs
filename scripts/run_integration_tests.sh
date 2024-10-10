@@ -43,6 +43,10 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 
 cd $INTEGRATION_TESTS_DIR
 
+# Remove snapshots generated from previous test runs
+rm -rf cdk.out
+rm -f snapshots/test-*-snapshot.json
+
 OUTPUT_ARRAY=("====================================")
 ALL_TESTS_PASSED=0
 compose_output() {
@@ -172,12 +176,18 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
         cp ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
     fi
 
-    echo "Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}"
-    set +e # Don't exit right away if there is a diff in snapshots
-    diff ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
-    RETURN_CODE=$?
-    set -e
+    if [ ! -s "$TEST_SNAPSHOT" ]; then
+        echo "The snapshot is empty."
+        RETURN_CODE=1
+    else
+        echo "Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}"
+        set +e # Don't exit right away if there is a diff in snapshots
+        diff ${TEST_SNAPSHOT} ${CORRECT_SNAPSHOT}
+        RETURN_CODE=$?
+        set -e
+    fi
     compose_output $RETURN_CODE $STACK_CONFIG_NAME
+
 done
 
 printOutputAndExit
