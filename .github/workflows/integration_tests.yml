@@ -27,6 +27,9 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install
 
+      - name: Build
+        run: yarn build
+
       - name: Install CDK CLI
         run: sudo yarn global add aws-cdk --prefix /usr/local
 
