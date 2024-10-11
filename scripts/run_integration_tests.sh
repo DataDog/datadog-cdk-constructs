@@ -22,6 +22,7 @@ STACK_CONFIG_PATHS=(
     "typescript/lambda-python-function-stack.ts"
     "typescript/lambda-java-function-stack.ts"
     "python/lambda_python_stack.py"
+    "go/lambda_go_stack.go"
 )
 
 SCRIPT_PATH=${BASH_SOURCE[0]}
@@ -44,7 +45,7 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 cd $INTEGRATION_TESTS_DIR
 
 # Remove snapshots generated from previous test runs
-rm -rf cdk.out
+rm -rf cdk.out stacks/go/cdk.out
 rm -f snapshots/test-*-snapshot.json
 
 OUTPUT_ARRAY=("====================================")
@@ -78,6 +79,11 @@ printOutputAndExit() {
     fi
 }
 
+snake_case_to_pascal_case() {
+  local snake_case="$1"
+  echo "$snake_case" | perl -pe 's/(?:^|_)./uc($&)/ge;s/_//g'
+}
+
 echo "Setting up for TypeScript stacks"
 npx tsc --project tsconfig.json
 
@@ -88,6 +94,12 @@ cd stacks/python
 virtualenv env && source env/bin/activate
 pip install -r requirements.txt
 pip install datadog-cdk-constructs-v2-$VERSION.tar.gz
+cd ../..
+
+echo "Setting up for Go"
+cp -r ../dist/go/ddcdkconstruct stacks/go
+cd stacks/go
+go get
 cd ../..
 
 for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
@@ -111,8 +123,22 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
 
         # convert snake_case to PascalCase (e.g. lambda_python_stack to LambdaPythonStack) to match the 
         # name of the generated json file for the Python stack
-        STACK_CONFIG_NAME_PASCAL_CASE=$(echo $STACK_CONFIG_NAME | perl -pe 's/(?:^|_)./uc($&)/ge;s/_//g')
+        STACK_CONFIG_NAME_PASCAL_CASE=$(snake_case_to_pascal_case "$STACK_CONFIG_NAME")
         RAW_CFN_TEMPLATE="cdk.out/$STACK_CONFIG_NAME_PASCAL_CASE.template.json"
+    elif [[ ${STACK_CONFIG_PATHS[i]} =~ ^go/ && ${STACK_CONFIG_PATHS[i]} =~ \.go$ ]]; then
+        # Case 3. Go
+        # Strip the ".go" suffix
+        STACK_CONFIG_PATH_NO_EXT="${STACK_CONFIG_PATHS[i]%.go}"
+        # Strip the "go/" prefix
+        STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#go/}"
+
+        cd stacks/go
+        cdk synth --app "go run $STACK_CONFIG_NAME.go" --json --quiet
+        cd ../..
+        # convert snake_case to PascalCase (e.g. lambda_python_stack to LambdaPythonStack) to match the 
+        # name of the generated json file for the Go stack
+        STACK_CONFIG_NAME_PASCAL_CASE=$(snake_case_to_pascal_case "$STACK_CONFIG_NAME")
+        RAW_CFN_TEMPLATE="stacks/go/cdk.out/$STACK_CONFIG_NAME_PASCAL_CASE.template.json"
     else
         echo "Invalid stack config path: ${STACK_CONFIG_PATHS[i]}"
         exit 1
