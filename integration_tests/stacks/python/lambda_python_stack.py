@@ -1,5 +1,5 @@
 from constructs import Construct
-from datadog_cdk_constructs_v2 import Datadog, DatadogProps
+from datadog_cdk_constructs_v2 import DatadogLambda, DatadogLambdaProps
 from aws_cdk import App
 
 from lambda_python_stack_base import LambdaPythonStackBase
@@ -8,7 +8,7 @@ class LambdaPythonStack(LambdaPythonStackBase):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        datadog = Datadog(
+        datadog = DatadogLambda(
             self,
             "Datadog",
             dotnet_layer_version=15,
@@ -23,8 +23,8 @@ class LambdaPythonStack(LambdaPythonStackBase):
             site="datadoghq.com",
         )
         
-        # Ensure DatadogProps can be imported properly
-        props = DatadogProps()
+        # Ensure DatadogLambdaProps can be imported properly
+        props = DatadogLambdaProps()
         datadog.add_lambda_functions(self.lambdaFunctions)
 
 app = App()

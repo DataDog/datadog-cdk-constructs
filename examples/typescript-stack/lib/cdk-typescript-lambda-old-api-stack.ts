@@ -1,15 +1,15 @@
 import { StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { DatadogLambda, DatadogLambdaProps } from "datadog-cdk-constructs-v2";
+import { Datadog, DatadogProps } from "datadog-cdk-constructs-v2";
 import { CdkTypeScriptStackBase } from "./cdk-typescript-stack-base";
 
-export class CdkTypeScriptStack extends CdkTypeScriptStackBase {
+export class CdkTypeScriptLambdaOldApiStack extends CdkTypeScriptStackBase {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    console.log("Instrumenting Lambda Functions in TypeScript stack with Datadog");
+    console.log("Instrumenting Lambda Functions in TypeScript stack using the old Datadog Lambda API");
 
-    const datadogLambdaProps: DatadogLambdaProps = {
+    const datadogProps: DatadogProps = {
       dotnetLayerVersion: 15,
       nodeLayerVersion: 108,
       pythonLayerVersion: 89,
@@ -22,7 +22,7 @@ export class CdkTypeScriptStack extends CdkTypeScriptStackBase {
       site: "datadoghq.com",
     };
 
-    const datadog = new DatadogLambda(this, "Datadog", datadogLambdaProps);
+    const datadog = new Datadog(this, "Datadog", datadogProps);
 
     datadog.addLambdaFunctions(this.lambdaFunctions);
   }

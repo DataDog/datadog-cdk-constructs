@@ -19,11 +19,11 @@ import {
   addForwarderToLogGroups,
   applyEnvVariables,
   TagKeys,
-  DatadogStrictProps,
+  DatadogLambdaStrictProps,
   setGitEnvironmentVariables,
   setDDEnvVariables,
-  DefaultDatadogProps,
-  DatadogProps,
+  DatadogLambdaDefaultProps,
+  DatadogLambdaProps,
   Transport,
 } from "./index";
 import { LambdaFunction } from "./interfaces";
@@ -32,9 +32,10 @@ const versionJson = require("../version.json");
 
 export class DatadogLambda extends Construct {
   scope: Construct;
-  props: DatadogProps;
+  props: DatadogLambdaProps;
   transport: Transport;
-  constructor(scope: Construct, id: string, props: DatadogProps) {
+
+  constructor(scope: Construct, id: string, props: DatadogLambdaProps) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() == "true") {
       log.setLevel("debug");
     }
@@ -59,7 +60,7 @@ export class DatadogLambda extends Construct {
   public addLambdaFunctions(lambdaFunctions: LambdaFunction[], construct?: Construct): void {
     // baseProps contains all properties set by the user, with default values for properties
     // defined in DefaultDatadogProps (if not set by user)
-    const baseProps: DatadogStrictProps = handleSettingPropDefaults(this.props);
+    const baseProps: DatadogLambdaStrictProps = handleSettingPropDefaults(this.props);
 
     const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
 
@@ -160,7 +161,7 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]): v
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: DatadogProps): void {
+function setTags(lambdaFunctions: lambda.Function[], props: DatadogLambdaProps): void {
   log.debug(`Adding datadog tags`);
   lambdaFunctions.forEach((functionName) => {
     if (props.forwarderArn) {
@@ -214,7 +215,7 @@ function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction
   return fn.hasOwnProperty("lambdaFunction");
 }
 
-export function validateProps(props: DatadogProps, apiKeyArnOverride = false): void {
+export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
   log.debug("Validating props...");
 
   checkForMultipleApiKeys(props, apiKeyArnOverride);
@@ -268,7 +269,7 @@ export function validateProps(props: DatadogProps, apiKeyArnOverride = false): v
   }
 }
 
-export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride = false): void {
+export function checkForMultipleApiKeys(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
   let multipleApiKeysMessage;
   const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
   if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
@@ -286,7 +287,7 @@ export function checkForMultipleApiKeys(props: DatadogProps, apiKeyArnOverride =
   }
 }
 
-export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictProps {
+export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLambdaStrictProps {
   let addLayers = props.addLayers;
   let enableDatadogTracing = props.enableDatadogTracing;
   let enableDatadogASM = props.enableDatadogASM;
@@ -301,51 +302,59 @@ export function handleSettingPropDefaults(props: DatadogProps): DatadogStrictPro
   const extensionLayerVersion = props.extensionLayerVersion;
 
   if (addLayers === undefined) {
-    log.debug(`No value provided for addLayers, defaulting to ${DefaultDatadogProps.addLayers}`);
-    addLayers = DefaultDatadogProps.addLayers;
+    log.debug(`No value provided for addLayers, defaulting to ${DatadogLambdaDefaultProps.addLayers}`);
+    addLayers = DatadogLambdaDefaultProps.addLayers;
   }
   if (enableDatadogTracing === undefined) {
-    log.debug(`No value provided for enableDatadogTracing, defaulting to ${DefaultDatadogProps.enableDatadogTracing}`);
-    enableDatadogTracing = DefaultDatadogProps.enableDatadogTracing;
+    log.debug(
+      `No value provided for enableDatadogTracing, defaulting to ${DatadogLambdaDefaultProps.enableDatadogTracing}`,
+    );
+    enableDatadogTracing = DatadogLambdaDefaultProps.enableDatadogTracing;
   }
   if (enableDatadogASM === undefined) {
-    log.debug(`No value provided for enableDatadogASM, defaulting to ${DefaultDatadogProps.enableDatadogASM}`);
-    enableDatadogASM = DefaultDatadogProps.enableDatadogASM;
+    log.debug(`No value provided for enableDatadogASM, defaulting to ${DatadogLambdaDefaultProps.enableDatadogASM}`);
+    enableDatadogASM = DatadogLambdaDefaultProps.enableDatadogASM;
   }
   if (enableMergeXrayTraces === undefined) {
     log.debug(
-      `No value provided for enableMergeXrayTraces, defaulting to ${DefaultDatadogProps.enableMergeXrayTraces}`,
+      `No value provided for enableMergeXrayTraces, defaulting to ${DatadogLambdaDefaultProps.enableMergeXrayTraces}`,
     );
-    enableMergeXrayTraces = DefaultDatadogProps.enableMergeXrayTraces;
+    enableMergeXrayTraces = DatadogLambdaDefaultProps.enableMergeXrayTraces;
   }
   if (injectLogContext === undefined) {
-    log.debug(`No value provided for injectLogContext, defaulting to ${DefaultDatadogProps.injectLogContext}`);
-    injectLogContext = DefaultDatadogProps.injectLogContext;
+    log.debug(`No value provided for injectLogContext, defaulting to ${DatadogLambdaDefaultProps.injectLogContext}`);
+    injectLogContext = DatadogLambdaDefaultProps.injectLogContext;
   }
   if (logLevel === undefined) {
     log.debug(`No value provided for logLevel`);
   }
   if (enableDatadogLogs === undefined) {
-    log.debug(`No value provided for enableDatadogLogs, defaulting to ${DefaultDatadogProps.enableDatadogLogs}`);
-    enableDatadogLogs = DefaultDatadogProps.enableDatadogLogs;
+    log.debug(`No value provided for enableDatadogLogs, defaulting to ${DatadogLambdaDefaultProps.enableDatadogLogs}`);
+    enableDatadogLogs = DatadogLambdaDefaultProps.enableDatadogLogs;
   }
   if (captureLambdaPayload === undefined) {
-    log.debug(`No value provided for captureLambdaPayload, default to ${DefaultDatadogProps.captureLambdaPayload}`);
-    captureLambdaPayload = DefaultDatadogProps.captureLambdaPayload;
+    log.debug(
+      `No value provided for captureLambdaPayload, default to ${DatadogLambdaDefaultProps.captureLambdaPayload}`,
+    );
+    captureLambdaPayload = DatadogLambdaDefaultProps.captureLambdaPayload;
   }
   if (sourceCodeIntegration === undefined) {
-    log.debug(`No value provided for sourceCodeIntegration, default to ${DefaultDatadogProps.sourceCodeIntegration}`);
-    sourceCodeIntegration = DefaultDatadogProps.sourceCodeIntegration;
+    log.debug(
+      `No value provided for sourceCodeIntegration, default to ${DatadogLambdaDefaultProps.sourceCodeIntegration}`,
+    );
+    sourceCodeIntegration = DatadogLambdaDefaultProps.sourceCodeIntegration;
   }
 
   if (redirectHandler === undefined) {
-    log.debug(`No value provided for redirectHandler, default to ${DefaultDatadogProps.redirectHandler}`);
-    redirectHandler = DefaultDatadogProps.redirectHandler;
+    log.debug(`No value provided for redirectHandler, default to ${DatadogLambdaDefaultProps.redirectHandler}`);
+    redirectHandler = DatadogLambdaDefaultProps.redirectHandler;
   }
 
   if (grantSecretReadAccess === undefined) {
-    log.debug(`No value provided for grantSecretReadAccess, default to ${DefaultDatadogProps.grantSecretReadAccess}`);
-    grantSecretReadAccess = DefaultDatadogProps.grantSecretReadAccess;
+    log.debug(
+      `No value provided for grantSecretReadAccess, default to ${DatadogLambdaDefaultProps.grantSecretReadAccess}`,
+    );
+    grantSecretReadAccess = DatadogLambdaDefaultProps.grantSecretReadAccess;
   }
 
   return {

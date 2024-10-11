@@ -48,8 +48,38 @@ func NewAppStackWithoutDatadog(scope constructs.Construct, id *string, props *Ap
 	return stack, myFunction
 }
 
-// Creates a stack with Datadog integration set up
-func NewAppStackWithDatadog(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
+// Creates a stack with Datadog integration set up, using the new API (DatadogLambda, DatadogLambdaProps)
+func NewAppStackWithDatadogLambda(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
+	stack, lambdaFunction := NewAppStackWithoutDatadog(scope, &id, props)
+
+	// Set up Datadog integration
+	datadog := ddcdkconstruct.NewDatadogLambda(
+		stack,
+		jsii.String("Datadog"),
+		&ddcdkconstruct.DatadogLambdaProps{
+			NodeLayerVersion:      jsii.Number(113),
+			PythonLayerVersion:    jsii.Number(97),
+			JavaLayerVersion:      jsii.Number(21),
+			DotnetLayerVersion:    jsii.Number(15),
+			AddLayers:             jsii.Bool(true),
+			ExtensionLayerVersion: jsii.Number(62),
+			FlushMetricsToLogs:    jsii.Bool(true),
+			Site:                  jsii.String("datadoghq.com"),
+			ApiKey:                jsii.String(os.Getenv("DD_API_KEY")),
+			EnableDatadogTracing:  jsii.Bool(true),
+			EnableMergeXrayTraces: jsii.Bool(true),
+			EnableDatadogLogs:     jsii.Bool(true),
+			InjectLogContext:      jsii.Bool(true),
+			LogLevel:              jsii.String("debug"),
+		})
+	datadog.AddLambdaFunctions(&[]interface{}{lambdaFunction}, nil)
+
+	return stack
+}
+
+// Creates a stack with Datadog integration set up, using the old API (Datadog, DatadogProps) to ensure
+// backward compatibility. Users are recommended to use the new API.
+func NewAppStackWithDatadogOldApi(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
 	stack, lambdaFunction := NewAppStackWithoutDatadog(scope, &id, props)
 
 	// Set up Datadog integration
@@ -82,7 +112,13 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	NewAppStackWithDatadog(app, "AppStack", &AppStackProps{
+	NewAppStackWithDatadogLambda(app, "CdkGoStack", &AppStackProps{
+		awscdk.StackProps{
+			Env: env(),
+		},
+	})
+	
+    NewAppStackWithDatadogOldApi(app, "CdkGoLambdaOldApiStack", &AppStackProps{
 		awscdk.StackProps{
 			Env: env(),
 		},

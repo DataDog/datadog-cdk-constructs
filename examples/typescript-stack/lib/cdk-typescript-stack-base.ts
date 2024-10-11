@@ -6,7 +6,7 @@ import { Function } from "aws-cdk-lib/aws-lambda";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { Construct } from "constructs";
 
-export class CdkTypeScriptStackBase extends Stack {
+export abstract class CdkTypeScriptStackBase extends Stack {
   protected lambdaFunctions: lambda.Function[];
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);

@@ -1,13 +1,13 @@
 from constructs import Construct
-from datadog_cdk_constructs_v2 import DatadogLambda, DatadogLambdaProps
+from datadog_cdk_constructs_v2 import Datadog, DatadogProps
 import os
 from cdk_python.cdk_python_stack_base import CdkPythonStackBase
 
-class CdkPythonStack(CdkPythonStackBase):
+class CdkPythonLambdaOldApiStack(CdkPythonStackBase):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        datadog = DatadogLambda(
+        datadog = Datadog(
             self,
             "Datadog",
             dotnet_layer_version=15,
@@ -22,6 +22,6 @@ class CdkPythonStack(CdkPythonStackBase):
             site="datadoghq.com",
         )
         
-        # Ensure DatadogLambdaProps can be imported properly
-        props = DatadogLambdaProps()
+        # Ensure DatadogProps can be imported properly
+        props = DatadogProps()
         datadog.add_lambda_functions(self.lambdaFunctions)
