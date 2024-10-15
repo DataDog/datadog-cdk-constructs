@@ -27,7 +27,7 @@ export enum RuntimeType {
   UNSUPPORTED,
 }
 
-export const DefaultDatadogProps = {
+export const DatadogLambdaDefaultProps = {
   addLayers: true,
   enableDatadogTracing: true,
   enableDatadogASM: false,
@@ -39,6 +39,12 @@ export const DefaultDatadogProps = {
   redirectHandler: true,
   grantSecretReadAccess: true,
 };
+
+/**
+ * For backward compatibility. It's recommended to use DatadogLambdaDefaultProps for
+ * users who want to add Datadog monitoring for Lambda functions.
+ */
+export const DatadogDefaultProps = DatadogLambdaDefaultProps;
 
 export enum TagKeys {
   CDK = "dd_cdk_construct",

@@ -7,15 +7,16 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-// Creates a stack with Datadog integration using the new API (DatadogLambda, DatadogLambdaProps)
-func NewAppStackWithDatadogLambda(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
+// Creates a stack with Datadog integration set up, using the old API (Datadog, DatadogProps) to ensure
+// backward compatibility. Users are recommended to use the new API (DatadogLambda, DatadogLambdaProps).
+func NewAppStackWithDatadogOldApi(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
 	stack, lambdaFunction := NewAppStackWithoutDatadog(scope, &id, props)
 
 	// Set up Datadog integration
-	datadog := ddcdkconstruct.NewDatadogLambda(
+	datadog := ddcdkconstruct.NewDatadog(
 		stack,
 		jsii.String("Datadog"),
-		&ddcdkconstruct.DatadogLambdaProps{
+		&ddcdkconstruct.DatadogProps{
 			NodeLayerVersion:      jsii.Number(113),
 			PythonLayerVersion:    jsii.Number(97),
 			JavaLayerVersion:      jsii.Number(21),
@@ -35,4 +36,3 @@ func NewAppStackWithDatadogLambda(scope constructs.Construct, id string, props *
 	datadog.AddLambdaFunctions(&[]interface{}{lambdaFunction}, nil)
 	return stack
 }
-

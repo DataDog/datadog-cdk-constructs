@@ -9,7 +9,7 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
-export interface DatadogProps {
+export interface DatadogLambdaProps {
   readonly dotnetLayerVersion?: number;
   readonly pythonLayerVersion?: number;
   readonly nodeLayerVersion?: number;
@@ -48,10 +48,16 @@ export interface DatadogProps {
   readonly useLayersFromAccount?: string;
 }
 
-/*
- * Makes fields shared with DefaultDatadogProps (in constants file) required.
+/**
+ * For backward compatibility. It's recommended to use DatadogLambdaProps for
+ * users who want to add Datadog monitoring for Lambda functions.
  */
-export interface DatadogStrictProps {
+export interface DatadogProps extends DatadogLambdaProps {}
+
+/*
+ * Makes fields shared with DefaultDatadogLambdaProps (in constants file) required.
+ */
+export interface DatadogLambdaStrictProps {
   readonly addLayers: boolean;
   readonly enableDatadogLogs: boolean;
   readonly captureLambdaPayload: boolean;
@@ -75,6 +81,12 @@ export interface DatadogStrictProps {
   readonly sourceCodeIntegration?: boolean;
   readonly redirectHandler?: boolean;
 }
+
+/**
+ * For backward compatibility. It's recommended to use DatadogLambdaStrictProps for
+ * users who want to add Datadog monitoring for Lambda functions.
+ */
+export interface DatadogStrictProps extends DatadogLambdaStrictProps {}
 
 export interface Runtime {
   readonly name: string;
