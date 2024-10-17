@@ -195,7 +195,7 @@ describe("applyLayers", () => {
     });
   });
 
-  it("does not add layers when addLayers is false", () => {
+  it("does not add runtime layers when addLayers is false", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -209,7 +209,6 @@ describe("applyLayers", () => {
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: 80,
-      extensionLayerVersion: 23,
       apiKey: "1234",
       addLayers: false,
     });

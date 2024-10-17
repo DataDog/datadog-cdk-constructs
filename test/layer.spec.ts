@@ -68,6 +68,32 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds an extension layer when addLayers is false", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      addLayers: false,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`],
+    });
+  });
+
   it("adds adds the ARM suffix to only the Extension layer", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
