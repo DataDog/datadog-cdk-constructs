@@ -97,3 +97,5 @@ export interface Node {
 }
 
 export type LambdaFunction = lambda.Function | lambda.SingletonFunction;
+
+export interface DatadogStepFunctionsProps {}
