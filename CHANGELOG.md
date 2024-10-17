@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.17.0...v2-1.18.0) (2024-10-17)
+
+
+### Features
+
+* Decouple `extensionLayerVersion` from `addLayers` ([#303](https://github.com/DataDog/datadog-cdk-constructs/issues/303)) ([db1738f](https://github.com/DataDog/datadog-cdk-constructs/commit/db1738fc5c461f399077de2089b9f5efce24476b))
+
 ## [1.17.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.16.1...v2-1.17.0) (2024-10-16)
 
 ### [1.16.1](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.16.0...v2-1.16.1) (2024-09-09)
