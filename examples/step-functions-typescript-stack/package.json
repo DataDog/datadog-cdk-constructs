@@ -1,0 +1,20 @@
+{
+  "name": "typescript-stack",
+  "version": "1.0.0",
+  "bin": {
+    "cdk-typescript": "bin/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.8",
+    "aws-cdk": "^2.134.0",
+    "ts-node": "^10.9.1",
+    "typescript": "~5.2.2"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-lambda-go-alpha": "^2.134.0-alpha.0",
+    "@aws-cdk/aws-lambda-python-alpha": "^2.134.0-alpha.0",
+    "aws-cdk-lib": "^2.134.0",
+    "constructs": "^10.3.0",
+    "datadog-cdk-constructs-v2": "^1.15.0"
+  }
+}
