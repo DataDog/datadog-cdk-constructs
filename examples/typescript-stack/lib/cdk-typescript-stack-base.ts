@@ -1,9 +1,6 @@
-import { GoFunction } from "@aws-cdk/aws-lambda-go-alpha";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as apigwv2 from "aws-cdk-lib/aws-apigatewayv2";
-import { BundlingOutput, Duration, Stack, StackProps } from "aws-cdk-lib";
+import { Duration, Stack, StackProps } from "aws-cdk-lib";
 import { Function } from "aws-cdk-lib/aws-lambda";
-import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { Construct } from "constructs";
 
 export abstract class CdkTypeScriptStackBase extends Stack {
@@ -14,7 +11,7 @@ export abstract class CdkTypeScriptStackBase extends Stack {
     console.log("Creating Hello World TypeScript stack");
 
     const helloNode = new Function(this, "hello-node", {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_LATEST,
       memorySize: 256,
       timeout: Duration.seconds(10),
       code: lambda.Code.fromAsset("../lambda/node", {
@@ -27,6 +24,7 @@ export abstract class CdkTypeScriptStackBase extends Stack {
       handler: "hello.lambda_handler",
     });
 
+    /*
     const helloPython = new Function(this, "hello-python", {
       runtime: lambda.Runtime.PYTHON_3_12,
       timeout: Duration.seconds(10),
@@ -73,9 +71,11 @@ export abstract class CdkTypeScriptStackBase extends Stack {
         },
       }),
     });
+    */
 
-    this.lambdaFunctions = [helloNode, helloPython, helloGo, helloDotnet];
+    this.lambdaFunctions = [helloNode];
 
+    /*
     const dotnetHttpIntegration = new HttpLambdaIntegration("GetDotnetIntegration", helloDotnet);
     const dotnetHttpApi = new apigwv2.HttpApi(this, "dotnetHttpApi");
     dotnetHttpApi.addRoutes({
@@ -83,5 +83,6 @@ export abstract class CdkTypeScriptStackBase extends Stack {
       methods: [apigwv2.HttpMethod.GET],
       integration: dotnetHttpIntegration,
     });
+    */
   }
 }
