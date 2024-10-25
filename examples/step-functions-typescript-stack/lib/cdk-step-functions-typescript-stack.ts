@@ -24,7 +24,7 @@ export class CdkStepFunctionsTypeScriptStack extends Stack {
       handler: "hello.lambda_handler",
     });
 
-    const stateMachine = new sfn.StateMachine(this, "MyStateMachine", {
+    const stateMachine = new sfn.StateMachine(this, "CdkTypeScriptTestStateMachine", {
       definitionBody: sfn.DefinitionBody.fromChainable(
         new tasks.LambdaInvoke(this, "MyLambdaTask", {
           lambdaFunction: helloLambdaFunction,
