@@ -69,15 +69,22 @@ export class DatadogLambda extends Construct {
       return;
     }
 
-    if (this.props.apiKeySecret !== undefined) {
-      grantReadLambdas(this.props.apiKeySecret, extractedLambdaFunctions);
-    } else if (this.props.apiKeySecretArn !== undefined && construct !== undefined && baseProps.grantSecretReadAccess) {
-      log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
-      grantReadLambdasFromSecretArn(construct, this.props.apiKeySecretArn, extractedLambdaFunctions);
-    }
-
     const region = extractedLambdaFunctions[0].env.region;
     log.debug(`Using region: ${region}`);
+
+    for (const lambdaFunction of extractedLambdaFunctions) {
+      if (this.props.apiKeySecret !== undefined) {
+        grantReadLambda(this.props.apiKeySecret, lambdaFunction);
+      } else if (
+        this.props.apiKeySecretArn !== undefined &&
+        construct !== undefined &&
+        baseProps.grantSecretReadAccess
+      ) {
+        log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
+        grantReadLambdaFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunction);
+      }
+    }
+
     if (baseProps.addLayers) {
       applyLayers(
         this.scope,
@@ -197,17 +204,13 @@ function setTags(lambdaFunctions: lambda.Function[], props: DatadogLambdaProps):
   });
 }
 
-function grantReadLambdas(secret: ISecret, lambdaFunctions: lambda.Function[]): void {
-  lambdaFunctions.forEach((functionName) => {
-    secret.grantRead(functionName);
-  });
+function grantReadLambda(secret: ISecret, lambdaFunction: lambda.Function): void {
+  secret.grantRead(lambdaFunction);
 }
 
-function grantReadLambdasFromSecretArn(construct: Construct, arn: string, lambdaFunctions: lambda.Function[]): void {
+function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaFunction: lambda.Function): void {
   const secret = Secret.fromSecretPartialArn(construct, "DatadogApiKeySecret", arn);
-  lambdaFunctions.forEach((functionName) => {
-    secret.grantRead(functionName);
-  });
+  secret.grantRead(lambdaFunction);
 }
 
 function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]): lambda.Function[] {
