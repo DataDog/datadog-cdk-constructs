@@ -34,7 +34,10 @@ export class CdkStepFunctionsTypeScriptStack extends Stack {
 
     console.log("Instrumenting Step Functions in TypeScript stack with Datadog");
 
-    const datadogSfn = new DatadogStepFunctions(this, "Datadog", {});
+    const datadogSfn = new DatadogStepFunctions(this, "Datadog", {
+      env: "dev",
+      forwarderArn: process.env.DD_FORWARDER_ARN,
+    });
     datadogSfn.addStateMachines([stateMachine]);
   }
 }

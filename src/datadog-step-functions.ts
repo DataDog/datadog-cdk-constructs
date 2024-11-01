@@ -11,7 +11,13 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { Construct } from "constructs";
+import log from "loglevel";
+import { addForwarderForStateMachine } from "./forwarder";
 import { DatadogStepFunctionsProps } from "./index";
+
+const unsupportedCaseErrorMessage =
+  "Step Function Instrumentation is not supported. \
+Please open a feature request in https://github.com/DataDog/datadog-cdk-constructs.";
 
 export class DatadogStepFunctions extends Construct {
   scope: Construct;
@@ -32,7 +38,13 @@ export class DatadogStepFunctions extends Construct {
   }
 
   private addStateMachine(stateMachine: sfn.StateMachine, _construct?: Construct) {
-    this.setUpLogging(stateMachine);
+    const logGroup = this.setUpLogging(stateMachine);
+
+    if (this.props.forwarderArn !== undefined) {
+      addForwarderForStateMachine(this, stateMachine, this.props.forwarderArn, logGroup);
+    } else {
+      log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
+    }
   }
 
   /**
@@ -41,17 +53,17 @@ export class DatadogStepFunctions extends Construct {
    * 2. Set includeExecutionData to true
    * 3. Set destination log group (if not set already)
    * 4. Add permissions to the state machine role to log to CloudWatch Logs
+   *
+   * Also extracts the log group if it exists.
+   *
+   * @returns the existing or newly created log group
    */
-  private setUpLogging(stateMachine: sfn.StateMachine) {
+  private setUpLogging(stateMachine: sfn.StateMachine): logs.ILogGroup {
     const cfnStateMachine = stateMachine.node.defaultChild as sfn.CfnStateMachine;
 
     if (Token.isUnresolved(cfnStateMachine.loggingConfiguration)) {
       // loggingConfiguration is IResolvable, i.e. an unresolved token
-      throw new Error(
-        `loggingConfiguration is an an unresolved token. \
-Step Function Instrumentation is not supported. \
-Please open a feature request in https://github.com/DataDog/datadog-cdk-constructs.`,
-      );
+      throw new Error(`loggingConfiguration is an an unresolved token. ${unsupportedCaseErrorMessage}`);
     }
 
     // Set log level and includeExecutionData
@@ -61,10 +73,11 @@ Please open a feature request in https://github.com/DataDog/datadog-cdk-construc
       includeExecutionData: true,
     };
 
+    let logGroup: logs.ILogGroup;
     // Set destination log group if not set
     if (!cfnStateMachine.loggingConfiguration.destinations) {
       const logGroupName = buildLogGroupName(stateMachine, this.props.env);
-      const logGroup = new logs.LogGroup(stateMachine, "LogGroup", {
+      logGroup = new logs.LogGroup(stateMachine, "LogGroup", {
         retention: logs.RetentionDays.ONE_WEEK,
         logGroupName: logGroupName,
       });
@@ -79,6 +92,33 @@ Please open a feature request in https://github.com/DataDog/datadog-cdk-construc
           } as sfn.CfnStateMachine.LogDestinationProperty,
         ],
       };
+    } else {
+      // Extract log group from logging config
+      const destinations = cfnStateMachine.loggingConfiguration.destinations;
+      if (!this.isLogDestinationPropertyArray(destinations)) {
+        throw new Error(`destinations is not an array. ${unsupportedCaseErrorMessage}`);
+      }
+
+      const destination = destinations[0];
+      if (!("cloudWatchLogsLogGroup" in destination)) {
+        throw new Error(`cloudWatchLogsLogGroup is not in destination. ${unsupportedCaseErrorMessage}`);
+      }
+
+      const logGroupConfig = destination.cloudWatchLogsLogGroup;
+      if (logGroupConfig === undefined) {
+        throw new Error(`cloudWatchLogsLogGroup is undefined. ${unsupportedCaseErrorMessage}`);
+      }
+
+      if (!("logGroupArn" in logGroupConfig)) {
+        throw new Error(`logGroupArn is not in cloudWatchLogsLogGroup. ${unsupportedCaseErrorMessage}`);
+      }
+
+      const logGroupArn = logGroupConfig.logGroupArn;
+      if (logGroupArn === undefined) {
+        throw new Error(`logGroupArn is undefined. ${unsupportedCaseErrorMessage}`);
+      }
+
+      logGroup = logs.LogGroup.fromLogGroupArn(this, "LogGroup", logGroupArn);
     }
 
     // Configure state machine role to have permission to log to CloudWatch Logs, following
@@ -99,6 +139,20 @@ Please open a feature request in https://github.com/DataDog/datadog-cdk-construc
         ],
         resources: ["*"],
       }),
+    );
+
+    return logGroup;
+  }
+
+  private isLogDestinationPropertyArray(
+    destinations: any,
+  ): destinations is sfn.CfnStateMachine.LogDestinationProperty[] {
+    return (
+      Array.isArray(destinations) &&
+      destinations.every(
+        (destination) =>
+          typeof destination === "object" && destination !== null && "cloudWatchLogsLogGroup" in destination,
+      )
     );
   }
 }

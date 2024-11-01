@@ -4,10 +4,12 @@ import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigatewa
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 
+import * as sfn from "aws-cdk-lib/aws-stepfunctions";
+import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import { findDatadogSubscriptionFilters } from "./test-utils";
-import { addForwarder, addForwarderToLogGroups } from "../src/forwarder";
+import { addForwarder, addForwarderToLogGroups, addForwarderForStateMachine } from "../src/forwarder";
 
-describe("Forwarder", () => {
+describe("Forwarder for Lambda", () => {
   it("applies the subscription filter correctly", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -258,6 +260,38 @@ describe("Forwarder", () => {
     });
     Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "arn:test:forwarder:sa-east-1:12345678:2",
+      FilterPattern: "",
+    });
+  });
+});
+
+describe("Forwarder for State Machine", () => {
+  it("applies the subscription filter correctly", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-east-1",
+      },
+    });
+    const logGroup = new LogGroup(stack, "logGroup");
+    const nodeLambda = new lambda.Function(stack, "NodeHandler", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const stateMachine = new sfn.StateMachine(stack, "CdkTypeScriptTestStateMachine", {
+      definitionBody: sfn.DefinitionBody.fromChainable(
+        new tasks.LambdaInvoke(stack, "MyLambdaTask", {
+          lambdaFunction: nodeLambda,
+        }).next(new sfn.Succeed(stack, "GreetedWorld")),
+      ),
+      logs: {
+        destination: logGroup,
+      },
+    });
+    addForwarderForStateMachine(stack, stateMachine, "arn:test:forwarder:sa-east-1:12345678:1", logGroup);
+    Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
+      DestinationArn: "arn:test:forwarder:sa-east-1:12345678:1",
       FilterPattern: "",
     });
   });
