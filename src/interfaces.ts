@@ -98,4 +98,6 @@ export interface Node {
 
 export type LambdaFunction = lambda.Function | lambda.SingletonFunction;
 
-export interface DatadogStepFunctionsProps {}
+export interface DatadogStepFunctionsProps {
+  readonly env?: string;
+}
