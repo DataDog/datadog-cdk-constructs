@@ -11,6 +11,7 @@ import { Names } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { FilterPattern, ILogGroup } from "aws-cdk-lib/aws-logs";
 import { LambdaDestination } from "aws-cdk-lib/aws-logs-destinations";
+import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { SUBSCRIPTION_FILTER_PREFIX } from "./index";
@@ -39,6 +40,22 @@ export function addForwarder(
       destination: forwarderDestination,
       filterPattern: FilterPattern.allEvents(),
     });
+  });
+}
+
+export function addForwarderForStateMachine(
+  scope: Construct,
+  stateMachine: sfn.StateMachine,
+  forwarderArn: string,
+  logGroup: ILogGroup,
+): void {
+  const forwarder = getForwarder(scope, forwarderArn);
+  const forwarderDestination = new LambdaDestination(forwarder);
+  const subscriptionFilterName = generateSubscriptionFilterName(Names.uniqueId(stateMachine), forwarderArn);
+  log.debug(`Adding log subscription ${subscriptionFilterName} for ${stateMachine.node.path}`);
+  logGroup.addSubscriptionFilter(subscriptionFilterName, {
+    destination: forwarderDestination,
+    filterPattern: FilterPattern.allEvents(),
   });
 }
 

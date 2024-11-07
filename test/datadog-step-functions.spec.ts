@@ -4,7 +4,7 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { DatadogStepFunctions, buildLogGroupName } from "../src/datadog-step-functions";
 
 describe("DatadogStepFunctions", () => {
-  describe("updateLogConfig", () => {
+  describe("setUpLogging", () => {
     it("sets up log config if it's not set", () => {
       const stack = new Stack();
       const stateMachine = new sfn.StateMachine(stack, "StateMachine", {
