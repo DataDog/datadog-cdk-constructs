@@ -14,6 +14,7 @@ import { Construct } from "constructs";
 import log from "loglevel";
 import { addForwarderForStateMachine } from "./forwarder";
 import { DatadogStepFunctionsProps } from "./index";
+import { setTags } from "./tag";
 
 const unsupportedCaseErrorMessage =
   "Step Function Instrumentation is not supported. \
@@ -45,6 +46,8 @@ export class DatadogStepFunctions extends Construct {
     } else {
       log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
     }
+
+    setTags(stateMachine, this.props);
   }
 
   /**
