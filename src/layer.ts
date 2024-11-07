@@ -27,7 +27,7 @@ const layers: Map<string, lambda.ILayerVersion> = new Map();
 export function applyLayers(
   scope: Construct,
   region: string,
-  lambdas: lambda.Function[],
+  lam: lambda.Function,
   pythonLayerVersion?: number,
   nodeLayerVersion?: number,
   javaLayerVersion?: number,
@@ -37,59 +37,61 @@ export function applyLayers(
   // TODO: check region availability
   const errors: string[] = [];
   log.debug("Applying layers to Lambda functions...");
-  lambdas.forEach((lam) => {
-    const runtime: string = lam.runtime.name;
-    const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
-    const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
+  const runtime: string = lam.runtime.name;
+  const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
+  const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
 
-    if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
-      log.debug(`Unsupported runtime: ${runtime}`);
-      return;
-    }
+  if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
+    log.debug(`Unsupported runtime: ${runtime}`);
+    return errors;
+  }
 
-    const accountId = useLayersFromAccount;
-    let lambdaLayerArn;
-    switch (lambdaRuntimeType) {
-      case RuntimeType.PYTHON:
-        if (pythonLayerVersion === undefined) {
-          return handleLayerError(errors, lam.node.id, "Python", "python");
-        }
-        lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
-        log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
-        addLayer(lambdaLayerArn, false, scope, lam, runtime);
-        break;
+  const accountId = useLayersFromAccount;
+  let lambdaLayerArn;
+  switch (lambdaRuntimeType) {
+    case RuntimeType.PYTHON:
+      if (pythonLayerVersion === undefined) {
+        handleLayerError(errors, lam.node.id, "Python", "python");
+        return errors;
+      }
+      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
+      log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+      break;
 
-      case RuntimeType.NODE:
-        if (nodeLayerVersion === undefined) {
-          return handleLayerError(errors, lam.node.id, "Node.js", "node");
-        }
-        lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
-        log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
-        addLayer(lambdaLayerArn, false, scope, lam, runtime);
-        break;
+    case RuntimeType.NODE:
+      if (nodeLayerVersion === undefined) {
+        handleLayerError(errors, lam.node.id, "Node.js", "node");
+        return errors;
+      }
+      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
+      log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+      break;
 
-      case RuntimeType.JAVA:
-        if (javaLayerVersion === undefined) {
-          return handleLayerError(errors, lam.node.id, "Java", "java");
-        }
-        lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
-        log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
-        addLayer(lambdaLayerArn, false, scope, lam, runtime);
-        break;
+    case RuntimeType.JAVA:
+      if (javaLayerVersion === undefined) {
+        handleLayerError(errors, lam.node.id, "Java", "java");
+        return errors;
+      }
+      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
+      log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+      break;
 
-      case RuntimeType.DOTNET:
-        if (dotnetLayerVersion === undefined) {
-          return handleLayerError(errors, lam.node.id, ".NET", "dotnet");
-        }
-        lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
-        log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
-        addLayer(lambdaLayerArn, false, scope, lam, runtime);
-        break;
+    case RuntimeType.DOTNET:
+      if (dotnetLayerVersion === undefined) {
+        handleLayerError(errors, lam.node.id, ".NET", "dotnet");
+        return errors;
+      }
+      lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
+      log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+      break;
 
-      case RuntimeType.CUSTOM:
-        break;
-    }
-  });
+    case RuntimeType.CUSTOM:
+      break;
+  }
   return errors;
 }
 

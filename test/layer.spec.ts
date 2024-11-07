@@ -31,7 +31,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`],
     });
@@ -200,7 +200,7 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
     (hello as any).architecture = undefined;
-    const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`],
     });
@@ -230,9 +230,13 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
 
-    const errors = applyLayers(stack, stack.region, [hello1, hello2, hello3], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors1 = applyLayers(stack, stack.region, hello1, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors2 = applyLayers(stack, stack.region, hello2, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors3 = applyLayers(stack, stack.region, hello3, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
 
-    expect(errors.length).toEqual(0);
+    expect(errors1.length).toEqual(0);
+    expect(errors2.length).toEqual(0);
+    expect(errors3.length).toEqual(0);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:${NODE_LAYER_VERSION}`],
     });
@@ -256,7 +260,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const errors = applyLayers(stack, stack.region, [hello], PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
     });
@@ -394,14 +398,13 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errors = applyLayers(stack, stack.region, [hello1, hello2]);
+    const errors1 = applyLayers(stack, stack.region, hello1);
+    const errors2 = applyLayers(stack, stack.region, hello2);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
     });
-    expect(errors).toEqual([
-      getMissingLayerVersionErrorMsg("NodeHandler", "Node.js", "node"),
-      getMissingLayerVersionErrorMsg("PythonHandler", "Python", "python"),
-    ]);
+    expect(errors1).toEqual([getMissingLayerVersionErrorMsg("NodeHandler", "Node.js", "node")]);
+    expect(errors2).toEqual([getMissingLayerVersionErrorMsg("PythonHandler", "Python", "python")]);
     expect(logSpy).toHaveBeenCalledTimes(2);
     logSpy.mockRestore();
   });
@@ -426,15 +429,11 @@ describe("isGovCloud", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errors = applyLayers(
-      stack,
-      stack.region,
-      [pythonLambda, nodeLambda],
-      PYTHON_LAYER_VERSION,
-      NODE_LAYER_VERSION,
-    );
+    const errorsPython = applyLayers(stack, stack.region, pythonLambda, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errorsNode = applyLayers(stack, stack.region, nodeLambda, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
 
-    expect(errors.length).toEqual(0);
+    expect(errorsPython.length).toEqual(0);
+    expect(errorsNode.length).toEqual(0);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python39:${PYTHON_LAYER_VERSION}`,
