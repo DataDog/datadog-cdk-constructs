@@ -28,6 +28,7 @@ import {
   applyExtensionLayer,
 } from "./index";
 import { LambdaFunction } from "./interfaces";
+import { setTags } from "./tag";
 
 const versionJson = require("../version.json");
 
@@ -132,7 +133,7 @@ export class DatadogLambda extends Construct {
 
     applyEnvVariables(extractedLambdaFunctions, baseProps);
     setDDEnvVariables(extractedLambdaFunctions, this.props);
-    setTags(extractedLambdaFunctions, this.props);
+    setTagsForFunctions(extractedLambdaFunctions, this.props);
 
     this.transport.applyEnvVars(extractedLambdaFunctions);
 
@@ -178,28 +179,10 @@ export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]): v
   });
 }
 
-function setTags(lambdaFunctions: lambda.Function[], props: DatadogLambdaProps): void {
-  log.debug(`Adding datadog tags`);
-  lambdaFunctions.forEach((functionName) => {
+function setTagsForFunctions(lambdaFunctions: lambda.Function[], props: DatadogLambdaProps): void {
+  lambdaFunctions.forEach((lambdaFunction) => {
     if (props.forwarderArn) {
-      if (props.env) {
-        Tags.of(functionName).add(TagKeys.ENV, props.env);
-      }
-      if (props.service) {
-        Tags.of(functionName).add(TagKeys.SERVICE, props.service);
-      }
-      if (props.version) {
-        Tags.of(functionName).add(TagKeys.VERSION, props.version);
-      }
-      if (props.tags) {
-        const tagsArray = props.tags.split(",");
-        tagsArray.forEach((tag: string) => {
-          const [key, value] = tag.split(":");
-          if (key && value) {
-            Tags.of(functionName).add(key, value);
-          }
-        });
-      }
+      setTags(lambdaFunction, props);
     }
   });
 }
