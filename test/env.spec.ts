@@ -109,6 +109,7 @@ describe("applyEnvVariables", () => {
       enableDatadogASM: true,
       extensionLayerVersion: 50,
       apiKey: "test",
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
