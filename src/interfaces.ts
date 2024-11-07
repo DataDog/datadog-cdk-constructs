@@ -100,5 +100,8 @@ export type LambdaFunction = lambda.Function | lambda.SingletonFunction;
 
 export interface DatadogStepFunctionsProps {
   readonly env?: string;
+  readonly service?: string;
+  readonly version?: string;
   readonly forwarderArn?: string;
+  readonly tags?: string;
 }

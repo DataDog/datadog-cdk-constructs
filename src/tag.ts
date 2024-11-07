@@ -8,10 +8,14 @@
 
 import { Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import log from "loglevel";
-import { TagKeys, DatadogLambdaProps } from "./index";
+import { TagKeys, DatadogLambdaProps, DatadogStepFunctionsProps } from "./index";
 
-export function setTags(resource: lambda.Function, props: DatadogLambdaProps): void {
+export function setTags(
+  resource: lambda.Function | sfn.StateMachine,
+  props: DatadogLambdaProps | DatadogStepFunctionsProps,
+): void {
   log.debug(`Adding datadog tags`);
   if (props.env) {
     Tags.of(resource).add(TagKeys.ENV, props.env);

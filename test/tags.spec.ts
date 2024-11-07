@@ -1,7 +1,9 @@
 import { App, Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { DatadogLambda } from "../src/index";
+import * as sfn from "aws-cdk-lib/aws-stepfunctions";
+import { DatadogStepFunctions } from "../src/datadog-step-functions";
+import { DatadogLambda, DatadogStepFunctionsProps } from "../src/index";
 
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
@@ -152,6 +154,51 @@ describe("setTags for Lambda", () => {
         {
           Key: "dd_cdk_construct",
           Value: `v${versionJson.version}`,
+        },
+      ],
+    });
+  });
+});
+
+describe("setTags for Step Function", () => {
+  it("adds DD tags and custom tags", () => {
+    const stack = new Stack();
+    const stateMachine = new sfn.StateMachine(stack, "StateMachine", {
+      definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(stack, "PassState")),
+    });
+
+    const props: DatadogStepFunctionsProps = {
+      env: "dev",
+      service: "my-service",
+      version: "1.0.0",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
+      tags: "custom-tag-1:tag-value-1,custom-tag-2:tag-value-2",
+    };
+
+    const datadogSfn = new DatadogStepFunctions(stack, "DatadogStepFunctions", props);
+    datadogSfn.addStateMachines([stateMachine]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::StepFunctions::StateMachine", {
+      Tags: [
+        {
+          Key: "custom-tag-1",
+          Value: "tag-value-1",
+        },
+        {
+          Key: "custom-tag-2",
+          Value: "tag-value-2",
+        },
+        {
+          Key: "env",
+          Value: "dev",
+        },
+        {
+          Key: "service",
+          Value: "my-service",
+        },
+        {
+          Key: "version",
+          Value: "1.0.0",
         },
       ],
     });
