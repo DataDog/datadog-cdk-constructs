@@ -8,7 +8,7 @@ Use this example Python stack to try out the [datadog-cdk-constructs](https://gi
 1. Run `export DD_API_KEY=<DATADOG_API_KEY>` to set the Datadog API key in your shell session.
 1. Run `virtualenv env` to create a virtual environment.
 1. Run `source env/bin/activate` to activate the virtual environment.
-1. Run `pip install -r requirements.txt` install dependencies.
+1. Run `pip install -r requirements.txt` to install dependencies.
 1. Update the layer versions in [cdk_python/cdk_python_stack.py](https://github.com/DataDog/datadog-cdk-constructs/blob/d2f1f60b7e0594ae77dd76a7f5964bee651e8022/examples/python-stack/cdk_python/cdk_python_stack.py#L72-L74) with the latest releases:
    - Datadog Lambda Extension: https://github.com/DataDog/datadog-lambda-extension/releases
    - Python Layer: https://github.com/DataDog/datadog-lambda-python/releases
