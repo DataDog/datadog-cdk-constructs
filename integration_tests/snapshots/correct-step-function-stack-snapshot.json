@@ -1,0 +1,557 @@
+{
+ "Resources": {
+  "CdkTypeScriptTestChildStateMachineRole0F1740DA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.sa-east-1.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "custom-tag-1",
+      "Value": "tag-value-1"
+     },
+     {
+      "Key": "custom-tag-2",
+      "Value": "tag-value-2"
+     },
+     {
+      "Key": "env",
+      "Value": "dev"
+     },
+     {
+      "Key": "service",
+      "Value": "cdk-test-service"
+     },
+     {
+      "Key": "version",
+      "Value": "1.0.0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestChildStateMachine/Role/Resource"
+   }
+  },
+  "CdkTypeScriptTestChildStateMachineRoleDefaultPolicyD82888B3": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogDelivery",
+        "logs:CreateLogStream",
+        "logs:GetLogDelivery",
+        "logs:UpdateLogDelivery",
+        "logs:DeleteLogDelivery",
+        "logs:ListLogDeliveries",
+        "logs:PutLogEvents",
+        "logs:PutResourcePolicy",
+        "logs:DescribeResourcePolicies",
+        "logs:DescribeLogGroups"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CdkTypeScriptTestChildStateMachineRoleDefaultPolicyD82888B3",
+    "Roles": [
+     {
+      "Ref": "CdkTypeScriptTestChildStateMachineRole0F1740DA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestChildStateMachine/Role/DefaultPolicy/Resource"
+   }
+  },
+  "CdkTypeScriptTestChildStateMachineB7B7DE92": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": "{\"StartAt\":\"PassState\",\"States\":{\"PassState\":{\"Type\":\"Pass\",\"Next\":\"WaitState\"},\"WaitState\":{\"Type\":\"Wait\",\"Seconds\":1,\"Next\":\"SuccessState\"},\"SuccessState\":{\"Type\":\"Succeed\"}}}",
+    "LoggingConfiguration": {
+     "Destinations": [
+      {
+       "CloudWatchLogsLogGroup": {
+        "LogGroupArn": {
+         "Fn::GetAtt": [
+          "CdkTypeScriptTestChildStateMachineLogGroup6F1ED731",
+          "Arn"
+         ]
+        }
+       }
+      }
+     ],
+     "IncludeExecutionData": true,
+     "Level": "ALL"
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "CdkTypeScriptTestChildStateMachineRole0F1740DA",
+      "Arn"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "custom-tag-1",
+      "Value": "tag-value-1"
+     },
+     {
+      "Key": "custom-tag-2",
+      "Value": "tag-value-2"
+     },
+     {
+      "Key": "env",
+      "Value": "dev"
+     },
+     {
+      "Key": "service",
+      "Value": "cdk-test-service"
+     },
+     {
+      "Key": "version",
+      "Value": "1.0.0"
+     }
+    ]
+   },
+   "DependsOn": [
+    "CdkTypeScriptTestChildStateMachineRoleDefaultPolicyD82888B3",
+    "CdkTypeScriptTestChildStateMachineRole0F1740DA"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestChildStateMachine/Resource"
+   }
+  },
+  "CdkTypeScriptTestChildStateMachineLogGroup6F1ED731": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/vendedlogs/states/step-function-stack-CdkTypeScriptTestChildStateMachine-Logs-dev",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "custom-tag-1",
+      "Value": "tag-value-1"
+     },
+     {
+      "Key": "custom-tag-2",
+      "Value": "tag-value-2"
+     },
+     {
+      "Key": "env",
+      "Value": "dev"
+     },
+     {
+      "Key": "service",
+      "Value": "cdk-test-service"
+     },
+     {
+      "Key": "version",
+      "Value": "1.0.0"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestChildStateMachine/LogGroup/Resource"
+   }
+  },
+  "CdkTypeScriptTestChildStateMachineLogGroupDatadogSubscriptionFilterXXXXXXXX": {
+   "Type": "AWS::Logs::SubscriptionFilter",
+   "Properties": {
+    "DestinationArn": "arn:test:forwarder:sa-east-1:12345678:1",
+    "FilterPattern": "",
+    "LogGroupName": {
+     "Ref": "CdkTypeScriptTestChildStateMachineLogGroup6F1ED731"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestChildStateMachine/LogGroup/DatadogSubscriptionFilterXXXXXXXX/Resource"
+   }
+  },
+  "hellopythonServiceRoleEBA89F44": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/hello-python/ServiceRole/Resource"
+   }
+  },
+  "hellopython5270C3B7": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "\n      def handler(event, context):\n        return \"Hello, world!\"\n      "
+    },
+    "Environment": {
+     "Variables": {
+      "DD_LAMBDA_HANDLER": "index.handler",
+      "DD_TRACE_ENABLED": "true",
+      "DD_SERVERLESS_APPSEC_ENABLED": "true",
+      "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
+      "DD_MERGE_XRAY_TRACES": "false",
+      "DD_LOGS_INJECTION": "false",
+      "DD_SERVERLESS_LOGS_ENABLED": "true",
+      "DD_CAPTURE_LAMBDA_PAYLOAD": "false",
+      "DD_ENV": "dev",
+      "DD_SERVICE": "cdk-test-service",
+      "DD_VERSION": "1.0.0",
+      "DD_FLUSH_TO_LOG": "false",
+      "DD_SITE": "datadoghq.com",
+      "DD_API_KEY": "1234",
+      "DD_TAGS": "git.commit.sha:XXXXXXXX,git.repository_url:github.com/DataDog/datadog-cdk-constructs"
+     }
+    },
+    "Handler": "datadog_lambda.handler.handler",
+    "Layers": [
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Python312:101",
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "hellopythonServiceRoleEBA89F44",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ]
+   },
+   "DependsOn": [
+    "hellopythonServiceRoleEBA89F44"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/hello-python/Resource"
+   }
+  },
+  "CdkTypeScriptTestStateMachineRole861DFB1A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.sa-east-1.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "custom-tag-1",
+      "Value": "tag-value-1"
+     },
+     {
+      "Key": "custom-tag-2",
+      "Value": "tag-value-2"
+     },
+     {
+      "Key": "env",
+      "Value": "dev"
+     },
+     {
+      "Key": "service",
+      "Value": "cdk-test-service"
+     },
+     {
+      "Key": "version",
+      "Value": "1.0.0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestStateMachine/Role/Resource"
+   }
+  },
+  "CdkTypeScriptTestStateMachineRoleDefaultPolicyC7442749": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "hellopython5270C3B7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "hellopython5270C3B7",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "states:StartExecution",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "CdkTypeScriptTestChildStateMachineB7B7DE92"
+       }
+      },
+      {
+       "Action": [
+        "logs:CreateLogDelivery",
+        "logs:CreateLogStream",
+        "logs:GetLogDelivery",
+        "logs:UpdateLogDelivery",
+        "logs:DeleteLogDelivery",
+        "logs:ListLogDeliveries",
+        "logs:PutLogEvents",
+        "logs:PutResourcePolicy",
+        "logs:DescribeResourcePolicies",
+        "logs:DescribeLogGroups"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CdkTypeScriptTestStateMachineRoleDefaultPolicyC7442749",
+    "Roles": [
+     {
+      "Ref": "CdkTypeScriptTestStateMachineRole861DFB1A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestStateMachine/Role/DefaultPolicy/Resource"
+   }
+  },
+  "CdkTypeScriptTestStateMachine70B394BB": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"StartAt\":\"MyLambdaTask\",\"States\":{\"MyLambdaTask\":{\"Next\":\"InvokeChildStateMachineTask\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ClientExecutionTimeoutException\",\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2}],\"Type\":\"Task\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+       {
+        "Fn::GetAtt": [
+         "hellopython5270C3B7",
+         "Arn"
+        ]
+       },
+       "\",\"Payload\":{\"Execution.$\":\"$$.Execution\",\"State.$\":\"$$.State\",\"StateMachine.$\":\"$$.StateMachine\"}}},\"InvokeChildStateMachineTask\":{\"End\":true,\"Type\":\"Task\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::states:startExecution\",\"Parameters\":{\"Input\":{\"custom-key\":\"custom-value\",\"CONTEXT.$\":\"$$['Execution', 'State', 'StateMachine']\"},\"StateMachineArn\":\"",
+       {
+        "Ref": "CdkTypeScriptTestChildStateMachineB7B7DE92"
+       },
+       "\"}}}}"
+      ]
+     ]
+    },
+    "LoggingConfiguration": {
+     "Destinations": [
+      {
+       "CloudWatchLogsLogGroup": {
+        "LogGroupArn": {
+         "Fn::GetAtt": [
+          "CdkTypeScriptTestStateMachineLogGroupB783C316",
+          "Arn"
+         ]
+        }
+       }
+      }
+     ],
+     "IncludeExecutionData": true,
+     "Level": "ALL"
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "CdkTypeScriptTestStateMachineRole861DFB1A",
+      "Arn"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "custom-tag-1",
+      "Value": "tag-value-1"
+     },
+     {
+      "Key": "custom-tag-2",
+      "Value": "tag-value-2"
+     },
+     {
+      "Key": "env",
+      "Value": "dev"
+     },
+     {
+      "Key": "service",
+      "Value": "cdk-test-service"
+     },
+     {
+      "Key": "version",
+      "Value": "1.0.0"
+     }
+    ]
+   },
+   "DependsOn": [
+    "CdkTypeScriptTestStateMachineRoleDefaultPolicyC7442749",
+    "CdkTypeScriptTestStateMachineRole861DFB1A"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestStateMachine/Resource"
+   }
+  },
+  "CdkTypeScriptTestStateMachineLogGroupB783C316": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/vendedlogs/states/step-function-stack-CdkTypeScriptTestStateMachine-Logs-dev",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "custom-tag-1",
+      "Value": "tag-value-1"
+     },
+     {
+      "Key": "custom-tag-2",
+      "Value": "tag-value-2"
+     },
+     {
+      "Key": "env",
+      "Value": "dev"
+     },
+     {
+      "Key": "service",
+      "Value": "cdk-test-service"
+     },
+     {
+      "Key": "version",
+      "Value": "1.0.0"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestStateMachine/LogGroup/Resource"
+   }
+  },
+  "CdkTypeScriptTestStateMachineLogGroupDatadogSubscriptionFilterXXXXXXXX": {
+   "Type": "AWS::Logs::SubscriptionFilter",
+   "Properties": {
+    "DestinationArn": "arn:test:forwarder:sa-east-1:12345678:1",
+    "FilterPattern": "",
+    "LogGroupName": {
+     "Ref": "CdkTypeScriptTestStateMachineLogGroupB783C316"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CdkTypeScriptTestStateMachine/LogGroup/DatadogSubscriptionFilterXXXXXXXX/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "vX:XXXXXX:XXXXXX"
+   },
+   "Metadata": {
+    "aws:cdk:path": "step-function-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

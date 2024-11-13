@@ -21,6 +21,7 @@ STACK_CONFIG_PATHS=(
     "typescript/lambda-nodejs-function-stack.ts"
     "typescript/lambda-python-function-stack.ts"
     "typescript/lambda-java-function-stack.ts"
+    "typescript/step-function-stack.ts"
     "python/lambda_python_stack.py"
     "python/lambda_python_old_lambda_api_stack.py"
     "go/lambda_go_stack.go"
@@ -174,6 +175,8 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     perl -p -i -e 's/(arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-(Python27|Python36|Python37|Python38|Python39|Node12-x|Node14-x|Extension):\d+)/arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-\2:XXX/g' ${RAW_CFN_TEMPLATE}
     # Normalize API Gateway timestamps
     perl -p -i -e 's/("ApiGatewayDeployment.*")/"ApiGatewayDeploymentxxxx"/g' ${RAW_CFN_TEMPLATE}
+    # Normalize Subscription Filter name
+    perl -p -i -e 's/DatadogSubscriptionFilter[0-9a-fA-F]+/DatadogSubscriptionFilterXXXXXXXX/g' ${RAW_CFN_TEMPLATE}
 
     # Normalize resttest resource names
     perl -p -i -e 's/("restLogGroup.*")/"restLogGroupXXXXXXXX"/g' ${RAW_CFN_TEMPLATE}
