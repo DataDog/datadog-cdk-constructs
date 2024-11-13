@@ -14,6 +14,7 @@ import { Construct } from "constructs";
 import log from "loglevel";
 import { addForwarderForStateMachine } from "./forwarder";
 import { DatadogStepFunctionsProps } from "./index";
+import { buildStepFunctionLambdaTaskPayloadToMergeTraces } from "./span-link";
 import { setTags } from "./tag";
 
 const unsupportedCaseErrorMessage =
@@ -21,6 +22,10 @@ const unsupportedCaseErrorMessage =
 Please open a feature request in https://github.com/DataDog/datadog-cdk-constructs.";
 
 export class DatadogStepFunctions extends Construct {
+  public static buildLambdaPayloadToMergeTraces(payload: { [key: string]: any } = {}): { [key: string]: any } {
+    return buildStepFunctionLambdaTaskPayloadToMergeTraces(payload);
+  }
+
   scope: Construct;
   props: DatadogStepFunctionsProps;
   stack: Stack;
