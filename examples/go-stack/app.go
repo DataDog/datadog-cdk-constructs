@@ -23,7 +23,7 @@ func NewAppStackWithoutDatadog(scope constructs.Construct, id *string, props *Ap
 	stack := awscdk.NewStack(scope, id, &sprops)
 
 	myFunction := awslambda.NewFunction(stack, jsii.String("HelloWorldFunction"), &awslambda.FunctionProps{
-		Runtime: awslambda.Runtime_NODEJS_20_X(), // Provide any supported Node.js runtime
+		Runtime: awslambda.Runtime_NODEJS_20_X(),
 		Handler: jsii.String("index.handler"),
 		Code: awslambda.Code_FromInline(jsii.String(`
 		  exports.handler = async function(event) {
@@ -132,7 +132,7 @@ func main() {
 func env() *awscdk.Environment {
 	env := awscdk.Environment{
 		Account: jsii.String("425362996713"),
-		Region:  jsii.String("us-east-1"),
+		Region:  jsii.String("sa-east-1"),
 	}
 	return &env
 }
