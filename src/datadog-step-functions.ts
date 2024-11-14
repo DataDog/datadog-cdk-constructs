@@ -16,7 +16,7 @@ import { addForwarderForStateMachine } from "./forwarder";
 import { DatadogStepFunctionsProps } from "./index";
 import {
   buildStepFunctionLambdaTaskPayloadToMergeTraces,
-  buildStepFunctionSfnExecutionTaskPayloadToMergeTraces,
+  buildStepFunctionSfnExecutionTaskInputToMergeTraces,
 } from "./span-link";
 import { setTags } from "./tag";
 
@@ -29,10 +29,10 @@ export class DatadogStepFunctions extends Construct {
     return buildStepFunctionLambdaTaskPayloadToMergeTraces(payload);
   }
 
-  public static buildStepFunctionTaskPayloadToMergeTraces(payload: { [key: string]: any } = {}): {
+  public static buildStepFunctionTaskInputToMergeTraces(input: { [key: string]: any } = {}): {
     [key: string]: any;
   } {
-    return buildStepFunctionSfnExecutionTaskPayloadToMergeTraces(payload);
+    return buildStepFunctionSfnExecutionTaskInputToMergeTraces(input);
   }
 
   scope: Construct;

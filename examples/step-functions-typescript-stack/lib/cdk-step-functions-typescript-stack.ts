@@ -26,7 +26,7 @@ export class CdkStepFunctionsTypeScriptStack extends Stack {
     const invokeChildStateMachineTask = new tasks.StepFunctionsStartExecution(this, "InvokeChildStateMachineTask", {
       stateMachine: childStateMachine,
       input: sfn.TaskInput.fromObject(
-        DatadogStepFunctions.buildStepFunctionTaskPayloadToMergeTraces({ "custom-key": "custom-value" }),
+        DatadogStepFunctions.buildStepFunctionTaskInputToMergeTraces({ "custom-key": "custom-value" }),
       ),
     });
 
