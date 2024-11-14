@@ -11,6 +11,25 @@ export class CdkStepFunctionsTypeScriptStack extends Stack {
 
     console.log("Creating Hello World TypeScript stack");
 
+    /* Set up the child state machine */
+
+    const passState = new sfn.Pass(this, "PassState");
+    const waitState = new sfn.Wait(this, "WaitState", { time: sfn.WaitTime.duration(Duration.seconds(1)) });
+    const successState = new sfn.Succeed(this, "SuccessState");
+
+    const childStateMachine = new sfn.StateMachine(this, "CdkTypeScriptTestChildStateMachine", {
+      definitionBody: sfn.DefinitionBody.fromChainable(passState.next(waitState).next(successState)),
+    });
+
+    /* Set up the parent state machine */
+
+    const invokeChildStateMachineTask = new tasks.StepFunctionsStartExecution(this, "InvokeChildStateMachineTask", {
+      stateMachine: childStateMachine,
+      input: sfn.TaskInput.fromObject(
+        DatadogStepFunctions.buildStepFunctionTaskInputToMergeTraces({ "custom-key": "custom-value" }),
+      ),
+    });
+
     const helloLambdaFunction = new lambda.Function(this, "hello-python", {
       runtime: lambda.Runtime.PYTHON_3_12,
       timeout: Duration.seconds(10),
@@ -24,14 +43,16 @@ export class CdkStepFunctionsTypeScriptStack extends Stack {
       handler: "hello.lambda_handler",
     });
 
-    const stateMachine = new sfn.StateMachine(this, "CdkTypeScriptTestStateMachine", {
-      definitionBody: sfn.DefinitionBody.fromChainable(
-        new tasks.LambdaInvoke(this, "MyLambdaTask", {
-          lambdaFunction: helloLambdaFunction,
-          payload: sfn.TaskInput.fromObject(DatadogStepFunctions.buildLambdaPayloadToMergeTraces()),
-        }).next(new sfn.Succeed(this, "GreetedWorld")),
-      ),
+    const lambdaTask = new tasks.LambdaInvoke(this, "MyLambdaTask", {
+      lambdaFunction: helloLambdaFunction,
+      payload: sfn.TaskInput.fromObject(DatadogStepFunctions.buildLambdaPayloadToMergeTraces()),
     });
+
+    const parentStateMachine = new sfn.StateMachine(this, "CdkTypeScriptTestStateMachine", {
+      definitionBody: sfn.DefinitionBody.fromChainable(lambdaTask.next(invokeChildStateMachineTask)),
+    });
+
+    /* Instrument the lambda functions and the state machines */
 
     console.log("Instrumenting Step Functions in TypeScript stack with Datadog");
 
@@ -42,7 +63,7 @@ export class CdkStepFunctionsTypeScriptStack extends Stack {
       forwarderArn: process.env.DD_FORWARDER_ARN,
       tags: "custom-tag-1:tag-value-1,custom-tag-2:tag-value-2",
     });
-    datadogSfn.addStateMachines([stateMachine]);
+    datadogSfn.addStateMachines([childStateMachine, parentStateMachine]);
 
     const datadogLambda = new DatadogLambda(this, "DatadogLambda", {
       pythonLayerVersion: 101,

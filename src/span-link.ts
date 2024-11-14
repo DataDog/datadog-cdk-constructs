@@ -31,3 +31,29 @@ Please open an issue in https://github.com/DataDog/datadog-cdk-constructs to dis
   payload["StateMachine.$"] = "$$.StateMachine";
   return payload;
 }
+
+/**
+ * Builds an input for a Step Function execution task, so the Step Function traces
+ * can be merged with downstream Step Function traces.
+ *
+ * This function modifies the provided input to include context fields necessary
+ * for trace merging purposes. If the input already contains CONTEXT or CONTEXT.$ field,
+ * an error is thrown to avoid conflicts.
+ *
+ * @param input - The user's input object. Defaults to an empty object.
+ * @returns The modified input object with necessary context added.
+ * @throws {ConflictError} If the input already contains `CONTEXT` or `CONTEXT.$` fields.
+ */
+
+export function buildStepFunctionSfnExecutionTaskInputToMergeTraces(input: { [key: string]: any } = {}): {
+  [key: string]: any;
+} {
+  if ("CONTEXT" in input || "CONTEXT.$" in input) {
+    throw new Error(`The StepFunction StartExecution task may be using custom CONTEXT field. Step Functions Context Object injection skipped. \
+Your Step Functions trace will not be merged with downstream Lambda traces. \
+Please open an issue in https://github.com/DataDog/datadog-cdk-constructs to discuss your workaround.`);
+  }
+
+  input["CONTEXT.$"] = `$$['Execution', 'State', 'StateMachine']`;
+  return input;
+}
