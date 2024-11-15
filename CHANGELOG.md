@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.19.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.18.0...v2-1.19.0) (2024-11-15)
+
+
+### Features
+
+* [Step Function] Set up logging ([#318](https://github.com/DataDog/datadog-cdk-constructs/issues/318)) ([49ae769](https://github.com/DataDog/datadog-cdk-constructs/commit/49ae76996a94585d0ff308ec41acf5c6e2947bb5))
+* [Step Function] Subscribe forwarder to log group ([#319](https://github.com/DataDog/datadog-cdk-constructs/issues/319)) ([b91b796](https://github.com/DataDog/datadog-cdk-constructs/commit/b91b79690de4b7aa0f70d61211c62d8025fc1568))
+* add skeleton of step function class and example stack ([#315](https://github.com/DataDog/datadog-cdk-constructs/issues/315)) ([225ad21](https://github.com/DataDog/datadog-cdk-constructs/commit/225ad21fae8f99aed3304eb9bf0442d53fe1c82e))
+* Support StepFunction->Lambda trace merging ([#325](https://github.com/DataDog/datadog-cdk-constructs/issues/325)) ([cd49812](https://github.com/DataDog/datadog-cdk-constructs/commit/cd49812784c143572ee459f4d82dd2e8927b053e))
+* Support StepFunction->StepFunction trace merging ([#326](https://github.com/DataDog/datadog-cdk-constructs/issues/326)) ([0fc4e7d](https://github.com/DataDog/datadog-cdk-constructs/commit/0fc4e7d886665bf167e5dfcbf597b545883978a8))
+* update example code and doc to use DatadogLambda ([#289](https://github.com/DataDog/datadog-cdk-constructs/issues/289)) ([fbf5c43](https://github.com/DataDog/datadog-cdk-constructs/commit/fbf5c43bd72a4dc2193e2659e6b2bb133953ef46))
+
 ## [1.18.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.17.0...v2-1.18.0) (2024-10-17)
 
 
