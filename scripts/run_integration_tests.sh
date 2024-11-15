@@ -24,6 +24,7 @@ STACK_CONFIG_PATHS=(
     "typescript/step-function-stack.ts"
     "python/lambda_python_stack.py"
     "python/lambda_python_old_lambda_api_stack.py"
+    "python/step_functions_python_stack.py"
     "go/lambda_go_stack.go"
     "go/lambda_go_old_lambda_api_stack.go"
 )
@@ -211,7 +212,7 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     fi
 
     if [ ! -s "$TEST_SNAPSHOT" ]; then
-        echo "The snapshot is empty."
+        echo "The snapshot is empty. Please ensure the Python/Go stack name (e.g. LambdaPythonStack) is the PascalCase of the file name (e.g. lambda_python_stack.py)."
         RETURN_CODE=1
     else
         echo "Performing diff of ${TEST_SNAPSHOT} against ${CORRECT_SNAPSHOT}"
