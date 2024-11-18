@@ -8,7 +8,7 @@ describe("DatadogStepFunctions", () => {
     it("sets up log config if it's not set", () => {
       const stack = new Stack();
       const stateMachine = new sfn.StateMachine(stack, "StateMachine", {
-        definition: new sfn.Pass(stack, "PassState"),
+        definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(stack, "PassState")),
       });
 
       const datadogSfn = new DatadogStepFunctions(stack, "DatadogStepFunctions", {});
@@ -24,7 +24,7 @@ describe("DatadogStepFunctions", () => {
     it("sets log level to ALL and includeExecutionData to true if they are not", () => {
       const stack = new Stack();
       const stateMachine = new sfn.StateMachine(stack, "StateMachine", {
-        definition: new sfn.Pass(stack, "PassState"),
+        definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(stack, "PassState")),
         logs: {
           destination: new logs.LogGroup(stack, "LogGroup"),
           level: sfn.LogLevel.ERROR,
@@ -45,7 +45,7 @@ describe("DatadogStepFunctions", () => {
     it("throws if loggingConfiguration is an unresolved token", () => {
       const stack = new Stack();
       const stateMachine = new sfn.StateMachine(stack, "StateMachine", {
-        definition: new sfn.Pass(stack, "PassState"),
+        definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(stack, "PassState")),
       });
 
       const cfnStateMachine = stateMachine.node.defaultChild as sfn.CfnStateMachine;
