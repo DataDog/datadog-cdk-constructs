@@ -27,6 +27,7 @@ STACK_CONFIG_PATHS=(
     "python/step_functions_python_stack.py"
     "go/lambda_go_stack.go"
     "go/lambda_go_old_lambda_api_stack.go"
+    "go/step_functions_go_stack.go"
 )
 
 SCRIPT_PATH=${BASH_SOURCE[0]}

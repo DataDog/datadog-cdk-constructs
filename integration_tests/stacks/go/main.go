@@ -24,6 +24,13 @@ func main() {
 		},
 	})
 
+	// Creates a Step Functions stack
+	NewCdkStepFunctionsGoStack(app, "StepFunctionsGoStack", &AppStackProps{
+		StackProps: awscdk.StackProps{
+			Env: env(),
+		},
+	})
+
 	app.Synth(nil)
 }
 
