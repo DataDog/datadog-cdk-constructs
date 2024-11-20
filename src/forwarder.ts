@@ -27,19 +27,17 @@ function getForwarder(scope: Construct, forwarderArn: string) {
 
 export function addForwarder(
   scope: Construct,
-  lambdaFunctions: lambda.Function[],
+  lam: lambda.Function,
   forwarderArn: string,
   createForwarderPermissions: boolean,
 ): void {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
-  lambdaFunctions.forEach((lam) => {
-    const subscriptionFilterName = generateSubscriptionFilterName(Names.uniqueId(lam), forwarderArn);
-    log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
-    lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
-      destination: forwarderDestination,
-      filterPattern: FilterPattern.allEvents(),
-    });
+  const subscriptionFilterName = generateSubscriptionFilterName(Names.uniqueId(lam), forwarderArn);
+  log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
+  lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
+    destination: forwarderDestination,
+    filterPattern: FilterPattern.allEvents(),
   });
 }
 
