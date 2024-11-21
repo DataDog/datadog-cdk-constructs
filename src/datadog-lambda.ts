@@ -84,19 +84,19 @@ export class DatadogLambda extends Construct {
         log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
         grantReadLambdaFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunction);
       }
-    }
 
-    if (baseProps.addLayers) {
-      applyLayers(
-        this.scope,
-        region,
-        extractedLambdaFunctions,
-        this.props.pythonLayerVersion,
-        this.props.nodeLayerVersion,
-        this.props.javaLayerVersion,
-        this.props.dotnetLayerVersion,
-        this.props.useLayersFromAccount,
-      );
+      if (baseProps.addLayers) {
+        applyLayers(
+          this.scope,
+          region,
+          lambdaFunction,
+          this.props.pythonLayerVersion,
+          this.props.nodeLayerVersion,
+          this.props.javaLayerVersion,
+          this.props.dotnetLayerVersion,
+          this.props.useLayersFromAccount,
+        );
+      }
     }
 
     if (baseProps.extensionLayerVersion !== undefined) {
