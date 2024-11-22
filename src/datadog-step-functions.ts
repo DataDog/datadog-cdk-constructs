@@ -26,12 +26,14 @@ Please open a feature request in https://github.com/DataDog/datadog-cdk-construc
 
 export class DatadogStepFunctions extends Construct {
   public static buildLambdaPayloadToMergeTraces(payload: { [key: string]: any } = {}): { [key: string]: any } {
+    log.debug(`Building lambda payload to merge traces`);
     return buildStepFunctionLambdaTaskPayloadToMergeTraces(payload);
   }
 
   public static buildStepFunctionTaskInputToMergeTraces(input: { [key: string]: any } = {}): {
     [key: string]: any;
   } {
+    log.debug(`Building step function task input to merge traces`);
     return buildStepFunctionSfnExecutionTaskInputToMergeTraces(input);
   }
 
@@ -40,6 +42,10 @@ export class DatadogStepFunctions extends Construct {
   stack: Stack;
 
   constructor(scope: Construct, id: string, props: DatadogStepFunctionsProps) {
+    if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() === "true") {
+      log.setLevel("debug");
+    }
+
     super(scope, id);
     this.scope = scope;
     this.props = props;
@@ -53,6 +59,8 @@ export class DatadogStepFunctions extends Construct {
   }
 
   private addStateMachine(stateMachine: sfn.StateMachine, _construct?: Construct) {
+    log.debug(`\nInstrumenting state machine ${stateMachine.node.path}`);
+
     const logGroup = this.setUpLogging(stateMachine);
 
     if (this.props.forwarderArn !== undefined) {
@@ -84,6 +92,7 @@ export class DatadogStepFunctions extends Construct {
     }
 
     // Set log level and includeExecutionData
+    log.debug(`Setting log level to ALL`);
     cfnStateMachine.loggingConfiguration = {
       ...cfnStateMachine.loggingConfiguration,
       level: "ALL",
@@ -93,6 +102,7 @@ export class DatadogStepFunctions extends Construct {
     let logGroup: logs.ILogGroup;
     // Set destination log group if not set
     if (!cfnStateMachine.loggingConfiguration.destinations) {
+      log.debug(`Logging destination is not set. Creating a new log group.`);
       const logGroupName = buildLogGroupName(stateMachine, this.props.env);
       logGroup = new logs.LogGroup(stateMachine, "LogGroup", {
         retention: logs.RetentionDays.ONE_WEEK,
@@ -110,6 +120,7 @@ export class DatadogStepFunctions extends Construct {
         ],
       };
     } else {
+      log.debug(`Logging destination is already set. Extracting log group ARN.`);
       // Extract log group from logging config
       const destinations = cfnStateMachine.loggingConfiguration.destinations;
       if (!this.isLogDestinationPropertyArray(destinations)) {
@@ -131,6 +142,7 @@ export class DatadogStepFunctions extends Construct {
       }
 
       const logGroupArn = logGroupConfig.logGroupArn;
+      log.debug(`Extracted log group ARN: ${logGroupArn}`);
       if (logGroupArn === undefined) {
         throw new Error(`logGroupArn is undefined. ${unsupportedCaseErrorMessage}`);
       }
@@ -140,6 +152,7 @@ export class DatadogStepFunctions extends Construct {
 
     // Configure state machine role to have permission to log to CloudWatch Logs, following
     // https://docs.aws.amazon.com/step-functions/latest/dg/cw-logs.html#cloudwatch-iam-policy
+    log.debug(`Adding permissions to the state machine role to log to CloudWatch Logs`);
     stateMachine.role.addToPrincipalPolicy(
       new iam.PolicyStatement({
         actions: [
