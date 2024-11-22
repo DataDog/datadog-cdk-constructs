@@ -189,6 +189,10 @@ describe("setTags for Step Function", () => {
           Value: "tag-value-2",
         },
         {
+          Key: "dd_cdk_construct",
+          Value: `v${versionJson.version}`,
+        },
+        {
           Key: "DD_TRACE_ENABLED",
           Value: "true",
         },

@@ -12,6 +12,8 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import log from "loglevel";
 import { TagKeys, DatadogLambdaProps, DatadogStepFunctionsProps } from "./index";
 
+const versionJson = require("../version.json");
+
 export function setTags(
   resource: lambda.Function | sfn.StateMachine,
   props: DatadogLambdaProps | DatadogStepFunctionsProps,
@@ -43,4 +45,5 @@ export function setTags(
 
 function setStepFunctionTags(stateMachine: sfn.StateMachine) {
   Tags.of(stateMachine).add(TagKeys.DD_TRACE_ENABLED, "true");
+  Tags.of(stateMachine).add(TagKeys.CDK, `v${versionJson.version}`);
 }
