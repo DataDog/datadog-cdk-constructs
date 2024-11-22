@@ -189,6 +189,10 @@ describe("setTags for Step Function", () => {
           Value: "tag-value-2",
         },
         {
+          Key: "DD_TRACE_ENABLED",
+          Value: "true",
+        },
+        {
           Key: "env",
           Value: "dev",
         },

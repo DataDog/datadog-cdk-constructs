@@ -35,4 +35,12 @@ export function setTags(
       }
     });
   }
+
+  if (resource instanceof sfn.StateMachine) {
+    setStepFunctionTags(resource);
+  }
+}
+
+function setStepFunctionTags(stateMachine: sfn.StateMachine) {
+  Tags.of(stateMachine).add(TagKeys.DD_TRACE_ENABLED, "true");
 }
