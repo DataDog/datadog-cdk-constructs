@@ -111,22 +111,22 @@ export class DatadogLambda extends Construct {
       if (baseProps.redirectHandler) {
         redirectHandlers(lambdaFunction, baseProps.addLayers);
       }
-    }
 
-    if (this.props.forwarderArn !== undefined) {
-      if (this.props.extensionLayerVersion !== undefined) {
-        log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
+      if (this.props.forwarderArn !== undefined) {
+        if (this.props.extensionLayerVersion !== undefined) {
+          log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
+        } else {
+          log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
+          addForwarder(
+            this.scope,
+            lambdaFunction,
+            this.props.forwarderArn,
+            this.props.createForwarderPermissions === true,
+          );
+        }
       } else {
-        log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
-        addForwarder(
-          this.scope,
-          extractedLambdaFunctions,
-          this.props.forwarderArn,
-          this.props.createForwarderPermissions === true,
-        );
+        log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
-    } else {
-      log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
     }
 
     addCdkConstructVersionTag(extractedLambdaFunctions);

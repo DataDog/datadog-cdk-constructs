@@ -22,7 +22,7 @@ describe("Forwarder for Lambda", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    addForwarder(stack, [nodeLambda], "arn:test:forwarder:sa-east-1:12345678:1", false);
+    addForwarder(stack, nodeLambda, "arn:test:forwarder:sa-east-1:12345678:1", false);
     Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "arn:test:forwarder:sa-east-1:12345678:1",
       FilterPattern: "",
@@ -47,7 +47,8 @@ describe("Forwarder for Lambda", () => {
       handler: "hello.handler",
     });
 
-    addForwarder(stack, [nodeLambda, pythonLambda], "arn:test:forwarder:sa-east-1:12345678:1", false);
+    addForwarder(stack, nodeLambda, "arn:test:forwarder:sa-east-1:12345678:1", false);
+    addForwarder(stack, pythonLambda, "arn:test:forwarder:sa-east-1:12345678:1", false);
 
     const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
     const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
@@ -74,8 +75,8 @@ describe("Forwarder for Lambda", () => {
       handler: "hello.handler",
     });
 
-    addForwarder(stack, [nodeLambda], "arn:test:forwarder:sa-east-1:12345678:1", false);
-    addForwarder(stack, [pythonLambda], "arn:test:forwarder:sa-east-1:12345678:2", false);
+    addForwarder(stack, nodeLambda, "arn:test:forwarder:sa-east-1:12345678:1", false);
+    addForwarder(stack, pythonLambda, "arn:test:forwarder:sa-east-1:12345678:2", false);
 
     const nodeLambdaSubscriptionFilters = findDatadogSubscriptionFilters(nodeLambda);
     const pythonLambdaSubscriptionFilters = findDatadogSubscriptionFilters(pythonLambda);
@@ -99,7 +100,7 @@ describe("Forwarder for Lambda", () => {
         code: lambda.Code.fromAsset("test"),
         handler: "hello.handler",
       });
-      addForwarder(stack, [pythonLambda], "arn:test:forwarder:sa-east-1:12345678:1", false);
+      addForwarder(stack, pythonLambda, "arn:test:forwarder:sa-east-1:12345678:1", false);
 
       return stack;
     };
@@ -134,7 +135,8 @@ describe("Forwarder for Lambda", () => {
         code: lambda.Code.fromAsset("test"),
         handler: "hello.handler",
       });
-      addForwarder(stack, [pythonLambda, nodeLambda], forwarderArn, false);
+      addForwarder(stack, pythonLambda, forwarderArn, false);
+      addForwarder(stack, nodeLambda, forwarderArn, false);
 
       return stack;
     };
@@ -252,7 +254,7 @@ describe("Forwarder for Lambda", () => {
         accessLogDestination: new LogGroupLogDestination(restLogGroup),
       },
     });
-    addForwarder(stack, [pythonLambda], "arn:test:forwarder:sa-east-1:12345678:1", false);
+    addForwarder(stack, pythonLambda, "arn:test:forwarder:sa-east-1:12345678:1", false);
     addForwarderToLogGroups(stack, [restLogGroup], "arn:test:forwarder:sa-east-1:12345678:2", false);
     Template.fromStack(stack).hasResourceProperties("AWS::Logs::SubscriptionFilter", {
       DestinationArn: "arn:test:forwarder:sa-east-1:12345678:1",
