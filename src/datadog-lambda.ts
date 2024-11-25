@@ -97,20 +97,20 @@ export class DatadogLambda extends Construct {
           this.props.useLayersFromAccount,
         );
       }
-    }
 
-    if (baseProps.extensionLayerVersion !== undefined) {
-      applyExtensionLayer(
-        this.scope,
-        region,
-        extractedLambdaFunctions,
-        baseProps.extensionLayerVersion,
-        this.props.useLayersFromAccount,
-      );
-    }
+      if (baseProps.extensionLayerVersion !== undefined) {
+        applyExtensionLayer(
+          this.scope,
+          region,
+          lambdaFunction,
+          baseProps.extensionLayerVersion,
+          this.props.useLayersFromAccount,
+        );
+      }
 
-    if (baseProps.redirectHandler) {
-      redirectHandlers(extractedLambdaFunctions, baseProps.addLayers);
+      if (baseProps.redirectHandler) {
+        redirectHandlers(lambdaFunction, baseProps.addLayers);
+      }
     }
 
     if (this.props.forwarderArn !== undefined) {

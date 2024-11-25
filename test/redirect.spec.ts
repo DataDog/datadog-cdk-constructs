@@ -24,7 +24,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    redirectHandlers([hello], true);
+    redirectHandlers(hello, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
@@ -42,7 +42,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    redirectHandlers([hello], false);
+    redirectHandlers(hello, false);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER}`,
     });
@@ -60,7 +60,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    redirectHandlers([hello], true);
+    redirectHandlers(hello, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
@@ -88,7 +88,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
-    redirectHandlers([hello], true);
+    redirectHandlers(hello, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: "handleRequest",
     });
@@ -113,7 +113,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
-    redirectHandlers([hello], true);
+    redirectHandlers(hello, true);
     Template.fromStack(stack).resourcePropertiesCountIs(
       "AWS::Lambda::Function",
       {
@@ -137,7 +137,7 @@ describe("redirectHandlers", () => {
     const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
       code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
     });
-    redirectHandlers([hello], true);
+    redirectHandlers(hello, true);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: Match.absent(),

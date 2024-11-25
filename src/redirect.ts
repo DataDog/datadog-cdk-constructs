@@ -27,35 +27,33 @@ import {
  *
  * Unchanged aside from parameter type
  */
-export function redirectHandlers(lambdas: lambda.Function[], addLayers: boolean): void {
+export function redirectHandlers(lam: lambda.Function, addLayers: boolean): void {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
 
-  for (const l of lambdas) {
-    const runtime: string = l.runtime.name;
-    const runtimeType: RuntimeType = runtimeLookup[runtime];
+  const runtime: string = lam.runtime.name;
+  const runtimeType: RuntimeType = runtimeLookup[runtime];
 
-    if (runtimeType === RuntimeType.JAVA || runtimeType === RuntimeType.DOTNET) {
-      l.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR, AWS_LAMBDA_EXEC_WRAPPER);
-      continue;
-    }
-
-    const cfnFuntion = l.node.defaultChild as lambda.CfnFunction;
-    if (cfnFuntion === undefined) {
-      log.debug("Unable to get Lambda Function handler");
-      continue;
-    }
-
-    const originalHandler = cfnFuntion.handler as string;
-    l.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
-
-    const handler = getDDHandler(runtimeType, addLayers);
-    if (handler === null) {
-      log.debug("Unable to get Datadog handler");
-      continue;
-    }
-
-    cfnFuntion.handler = handler;
+  if (runtimeType === RuntimeType.JAVA || runtimeType === RuntimeType.DOTNET) {
+    lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR, AWS_LAMBDA_EXEC_WRAPPER);
+    return;
   }
+
+  const cfnFuntion = lam.node.defaultChild as lambda.CfnFunction;
+  if (cfnFuntion === undefined) {
+    log.debug("Unable to get Lambda Function handler");
+    return;
+  }
+
+  const originalHandler = cfnFuntion.handler as string;
+  lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
+
+  const handler = getDDHandler(runtimeType, addLayers);
+  if (handler === null) {
+    log.debug("Unable to get Datadog handler");
+    return;
+  }
+
+  cfnFuntion.handler = handler;
 }
 
 function getDDHandler(runtimeType: RuntimeType, addLayers: boolean): string | null {
