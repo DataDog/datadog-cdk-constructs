@@ -25,7 +25,11 @@ Two separate versions of Datadog CDK Constructs exist; `datadog-cdk-constructs` 
 - `datadog-cdk-constructs-v2` contains more features.
 - Otherwise, the use of the two packages is identical.
 
-## npm Package Installation:
+## Lambda
+
+### Package Installation
+
+#### npm
 
 For use with AWS CDK v2:
 
@@ -43,7 +47,7 @@ yarn add --dev datadog-cdk-constructs
 npm install datadog-cdk-constructs --save-dev
 ```
 
-## PyPI Package Installation:
+#### PyPI
 
 For use with AWS CDK v2:
 
@@ -57,7 +61,11 @@ For use with AWS CDK v1:
 pip install datadog-cdk-constructs
 ```
 
-## Go Package Installation:
+##### Note:
+
+Pay attention to the output from your package manager as the `Datadog CDK Construct Library` has peer dependencies.
+
+#### Go
 
 For use with AWS CDK v2:
 
@@ -67,16 +75,11 @@ go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct
 
 AWS CDK v1 is not supported.
 
-### Note:
+### Usage
 
-Pay attention to the output from your package manager as the `Datadog CDK Construct Library` has peer dependencies.
+#### AWS CDK
 
-## Usage
-
-### AWS CDK
-
-- _If you are new to AWS CDK then check out this [workshop][14]._
-- _The following examples assume the use of AWS CDK v2. If you're using CDK v1, import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`._
+_The following examples assume the use of AWS CDK v2. If you're using CDK v1, import `datadog-cdk-constructs` rather than `datadog-cdk-constructs-v2`._
 
 Add this to your CDK stack:
 
@@ -85,7 +88,7 @@ Add this to your CDK stack:
 ```typescript
 import { DatadogLambda } from "datadog-cdk-constructs-v2";
 
-const datadog = new DatadogLambda(this, "Datadog", {
+const datadogLambda = new DatadogLambda(this, "datadogLambda", {
   nodeLayerVersion: <LAYER_VERSION>,
   pythonLayerVersion: <LAYER_VERSION>,
   javaLayerVersion: <LAYER_VERSION>,
@@ -110,8 +113,8 @@ const datadog = new DatadogLambda(this, "Datadog", {
   version: <STRING>, //Optional
   tags: <STRING>, //Optional
 });
-datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
-datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
+datadogLambda.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
+datadogLambda.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
 #### Go
@@ -120,7 +123,7 @@ datadog.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 import (
 	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
 )
-datadog := ddcdkconstruct.NewDatadogLambda(
+datadogLambda := ddcdkconstruct.NewDatadogLambda(
     stack,
     jsii.String("Datadog"),
     &ddcdkconstruct.DatadogLambdaProps{
@@ -130,11 +133,11 @@ datadog := ddcdkconstruct.NewDatadogLambda(
         ApiKey:                jsii.String(os.Getenv("DD_API_KEY")),
         // ...
     })
-datadog.AddLambdaFunctions(&[]interface{}{myFunction}, nil)
-datadog.AddForwarderToNonLambdaLogGroups()
+datadogLambda.AddLambdaFunctions(&[]interface{}{myFunction}, nil)
+datadogLambda.AddForwarderToNonLambdaLogGroups()
 ```
 
-## Source Code Integration
+### Source Code Integration
 
 [Source code integration](https://docs.datadoghq.com/integrations/guide/source-code-integration/) is enabled by default through automatic lambda tagging, and will work if:
 
@@ -143,7 +146,7 @@ datadog.AddForwarderToNonLambdaLogGroups()
   - `datadog-cdk-constructs-v2` >= 1.4.0
   - `datadog-cdk-constructs` >= 0.8.5
 
-### Alternative Methods to Enable Source Code Integration
+#### Alternative Methods to Enable Source Code Integration
 
 If the automatic implementation doesn't work for your case, please follow one of the two guides below.
 
@@ -196,18 +199,18 @@ export class ExampleStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps, gitHash?: string) {
     ...
     ...
-    datadog.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash)
+    datadogLambda.addGitCommitMetadata([<YOUR_FUNCTIONS>], gitHash)
   }
 }
 ```
 
 </details>
 
-## Configuration
+### Configuration
 
-To further configure your Datadog construct, use the following custom parameters:
+To further configure your Datadog construct for Lambda, use the following custom parameters:
 
-_Note_: The descriptions use the npm package parameters, but they also apply to the PyPI package parameters.
+_Note_: The descriptions use the npm package parameters, but they also apply to PyPI and Go package parameters.
 
 | npm package parameter        | PyPI package parameter          | Description                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -246,7 +249,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 
 **Note**: Using the parameters above may override corresponding function level `DD_XXX` environment variables.
 
-### Tracing
+#### Tracing
 
 Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK documentation][9].
 
@@ -261,12 +264,12 @@ const lambda_function = new lambda.Function(this, "HelloHandler", {
 });
 ```
 
-### Nested Stacks
+#### Nested Stacks
 
 Add the Datadog CDK Construct to each stack you wish to instrument with Datadog. In the example below, we initialize the Datadog CDK Construct and call `addLambdaFunctions()` in both the `RootStack` and `NestedStack`.
 
 ```typescript
-import { Datadog } from "datadog-cdk-constructs-v2";
+import { DatadogLambda } from "datadog-cdk-constructs-v2";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -275,7 +278,7 @@ class RootStack extends cdk.Stack {
     super(scope, id, props);
     new NestedStack(this, "NestedStack");
 
-    const datadog = new Datadog(this, "Datadog", {
+    const datadogLambda = new DatadogLambda(this, "DatadogLambda", {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
       javaLayerVersion: <LAYER_VERSION>,
@@ -292,7 +295,7 @@ class RootStack extends cdk.Stack {
       enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
-    datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
+    datadogLambda.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
 
   }
 }
@@ -301,7 +304,7 @@ class NestedStack extends cdk.NestedStack {
   constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
     super(scope, id, props);
 
-    const datadog = new Datadog(this, "Datadog", {
+    const datadogLambda = new DatadogLambda(this, "DatadogLambda", {
       nodeLayerVersion: <LAYER_VERSION>,
       pythonLayerVersion: <LAYER_VERSION>,
       javaLayerVersion: <LAYER_VERSION>,
@@ -318,17 +321,17 @@ class NestedStack extends cdk.NestedStack {
       enableDatadogLogs: <BOOLEAN>,
       injectLogContext: <BOOLEAN>
     });
-    datadog.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
+    datadogLambda.addLambdaFunctions([<LAMBDA_FUNCTIONS>]);
 
   }
 }
 ```
 
-### Tags
+#### Tags
 
 Add tags to your constructs. We recommend setting an `env` and `service` tag to tie Datadog telemetry together. For more information see [official AWS documentation][10] and [CDK documentation][11].
 
-## Automatically grant AWS secret read access to Lambda execution role
+### Automatically grant AWS secret read access to Lambda execution role
 
 **Only available in datadog-cdk-constructs-v2**
 
@@ -339,7 +342,7 @@ const { Secret } = require('aws-cdk-lib/aws-secretsmanager');
 
 const secret = Secret.fromSecretPartialArn(this, 'DatadogApiKeySecret', 'arn:aws:secretsmanager:us-west-1:123:secret:DATADOG_API_KEY');
 
-const datadog = new Datadog(this, 'Datadog', {
+const datadogLambda = new DatadogLambda(this, 'DatadogLambda', {
   ...
   apiKeySecret: secret
   ...
@@ -348,14 +351,19 @@ const datadog = new Datadog(this, 'Datadog', {
 
 When `addLambdaFunctions` is called, the Datadog CDK construct grants your Lambda execution roles read access to the given AWS secret. This is done through the [AWS ISecret's grantRead function][17].
 
-## How it works
+### How it works
 
 The Datadog CDK construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [.NET][19], [Java][15], [Node.js][2], and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
 While Lambda function based log groups are handled by the `addLambdaFunctions` method automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which subscribes the forwarder to any additional log groups of your choosing.
 
+## Step Functions
+
+Instructions for Step Functions are coming soon. Stay tuned!
+
 ## Resources to learn about CDK
 
+- If you are new to AWS CDK then check out this [workshop][14].
 - [CDK TypeScript Workshop](https://cdkworkshop.com/20-typescript.html)
 - [Video Introducing CDK by AWS with Demo](https://youtu.be/ZWCvNFUN-sU)
 - [CDK Concepts](https://youtu.be/9As_ZIjUGmY)
@@ -389,7 +397,7 @@ If you contribute to this package you can run the tests using `yarn test`. This 
 
 ### Debug Logs
 
-To display the debug logs for this library, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output).
+To display the debug logs for this library for Lambda, set the `DD_CONSTRUCT_DEBUG_LOGS` env var to `true` when running `cdk synth` (use `--quiet` to suppress generated template output).
 
 Example:
 _Ensure you are at the root directory_
