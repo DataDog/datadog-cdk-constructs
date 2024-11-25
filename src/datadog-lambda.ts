@@ -130,10 +130,9 @@ export class DatadogLambda extends Construct {
 
       addCdkConstructVersionTag(lambdaFunction);
       applyEnvVariables(lambdaFunction, baseProps);
+      setDDEnvVariables(lambdaFunction, this.props);
+      setTagsForFunction(lambdaFunction, this.props);
     }
-
-    setDDEnvVariables(extractedLambdaFunctions, this.props);
-    setTagsForFunctions(extractedLambdaFunctions, this.props);
 
     this.transport.applyEnvVars(extractedLambdaFunctions);
 
@@ -177,12 +176,10 @@ export function addCdkConstructVersionTag(lambdaFunction: lambda.Function): void
   });
 }
 
-function setTagsForFunctions(lambdaFunctions: lambda.Function[], props: DatadogLambdaProps): void {
-  lambdaFunctions.forEach((lambdaFunction) => {
-    if (props.forwarderArn) {
-      setTags(lambdaFunction, props);
-    }
-  });
+function setTagsForFunction(lambdaFunction: lambda.Function, props: DatadogLambdaProps): void {
+  if (props.forwarderArn) {
+    setTags(lambdaFunction, props);
+  }
 }
 
 function grantReadLambda(secret: ISecret, lambdaFunction: lambda.Function): void {
