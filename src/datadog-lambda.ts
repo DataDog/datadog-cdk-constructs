@@ -132,12 +132,12 @@ export class DatadogLambda extends Construct {
       applyEnvVariables(lambdaFunction, baseProps);
       setDDEnvVariables(lambdaFunction, this.props);
       setTagsForFunction(lambdaFunction, this.props);
-    }
 
-    this.transport.applyEnvVars(extractedLambdaFunctions);
+      this.transport.applyEnvVars(lambdaFunction);
 
-    if (baseProps.sourceCodeIntegration) {
-      this.addGitCommitMetadata(extractedLambdaFunctions);
+      if (baseProps.sourceCodeIntegration) {
+        this.addGitCommitMetadata([lambdaFunction]);
+      }
     }
   }
 
