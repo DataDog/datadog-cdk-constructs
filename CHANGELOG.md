@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.20.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.19.0...v2-1.20.0) (2024-11-26)
+
+
+### Features
+
+* Add example Go stack for Step Functions ([#329](https://github.com/DataDog/datadog-cdk-constructs/issues/329)) ([dc2b917](https://github.com/DataDog/datadog-cdk-constructs/commit/dc2b9174cc84445cb2d15f694202c9516a1b573d))
+* Add example Python stack for Step Functions ([#328](https://github.com/DataDog/datadog-cdk-constructs/issues/328)) ([ce4937d](https://github.com/DataDog/datadog-cdk-constructs/commit/ce4937df3b1509529e5d6ea0c63461b93ffda886))
+* Set dd_cdk_construct version tag on state machine ([#339](https://github.com/DataDog/datadog-cdk-constructs/issues/339)) ([914c444](https://github.com/DataDog/datadog-cdk-constructs/commit/914c444f22ca56455f1a817312dcf60c6b5b044c))
+* Set DD_TRACE_ENABLED tag on state machine ([#338](https://github.com/DataDog/datadog-cdk-constructs/issues/338)) ([8fcf1e1](https://github.com/DataDog/datadog-cdk-constructs/commit/8fcf1e1c83239e66a17784e6879383e6d1a6a18a))
+* Support debug log for Step Function ([#340](https://github.com/DataDog/datadog-cdk-constructs/issues/340)) ([44e9dd0](https://github.com/DataDog/datadog-cdk-constructs/commit/44e9dd0fce0c8ba228681dfe94b1921d2b94b319))
+
 ## [1.19.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.18.0...v2-1.19.0) (2024-11-15)
 
 
