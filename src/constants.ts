@@ -51,6 +51,7 @@ export enum TagKeys {
   ENV = "env",
   SERVICE = "service",
   VERSION = "version",
+  DD_TRACE_ENABLED = "DD_TRACE_ENABLED",
 }
 
 export const runtimeLookup: { [key: string]: RuntimeType } = {

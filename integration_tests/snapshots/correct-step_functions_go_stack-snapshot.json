@@ -25,6 +25,10 @@
       "Value": "tag-value-2"
      },
      {
+      "Key": "DD_TRACE_ENABLED",
+      "Value": "true"
+     },
+     {
       "Key": "env",
       "Value": "dev"
      },
@@ -113,6 +117,10 @@
       "Value": "tag-value-2"
      },
      {
+      "Key": "DD_TRACE_ENABLED",
+      "Value": "true"
+     },
+     {
       "Key": "env",
       "Value": "dev"
      },
@@ -149,6 +157,10 @@
      {
       "Key": "custom-tag-2",
       "Value": "tag-value-2"
+     },
+     {
+      "Key": "DD_TRACE_ENABLED",
+      "Value": "true"
      },
      {
       "Key": "env",
@@ -292,6 +304,10 @@
      {
       "Key": "custom-tag-2",
       "Value": "tag-value-2"
+     },
+     {
+      "Key": "DD_TRACE_ENABLED",
+      "Value": "true"
      },
      {
       "Key": "env",
@@ -441,6 +457,10 @@
       "Value": "tag-value-2"
      },
      {
+      "Key": "DD_TRACE_ENABLED",
+      "Value": "true"
+     },
+     {
       "Key": "env",
       "Value": "dev"
      },
@@ -477,6 +497,10 @@
      {
       "Key": "custom-tag-2",
       "Value": "tag-value-2"
+     },
+     {
+      "Key": "DD_TRACE_ENABLED",
+      "Value": "true"
      },
      {
       "Key": "env",
