@@ -25,6 +25,10 @@
       "Value": "tag-value-2"
      },
      {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     },
+     {
       "Key": "DD_TRACE_ENABLED",
       "Value": "true"
      },
@@ -117,6 +121,10 @@
       "Value": "tag-value-2"
      },
      {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     },
+     {
       "Key": "DD_TRACE_ENABLED",
       "Value": "true"
      },
@@ -157,6 +165,10 @@
      {
       "Key": "custom-tag-2",
       "Value": "tag-value-2"
+     },
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
      },
      {
       "Key": "DD_TRACE_ENABLED",
@@ -303,6 +315,10 @@
      {
       "Key": "custom-tag-2",
       "Value": "tag-value-2"
+     },
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
      },
      {
       "Key": "DD_TRACE_ENABLED",
@@ -456,6 +472,10 @@
       "Value": "tag-value-2"
      },
      {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     },
+     {
       "Key": "DD_TRACE_ENABLED",
       "Value": "true"
      },
@@ -496,6 +516,10 @@
      {
       "Key": "custom-tag-2",
       "Value": "tag-value-2"
+     },
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
      },
      {
       "Key": "DD_TRACE_ENABLED",
