@@ -601,7 +601,9 @@ The `DatadogStepFunctions` construct takes in a list of state machines and for e
    1. `env`
    2. `service`
    3. `version`
-   4. `DD_TRACE_ENABLED`: `true`
+   4. `DD_TRACE_ENABLED`: `true`. This enables tracing.
+      1. To disable tracing, set it to `false` from AWS Management Console after the stack is deployed.
+      2. If you wish to disable tracing using CDK, please open an issue so we can support it.
    5. `dd_cdk_construct` version tag
    6. custom tags passed as the `tags` paramater to `DatadogStepFunctions` construct
 
