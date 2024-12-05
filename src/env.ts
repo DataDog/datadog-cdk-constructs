@@ -98,28 +98,26 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
   }
 }
 
-export function applyEnvVariables(lambdas: lambda.Function[], baseProps: DatadogLambdaStrictProps): void {
+export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
   log.debug(`Setting environment variables...`);
-  lambdas.forEach((lam) => {
-    lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
-    lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
-    if (baseProps.enableDatadogASM) {
-      lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
-    }
+  lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
+  lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
+  if (baseProps.enableDatadogASM) {
+    lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+  }
 
-    lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
-    // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
-    if (baseProps.extensionLayerVersion) {
-      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
-    } else {
-      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
-    }
-    lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
-    lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
-    if (baseProps.logLevel) {
-      lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
-    }
-  });
+  lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
+  // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
+  if (baseProps.extensionLayerVersion) {
+    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
+  } else {
+    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+  }
+  lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
+  lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
+  if (baseProps.logLevel) {
+    lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
+  }
 }
 
 export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogLambdaProps): void {

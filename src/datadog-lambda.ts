@@ -127,11 +127,11 @@ export class DatadogLambda extends Construct {
       } else {
         log.debug("Forwarder ARN not provided, no log group subscriptions will be added");
       }
+
+      addCdkConstructVersionTag(lambdaFunction);
+      applyEnvVariables(lambdaFunction, baseProps);
     }
 
-    addCdkConstructVersionTag(extractedLambdaFunctions);
-
-    applyEnvVariables(extractedLambdaFunctions, baseProps);
     setDDEnvVariables(extractedLambdaFunctions, this.props);
     setTagsForFunctions(extractedLambdaFunctions, this.props);
 
@@ -170,12 +170,10 @@ export class DatadogLambda extends Construct {
   }
 }
 
-export function addCdkConstructVersionTag(lambdaFunctions: lambda.Function[]): void {
+export function addCdkConstructVersionTag(lambdaFunction: lambda.Function): void {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
-  lambdaFunctions.forEach((functionName) => {
-    Tags.of(functionName).add(TagKeys.CDK, `v${versionJson.version}`, {
-      includeResourceTypes: ["AWS::Lambda::Function"],
-    });
+  Tags.of(lambdaFunction).add(TagKeys.CDK, `v${versionJson.version}`, {
+    includeResourceTypes: ["AWS::Lambda::Function"],
   });
 }
 

@@ -267,7 +267,8 @@ describe("addCdkConstructVersionTag", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    addCdkConstructVersionTag([hello1, hello2]);
+    addCdkConstructVersionTag(hello1);
+    addCdkConstructVersionTag(hello2);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Runtime: "nodejs16.x",
       Tags: [
