@@ -120,42 +120,40 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
   }
 }
 
-export function setDDEnvVariables(lambdas: lambda.Function[], props: DatadogLambdaProps): void {
-  lambdas.forEach((lam) => {
-    if (props.extensionLayerVersion) {
-      if (props.env) {
-        lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
-      }
-      if (props.service) {
-        lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
-      }
-      if (props.version) {
-        lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
-      }
-      if (props.tags) {
-        lam.addEnvironment(DD_TAGS, props.tags);
-      }
+export function setDDEnvVariables(lam: lambda.Function, props: DatadogLambdaProps): void {
+  if (props.extensionLayerVersion) {
+    if (props.env) {
+      lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
     }
-    if (props.enableColdStartTracing !== undefined) {
-      lam.addEnvironment(DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());
+    if (props.service) {
+      lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
     }
-    if (props.minColdStartTraceDuration !== undefined) {
-      lam.addEnvironment(DD_MIN_COLD_START_DURATION, props.minColdStartTraceDuration.toString().toLowerCase());
+    if (props.version) {
+      lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
     }
-    if (props.coldStartTraceSkipLibs !== undefined) {
-      lam.addEnvironment(DD_COLD_START_TRACE_SKIP_LIB, props.coldStartTraceSkipLibs);
+    if (props.tags) {
+      lam.addEnvironment(DD_TAGS, props.tags);
     }
-    if (props.enableProfiling !== undefined) {
-      lam.addEnvironment(DD_PROFILING_ENABLED, props.enableProfiling.toString().toLowerCase());
-    }
-    if (props.encodeAuthorizerContext !== undefined) {
-      lam.addEnvironment(DD_ENCODE_AUTHORIZER_CONTEXT, props.encodeAuthorizerContext.toString().toLowerCase());
-    }
-    if (props.decodeAuthorizerContext !== undefined) {
-      lam.addEnvironment(DD_DECODE_AUTHORIZER_CONTEXT, props.decodeAuthorizerContext.toString().toLowerCase());
-    }
-    if (props.apmFlushDeadline !== undefined) {
-      lam.addEnvironment(DD_APM_FLUSH_DEADLINE_MILLISECONDS, props.apmFlushDeadline.toString().toLowerCase());
-    }
-  });
+  }
+  if (props.enableColdStartTracing !== undefined) {
+    lam.addEnvironment(DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());
+  }
+  if (props.minColdStartTraceDuration !== undefined) {
+    lam.addEnvironment(DD_MIN_COLD_START_DURATION, props.minColdStartTraceDuration.toString().toLowerCase());
+  }
+  if (props.coldStartTraceSkipLibs !== undefined) {
+    lam.addEnvironment(DD_COLD_START_TRACE_SKIP_LIB, props.coldStartTraceSkipLibs);
+  }
+  if (props.enableProfiling !== undefined) {
+    lam.addEnvironment(DD_PROFILING_ENABLED, props.enableProfiling.toString().toLowerCase());
+  }
+  if (props.encodeAuthorizerContext !== undefined) {
+    lam.addEnvironment(DD_ENCODE_AUTHORIZER_CONTEXT, props.encodeAuthorizerContext.toString().toLowerCase());
+  }
+  if (props.decodeAuthorizerContext !== undefined) {
+    lam.addEnvironment(DD_DECODE_AUTHORIZER_CONTEXT, props.decodeAuthorizerContext.toString().toLowerCase());
+  }
+  if (props.apmFlushDeadline !== undefined) {
+    lam.addEnvironment(DD_APM_FLUSH_DEADLINE_MILLISECONDS, props.apmFlushDeadline.toString().toLowerCase());
+  }
 }
