@@ -86,7 +86,7 @@ export class DatadogLambda extends Construct {
       }
 
       if (baseProps.addLayers) {
-        applyLayers(
+        const errors = applyLayers(
           this.scope,
           region,
           lambdaFunction,
@@ -96,16 +96,28 @@ export class DatadogLambda extends Construct {
           this.props.dotnetLayerVersion,
           this.props.useLayersFromAccount,
         );
+        if (errors.length > 0) {
+          log.warn(
+            `Failed to apply layers to the Lambda function ${lambdaFunction.functionName}. Skipping instrumenting it.`,
+          );
+          continue;
+        }
       }
 
       if (baseProps.extensionLayerVersion !== undefined) {
-        applyExtensionLayer(
+        const errors = applyExtensionLayer(
           this.scope,
           region,
           lambdaFunction,
           baseProps.extensionLayerVersion,
           this.props.useLayersFromAccount,
         );
+        if (errors.length > 0) {
+          log.warn(
+            `Failed to apply extention layer to the Lambda function ${lambdaFunction.functionName}. Skipping instrumenting it.`,
+          );
+          continue;
+        }
       }
 
       if (baseProps.redirectHandler) {

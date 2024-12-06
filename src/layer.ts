@@ -42,7 +42,9 @@ export function applyLayers(
   const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
 
   if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
-    log.debug(`Unsupported runtime: ${runtime}`);
+    const error = `Unsupported runtime: ${runtime}`;
+    log.warn(error);
+    errors.push(error);
     return errors;
   }
 
@@ -111,7 +113,9 @@ export function applyExtensionLayer(
   const accountId = useLayersFromAccount;
 
   if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
-    log.debug(`Unsupported runtime: ${runtime}`);
+    const error = `Unsupported runtime: ${runtime}`;
+    log.warn(error);
+    errors.push(error);
     return errors;
   }
 
