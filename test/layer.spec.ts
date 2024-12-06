@@ -264,7 +264,8 @@ describe("applyLayers", () => {
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
     });
-    expect(errors.length).toEqual(0);
+    expect(errors.length).toEqual(1);
+    expect(errors[0]).toEqual("Unsupported runtime: go1.x");
   });
 
   it("doesn't add layer to container image Lambda without extension or layer versions", () => {
