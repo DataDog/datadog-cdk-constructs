@@ -465,6 +465,7 @@ describe("addLambdaFunctions", () => {
       },
     });
   });
+
   it("doesn't give lambdas secret read access to the given apiKeySecretArn if grantSecretReadAccess is false", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
@@ -484,6 +485,32 @@ describe("addLambdaFunctions", () => {
     });
     datadogLambda.addLambdaFunctions([hello], stack);
     Template.fromStack(stack).resourceCountIs("AWS::IAM::Policy", 0);
+  });
+
+  it("doesn't instrument the lambda function if Node version is unresolved", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      // unresolved Node runtime. Its name is like '${Token[TOKEN.330]}'.
+      runtime: lambda.determineLatestNodeRuntime(stack),
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      addLayers: true,
+      apiKeySecretArn: "arn:aws:secretsmanager:sa-east-1:123:secret:test-key",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+      grantSecretReadAccess: false,
+      forwarderArn: "forwarder-arn",
+    });
+    datadogLambda.addLambdaFunctions([hello], stack);
+    Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 0);
+    const lambdaFunction = Object.values(Template.fromStack(stack).findResources("AWS::Lambda::Function"))[0];
+    expect(lambdaFunction.Properties.hasOwnProperty("Tags")).toBe(false);
   });
 });
 
