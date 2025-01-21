@@ -12,17 +12,17 @@
     },
     {
       "name": "@types/node",
-      "version": "^14",
+      "version": "^18 <= 18.11.19",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^6",
+      "version": "^7",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^6",
+      "version": "^7",
       "type": "build"
     },
     {
