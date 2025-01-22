@@ -52,6 +52,7 @@ export interface DatadogLambdaProps {
  * For backward compatibility. It's recommended to use DatadogLambdaProps for
  * users who want to add Datadog monitoring for Lambda functions.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface DatadogProps extends DatadogLambdaProps {}
 
 /*
@@ -86,6 +87,7 @@ export interface DatadogLambdaStrictProps {
  * For backward compatibility. It's recommended to use DatadogLambdaStrictProps for
  * users who want to add Datadog monitoring for Lambda functions.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface DatadogStrictProps extends DatadogLambdaStrictProps {}
 
 export interface Runtime {
