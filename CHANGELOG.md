@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.22.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.21.0...v2-1.22.0) (2025-01-22)
+
+
+### Features
+
+* Abort instrumenting Lambda if runtime is unsupported ([#348](https://github.com/DataDog/datadog-cdk-constructs/issues/348)) ([4895acf](https://github.com/DataDog/datadog-cdk-constructs/commit/4895acf654ce2f8cf9af8b072c8128ebf9fa8722))
+
 ## [1.21.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.20.0...v2-1.21.0) (2024-11-26)
 
 ## [1.20.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.19.0...v2-1.20.0) (2024-11-26)
