@@ -94,11 +94,11 @@ npx tsc --project tsconfig.json
 
 echo "Setting up for Python"
 VERSION=$(jq -r '.version' ../version.json)
-cp "$ROOT_DIR/dist/python/datadog-cdk-constructs-v2-$VERSION.tar.gz" stacks/python
+cp "$ROOT_DIR/dist/python/datadog_cdk_constructs_v2-$VERSION.tar.gz" stacks/python
 cd stacks/python
 virtualenv env && source env/bin/activate
 pip install -r requirements.txt
-pip install datadog-cdk-constructs-v2-$VERSION.tar.gz
+pip install datadog_cdk_constructs_v2-$VERSION.tar.gz
 cd ../..
 
 echo "Setting up for Go"
