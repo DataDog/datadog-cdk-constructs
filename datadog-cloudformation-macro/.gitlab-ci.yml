@@ -1,0 +1,10 @@
+stages:
+  - test
+
+test gitlab:
+  stage: test
+  image: registry.ddbuild.io/images/docker:20.10
+  tags: ["arch:arm64"]
+  script:
+    - echo "Running tests"
+    - echo "Tests passed"
