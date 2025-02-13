@@ -649,15 +649,15 @@ The Datadog CDK Construct Libraries use Projen to maintain project configuration
 
 ## Migrating from v2-1.x.x to v2-2.x.x
 
-We bumped the major version from `1.x.x` to `2.x.x` in February 2025. Below are the changes needed to migrate to the new version.
+In February 2025, Datadog released a major version update from `1.x.x` to `2.x.x`. The required changes to migrate to the new version are as follows:
 
 1. Rename the classes for instrumenting Lambda functions:
 
    1. `Datadog` -> `DatadogLambda`
    2. `DatadogProps` -> `DatadogLambdaProps`
-      For examples, see [Usage](#usage) section and [examples/](https://github.com/DataDog/datadog-cdk-constructs/tree/main/examples) folder.
+      For examples, see the [Usage](#usage) section of this page and [examples/][20] folder of the GitHub repository.
 
-2. Upgrade Node.js version to 18.18.0 or above.
+2. Upgrade Node.js version to `18.18.0` or above.
 
 ## Opening Issues
 
@@ -722,3 +722,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [17]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_secretsmanager.ISecret.html#grantwbrreadgrantee-versionstages
 [18]: https://github.com/DataDog/dd-trace-dotnet-aws-lambda-layer/releases
 [19]: https://docs.datadoghq.com/serverless/aws_lambda/installation/dotnet
+[20]: https://github.com/DataDog/datadog-cdk-constructs/tree/main/examples
