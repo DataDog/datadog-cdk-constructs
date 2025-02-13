@@ -48,12 +48,6 @@ export interface DatadogLambdaProps {
   readonly useLayersFromAccount?: string;
 }
 
-/**
- * For backward compatibility. It's recommended to use DatadogLambdaProps for
- * users who want to add Datadog monitoring for Lambda functions.
- */
-export interface DatadogProps extends DatadogLambdaProps {}
-
 /*
  * Makes fields shared with DefaultDatadogLambdaProps (in constants file) required.
  */
@@ -81,12 +75,6 @@ export interface DatadogLambdaStrictProps {
   readonly sourceCodeIntegration?: boolean;
   readonly redirectHandler?: boolean;
 }
-
-/**
- * For backward compatibility. It's recommended to use DatadogLambdaStrictProps for
- * users who want to add Datadog monitoring for Lambda functions.
- */
-export interface DatadogStrictProps extends DatadogLambdaStrictProps {}
 
 export interface Runtime {
   readonly name: string;

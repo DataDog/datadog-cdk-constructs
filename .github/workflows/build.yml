@@ -11,16 +11,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Node 16
+      - name: Set up Node 18
         uses: actions/setup-node@v1
         with:
-          node-version: 16
-      
+          node-version: 18
+
       - name: Cache Node modules
         id: cache-node-modules
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-${{ matrix.working-dir }}
 
       - name: Install dependencies
@@ -48,7 +48,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        node-version: [16, 18, 20]
+        node-version: [18, 20]
 
     steps:
       - name: Checkout
@@ -63,9 +63,9 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-${{ matrix.working-dir }}
-      
+
       - name: Install common dependencies
         working-directory: ./
         run: yarn install

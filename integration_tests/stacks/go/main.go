@@ -10,15 +10,8 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	// Creates a stack using the new API (DatadogLambda, DatadogLambdaProps)
+	// Creates a stack using the current API (DatadogLambda, DatadogLambdaProps)
 	NewAppStackWithDatadogLambda(app, "LambdaGoStack", &AppStackProps{
-		StackProps: awscdk.StackProps{
-			Env: env(),
-		},
-	})
-
-	// Creates a stack using the old API (Datadog, DatadogProps)
-	NewAppStackWithDatadogOldApi(app, "LambdaGoOldLambdaApiStack", &AppStackProps{
 		StackProps: awscdk.StackProps{
 			Env: env(),
 		},

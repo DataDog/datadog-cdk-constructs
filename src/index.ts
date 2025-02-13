@@ -6,7 +6,6 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-export * from "./datadog";
 export * from "./datadog-lambda";
 export * from "./datadog-step-functions";
 export * from "./layer";
