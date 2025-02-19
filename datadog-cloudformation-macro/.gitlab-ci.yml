@@ -8,3 +8,5 @@ test gitlab:
   script:
     - echo "Running tests"
     - echo "Tests passed"
+    - echo "Listing files in working directory"
+    - ls -la
