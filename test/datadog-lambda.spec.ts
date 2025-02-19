@@ -2,7 +2,13 @@ import { App, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { addCdkConstructVersionTag, checkForMultipleApiKeys, DatadogLambda, DD_HANDLER_ENV_VAR } from "../src/index";
+import {
+  addCdkConstructVersionTag,
+  checkForMultipleApiKeys,
+  DatadogLambda,
+  DD_HANDLER_ENV_VAR,
+  DD_TAGS,
+} from "../src/index";
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
@@ -560,5 +566,188 @@ describe("redirectHandler", () => {
         },
       },
     });
+  });
+});
+
+describe("overrideGitMetadata", () => {
+  it("overrides new lambda functions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
+    datadogLambda.addLambdaFunctions([hello], stack);
+    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+      expect.arrayContaining(["git.commit.sha:fake-sha"]),
+    );
+    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+      expect.arrayContaining(["git.repository_url:fake-url"]),
+    );
+  });
+
+  it("overrides existing lambda functions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogLambda.addLambdaFunctions([hello], stack);
+    datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
+    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+      expect.arrayContaining(["git.commit.sha:fake-sha"]),
+    );
+    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+      expect.arrayContaining(["git.repository_url:fake-url"]),
+    );
+  });
+  it("overrides both existing and new lambda functions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const goodbye = new lambda.Function(stack, "GoodbyeHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogLambda.addLambdaFunctions([hello], stack);
+    datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
+    datadogLambda.addLambdaFunctions([goodbye], stack);
+
+    [hello, goodbye].forEach((f) => {
+      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+        expect.arrayContaining(["git.commit.sha:fake-sha"]),
+      );
+      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+        expect.arrayContaining(["git.repository_url:fake-url"]),
+      );
+    });
+  });
+
+  it("overrides only the sha for both existing and new lambda functions while preserving existing tags", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const goodbye = new lambda.Function(stack, "GoodbyeHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+      tags: "testVar:xyz",
+    });
+    datadogLambda.addLambdaFunctions([hello], stack);
+    datadogLambda.overrideGitMetadata("fake-sha");
+    datadogLambda.addLambdaFunctions([goodbye], stack);
+
+    [hello, goodbye].forEach((f) => {
+      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+        expect.arrayContaining(["git.commit.sha:fake-sha"]),
+      );
+      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(expect.arrayContaining(["testVar:xyz"]));
+    });
+  });
+
+  it("overrides only the sha for both existing and new lambda functions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const goodbye = new lambda.Function(stack, "GoodbyeHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogLambda.addLambdaFunctions([hello], stack);
+    datadogLambda.overrideGitMetadata("fake-sha");
+    datadogLambda.addLambdaFunctions([goodbye], stack);
+
+    [hello, goodbye].forEach((f) => {
+      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+        expect.arrayContaining([
+          "git.commit.sha:fake-sha",
+          "git.repository_url:github.com/DataDog/datadog-cdk-constructs",
+        ]),
+      );
+    });
+  });
+
+  it("does not override when not called", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogLambda.addLambdaFunctions([hello], stack);
+
+    expect(
+      (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.commit.sha")),
+    ).toEqual(true);
+    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+      expect.arrayContaining(["git.repository_url:github.com/DataDog/datadog-cdk-constructs"]),
+    );
   });
 });

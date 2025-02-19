@@ -26,6 +26,7 @@ import {
   DatadogLambdaProps,
   Transport,
   applyExtensionLayer,
+  DD_TAGS,
 } from "./index";
 import { LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
@@ -36,6 +37,9 @@ export class DatadogLambda extends Construct {
   scope: Construct;
   props: DatadogLambdaProps;
   transport: Transport;
+  gitCommitShaOverride: string | undefined;
+  gitRepoUrlOverride: string | undefined;
+  lambdas: LambdaFunction[];
 
   constructor(scope: Construct, id: string, props: DatadogLambdaProps) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() === "true") {
@@ -44,6 +48,7 @@ export class DatadogLambda extends Construct {
     super(scope, id);
     this.scope = scope;
     this.props = props;
+    this.lambdas = [];
     let apiKeySecretArn = this.props.apiKeySecretArn;
     if (this.props.apiKeySecret !== undefined) {
       apiKeySecretArn = this.props.apiKeySecret.secretArn;
@@ -150,6 +155,37 @@ export class DatadogLambda extends Construct {
       if (baseProps.sourceCodeIntegration) {
         this.addGitCommitMetadata([lambdaFunction]);
       }
+      this.lambdas.push(lambdaFunction);
+    }
+  }
+
+  public overrideGitMetadata(gitCommitSha: string, gitRepoUrl?: string): void {
+    if (gitCommitSha) {
+      this.gitCommitShaOverride = gitCommitSha;
+    }
+    if (gitRepoUrl) {
+      this.gitRepoUrlOverride = gitRepoUrl;
+    }
+
+    // If any lambdas have already been added, override the commit sha and url
+    if (this.lambdas) {
+      this.lambdas.forEach((lambdaFunction: any) => {
+        if (lambdaFunction.environment[DD_TAGS] === undefined) {
+          return;
+        }
+        const tags = lambdaFunction.environment[DD_TAGS].value.split(",");
+        if (gitCommitSha) {
+          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
+          tags[index] = `git.commit.sha:${gitCommitSha}`;
+        }
+
+        if (gitRepoUrl) {
+          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.repository_url");
+          tags[index] = `git.repository_url:${gitRepoUrl}`;
+        }
+
+        lambdaFunction.environment[DD_TAGS].value = tags.join(",");
+      });
     }
   }
 
@@ -164,7 +200,7 @@ export class DatadogLambda extends Construct {
     gitRepoUrl?: string,
   ): void {
     const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
-    setGitEnvironmentVariables(extractedLambdaFunctions);
+    setGitEnvironmentVariables(extractedLambdaFunctions, this.gitCommitShaOverride, this.gitRepoUrlOverride);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {

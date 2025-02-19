@@ -36,9 +36,21 @@ const execSync = require("child_process").execSync;
 
 const URL = require("url").URL;
 
-export function setGitEnvironmentVariables(lambdas: any[]): void {
+export function setGitEnvironmentVariables(
+  lambdas: any[],
+  gitCommitShaOverride?: string | undefined,
+  gitRepoUrlOverride?: string | undefined,
+): void {
   log.debug("Adding source code integration...");
-  const { hash, gitRepoUrl } = getGitData();
+  let { hash, gitRepoUrl } = getGitData();
+  if (gitCommitShaOverride) {
+    log.debug(`Using git SHA override.  Will be ${gitCommitShaOverride} instead of ${hash}`);
+    hash = gitCommitShaOverride;
+  }
+  if (gitRepoUrlOverride) {
+    log.debug(`Using git repo URL override.  Will be ${gitRepoUrlOverride} instead of ${hash}`);
+    gitRepoUrl = gitRepoUrlOverride;
+  }
 
   if (hash == "" || gitRepoUrl == "") return;
 
