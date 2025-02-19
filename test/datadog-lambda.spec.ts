@@ -656,7 +656,7 @@ describe("overrideGitMetadata", () => {
     });
   });
 
-  it("overrides only the sha for both existing and new lambda functions", () => {
+  it("overrides only the sha for both existing and new lambda functions while preserving existing tags", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
