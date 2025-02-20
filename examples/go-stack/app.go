@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -77,36 +77,6 @@ func NewAppStackWithDatadogLambda(scope constructs.Construct, id string, props *
 	return stack
 }
 
-// Creates a stack with Datadog integration set up, using the old API (Datadog, DatadogProps) to ensure
-// backward compatibility. Users are recommended to use the new API.
-func NewAppStackWithDatadogOldApi(scope constructs.Construct, id string, props *AppStackProps) awscdk.Stack {
-	stack, lambdaFunction := NewAppStackWithoutDatadog(scope, &id, props)
-
-	// Set up Datadog integration
-	datadog := ddcdkconstruct.NewDatadog(
-		stack,
-		jsii.String("Datadog"),
-		&ddcdkconstruct.DatadogProps{
-			NodeLayerVersion:      jsii.Number(113),
-			PythonLayerVersion:    jsii.Number(97),
-			JavaLayerVersion:      jsii.Number(21),
-			DotnetLayerVersion:    jsii.Number(15),
-			AddLayers:             jsii.Bool(true),
-			ExtensionLayerVersion: jsii.Number(62),
-			FlushMetricsToLogs:    jsii.Bool(true),
-			Site:                  jsii.String("datadoghq.com"),
-			ApiKey:                jsii.String(os.Getenv("DD_API_KEY")),
-			EnableDatadogTracing:  jsii.Bool(true),
-			EnableMergeXrayTraces: jsii.Bool(true),
-			EnableDatadogLogs:     jsii.Bool(true),
-			InjectLogContext:      jsii.Bool(true),
-			LogLevel:              jsii.String("debug"),
-		})
-	datadog.AddLambdaFunctions(&[]interface{}{lambdaFunction}, nil)
-
-	return stack
-}
-
 func main() {
 	defer jsii.Close()
 
@@ -118,12 +88,6 @@ func main() {
 		},
 	})
 	
-    NewAppStackWithDatadogOldApi(app, "CdkGoLambdaOldApiStack", &AppStackProps{
-		awscdk.StackProps{
-			Env: env(),
-		},
-	})
-
 	app.Synth(nil)
 }
 
