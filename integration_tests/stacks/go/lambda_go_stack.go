@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
