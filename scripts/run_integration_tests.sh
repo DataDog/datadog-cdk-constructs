@@ -17,16 +17,13 @@ STACK_CONFIG_PATHS=(
     "typescript/lambda-singleton-function-stack.ts"
     "typescript/lambda-function-arm-stack.ts"
     "typescript/lambda-function-stack.ts"
-    "typescript/lambda-function-stack-legacy-datadog-api.ts"
     "typescript/lambda-nodejs-function-stack.ts"
     "typescript/lambda-python-function-stack.ts"
     "typescript/lambda-java-function-stack.ts"
     "typescript/step-function-stack.ts"
     "python/lambda_python_stack.py"
-    "python/lambda_python_old_lambda_api_stack.py"
     "python/step_functions_python_stack.py"
     "go/lambda_go_stack.go"
-    "go/lambda_go_old_lambda_api_stack.go"
     "go/step_functions_go_stack.go"
 )
 
@@ -94,11 +91,11 @@ npx tsc --project tsconfig.json
 
 echo "Setting up for Python"
 VERSION=$(jq -r '.version' ../version.json)
-cp "$ROOT_DIR/dist/python/datadog-cdk-constructs-v2-$VERSION.tar.gz" stacks/python
+cp "$ROOT_DIR/dist/python/datadog_cdk_constructs_v2-$VERSION.tar.gz" stacks/python
 cd stacks/python
 virtualenv env && source env/bin/activate
 pip install -r requirements.txt
-pip install datadog-cdk-constructs-v2-$VERSION.tar.gz
+pip install datadog_cdk_constructs_v2-$VERSION.tar.gz
 cd ../..
 
 echo "Setting up for Go"
