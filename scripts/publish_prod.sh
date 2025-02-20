@@ -106,7 +106,7 @@ if [ ! -f $PY_WHEEL ]; then
     exit 1
 fi
 
-PY_TARBALL=./dist/python/datadog-cdk-constructs-v2-$VERSION.tar.gz
+PY_TARBALL=./dist/python/datadog_cdk_constructs_v2-$VERSION.tar.gz
 if [ ! -f $PY_TARBALL ]; then
     echo "'${PY_TARBALL}' not found. Run 'yarn build' and ensure this file is created."
     exit 1
