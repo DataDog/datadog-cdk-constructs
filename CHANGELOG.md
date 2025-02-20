@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.24.0...v2-2.0.0) (2025-02-20)
+
+
+### Features
+
+* [Major version bump] Merge breaking changes into main ([#363](https://github.com/DataDog/datadog-cdk-constructs/issues/363)) ([5ec2a67](https://github.com/DataDog/datadog-cdk-constructs/commit/5ec2a6711a56df9e214e9fc2160d92d5341eaa15)), closes [#353](https://github.com/DataDog/datadog-cdk-constructs/issues/353) [#355](https://github.com/DataDog/datadog-cdk-constructs/issues/355)
+
+
+### Bug Fixes
+
+* Change Python tarball name in publish_prod.sh ([#365](https://github.com/DataDog/datadog-cdk-constructs/issues/365)) ([a2f263d](https://github.com/DataDog/datadog-cdk-constructs/commit/a2f263dbd4ad9669c87c10aad5cafff1b7a5cf68))
+
 ## [1.24.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.23.0...v2-1.24.0) (2025-02-19)
 
 ## [1.23.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.22.0...v2-1.23.0) (2025-01-31)
