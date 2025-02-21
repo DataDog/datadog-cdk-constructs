@@ -1,12 +1,67 @@
-stages:
-  - test
+stages: 
+  - build
+  - release
 
-test gitlab:
-  stage: test
+variables:
+  DOCKER_TARGET_IMAGE: registry.ddbuild.io/ci/datadog-cloudformation-macro-ci
+  DOCKER_TARGET_VERSION: latest
+  # Default version for development builds
+  # This will be overwritten by the tag version if it is a release.
+  VERSION: dev
+  SANDBOX_NAME: sandbox
+  SANDBOX_EXTERNAL_ID_NAME: sandbox-publish-externalid
+  SANDBOX_ROLE_TO_ASSUME: sandbox-layer-deployer
+  SANDBOX_ACCOUNT: 425362996713
+  PROD_NAME: prod
+  PROD_EXTERNAL_ID_NAME: prod-publish-externalid
+  PROD_ROLE_TO_ASSUME: dd-serverless-layer-deployer-role
+  PROD_ACCOUNT: 464622532012
+  BUCKET: datadog-cloudformation-template
+
+ci image:
+  stage: build
   image: registry.ddbuild.io/images/docker:20.10
   tags: ["arch:arm64"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - ./serverless/Dockerfile
+      when: on_success
+  variables:
+    DOCKER_TARGET: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
   script:
-    - echo "Running tests"
-    - echo "Tests passed"
-    - echo "Listing files in working directory"
-    - ls -la
+    - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f ./serverless/Dockerfile .
+      
+
+release macro:
+  stage: release
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  tags: ["arch:arm64"]
+  before_script:
+    - EXTERNAL_ID=$(vault kv get -field=$SANDBOX_EXTERNAL_ID_NAME kv/k8s/gitlab-runner/datadog-cloudformation-macro/secrets)
+   
+    - if [ -z "$EXTERNAL_ID" ]; then
+        echo "[Error] Failed to retrieve EXTERNAL_ID.";
+        exit 1;
+      fi
+
+    - CREDENTIALS=$(aws sts assume-role \
+          --role-arn "arn:aws:iam::$SANDBOX_ACCOUNT:role/$SANDBOX_ROLE_TO_ASSUME" \
+          --role-session-name "ci.datadog-cloudformation-macro-$CI_JOB_ID-$CI_JOB_STAGE" \
+          --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+          --external-id "$EXTERNAL_ID" \
+          --output text)
+
+    - if [ -z "$CREDENTIALS" ]; then
+        echo "[Error] Failed to assume AWS IAM role.";
+        exit 1;
+      fi
+
+    - read AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< "$CREDENTIALS"
+    - export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+  script:
+    - ./serverless/release.sh 
+  after_script:
+    echo "Done uploading the template, and here is the CloudFormation quick launch URL"
+    echo "https://console.aws.amazon.com/cloudformation/home#/stacks/quickCreate?stackName=datadog-serverless-macro&templateURL=${TEMPLATE_URL}"
+
