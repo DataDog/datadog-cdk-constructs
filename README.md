@@ -121,7 +121,7 @@ datadogLambda.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 
 ```go
 import (
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
 )
 datadogLambda := ddcdkconstruct.NewDatadogLambda(
     stack,
@@ -507,7 +507,7 @@ Example stack: [step-functions-go-stack](https://github.com/DataDog/datadog-cdk-
 
 ```
 import (
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	sfn "github.com/aws/aws-cdk-go/awscdk/v2/awsstepfunctions"
 )
@@ -534,7 +534,7 @@ To merge the Step Function's traces with downstream Lambda function or Step func
 
 ```
 import (
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	sfn "github.com/aws/aws-cdk-go/awscdk/v2/awsstepfunctions"
 	sfntasks "github.com/aws/aws-cdk-go/awscdk/v2/awsstepfunctionstasks"
@@ -658,6 +658,18 @@ In February 2025, Datadog released a major version update from `1.x.x` to `2.x.x
       For examples, see the [Usage](#usage) section of this page and [examples/][20] folder of the GitHub repository.
 
 2. Upgrade Node.js version to `18.18.0` or above.
+
+3. For Go, change the import from:
+
+   ```
+   "github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct"
+   ```
+
+   to:
+
+   ```
+   "github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
+   ```
 
 ## Opening Issues
 
