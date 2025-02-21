@@ -209,11 +209,11 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-"datadog-cdk-constructs-v2@file:./datadog-cdk-constructs-v2-1.18.0.jsii.tgz":
-  version "1.18.0"
-  resolved "file:./datadog-cdk-constructs-v2-1.18.0.jsii.tgz#efede0e9a31a60677baeb1424947ef45379e05f1"
+"datadog-cdk-constructs-v2@file:./datadog-cdk-constructs-v2-2.0.0.jsii.tgz":
+  version "2.0.0"
+  resolved "file:./datadog-cdk-constructs-v2-2.0.0.jsii.tgz#05c2fa97c4f1de260aac595e96bb9b1e523ec910"
   dependencies:
-    loglevel "^1.9.1"
+    loglevel "^1.9.2"
 
 diff@^4.0.1:
   version "4.0.2"
@@ -288,7 +288,7 @@ lodash.truncate@^4.4.2:
   resolved "https://registry.yarnpkg.com/lodash.truncate/-/lodash.truncate-4.4.2.tgz#5a350da0b1113b837ecfffd5812cbe58d6eae193"
   integrity sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==
 
-loglevel@^1.9.1:
+loglevel@^1.9.2:
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.9.2.tgz#c2e028d6c757720107df4e64508530db6621ba08"
   integrity sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==
