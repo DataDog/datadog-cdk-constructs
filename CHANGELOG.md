@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.0.0...v2-2.1.0) (2025-02-21)
+
+
+### Bug Fixes
+
+* Make Go package work properly for v2 ([#366](https://github.com/DataDog/datadog-cdk-constructs/issues/366)) ([7b9d813](https://github.com/DataDog/datadog-cdk-constructs/commit/7b9d813addef312171475cb5859ecdfbc86e50cf))
+
 ## [2.0.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-1.24.0...v2-2.0.0) (2025-02-20)
 
 
