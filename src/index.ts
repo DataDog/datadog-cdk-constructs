@@ -17,3 +17,12 @@ export * from "./constants";
 export * from "./interfaces";
 export * from "./redirect";
 export * from "./transport";
+
+export * from "./ecs/interfaces";
+export * from "./ecs/fargate/datadog-ecs-fargate";
+export {
+  DatadogECSFargateProps,
+  DatadogECSLogDriverProps,
+  LoggingType,
+  FargateLogCollectionFeatureConfig,
+} from "./ecs/fargate/interfaces";

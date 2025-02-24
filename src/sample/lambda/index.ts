@@ -13,27 +13,27 @@ import { LambdaRestApi, LogGroupLogDestination } from "aws-cdk-lib/aws-apigatewa
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { DatadogLambda } from "../index";
+import { DatadogLambda } from "../../index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const lambdaFunction = new lambda.Function(this, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      code: lambda.Code.fromAsset("./src/sample/lambda"),
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset("./src/sample/lambda/python"),
       handler: "lambdaFunction.handler",
     });
 
     const lambdaNodejsFunction = new lambdaNodejs.NodejsFunction(this, "NodeJSHandler", {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      entry: "./src/sample/lambda_nodejs/hello_node.js",
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: "./src/sample/lambda/nodejs/hello_node.js",
       handler: "handler",
     });
 
     const lambdaPythonFunction = new lambdaPython.PythonFunction(this, "PythonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
-      entry: "./src/sample/lambda/",
+      runtime: lambda.Runtime.PYTHON_3_12,
+      entry: "./src/sample/lambda/python/",
       index: "hello_py.py",
       handler: "handler",
     });
@@ -48,8 +48,8 @@ export class ExampleStack extends Stack {
     });
 
     const lambdaFunction1 = new lambda.Function(this, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      code: lambda.Code.fromAsset("./src/sample/lambda"),
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset("./src/sample/lambda/python"),
       handler: "lambdaFunction.handler",
     });
 
@@ -62,8 +62,8 @@ export class ExampleStack extends Stack {
     });
 
     const lambdaFunction2 = new lambda.Function(this, "HelloHandler2", {
-      runtime: lambda.Runtime.PYTHON_3_7,
-      code: lambda.Code.fromAsset("./src/sample/lambda"),
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromAsset("./src/sample/lambda/python"),
       handler: "hello_py.handler",
       tracing: lambda.Tracing.ACTIVE,
     });

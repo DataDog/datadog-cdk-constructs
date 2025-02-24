@@ -1,0 +1,78 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed
+ * under the Apache License Version 2.0.
+ *
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2021 Datadog, Inc.
+ */
+
+import { HealthCheck, Secret } from "aws-cdk-lib/aws-ecs";
+import { EnvVarManager } from "../environment";
+import { DatadogECSBaseProps, LogCollectionFeatureConfig } from "../interfaces";
+
+export interface DatadogECSFargateProps extends DatadogECSBaseProps {
+  readonly logCollection?: FargateLogCollectionFeatureConfig;
+}
+
+export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureConfig {
+  /**
+   * Type of log collection.
+   */
+  readonly datadogLoggingType?: LoggingType;
+  /**
+   * Configuration for the Datadog fluentbit log driver.
+   */
+  readonly logDriverConfiguration?: DatadogECSLogDriverProps;
+  /**
+   * Makes the log router essential.
+   */
+  readonly isLogRouterEssential?: boolean;
+  /**
+   * Enables the log router health check.
+   */
+  readonly isLogRouterHealthCheckEnabled?: boolean;
+  /**
+   * Health check configuration for the log router.
+   */
+  readonly logRouterHealthCheck?: HealthCheck;
+}
+
+/**
+ * Internal props for the Datadog ECS Fargate construct.
+ */
+export interface DatadogECSFargateInternalProps extends DatadogECSFargateProps {
+  readonly envVarManager: EnvVarManager;
+  readonly isLinux: boolean;
+  readonly isSocketRequired: boolean;
+  readonly isProtocolRequired: boolean;
+  readonly datadogSecret?: Secret;
+}
+
+/**
+ * Type of datadog logging configuration.
+ */
+export enum LoggingType {
+  FLUENTBIT = "fluentbit",
+  /**
+   * Currently unsupported within this construct,
+   * must configure manually on containers.
+   * https://docs.datadoghq.com/integrations/ecs_fargate/?tab=webui#aws-log-driver
+   */
+  LAMBDAFORWARDER = "lambda",
+}
+
+/**
+ * Datadog Fluentbit log driver configuration.
+ * https://docs.fluentbit.io/manual/pipeline/outputs/datadog
+ */
+export interface DatadogECSLogDriverProps {
+  readonly registry?: string;
+  readonly imageVersion?: string;
+
+  readonly hostEndpoint?: string;
+  readonly tls?: string;
+  readonly compress?: string;
+  readonly serviceName?: string;
+  readonly sourceName?: string;
+  readonly messageKey?: string;
+}
