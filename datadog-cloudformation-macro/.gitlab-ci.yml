@@ -38,7 +38,7 @@ release macro:
   image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
   tags: ["arch:arm64"]
   before_script:
-    - EXTERNAL_ID_NAME=${SANDBOX_EXTERNAL_ID} ROLE_TO_ASSUME=${SANDBOX_ROLE_TO_ASSUME} AWS_ACCOUNT=${SANDBOX_ACCOUNT} source ./serverless/tools/get_secrets.sh
+    - EXTERNAL_ID_NAME=${SANDBOX_EXTERNAL_ID_NAME} ROLE_TO_ASSUME=${SANDBOX_ROLE_TO_ASSUME} AWS_ACCOUNT=${SANDBOX_ACCOUNT} source ./serverless/tools/get_secrets.sh
   script:
     - ./serverless/release.sh ${BUCKET}
   after_script:
