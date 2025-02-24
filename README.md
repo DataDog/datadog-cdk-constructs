@@ -70,7 +70,7 @@ Pay attention to the output from your package manager as the `Datadog CDK Constr
 For use with AWS CDK v2:
 
 ```
-go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct
+go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
 ```
 
 AWS CDK v1 is not supported.
