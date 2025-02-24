@@ -27,7 +27,6 @@ ci image:
       changes:
         - ./serverless/Dockerfile
       when: on_success
-  when: manual
   variables:
     DOCKER_TARGET: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
   script:
@@ -39,29 +38,9 @@ release macro:
   image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
   tags: ["arch:arm64"]
   before_script:
-    - EXTERNAL_ID=$(vault kv get -field=$SANDBOX_EXTERNAL_ID_NAME kv/k8s/gitlab-runner/datadog-cloudformation-macro/secrets)
-   
-    - if [ -z "$EXTERNAL_ID" ]; then
-        echo "[Error] Failed to retrieve EXTERNAL_ID.";
-        exit 1;
-      fi
-
-    - CREDENTIALS=$(aws sts assume-role \
-          --role-arn "arn:aws:iam::$SANDBOX_ACCOUNT:role/$SANDBOX_ROLE_TO_ASSUME" \
-          --role-session-name "ci.datadog-cloudformation-macro-$CI_JOB_ID-$CI_JOB_STAGE" \
-          --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
-          --external-id "$EXTERNAL_ID" \
-          --output text)
-
-    - if [ -z "$CREDENTIALS" ]; then
-        echo "[Error] Failed to assume AWS IAM role.";
-        exit 1;
-      fi
-
-    - read AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< "$CREDENTIALS"
-    - export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+    - EXTERNAL_ID_NAME=${SANDBOX_EXTERNAL_ID} ROLE_TO_ASSUME=${SANDBOX_ROLE_TO_ASSUME} AWS_ACCOUNT=${SANDBOX_ACCOUNT} source ./serverless/tools/get_secrets.sh
   script:
-    - ./serverless/release.sh 
+    - ./serverless/release.sh ${BUCKET}
   after_script:
     echo "Done uploading the template, and here is the CloudFormation quick launch URL"
     echo "https://console.aws.amazon.com/cloudformation/home#/stacks/quickCreate?stackName=datadog-serverless-macro&templateURL=${TEMPLATE_URL}"
