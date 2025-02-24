@@ -8,6 +8,7 @@
 
 export * from "./datadog";
 export * from "./datadog-lambda";
+export * from "./ecs/fargate/datadog-ecs-fargate";
 export * from "./datadog-step-functions";
 export * from "./layer";
 export * from "./redirect";
@@ -18,3 +19,8 @@ export * from "./constants";
 export * from "./interfaces";
 export * from "./redirect";
 export * from "./transport";
+export * from "./ecs/interfaces";
+export * from "./ecs/constants";
+export * from "./ecs/fargate/interfaces";
+export * from "./ecs/environment";
+export * from "./ecs/utils";
