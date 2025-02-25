@@ -7,7 +7,8 @@
  */
 
 import { HealthCheck } from "aws-cdk-lib/aws-ecs";
-import { DatadogECSBaseProps, EnvVarManager } from "../../index";
+import { EnvVarManager } from "../environment";
+import { DatadogECSBaseProps } from "../interfaces";
 
 export interface DatadogECSFargateProps extends DatadogECSBaseProps {
   readonly logDriverConfiguration?: DatadogECSFargateLogDriverProps;

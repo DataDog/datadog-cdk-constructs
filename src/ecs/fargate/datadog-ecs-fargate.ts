@@ -21,15 +21,11 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { DatadogEcsFargateDefaultProps, FargateDefaultEnvVars } from "./constants";
-import {
-  DatadogECSFargateInternalProps,
-  DatadogECSFargateProps,
-  entryPointPrefixCWS,
-  isOperatingSystemLinux,
-  mergeFargateProps,
-  validateECSProps,
-} from "../../index";
+import { DatadogECSFargateInternalProps } from "./interfaces";
+import { DatadogECSFargateProps } from "../../index";
+import { entryPointPrefixCWS } from "../constants";
 import { EnvVarManager } from "../environment";
+import { isOperatingSystemLinux, mergeFargateProps, validateECSProps } from "../utils";
 
 export class DatadogEcsFargate extends Construct {
   scope: Construct;
@@ -78,6 +74,11 @@ export class DatadogEcsFargate extends Construct {
     if (props.enableDogstatsdOriginDetection) {
       envVarManager.add("DD_DOGSTATSD_ORIGIN_DETECTION", "true");
       envVarManager.add("DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT", "true");
+    }
+
+    if (props.enableCWS) {
+      envVarManager.add("DD_RUNTIME_SECURITY_CONFIG_ENABLED", "true");
+      envVarManager.add("DD_RUNTIME_SECURITY_CONFIG_EBPFLESS_ENABLED", "true");
     }
 
     return envVarManager;

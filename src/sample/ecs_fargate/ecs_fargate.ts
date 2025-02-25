@@ -22,7 +22,7 @@ export class EcsStackBase extends cdk.Stack {
 
     // Create a VPC with default configuration
     const vpc = new ec2.Vpc(this, "EcsFargateVpc", {
-      maxAzs: 2, // Default is all AZs in region
+      maxAzs: 2,
     });
 
     // Create an ECS cluster
@@ -31,44 +31,14 @@ export class EcsStackBase extends cdk.Stack {
       vpc,
     });
 
-    // const keyPair = ec2.KeyPair.fromKeyPairName(this, 'KeyPair', 'gabe.dossantos.rsa');
-
-    // cluster.addCapacity('DefaultAutoScalingGroup-Linux', {
-    //   instanceType: new ec2.InstanceType('t3.medium'),
-    //   minCapacity: 1,
-    //   maxCapacity: 1,
-    //   machineImage: ecs.EcsOptimizedImage.amazonLinux2(),
-    //   vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
-    //   associatePublicIpAddress: true,
-    //   keyName: keyPair.keyPairName,
-    // });
-
-    // const autoScalingGroup = new autoscaling.AutoScalingGroup(this, 'WindowsAutoScalingGroup', {
-    //   vpc,
-    //   instanceType: new ec2.InstanceType('t3.large'),
-    //   machineImage: ec2.MachineImage.latestWindows(ec2.WindowsVersion.WINDOWS_SERVER_2022_ENGLISH_FULL_BASE),
-    //   minCapacity: 1,
-    //   maxCapacity: 1,
-    //   vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
-    //   associatePublicIpAddress: true,
-    //   keyName: keyPair.keyPairName,
-    // });
-
-    // // Attach the ASG to the ECS Cluster
-    // const capacityProvider = new ecs.AsgCapacityProvider(this, 'WindowsCapacityProvider', {
-    //   autoScalingGroup,
-    // });
-
-    // cluster.addAsgCapacityProvider(capacityProvider);
-
     // Create an ECS task execution role
     const executionRole = new iam.Role(this, "TaskExecutionRole", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
       managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy")],
     });
 
-    // Create an ECS Fargate task definition with an nginx container
-    const fargateTaskDefinition = new ecs.FargateTaskDefinition(this, "NginxTaskDef", {
+    // Create an ECS Fargate task definition
+    const fargateTaskDefinition = new ecs.FargateTaskDefinition(this, "ExampleFargateTask", {
       memoryLimitMiB: 2048,
       cpu: 256,
       executionRole: executionRole,
@@ -93,16 +63,6 @@ export class EcsStackBase extends cdk.Stack {
       image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-tracegen:main"),
       essential: false,
     });
-
-    // const ec2windows = new ecs.TaskDefinition(this, 'WindTaskDefEC2', {
-    //   memoryMiB: '2048',
-    //   cpu: '1024',
-    //   executionRole: executionRole,
-    //   compatibility: ecs.Compatibility.EC2,
-    // });
-    // ec2windows.addContainer('WindowContEC2', {
-    //   image: ecs.ContainerImage.fromRegistry('mcr.microsoft.com/dotnet/samples:aspnetapp-nanoserver-ltsc2022'),
-    // });
 
     const fargateWindowsTaskDefinition = new ecs.FargateTaskDefinition(this, "WindowsTaskDef", {
       memoryLimitMiB: 4096,
