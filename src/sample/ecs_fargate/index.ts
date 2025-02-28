@@ -28,6 +28,7 @@ export class ExampleStack extends EcsStackBase {
         sourceName: "gabe-source",
       },
       enableDogstatsd: true,
+      // isLogRouterHealthCheckEnabled: false,
       enableAPM: true,
       enableCWS: true,
       enableLogCollection: true,

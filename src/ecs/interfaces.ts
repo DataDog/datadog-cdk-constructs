@@ -34,8 +34,16 @@ export interface DatadogECSBaseProps {
   readonly environmentVariables?: Record<string, string>;
 
   // Features to enable
+
+  /**
+   * Enables log collection
+   * * * * * * * * * * * * *
+   */
   readonly enableLogCollection?: boolean;
-  readonly enableASM?: boolean;
+  /**
+   * Type of log collection
+   */
+  readonly datadogLoggingType?: LoggingType;
 
   /**
    * Enables Dogstatsd custom metrics collection
@@ -74,6 +82,12 @@ export interface DatadogECSBaseProps {
   readonly enableCWS?: boolean;
 
   /**
+   * TODO: What ASM features?
+   * * * * * * * * * * * * * *
+   */
+  readonly enableASM?: boolean;
+
+  /**
    * Enable USM (Universal Service Monitoring)
    * * * * * * * * * * * * * * * * * * * * * *
    */
@@ -105,4 +119,15 @@ export enum Cardinality {
   LOW = "low",
   ORCHESTRATOR = "orchestrator",
   HIGH = "high",
+}
+
+/**
+ * Type of datadog logging configuration
+ */
+export enum LoggingType {
+  FLUENTBIT = "fluentbit",
+  /**
+   * Unsupported within this construct, must configure manually on containers
+   */
+  LAMBDAFORWARDER = "lambda",
 }

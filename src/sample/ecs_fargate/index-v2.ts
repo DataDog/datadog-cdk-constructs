@@ -1,15 +1,21 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed
+ * under the Apache License Version 2.0.
+ *
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2021 Datadog, Inc.
+ */
+
+import { App, Environment, Stack, StackProps } from "aws-cdk-lib";
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
-// import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
-import { Construct } from "constructs";
+import { DatadogECSFargate } from "../../ecs/fargate/datadog-ecs-fargate-v2";
 
-export class EcsStackBase extends cdk.Stack {
-  public fargateTaskDefinitions: ecs.TaskDefinition[];
-  public apiKeySecret: secretsmanager.Secret;
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class ExampleStack extends Stack {
+  constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
 
     // Create a secret for the Datadog API key
@@ -18,7 +24,6 @@ export class EcsStackBase extends cdk.Stack {
       description: "Datadog API key",
       secretStringValue: cdk.SecretValue.unsafePlainText(process.env.DD_API_KEY!),
     });
-    this.apiKeySecret = secret;
 
     // Create a VPC with default configuration
     const vpc = new ec2.Vpc(this, "EcsFargateVpc", {
@@ -37,23 +42,26 @@ export class EcsStackBase extends cdk.Stack {
       managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy")],
     });
 
-    // Create an ECS Fargate task definition
-    const fargateTaskDefinition = new ecs.FargateTaskDefinition(this, "ExampleFargateTask", {
-      memoryLimitMiB: 2048,
-      cpu: 256,
-      executionRole: executionRole,
-      runtimePlatform: {
-        operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+    // Configure the Datadog ECS Fargate construct
+    const ecsDatadog = new DatadogECSFargate({
+      apiKeySecret: secret,
+      enableDogstatsd: true,
+      enableAPM: true,
+      enableLogCollection: true,
+      isHealthCheckEnabled: true,
+      enableCWS: true,
+      environmentVariables: {
+        DD_TAGS: "owner:gabe, team:cont-p",
       },
     });
 
-    // Add a dummy container to the task definition
-    fargateTaskDefinition.addContainer("NginxContainer", {
-      image: ecs.ContainerImage.fromRegistry("nginx:latest"),
-      essential: false,
-      // entryPoint: ["/docker-entrypoint.sh"],
+    // Create a Datadog ECS Fargate task definition
+    const fargateTaskDefinition = ecsDatadog.FargateTaskDefinition(this, "ExampleFargateTask", {
+      taskRole: executionRole,
+      memoryLimitMiB: 512,
     });
 
+    // Automatically instrument the task definition
     fargateTaskDefinition.addContainer("UbuntuCWS", {
       containerName: "cws-workload-task",
       image: ecs.ContainerImage.fromRegistry("public.ecr.aws/ubuntu/ubuntu:22.04_stable"),
@@ -75,29 +83,26 @@ export class EcsStackBase extends cdk.Stack {
       essential: false,
     });
 
-    const fargateWindowsTaskDefinition = new ecs.FargateTaskDefinition(this, "WindowsTaskDef", {
-      memoryLimitMiB: 4096,
-      cpu: 2048,
-      executionRole: executionRole,
-      runtimePlatform: {
-        operatingSystemFamily: ecs.OperatingSystemFamily.WINDOWS_SERVER_2022_CORE,
-      },
-    });
-
-    fargateWindowsTaskDefinition.addContainer("WindowsContainer", {
-      image: ecs.ContainerImage.fromRegistry("mcr.microsoft.com/dotnet/samples:aspnetapp-nanoserver-ltsc2022"),
-    });
-
-    // Create an ECS Fargate service (only Linux bc faster)
     new ecs.FargateService(this, "NginxService", {
       serviceName: "NginxService",
       cluster,
       taskDefinition: fargateTaskDefinition,
-      desiredCount: 1,
+      desiredCount: 0,
       assignPublicIp: true,
       enableExecuteCommand: true, // only for debugging: to enable ecs exec
+      circuitBreaker: {
+        rollback: false,
+      },
+      minHealthyPercent: 0,
     });
-
-    this.fargateTaskDefinitions = [fargateTaskDefinition, fargateWindowsTaskDefinition];
   }
 }
+
+const app = new App();
+const env: Environment = {
+  account: process.env.CDK_DEFAULT_ACCOUNT || process.env.AWS_ACCOUNT_ID,
+  region: process.env.CDK_DEFAULT_REGION || process.env.AWS_REGION,
+};
+const stack = new ExampleStack(app, "ExampleDatadogEcsStack", { env: env });
+console.log("Stack name: " + stack.stackName);
+app.synth();

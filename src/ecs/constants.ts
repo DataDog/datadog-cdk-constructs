@@ -15,7 +15,6 @@ import { DatadogECSBaseProps, Cardinality } from "./interfaces";
 export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
   registry: "public.ecr.aws/datadog/agent",
   imageVersion: "latest",
-  memoryLimitMiB: 1024,
 
   site: "datadoghq.com",
   logLevel: "INFO",
@@ -34,10 +33,10 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
 
   isHealthCheckEnabled: true,
   datadogHealthCheck: {
-    command: ["agent", "health"],
-    interval: Duration.seconds(5),
+    command: ["/probe.sh"],
+    interval: Duration.seconds(10),
     retries: 3,
-    startPeriod: Duration.seconds(15),
+    startPeriod: Duration.seconds(60),
     timeout: Duration.seconds(5),
   },
 };

@@ -92,3 +92,15 @@ export function isOperatingSystemLinux(task: ecs.TaskDefinition): boolean {
 
   return runtimePlatform.operatingSystemFamily === "LINUX";
 }
+
+export function isOperatingSystemLinuxV2(props: ecs.FargateTaskDefinitionProps): boolean {
+  if (props.runtimePlatform === undefined) {
+    return true;
+  }
+
+  if (props.runtimePlatform.operatingSystemFamily === undefined) {
+    return true;
+  }
+
+  return props.runtimePlatform.operatingSystemFamily.isLinux();
+}

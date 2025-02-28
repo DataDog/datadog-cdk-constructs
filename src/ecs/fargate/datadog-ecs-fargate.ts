@@ -191,7 +191,7 @@ export class DatadogEcsFargate extends Construct {
           }
         }
       } else {
-        // Windows configuration
+        // TODO: Windows configuration for pipes
         // container.addMountPoints({
         //   containerPath: "",
         //   sourceVolume: "dd-sockets",
@@ -228,7 +228,8 @@ export class DatadogEcsFargate extends Construct {
         (container as any).props.entryPoint = currentEntryPoint;
 
         if (container.linuxParameters === undefined) {
-          (container as any).linuxParameters = new ecs.LinuxParameters(this.scope, "LinuxParameters", {});
+          const id = `DatadogLinuxParams-${container.node.id}`;
+          (container as any).linuxParameters = new ecs.LinuxParameters(this.scope, id, {});
         }
         container.linuxParameters?.addCapabilities(ecs.Capability.SYS_PTRACE);
 

@@ -33,4 +33,6 @@ export interface DatadogECSFargateInternalProps extends DatadogECSFargateProps {
   readonly isLinux: boolean;
   readonly entryPointsDefined?: boolean;
   readonly entryPoint?: string[];
+  readonly requiresSocket?: boolean;
+  readonly requiresProtocol?: boolean;
 }
