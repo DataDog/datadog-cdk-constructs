@@ -89,7 +89,7 @@
       "description": "Install project dependencies using frozen lockfile",
       "steps": [
         {
-          "exec": "yarn install --check-files --frozen-lockfile"
+          "exec": "yarn install --check-files --frozen-lockfile --verbose"
         }
       ]
     },
