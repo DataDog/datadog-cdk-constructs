@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 18.18.0
       - name: Install dependencies
-        run: yarn install --check-files --frozen-lockfile
+        run: yarn install --check-files --frozen-lockfile --verbose
       - name: Upgrade dependencies
         run: npx projen upgrade
       - name: Find mutations
