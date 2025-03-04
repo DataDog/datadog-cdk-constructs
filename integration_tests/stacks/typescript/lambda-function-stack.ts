@@ -17,7 +17,7 @@ export class ExampleStack extends Stack {
     super(scope, id, props);
 
     const lambdaFunction = new lambda.Function(this, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "lambdaFunction.handler",
     });

@@ -257,7 +257,7 @@ Enable X-Ray Tracing on your Lambda functions. For more information, see [CDK do
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
 const lambda_function = new lambda.Function(this, "HelloHandler", {
-  runtime: lambda.Runtime.NODEJS_14_X,
+  runtime: lambda.Runtime.NODEJS_18_X,
   code: lambda.Code.fromAsset("lambda"),
   handler: "hello.handler",
   tracing: lambda.Tracing.ACTIVE,

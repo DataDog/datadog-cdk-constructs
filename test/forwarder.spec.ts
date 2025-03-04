@@ -18,7 +18,7 @@ describe("Forwarder for Lambda", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -37,7 +37,7 @@ describe("Forwarder for Lambda", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -65,7 +65,7 @@ describe("Forwarder for Lambda", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -131,7 +131,7 @@ describe("Forwarder for Lambda", () => {
         handler: "hello.handler",
       });
       const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
         code: lambda.Code.fromAsset("test"),
         handler: "hello.handler",
       });
@@ -167,7 +167,7 @@ describe("Forwarder for Lambda", () => {
       },
     });
     const pythonLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -206,7 +206,7 @@ describe("Forwarder for Lambda", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -243,7 +243,7 @@ describe("Forwarder for Lambda", () => {
       },
     });
     const pythonLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -277,7 +277,7 @@ describe("Forwarder for State Machine", () => {
     });
     const logGroup = new LogGroup(stack, "logGroup");
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });

@@ -59,7 +59,7 @@
     },
     "Handler": "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
     "Layers": [
-     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node14-x:XXX",
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Node18-x:XXX",
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension-ARM:10"
     ],
     "Role": {
@@ -68,7 +68,7 @@
       "Arn"
      ]
     },
-    "Runtime": "nodejs14.x",
+    "Runtime": "nodejs18.x",
     "Tags": [
      {
       "Key": "dd_cdk_construct",

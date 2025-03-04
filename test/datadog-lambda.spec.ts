@@ -23,7 +23,7 @@ describe("validateProps", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -60,7 +60,7 @@ describe("validateProps", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -95,7 +95,7 @@ describe("validateProps", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -126,7 +126,7 @@ describe("validateProps", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -167,7 +167,7 @@ describe("validateProps", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -191,7 +191,7 @@ describe("validateProps", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -264,7 +264,7 @@ describe("addCdkConstructVersionTag", () => {
       },
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -276,7 +276,7 @@ describe("addCdkConstructVersionTag", () => {
     addCdkConstructVersionTag(hello1);
     addCdkConstructVersionTag(hello2);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs16.x",
+      Runtime: "nodejs18.x",
       Tags: [
         {
           Key: "dd_cdk_construct",
@@ -302,7 +302,7 @@ describe("addCdkConstructVersionTag", () => {
       },
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -393,7 +393,7 @@ describe("apiKeySecret", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -417,7 +417,7 @@ describe("apiKeySecret", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -529,7 +529,7 @@ describe("redirectHandler", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -552,7 +552,7 @@ describe("redirectHandler", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

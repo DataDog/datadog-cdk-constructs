@@ -17,7 +17,7 @@ export class ExampleStack extends Stack {
     super(scope, id, props);
 
     const singletonLambdaFunction = new lambda.SingletonFunction(this, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "lambdaFunction.handler",
       uuid: "b55587fe-6985-4c28-ab51-4d0edb1ba8a1",

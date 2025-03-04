@@ -20,13 +20,13 @@ export class ExampleStack extends Stack {
     super(scope, id, props);
 
     const lambdaFunction = new lambda.Function(this, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("./src/sample/lambda"),
       handler: "lambdaFunction.handler",
     });
 
     const lambdaNodejsFunction = new lambdaNodejs.NodejsFunction(this, "NodeJSHandler", {
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       entry: "./src/sample/lambda_nodejs/hello_node.js",
       handler: "handler",
     });
@@ -48,7 +48,7 @@ export class ExampleStack extends Stack {
     });
 
     const lambdaFunction1 = new lambda.Function(this, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("./src/sample/lambda"),
       handler: "lambdaFunction.handler",
     });

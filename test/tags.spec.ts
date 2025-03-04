@@ -19,7 +19,7 @@ describe("setTags for Lambda", () => {
       },
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -47,7 +47,7 @@ describe("setTags for Lambda", () => {
     datadogLambda.addLambdaFunctions([hello1, hello2]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs16.x",
+      Runtime: "nodejs18.x",
       Tags: [
         {
           Key: "dd_cdk_construct",
@@ -113,7 +113,7 @@ describe("setTags for Lambda", () => {
       },
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -140,7 +140,7 @@ describe("setTags for Lambda", () => {
     datadogLambda.addLambdaFunctions([hello1, hello2]);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs16.x",
+      Runtime: "nodejs18.x",
       Tags: [
         {
           Key: "dd_cdk_construct",
