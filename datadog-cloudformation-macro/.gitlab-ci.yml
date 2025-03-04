@@ -5,44 +5,60 @@ stages:
 variables:
   DOCKER_TARGET_IMAGE: registry.ddbuild.io/ci/datadog-cloudformation-macro-ci
   DOCKER_TARGET_VERSION: latest
-  # Default version for development builds
-  # This will be overwritten by the tag version if it is a release.
-  VERSION: dev
-  SANDBOX_NAME: sandbox
-  SANDBOX_EXTERNAL_ID_NAME: sandbox-publish-externalid
-  SANDBOX_ROLE_TO_ASSUME: sandbox-layer-deployer
-  SANDBOX_ACCOUNT: 425362996713
-  PROD_NAME: prod
-  PROD_EXTERNAL_ID_NAME: prod-publish-externalid
-  PROD_ROLE_TO_ASSUME: dd-serverless-layer-deployer-role
-  PROD_ACCOUNT: 464622532012
-  BUCKET: datadog-cloudformation-template
 
 ci image:
   stage: build
   image: registry.ddbuild.io/images/docker:20.10
   tags: ["arch:arm64"]
   # rules:
-  #   - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-  #     changes:
-  #       - ./serverless/Dockerfile
-  #     when: on_success
+    # - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+    #   changes:
+    #     - ./serverless/Dockerfile
+    #   when: on_success
   when: manual
   variables:
     DOCKER_TARGET: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
   script:
     - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f ./serverless/Dockerfile .
-      
 
-release macro:
+release macro in sandbox:
   stage: release
   image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
   tags: ["arch:arm64"]
+  # rules: 
+  #   - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+  #     when: on_success
+  when: manual
+  variables: 
+    SANDBOX_EXTERNAL_ID_NAME: sandbox-publish-externalid
+    SANDBOX_ROLE_TO_ASSUME: sandbox-layer-deployer
+    SANDBOX_ACCOUNT: 425362996713
+    SANDBOX_BUCKET: datadog-cloudformation-template-sandbox-staging
   before_script:
     - EXTERNAL_ID_NAME=${SANDBOX_EXTERNAL_ID_NAME} ROLE_TO_ASSUME=${SANDBOX_ROLE_TO_ASSUME} AWS_ACCOUNT=${SANDBOX_ACCOUNT} source ./serverless/tools/get_secrets.sh
   script:
-    - ./serverless/release.sh ${BUCKET}
-  after_script:
-    echo "Done uploading the template, and here is the CloudFormation quick launch URL"
-    echo "https://console.aws.amazon.com/cloudformation/home#/stacks/quickCreate?stackName=datadog-serverless-macro&templateURL=${TEMPLATE_URL}"
+    - ./serverless/release.sh ${SANDBOX_BUCKET}
+  after_script: 
+    - echo "Released to sandbox"
+
+release macro in prod:
+  stage: release
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  tags: ["arch:arm64"]
+  when: manual
+  # rules:
+  # - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG'
+  #   when: on_success
+  variables: 
+    PROD_EXTERNAL_ID_NAME: prod-publish-externalid
+    PROD_ROLE_TO_ASSUME: dd-serverless-layer-deployer-role
+    PROD_ACCOUNT: 464622532012
+    PROD_BUCKET: datadog-cloudformation-template
+  before_script:
+    - EXTERNAL_ID_NAME=${PROD_EXTERNAL_ID_NAME} ROLE_TO_ASSUME=${PROD_ROLE_TO_ASSUME} AWS_ACCOUNT=${PROD_ACCOUNT} source ./serverless/tools/get_secrets.sh
+  script:
+    - ./serverless/release.sh ${PROD_BUCKET} --prod
+  after_script: 
+    - echo "Released to prod"
+
 
