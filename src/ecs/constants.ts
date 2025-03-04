@@ -17,21 +17,24 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
   imageVersion: "latest",
 
   site: "datadoghq.com",
-  logLevel: "INFO",
 
-  enableAPM: true,
-  enableAPMSocket: true,
+  apm: {
+    isEnabled: false,
+    isSocketEnabled: true,
+  },
 
-  enableDogstatsd: true,
-  enableDogstatsdSocket: true,
-  enableDogstatsdOriginDetection: false,
-  dogstatsdCardinality: Cardinality.LOW,
+  dogstatsd: {
+    isEnabled: false,
+    isSocketEnabled: true,
+    isOriginDetectionEnabled: false,
+    dogstatsdCardinality: Cardinality.LOW,
+  },
 
-  enableLogCollection: false,
-  enableASM: false,
-  enableCWS: false,
+  cws: {
+    isEnabled: false,
+  },
 
-  isHealthCheckEnabled: true,
+  isDatadogDependencyEnabled: true,
   datadogHealthCheck: {
     command: ["/probe.sh"],
     interval: Duration.seconds(10),

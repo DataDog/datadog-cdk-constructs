@@ -7,27 +7,15 @@
  */
 
 import * as ecs from "aws-cdk-lib/aws-ecs";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
+import { Construct } from "constructs";
 import log from "loglevel";
-import { DatadogECSFargateProps } from "./fargate/interfaces";
 import { DatadogECSBaseProps } from "./interfaces";
 
-export function mergeFargateProps(
-  lowerPrecedence: DatadogECSFargateProps,
-  higherPrecedence: DatadogECSFargateProps,
-): DatadogECSFargateProps {
-  const newProps = { ...lowerPrecedence, ...higherPrecedence };
-  newProps.logDriverConfiguration = {
-    ...lowerPrecedence.logDriverConfiguration,
-    ...higherPrecedence.logDriverConfiguration,
-  };
-  return newProps;
-}
-
-export function validateECSProps(props: DatadogECSBaseProps): void {
-  log.debug("Validating props...");
-
-  if (process.env.DD_CDK_BYPASS_SITE_VALIDATION) {
-    log.debug("Bypassing site validation...");
+export function validateECSBaseProps(props: DatadogECSBaseProps): void {
+  if (process.env.DD_CDK_BYPASS_VALIDATION) {
+    log.debug("Bypassing props validation...");
     return;
   }
 
@@ -42,12 +30,22 @@ export function validateECSProps(props: DatadogECSBaseProps): void {
   if (
     props.site !== undefined &&
     !siteList.includes(props.site.toLowerCase()) &&
-    !(props.site.startsWith("${Token[") && props.site.endsWith("]}")) &&
-    !process.env.DD_CDK_BYPASS_SITE_VALIDATION
+    !(props.site.startsWith("${Token[") && props.site.endsWith("]}"))
   ) {
     throw new Error(
       "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, or ddog-gov.com.",
     );
+  }
+
+  // Agent feature configurations must all be defined
+  if (props.dogstatsd === undefined) {
+    throw new Error("The `dogstatsd` property must be defined.");
+  }
+  if (props.apm === undefined) {
+    throw new Error("The `apm` property must be defined.");
+  }
+  if (props.cws === undefined) {
+    throw new Error("The `cws` property must be defined.");
   }
 
   // Agent configuration validation
@@ -59,41 +57,15 @@ export function validateECSProps(props: DatadogECSBaseProps): void {
   }
 
   // Health check validation
-  if (props.isHealthCheckEnabled && props.datadogHealthCheck === undefined) {
-    throw new Error("The `datadogHealthCheck` property must be defined when `isHealthCheckEnabled` is true.");
+  if (props.isDatadogDependencyEnabled && props.datadogHealthCheck === undefined) {
+    throw new Error("The `datadogHealthCheck` property must be defined when `isDatadogDependencyEnabled` is true.");
   }
-  if (props.isHealthCheckEnabled && props.datadogHealthCheck!.command === undefined) {
+  if (props.isDatadogDependencyEnabled && props.datadogHealthCheck!.command === undefined) {
     throw new Error("The `command` property must be defined in `datadogHealthCheck`.");
   }
-
-  // App Sec requires tracing
-  if (props.enableASM && !props.enableAPM) {
-    throw new Error("When `enableDatadogASM` is enabled, `enableDatadogTracing` must also be enabled.");
-  }
-
-  // USM requires env, service, and version tags
-  if (props.enableUSM && (!props.env || !props.service || !props.version)) {
-    throw new Error("When `enableUSM` is enabled, `env`, `service`, and `version` must be defined.");
-  }
 }
 
-export function isOperatingSystemLinux(task: ecs.TaskDefinition): boolean {
-  const cfnTaskDef = task.node.defaultChild as ecs.CfnTaskDefinition;
-  const runtimePlatform = cfnTaskDef.runtimePlatform as ecs.CfnTaskDefinition.RuntimePlatformProperty;
-
-  if (runtimePlatform === undefined) {
-    // TODO: verify assumption if undefined OS, then Linux on Amazon ECS Fargate
-    return true;
-  }
-
-  if (runtimePlatform.operatingSystemFamily === undefined) {
-    return true;
-  }
-
-  return runtimePlatform.operatingSystemFamily === "LINUX";
-}
-
-export function isOperatingSystemLinuxV2(props: ecs.FargateTaskDefinitionProps): boolean {
+export function isOperatingSystemLinux(props: ecs.FargateTaskDefinitionProps): boolean {
   if (props.runtimePlatform === undefined) {
     return true;
   }
@@ -103,4 +75,24 @@ export function isOperatingSystemLinuxV2(props: ecs.FargateTaskDefinitionProps):
   }
 
   return props.runtimePlatform.operatingSystemFamily.isLinux();
+}
+
+export function configureEcsPolicies(task: ecs.TaskDefinition) {
+  task.addToTaskRolePolicy(
+    new iam.PolicyStatement({
+      actions: ["ecs:ListClusters", "ecs:ListContainerInstances", "ecs:DescribeContainerInstances"],
+      resources: ["*"],
+    }),
+  );
+}
+
+export function getSecretApiKey(scope: Construct, props: DatadogECSBaseProps): ecs.Secret | undefined {
+  if (props.apiKeySecret) {
+    return ecs.Secret.fromSecretsManager(props.apiKeySecret);
+  } else if (props.apiKeySecretArn) {
+    const secret = secretsmanager.Secret.fromSecretCompleteArn(scope, "DatadogSecret", props.apiKeySecretArn);
+    return ecs.Secret.fromSecretsManager(secret);
+  } else {
+    return undefined;
+  }
 }

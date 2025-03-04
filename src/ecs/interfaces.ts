@@ -18,42 +18,67 @@ export interface DatadogECSBaseProps {
   // Agent container configuration
   readonly registry?: string;
   readonly imageVersion?: string;
-  readonly memoryLimitMiB?: number;
+
+  readonly isDatadogEssential?: boolean;
+  readonly isDatadogDependencyEnabled?: boolean;
+  readonly datadogHealthCheck?: HealthCheck;
 
   readonly clusterName?: string;
   readonly site?: string;
-  readonly logLevel?: string;
 
-  readonly isDatadogEssential?: boolean;
-  readonly isHealthCheckEnabled?: boolean;
-  readonly datadogHealthCheck?: HealthCheck;
+  // Features to enable
+  // readonly logCollection?: LogCollectionFeatureConfig;
+  readonly dogstatsd?: DogstatsdFeatureConfig;
+  readonly apm?: APMFeatureConfig;
+  readonly cws?: CWSFeatureConfig;
 
   /**
    * Datadog Agent environment variables
    */
   readonly environmentVariables?: Record<string, string>;
 
-  // Features to enable
+  /**
+   * The task environment name. Used for tagging (UST).
+   */
+  readonly env?: string;
+  /**
+   * The task service name. Used for tagging (UST).
+   */
+  readonly service?: string;
+  /**
+   * The task version. Used for tagging (UST).
+   */
+  readonly version?: string;
 
+  /**
+   * Global tags to apply to all data sent by the Agent.
+   * Overrides any DD_TAGS values in environmentVariables.
+   */
+  readonly globalTags?: string;
+}
+
+/**
+ * Log collection feature configuration
+ */
+export interface LogCollectionFeatureConfig {
   /**
    * Enables log collection
-   * * * * * * * * * * * * *
    */
-  readonly enableLogCollection?: boolean;
-  /**
-   * Type of log collection
-   */
-  readonly datadogLoggingType?: LoggingType;
+  readonly isEnabled?: boolean;
+}
 
+/**
+ * Dogstatsd feature configuration
+ */
+export interface DogstatsdFeatureConfig {
   /**
-   * Enables Dogstatsd custom metrics collection
-   * * * * * * * * * * * * * * * * * * * * * * *
+   * Enables Dogstatsd
    */
-  readonly enableDogstatsd?: boolean;
+  readonly isEnabled?: boolean;
   /**
    * Enables Dogstatsd origin detection
    */
-  readonly enableDogstatsdOriginDetection?: boolean;
+  readonly isOriginDetectionEnabled?: boolean;
   /**
    * Controls the cardinality of custom dogstatsd metrics
    */
@@ -62,54 +87,32 @@ export interface DatadogECSBaseProps {
    * Enables Dogstatsd traffic over Unix Domain Socket.
    * Falls back to UDP configuration for application containers when disabled
    */
-  readonly enableDogstatsdSocket?: boolean;
+  readonly isSocketEnabled?: boolean;
+}
 
+/**
+ * APM feature configuration
+ */
+export interface APMFeatureConfig {
   /**
-   * Enables APM traces collection
-   * * * * * * * * * * * * * * * *
+   * Enables APM
    */
-  readonly enableAPM?: boolean;
+  readonly isEnabled?: boolean;
   /**
    * Enables APM traces traffic over Unix Domain Socket.
    * Falls back to TCP configuration for application containers when disabled
    */
-  readonly enableAPMSocket?: boolean;
+  readonly isSocketEnabled?: boolean;
+}
 
+/**
+ * CWS feature configuration
+ */
+export interface CWSFeatureConfig {
   /**
-   * Enables CWS (Cloud Workload Security)
-   * * * * * * * * * * * * * * * * * * * *
+   * Enables CWS
    */
-  readonly enableCWS?: boolean;
-
-  /**
-   * TODO: What ASM features?
-   * * * * * * * * * * * * * *
-   */
-  readonly enableASM?: boolean;
-
-  /**
-   * Enable USM (Universal Service Monitoring)
-   * * * * * * * * * * * * * * * * * * * * * *
-   */
-  readonly enableUSM?: boolean;
-  /**
-   * The task environment name. Used for tagging (UST/USM)
-   */
-  readonly env?: string;
-  /**
-   * The task service name. Used for tagging (UST/USM)
-   */
-  readonly service?: string;
-  /**
-   * The task version. Used for tagging (UST/USM)
-   */
-  readonly version?: string;
-
-  /**
-   * Global tags to apply to all data sent by the Agent.
-   * Overrides any DD_TAGS values in environmentVariables
-   */
-  readonly globalTags?: string;
+  readonly isEnabled?: boolean;
 }
 
 /**
@@ -119,15 +122,4 @@ export enum Cardinality {
   LOW = "low",
   ORCHESTRATOR = "orchestrator",
   HIGH = "high",
-}
-
-/**
- * Type of datadog logging configuration
- */
-export enum LoggingType {
-  FLUENTBIT = "fluentbit",
-  /**
-   * Unsupported within this construct, must configure manually on containers
-   */
-  LAMBDAFORWARDER = "lambda",
 }

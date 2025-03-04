@@ -6,33 +6,69 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { HealthCheck } from "aws-cdk-lib/aws-ecs";
+import { HealthCheck, Secret } from "aws-cdk-lib/aws-ecs";
 import { EnvVarManager } from "../environment";
-import { DatadogECSBaseProps } from "../interfaces";
+import { DatadogECSBaseProps, LogCollectionFeatureConfig } from "../interfaces";
 
 export interface DatadogECSFargateProps extends DatadogECSBaseProps {
-  readonly logDriverConfiguration?: DatadogECSFargateLogDriverProps;
-  readonly logRouterHealthCheck?: HealthCheck;
-  readonly isLogRouterHealthCheckEnabled?: boolean;
+  readonly logCollection?: FargateLogCollectionFeatureConfig;
 }
 
-export interface DatadogECSFargateLogDriverProps {
-  readonly registry?: string;
-  readonly hostEndpoint?: string;
-  readonly messageKey?: string;
-  readonly serviceName?: string;
-  readonly sourceName?: string;
-  readonly imageVersion?: string;
+export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureConfig {
+  /**
+   * Type of log collection.
+   */
+  readonly datadogLoggingType?: LoggingType;
+  /**
+   * Configuration for the Datadog fluentbit log driver.
+   */
+  readonly logDriverConfiguration?: DatadogECSLogDriverProps;
+  /**
+   * Enables the log router health check.
+   */
+  readonly isLogRouterHealthCheckEnabled?: boolean;
+  /**
+   * Health check configuration for the log router.
+   */
+  readonly logRouterHealthCheck?: HealthCheck;
 }
 
 /**
- * Internal props for the Datadog ECS Fargate construct
+ * Internal props for the Datadog ECS Fargate construct.
  */
 export interface DatadogECSFargateInternalProps extends DatadogECSFargateProps {
   readonly envVarManager: EnvVarManager;
   readonly isLinux: boolean;
-  readonly entryPointsDefined?: boolean;
-  readonly entryPoint?: string[];
-  readonly requiresSocket?: boolean;
-  readonly requiresProtocol?: boolean;
+  readonly isSocketRequired: boolean;
+  readonly isProtocolRequired: boolean;
+  readonly datadogSecret?: Secret;
+}
+
+/**
+ * Type of datadog logging configuration.
+ */
+export enum LoggingType {
+  FLUENTBIT = "fluentbit",
+  /**
+   * Currently unsupported within this construct,
+   * must configure manually on containers.
+   * https://docs.datadoghq.com/integrations/ecs_fargate/?tab=webui#aws-log-driver
+   */
+  LAMBDAFORWARDER = "lambda",
+}
+
+/**
+ * Datadog Fluentbit log driver configuration.
+ * https://docs.fluentbit.io/manual/pipeline/outputs/datadog
+ */
+export interface DatadogECSLogDriverProps {
+  readonly registry?: string;
+  readonly imageVersion?: string;
+
+  readonly hostEndpoint?: string;
+  readonly tls?: string;
+  readonly compress?: string;
+  readonly serviceName?: string;
+  readonly sourceName?: string;
+  readonly messageKey?: string;
 }

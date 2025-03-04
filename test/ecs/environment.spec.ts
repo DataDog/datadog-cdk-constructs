@@ -1,4 +1,4 @@
-import { EnvVarManager } from "../../src";
+import { EnvVarManager } from "../../src/ecs/environment";
 
 describe("EnvVarManager", () => {
   let envVarManager: EnvVarManager;
