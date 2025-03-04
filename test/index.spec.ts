@@ -25,7 +25,7 @@ describe("addLambdaFunctions", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -71,7 +71,7 @@ describe("addLambdaFunctions", () => {
       },
     });
     const nodeLambda = new lambda.Function(stack, "NodeHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -101,7 +101,7 @@ describe("addLambdaFunctions", () => {
     const NestStack = new NestedStack(RootStack, "NestedStack");
 
     const NestedStackLambda = new lambda.Function(NestStack, "NestedStackLambda", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -133,7 +133,7 @@ describe("addLambdaFunctions", () => {
     const NestStack = new NestedStack(RootStack, "NestedStack");
 
     const NestedStackLambda = new lambda.Function(NestStack, "NestedStackLambda", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -152,7 +152,7 @@ describe("addLambdaFunctions", () => {
 
     Template.fromStack(NestStack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node16-x:20`,
+        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:20`,
         `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension:6`,
       ],
     });
@@ -168,7 +168,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -203,7 +203,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
+      runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
