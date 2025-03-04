@@ -9,7 +9,7 @@
        "Action": "sts:AssumeRole",
        "Effect": "Allow",
        "Principal": {
-        "Service": "states.sa-east-1.amazonaws.com"
+        "Service": "states.amazonaws.com"
        }
       }
      ],
@@ -301,7 +301,7 @@
        "Action": "sts:AssumeRole",
        "Effect": "Allow",
        "Principal": {
-        "Service": "states.sa-east-1.amazonaws.com"
+        "Service": "states.amazonaws.com"
        }
       }
      ],
