@@ -45,6 +45,11 @@ export class ExampleStack extends Stack {
     // Configure the Datadog ECS Fargate construct
     const ecsDatadog = new DatadogECSFargate({
       apiKeySecret: secret,
+      clusterName: cluster.clusterName,
+      isDatadogDependencyEnabled: true,
+      environmentVariables: {
+        DD_TAGS: "team:cont-p, owner:container-monitoring",
+      },
       dogstatsd: {
         isEnabled: true,
       },
@@ -55,20 +60,23 @@ export class ExampleStack extends Stack {
         isEnabled: true,
         logDriverConfiguration: {
           tls: "on",
+          serviceName: "datadog-cdk-test",
+          sourceName: "datadog-cdk-test",
+          messageKey: "log",
         },
       },
       cws: {
         isEnabled: true,
       },
-      env: "env-gabe",
-      version: "version-gabe",
-      service: "service-gabe",
+      env: "staging",
+      version: "v1.0.0",
+      service: "container-service",
     });
 
     // Create a Datadog ECS Fargate task definition
     const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(this, "ExampleFargateTask", {
       taskRole: executionRole,
-      memoryLimitMiB: 512,
+      memoryLimitMiB: 1024,
     });
 
     fargateTaskDefinition.addContainer("DogStatsD", {
@@ -97,9 +105,9 @@ export class ExampleStack extends Stack {
       serviceName: "NginxService",
       cluster,
       taskDefinition: fargateTaskDefinition,
-      desiredCount: 0,
+      desiredCount: 1,
       assignPublicIp: true,
-      enableExecuteCommand: true, // only for debugging: to enable ecs exec
+      enableExecuteCommand: true,
       circuitBreaker: {
         rollback: false,
       },

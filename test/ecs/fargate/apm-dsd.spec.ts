@@ -24,8 +24,6 @@ describe("DatadogECSFargateTaskDefinition", () => {
       memoryLimitMiB: 512,
     };
     datadogProps = {
-      registry: "public.ecr.aws/datadog/agent",
-      imageVersion: "latest",
       apiKey: "test-api-key",
       dogstatsd: {
         isEnabled: true,
@@ -74,7 +72,21 @@ describe("DatadogECSFargateTaskDefinition", () => {
     });
   });
 
-  it("should add environment variables for DogStatsD and APM when sockets are not enabled", () => {
+  it("creates volumes for DogStatsD/APM UDS if necessary", () => {
+    new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the volume for DogStatsD/APM UDS is added
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      Volumes: Match.arrayWith([
+        Match.objectLike({
+          Name: "dd-sockets",
+        }),
+      ]),
+    });
+  });
+
+  it("should add environment variables for DogStatsD when sockets are not enabled", () => {
     datadogProps = {
       ...datadogProps,
       dogstatsd: {
@@ -103,6 +115,41 @@ describe("DatadogECSFargateTaskDefinition", () => {
             Match.objectLike({
               Name: "DD_AGENT_HOST",
               Value: "127.0.0.1",
+            }),
+          ]),
+        }),
+      ]),
+    });
+  });
+
+  it("should configure ports 8125 and 8126 for UDP and TCP on the datadog-agent container when sockets are not enabled", () => {
+    datadogProps = {
+      ...datadogProps,
+      dogstatsd: {
+        isEnabled: true,
+        isSocketEnabled: false,
+      },
+      apm: {
+        isEnabled: true,
+        isSocketEnabled: false,
+      },
+    };
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the ports are configured on the datadog-agent container
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: taskDefinition.datadogContainer.containerName,
+          PortMappings: Match.arrayWith([
+            Match.objectLike({
+              ContainerPort: 8125,
+              Protocol: "udp",
+            }),
+            Match.objectLike({
+              ContainerPort: 8126,
+              Protocol: "tcp",
             }),
           ]),
         }),

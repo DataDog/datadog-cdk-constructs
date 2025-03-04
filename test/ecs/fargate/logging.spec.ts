@@ -39,8 +39,11 @@ describe("DatadogECSFargateLogging", () => {
   });
 
   it("creates the log container when log collection is enabled", () => {
-    new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
     const template = Template.fromStack(stack);
+
+    // assert that the logContainer is defined
+    expect(task.logContainer).toBeDefined();
 
     // Validate that the log container is created
     template.hasResourceProperties("AWS::ECS::TaskDefinition", {
@@ -66,8 +69,11 @@ describe("DatadogECSFargateLogging", () => {
         isEnabled: false,
       },
     };
-    new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
     const template = Template.fromStack(stack);
+
+    // assert the log container is not defined
+    expect(task.logContainer).toBeUndefined();
 
     // Validate that the log container is not created
     template.resourceCountIs("AWS::ECS::TaskDefinition", 1);
@@ -77,6 +83,15 @@ describe("DatadogECSFargateLogging", () => {
           Name: "datadog-agent",
         },
       ],
+    });
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.not(
+        Match.arrayWith([
+          Match.objectLike({
+            Name: "datadog-log-router",
+          }),
+        ]),
+      ),
     });
   });
 

@@ -24,6 +24,10 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
    */
   readonly logDriverConfiguration?: DatadogECSLogDriverProps;
   /**
+   * Makes the log router essential.
+   */
+  readonly isLogRouterEssential?: boolean;
+  /**
    * Enables the log router health check.
    */
   readonly isLogRouterHealthCheckEnabled?: boolean;

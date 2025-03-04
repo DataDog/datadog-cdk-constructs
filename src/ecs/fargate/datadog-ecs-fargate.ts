@@ -204,7 +204,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       containerName: "datadog-agent",
       environment: props.envVarManager.retrieveAll(),
       essential: props.isDatadogEssential,
-      healthCheck: props.isDatadogDependencyEnabled ? props.datadogHealthCheck : undefined,
+      healthCheck: props.datadogHealthCheck,
       secrets: this.datadogProps.datadogSecret ? { DD_API_KEY: this.datadogProps.datadogSecret! } : undefined,
       portMappings: [
         {
@@ -243,7 +243,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           props.logCollection!.logDriverConfiguration!.imageVersion
         }`,
       ),
-      essential: props.logCollection!.isLogRouterHealthCheckEnabled,
+      memoryReservationMiB: 50,
+      essential: props.logCollection!.isLogRouterEssential,
       firelensConfig: {
         type: ecs.FirelensLogRouterType.FLUENTBIT,
         options: {
@@ -264,35 +265,40 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       throw new Error("Log driver configuration is required for log collection.");
     }
 
-    const ddTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
-    const logTags = ddTags ? ddTags : "";
+    let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
     if (this.datadogProps.clusterName !== undefined) {
-      logTags.concat(" ecs_cluster_name:" + this.datadogProps.clusterName);
+      if (logTags === undefined) {
+        logTags = "";
+      } else {
+        logTags += ", ";
+      }
+      logTags = logTags.concat("ecs_cluster_name:" + this.datadogProps.clusterName);
     }
 
     const logDriverProps = {
       options: {
         Name: "datadog",
         provider: "ecs",
-        ...(logCollection.logDriverConfiguration.hostEndpoint && {
+        retry_limit: "2",
+        ...(logCollection.logDriverConfiguration.hostEndpoint !== undefined && {
           Host: logCollection.logDriverConfiguration.hostEndpoint,
         }),
-        ...(logCollection.logDriverConfiguration.tls && {
+        ...(logCollection.logDriverConfiguration.tls !== undefined && {
           TLS: logCollection.logDriverConfiguration.tls,
         }),
-        ...(logCollection.logDriverConfiguration.serviceName && {
+        ...(logCollection.logDriverConfiguration.serviceName !== undefined && {
           dd_service: logCollection.logDriverConfiguration.serviceName,
         }),
-        ...(logCollection.logDriverConfiguration.sourceName && {
+        ...(logCollection.logDriverConfiguration.sourceName !== undefined && {
           dd_source: logCollection.logDriverConfiguration.sourceName,
         }),
-        ...(logCollection.logDriverConfiguration.messageKey && {
+        ...(logCollection.logDriverConfiguration.messageKey !== undefined && {
           dd_message_key: logCollection.logDriverConfiguration.messageKey,
         }),
         ...(logTags !== undefined && {
           dd_tags: logTags,
         }),
-        ...(this.datadogProps.apiKey && {
+        ...(this.datadogProps.apiKey !== undefined && {
           apikey: this.datadogProps.apiKey,
         }),
       },

@@ -33,6 +33,23 @@ describe("DatadogECSFargateTaskDefinition", () => {
     };
   });
 
+  it("creates the CWS container when enabled", () => {
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    expect(task.cwsContainer).toBeDefined();
+
+    // Validate that the CWS container is created
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: "cws-instrumentation-init",
+          Image: "datadog/cws-instrumentation:latest",
+        }),
+      ]),
+    });
+  });
+
   it("should inject the CWS entry point prefix and add the volume mount", () => {
     const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
     const containerProps: ecs.ContainerDefinitionOptions = {

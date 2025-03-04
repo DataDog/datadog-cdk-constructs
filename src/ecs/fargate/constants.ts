@@ -23,8 +23,9 @@ export const FargateDefaultEnvVars = {
  */
 const DatadogECSLogDriverDefaultProps: DatadogECSLogDriverProps = {
   registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
-  hostEndpoint: "http-intake.logs.datadoghq.com",
   imageVersion: "stable",
+  hostEndpoint: "http-intake.logs.datadoghq.com",
+  messageKey: "log", // TODO: check
 };
 
 /**
@@ -33,6 +34,7 @@ const DatadogECSLogDriverDefaultProps: DatadogECSLogDriverProps = {
 export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
   ...DatadogEcsBaseDefaultProps,
   logCollection: {
+    isEnabled: false,
     logDriverConfiguration: DatadogECSLogDriverDefaultProps,
     isLogRouterHealthCheckEnabled: false,
     logRouterHealthCheck: {
