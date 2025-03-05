@@ -38,8 +38,6 @@ release macro in sandbox:
     - EXTERNAL_ID_NAME=${SANDBOX_EXTERNAL_ID_NAME} ROLE_TO_ASSUME=${SANDBOX_ROLE_TO_ASSUME} AWS_ACCOUNT=${SANDBOX_ACCOUNT} source ./serverless/tools/get_secrets.sh
   script:
     - ./serverless/release.sh ${SANDBOX_BUCKET}
-  after_script: 
-    - echo "Released to sandbox"
 
 release macro in prod:
   stage: release
@@ -56,9 +54,8 @@ release macro in prod:
     PROD_BUCKET: datadog-cloudformation-template
   before_script:
     - EXTERNAL_ID_NAME=${PROD_EXTERNAL_ID_NAME} ROLE_TO_ASSUME=${PROD_ROLE_TO_ASSUME} AWS_ACCOUNT=${PROD_ACCOUNT} source ./serverless/tools/get_secrets.sh
+    - export GH_TOKEN=$(vault kv get -field="prod_publish_token" kv/k8s/gitlab-runner/datadog-cloudformation-macro/secrets)
   script:
     - ./serverless/release.sh ${PROD_BUCKET} --prod
-  after_script: 
-    - echo "Released to prod"
 
 
