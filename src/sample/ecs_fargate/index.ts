@@ -36,7 +36,7 @@ export class ExampleStack extends Stack {
     });
 
     // Create a secret for the Datadog API key
-    const secret = new secretsmanager.Secret(this, "DatadogSecret-Source", {
+    const secret = new secretsmanager.Secret(this, "DatadogApiKeySecret", {
       secretName: "DatadogSecret-CDK",
       description: "Datadog API key",
       secretStringValue: cdk.SecretValue.unsafePlainText(process.env.DD_API_KEY!),
@@ -45,7 +45,7 @@ export class ExampleStack extends Stack {
     // Configure the Datadog ECS Fargate construct
     const ecsDatadog = new DatadogECSFargate({
       apiKeySecret: secret,
-      // clusterName: cluster.clusterName,
+      clusterName: cluster.clusterName,
       isDatadogDependencyEnabled: true,
       environmentVariables: {
         DD_TAGS: "team:cont-p, owner:container-monitoring",
@@ -56,16 +56,17 @@ export class ExampleStack extends Stack {
       apm: {
         isEnabled: true,
       },
+      cws: {
+        isEnabled: false,
+      },
       logCollection: {
         isEnabled: true,
+        isLogRouterDependencyEnabled: true,
         logDriverConfiguration: {
           tls: "on",
           serviceName: "datadog-cdk-test",
           sourceName: "datadog-cdk-test",
         },
-      },
-      cws: {
-        isEnabled: false,
       },
       env: "staging",
       version: "v1.0.0",
@@ -78,14 +79,20 @@ export class ExampleStack extends Stack {
       memoryLimitMiB: 1024,
     });
 
-    fargateTaskDefinition.addContainer("DogStatsD", {
+    fargateTaskDefinition.addContainer("DatadogDogstatsd", {
+      containerName: "datadog-dogstatsd-app",
       image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-dogstatsd:main"),
       essential: false,
     });
 
-    // Automatically instrument the task definition
-    fargateTaskDefinition.addContainer("UbuntuCWS", {
-      containerName: "cws-workload-task",
+    fargateTaskDefinition.addContainer("DatadogAPM", {
+      containerName: "datadog-apm-app",
+      image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-tracegen:main"),
+      essential: false,
+    });
+
+    fargateTaskDefinition.addContainer("DatadogCWS", {
+      containerName: "datadog-cws-app",
       image: ecs.ContainerImage.fromRegistry("public.ecr.aws/ubuntu/ubuntu:22.04_stable"),
       essential: false,
       entryPoint: [
@@ -93,11 +100,6 @@ export class ExampleStack extends Stack {
         "-c",
         "cp /usr/bin/bash /tmp/malware; chmod u+s /tmp/malware; apt update;apt install -y curl wget; /tmp/malware -c 'while true; do wget https://google.com; sleep 60; done'",
       ],
-    });
-
-    fargateTaskDefinition.addContainer("DatadogAPM", {
-      image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-tracegen:main"),
-      essential: false,
     });
 
     new ecs.FargateService(this, "NginxService", {

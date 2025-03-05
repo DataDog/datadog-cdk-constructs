@@ -11,30 +11,25 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
+import { siteList } from "./constants";
 import { DatadogECSBaseProps } from "./interfaces";
 
+/**
+ * Verifies that the provided props are valid for the Datadog ECS construct.
+ */
 export function validateECSBaseProps(props: DatadogECSBaseProps): void {
   if (process.env.DD_CDK_BYPASS_VALIDATION) {
     log.debug("Bypassing props validation...");
     return;
   }
 
-  const siteList: string[] = [
-    "datadoghq.com",
-    "datadoghq.eu",
-    "us3.datadoghq.com",
-    "us5.datadoghq.com",
-    "ap1.datadoghq.com",
-    "ddog-gov.com",
-  ];
+  // Valid site URL
   if (
     props.site !== undefined &&
     !siteList.includes(props.site.toLowerCase()) &&
     !(props.site.startsWith("${Token[") && props.site.endsWith("]}"))
   ) {
-    throw new Error(
-      "Warning: Invalid site URL. Must be either datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, or ddog-gov.com.",
-    );
+    throw new Error(`Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`);
   }
 
   // Agent feature configurations must all be defined
@@ -48,7 +43,7 @@ export function validateECSBaseProps(props: DatadogECSBaseProps): void {
     throw new Error("The `cws` property must be defined.");
   }
 
-  // Agent configuration validation
+  // Agent container configuration validation
   if (props.registry === undefined) {
     throw new Error("The `registry` property must be defined.");
   }

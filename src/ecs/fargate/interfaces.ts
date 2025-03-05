@@ -30,7 +30,7 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
   /**
    * Enables the log router health check.
    */
-  readonly isLogRouterHealthCheckEnabled?: boolean;
+  readonly isLogRouterDependencyEnabled?: boolean;
   /**
    * Health check configuration for the log router.
    */
@@ -66,7 +66,13 @@ export enum LoggingType {
  * https://docs.fluentbit.io/manual/pipeline/outputs/datadog
  */
 export interface DatadogECSLogDriverProps {
+  /**
+   * The registry to pull the Fluentbit container image from.
+   */
   readonly registry?: string;
+  /**
+   * The version of the Fluentbit container image to use.
+   */
   readonly imageVersion?: string;
 
   readonly hostEndpoint?: string;

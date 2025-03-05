@@ -36,9 +36,15 @@ export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
     isEnabled: false,
     logDriverConfiguration: DatadogECSLogDriverDefaultProps,
     isLogRouterEssential: false,
-    isLogRouterHealthCheckEnabled: false,
+    isLogRouterDependencyEnabled: false,
     logRouterHealthCheck: {
-      command: ["curl -f http://127.0.0.1:2020/api/v1/health || exit 1"],
+      // Note: below is the recommended command for the health check,
+      // however, this requires changes to the fluent-bit.conf file to
+      // expose the health check endpoint. To ease configuration, the
+      // default command will only check that the container successfully
+      // started via "exit 0".
+      // command: ["curl -f http://127.0.0.1:2020/api/v1/health || exit 1"],
+      command: ["exit 0"],
       interval: Duration.seconds(5),
       retries: 3,
       startPeriod: Duration.seconds(15),

@@ -10,32 +10,75 @@ import { HealthCheck } from "aws-cdk-lib/aws-ecs";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
 export interface DatadogECSBaseProps {
-  // Must define at least 1 source for the API key
+  /**
+   * The Datadog API key string.
+   * Must define at least 1 source for the API key.
+   */
   readonly apiKey?: string;
+  /**
+   * The Datadog API key secret.
+   * Must define at least 1 source for the API key.
+   */
   readonly apiKeySecret?: secrets.ISecret;
+  /**
+   * The ARN of the Datadog API key secret.
+   * Must define at least 1 source for the API key.
+   */
   readonly apiKeySecretArn?: string;
 
-  // Agent container configuration
+  /**
+   * The registry to pull the Datadog Agent container image from.
+   */
   readonly registry?: string;
+  /**
+   * The version of the Datadog Agent container image to use.
+   */
   readonly imageVersion?: string;
 
+  /**
+   * Configure Datadog Agent container to be essential for the task.
+   */
   readonly isDatadogEssential?: boolean;
+  /**
+   * Configure added containers to have container dependency on the Datadog Agent container.
+   */
   readonly isDatadogDependencyEnabled?: boolean;
+  /**
+   * Configure health check for the Datadog Agent container.
+   */
   readonly datadogHealthCheck?: HealthCheck;
 
-  readonly clusterName?: string;
+  /**
+   * The Datadog site to send data to.
+   */
   readonly site?: string;
-
-  // Features to enable
-  // readonly logCollection?: LogCollectionFeatureConfig;
-  readonly dogstatsd?: DogstatsdFeatureConfig;
-  readonly apm?: APMFeatureConfig;
-  readonly cws?: CWSFeatureConfig;
+  /**
+   * The cluster name to use for tagging.
+   */
+  readonly clusterName?: string;
 
   /**
    * Datadog Agent environment variables
    */
   readonly environmentVariables?: Record<string, string>;
+  /**
+   * Global tags to apply to all data sent by the Agent.
+   * Overrides any DD_TAGS values in environmentVariables.
+   */
+  readonly globalTags?: string;
+
+  /**
+   * DogStatsD feature configuration
+   */
+  readonly dogstatsd?: DogstatsdFeatureConfig;
+  /**
+   * APM feature configuration
+   */
+  readonly apm?: APMFeatureConfig;
+  /**
+   * CWS feature configuration
+   */
+  readonly cws?: CWSFeatureConfig;
 
   /**
    * The task environment name. Used for tagging (UST).
@@ -49,12 +92,6 @@ export interface DatadogECSBaseProps {
    * The task version. Used for tagging (UST).
    */
   readonly version?: string;
-
-  /**
-   * Global tags to apply to all data sent by the Agent.
-   * Overrides any DD_TAGS values in environmentVariables.
-   */
-  readonly globalTags?: string;
 }
 
 /**
