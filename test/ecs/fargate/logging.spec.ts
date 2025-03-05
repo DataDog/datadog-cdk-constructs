@@ -98,6 +98,7 @@ describe("DatadogECSFargateLogging", () => {
   it("sets the correct log driver configuration on other containers", () => {
     datadogProps = {
       ...datadogProps,
+      clusterName: "test-cluster",
       environmentVariables: {
         DD_TAGS: "team:cont-p",
       },
@@ -105,8 +106,12 @@ describe("DatadogECSFargateLogging", () => {
         isEnabled: true,
         logDriverConfiguration: {
           tls: "on",
+          serviceName: "service-test",
+          sourceName: "source-test",
+          messageKey: "message-test",
         },
       },
+      apiKeySecretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:my-secret-name-AbCdEf",
     };
 
     const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
@@ -124,7 +129,10 @@ describe("DatadogECSFargateLogging", () => {
               Host: "http-intake.logs.datadoghq.com",
               TLS: "on",
               provider: "ecs",
-              dd_tags: "team:cont-p",
+              dd_tags: "team:cont-p, ecs_cluster_name:test-cluster",
+              dd_message_key: "message-test",
+              dd_service: "service-test",
+              dd_source: "source-test",
             }),
           },
         }),
@@ -137,6 +145,34 @@ describe("DatadogECSFargateLogging", () => {
         Match.objectLike({
           Image: "public.ecr.aws/aws-observability/aws-for-fluent-bit:stable",
           LogConfiguration: Match.absent(),
+        }),
+      ]),
+    });
+  });
+
+  it("creates container dependency on log router when enabled dependency", () => {
+    datadogProps = {
+      logCollection: {
+        isEnabled: true,
+        isLogRouterDependencyEnabled: true,
+      },
+    };
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const container = task.addContainer("app-container", {
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+    });
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: container.containerName,
+          DependsOn: Match.arrayWith([
+            {
+              Condition: "HEALTHY",
+              ContainerName: task.logContainer!.containerName,
+            },
+          ]),
         }),
       ]),
     });

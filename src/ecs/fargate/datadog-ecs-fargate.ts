@@ -146,6 +146,14 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       });
     }
 
+    // Log container dependencies
+    if (this.datadogProps.logCollection!.isEnabled && this.datadogProps.logCollection!.isLogRouterDependencyEnabled) {
+      container.addContainerDependencies({
+        container: this.logContainer!,
+        condition: ecs.ContainerDependencyCondition.HEALTHY,
+      });
+    }
+
     // DogStatsD/APM UDS configuration
     if (this.datadogProps.isLinux) {
       if (this.datadogProps.isSocketRequired) {
@@ -243,7 +251,6 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           props.logCollection!.logDriverConfiguration!.imageVersion
         }`,
       ),
-      memoryReservationMiB: 50,
       essential: props.logCollection!.isLogRouterEssential,
       firelensConfig: {
         type: ecs.FirelensLogRouterType.FLUENTBIT,
@@ -251,9 +258,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           enableECSLogMetadata: true,
         },
       },
-      healthCheck: props.logCollection!.isLogRouterHealthCheckEnabled
-        ? props.logCollection!.logRouterHealthCheck
-        : undefined,
+      healthCheck: props.logCollection!.logRouterHealthCheck,
     });
     return fluentbitContainer;
   }

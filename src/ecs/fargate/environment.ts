@@ -21,6 +21,12 @@ export class FargateEnvVarManager extends EnvVarManager {
     this.add("DD_ENV", props.env);
     this.add("DD_SERVICE", props.service);
     this.add("DD_VERSION", props.version);
+    if (props.globalTags && this.retrieve("DD_TAGS")) {
+      console.debug(
+        "Global tags are set in both the environment variable" +
+          "and the props. The environment variable will be overwritten.",
+      );
+    }
     this.add("DD_TAGS", props.globalTags);
     this.add("DD_CLUSTER_NAME", props.clusterName);
 

@@ -172,4 +172,32 @@ describe("DatadogECSFargateTaskDefinition", () => {
       ]),
     });
   });
+
+  it("should add container dependency on agent container when dependency flag enabled", () => {
+    datadogProps = {
+      ...datadogProps,
+      isDatadogDependencyEnabled: true,
+    };
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const container = task.addContainer("TestContainer", {
+      containerName: "test-container",
+      image: ecs.ContainerImage.fromRegistry("registry/image:version"),
+    });
+    const template = Template.fromStack(stack);
+
+    // Validate that the environment variables and Docker labels are added
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: container.containerName,
+          DependsOn: Match.arrayWith([
+            {
+              Condition: "HEALTHY",
+              ContainerName: task.datadogContainer!.containerName,
+            },
+          ]),
+        }),
+      ]),
+    });
+  });
 });

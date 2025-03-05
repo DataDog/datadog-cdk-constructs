@@ -19,21 +19,22 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
   site: "datadoghq.com",
 
   apm: {
-    isEnabled: false,
+    isEnabled: true,
     isSocketEnabled: true,
   },
 
   dogstatsd: {
-    isEnabled: false,
+    isEnabled: true,
     isSocketEnabled: true,
-    isOriginDetectionEnabled: false,
-    dogstatsdCardinality: Cardinality.LOW,
+    isOriginDetectionEnabled: true,
+    dogstatsdCardinality: Cardinality.ORCHESTRATOR,
   },
 
   cws: {
     isEnabled: false,
   },
 
+  isDatadogEssential: false,
   isDatadogDependencyEnabled: false,
   datadogHealthCheck: {
     command: ["/probe.sh"],
@@ -48,3 +49,15 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
  * Default CWS entrypoint prefix for application containers
  */
 export const entryPointPrefixCWS = ["/cws-instrumentation-volume/cws-instrumentation", "trace", "--"];
+
+/**
+ * Valid Datadog site URLs
+ */
+export const siteList: string[] = [
+  "datadoghq.com",
+  "datadoghq.eu",
+  "us3.datadoghq.com",
+  "us5.datadoghq.com",
+  "ap1.datadoghq.com",
+  "ddog-gov.com",
+];
