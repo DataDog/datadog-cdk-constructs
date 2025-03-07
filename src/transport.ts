@@ -29,6 +29,7 @@ export class Transport {
   apiKeySecretArn?: string;
   apiKmsKey?: string;
   extensionLayerVersion?: number;
+  extensionLayerArn?: string;
 
   constructor(
     flushMetricsToLogs?: boolean,
@@ -37,6 +38,7 @@ export class Transport {
     apiKeySecretArn?: string,
     apiKmsKey?: string,
     extensionLayerVersion?: number,
+    extensionLayerArn?: string,
   ) {
     if (flushMetricsToLogs === undefined) {
       log.debug(`No value provided for flushMetricsToLogs, defaulting to ${transportDefaults.flushMetricsToLogs}`);
@@ -46,9 +48,11 @@ export class Transport {
     }
 
     this.extensionLayerVersion = extensionLayerVersion;
+    this.extensionLayerArn = extensionLayerArn;
     // If the extension is used, metrics will be submitted via the extension.
-    if (this.extensionLayerVersion !== undefined) {
-      log.debug(`Using extension version ${this.extensionLayerVersion}, metrics will be submitted via the extension`);
+    if (this.extensionLayerVersion !== undefined || this.extensionLayerArn !== undefined) {
+      const extensionInfo = this.extensionLayerArn !== undefined ? `ARN ${this.extensionLayerArn}` : `version ${this.extensionLayerVersion}`;
+      log.debug(`Using extension ${extensionInfo}, metrics will be submitted via the extension`);
       this.flushMetricsToLogs = false;
     }
 
@@ -75,7 +79,7 @@ export class Transport {
     }
     if (this.apiKeySecretArn !== undefined) {
       const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE;
-      const isSendingSynchronousMetrics = this.extensionLayerVersion === undefined && !this.flushMetricsToLogs;
+      const isSendingSynchronousMetrics = (this.extensionLayerVersion === undefined && this.extensionLayerArn === undefined) && !this.flushMetricsToLogs;
       if (isSendingSynchronousMetrics && isNode) {
         throw new Error(
           `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,

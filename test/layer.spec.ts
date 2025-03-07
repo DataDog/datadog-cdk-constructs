@@ -17,6 +17,7 @@ const NODE_LAYER_VERSION = 91;
 const PYTHON_LAYER_VERSION = 73;
 const JAVA_LAYER_VERSION = 11;
 const EXTENSION_LAYER_VERSION = 5;
+const CUSTOM_EXTENSION_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension-custom:1`;
 
 describe("applyLayers", () => {
   it("adds a layer", () => {
@@ -68,6 +69,36 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds an extension layer with a custom layer arn along with a node layer while using an apiKey", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${NODE_LAYER_VERSION}`,
+        CUSTOM_EXTENSION_LAYER_ARN,
+      ],
+    });
+  });
+
   it("adds an extension layer when addLayers is false", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -91,6 +122,32 @@ describe("applyLayers", () => {
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`],
+    });
+  });
+
+  it("adds an extension layer with a custom arn when addLayers is false", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN, // extensionLayerArn takes precedence over extensionLayerVersion
+      apiKey: "1234",
+      addLayers: false,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [CUSTOM_EXTENSION_LAYER_ARN],
     });
   });
 
@@ -294,6 +351,33 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds extension layer by arn to provided runtime", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PROVIDED_AL2,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [CUSTOM_EXTENSION_LAYER_ARN],
+    });
+  });
+
   it("adds extension layer to provided runtime", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -366,6 +450,36 @@ describe("applyLayers", () => {
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.absent(),
+      Runtime: Match.absent(),
+      Handler: Match.absent(),
+    });
+  });
+
+  it("doesn't add layer to container image Lambda with custom extension arn and layer versions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
+      functionName: "container-lambda",
+      code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
+    });
+
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
       apiKmsKey: "1234",
       addLayers: true,
       enableDatadogTracing: false,
