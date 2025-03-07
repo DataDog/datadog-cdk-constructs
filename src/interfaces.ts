@@ -16,6 +16,7 @@ export interface DatadogLambdaProps {
   readonly nodeLayerVersion?: number;
   readonly nodeLayerArn?: string;
   readonly javaLayerVersion?: number;
+  readonly javaLayerArn?: string;
   readonly extensionLayerVersion?: number;
   readonly extensionLayerArn?: string;
   readonly addLayers?: boolean;
@@ -68,6 +69,7 @@ export interface DatadogLambdaStrictProps {
   readonly nodeLayerVersion?: number;
   readonly nodeLayerArn?: string;
   readonly javaLayerVersion?: number;
+  readonly javaLayerArn?: string;
   readonly extensionLayerVersion?: number;
   readonly extensionLayerArn?: string;
   readonly forwarderArn?: string;
