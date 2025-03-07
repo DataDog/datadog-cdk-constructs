@@ -14,6 +14,7 @@ import {
   generateExtensionLayerId,
 } from "../src/index";
 const NODE_LAYER_VERSION = 91;
+const CUSTOM_NODE_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node-custom:1`;
 const PYTHON_LAYER_VERSION = 73;
 const JAVA_LAYER_VERSION = 11;
 const EXTENSION_LAYER_VERSION = 5;
@@ -69,6 +70,36 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds an extension layer along with a custom node layer while using an apiKey", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        CUSTOM_NODE_LAYER_ARN,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
   it("adds an extension layer with a custom layer arn along with a node layer while using an apiKey", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -94,6 +125,36 @@ describe("applyLayers", () => {
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${NODE_LAYER_VERSION}`,
+        CUSTOM_EXTENSION_LAYER_ARN,
+      ],
+    });
+  });
+
+  it("adds an extension layer with a custom layer arn along with a custom node layer while using an apiKey", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        CUSTOM_NODE_LAYER_ARN,
         CUSTOM_EXTENSION_LAYER_ARN,
       ],
     });

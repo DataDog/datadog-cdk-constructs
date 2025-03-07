@@ -104,6 +104,7 @@ export class DatadogLambda extends Construct {
           lambdaFunction,
           this.props.pythonLayerVersion,
           this.props.nodeLayerVersion,
+          this.props.nodeLayerArn,
           this.props.javaLayerVersion,
           this.props.dotnetLayerVersion,
           this.props.useLayersFromAccount,

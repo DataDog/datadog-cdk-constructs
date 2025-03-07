@@ -17,6 +17,7 @@ import {
 const EXTENSION_LAYER_VERSION = 5;
 const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Extension-custom:1";
 const NODE_LAYER_VERSION = 91;
+const CUSTOM_NODE_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Node-custom:1";
 const PYTHON_LAYER_VERSION = 73;
 
 describe("SITE_URL_ENV_VAR", () => {
@@ -531,6 +532,31 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
         site: "datadoghq.com",
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         nodeLayerVersion: NODE_LAYER_VERSION,
+      });
+      datadogLambda.addLambdaFunctions([hello]);
+    }).toThrowError(
+      `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
+    );
+  });
+
+  it("doesn't set DD_API_KEY_SECRET_ARN when using synchronous metrics in custom node", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    expect(() => {
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
+        flushMetricsToLogs: false,
+        site: "datadoghq.com",
+        apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+        nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
       });
       datadogLambda.addLambdaFunctions([hello]);
     }).toThrowError(
