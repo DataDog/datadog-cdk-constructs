@@ -29,6 +29,7 @@ export function applyLayers(
   region: string,
   lam: lambda.Function,
   pythonLayerVersion?: number,
+  pythonLayerArn?: string,
   nodeLayerVersion?: number,
   nodeLayerArn?: string,
   javaLayerVersion?: number,
@@ -53,11 +54,26 @@ export function applyLayers(
   let lambdaLayerArn;
   switch (lambdaRuntimeType) {
     case RuntimeType.PYTHON:
-      if (pythonLayerVersion === undefined) {
+      if (pythonLayerVersion === undefined && pythonLayerArn === undefined) {
         handleLayerError(errors, lam.node.id, "Python", "python");
         return errors;
+      } else if (pythonLayerVersion !== undefined && pythonLayerArn !== undefined) {
+        const error = `Cannot have both pythonLayerVersion and pythonLayerArn defined. Please choose one or the other.`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      } else if (pythonLayerArn !== undefined) {
+        lambdaLayerArn = pythonLayerArn;
+      } else if (pythonLayerVersion !== undefined) {
+        lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
       }
-      lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
+
+      if (lambdaLayerArn === undefined) {
+        const error = `Failed to determine Python layer ARN`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      }
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;

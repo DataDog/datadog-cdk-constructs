@@ -16,6 +16,7 @@ import {
 const NODE_LAYER_VERSION = 91;
 const CUSTOM_NODE_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node-custom:1`;
 const PYTHON_LAYER_VERSION = 73;
+const CUSTOM_PYTHON_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Python-custom:1`;
 const JAVA_LAYER_VERSION = 11;
 const EXTENSION_LAYER_VERSION = 5;
 const CUSTOM_EXTENSION_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension-custom:1`;
@@ -33,7 +34,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${NODE_LAYER_VERSION}`],
     });
@@ -274,6 +275,36 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds an extension layer along with a custom python layer while using an apiKmsKey", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerArn: CUSTOM_PYTHON_LAYER_ARN,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        CUSTOM_PYTHON_LAYER_ARN,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
   it("adds the ARM suffix to the Python and Extension layers", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -305,6 +336,37 @@ describe("applyLayers", () => {
     });
   });
 
+  it("adds the ARM suffix to the Extension layer but not custom Python layer", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_7,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+      architecture: Architecture.ARM_64,
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerArn: CUSTOM_PYTHON_LAYER_ARN,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        CUSTOM_PYTHON_LAYER_ARN,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
   it("adds layer when architecture property is missing", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -318,7 +380,7 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
     (hello as any).architecture = undefined;
-    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${NODE_LAYER_VERSION}`],
     });
@@ -348,9 +410,9 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
 
-    const errors1 = applyLayers(stack, stack.region, hello1, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
-    const errors2 = applyLayers(stack, stack.region, hello2, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
-    const errors3 = applyLayers(stack, stack.region, hello3, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors1 = applyLayers(stack, stack.region, hello1, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errors2 = applyLayers(stack, stack.region, hello2, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errors3 = applyLayers(stack, stack.region, hello3, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
 
     expect(errors1.length).toEqual(0);
     expect(errors2.length).toEqual(0);
@@ -378,7 +440,7 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
     });
@@ -556,6 +618,36 @@ describe("applyLayers", () => {
     });
   });
 
+  it("doesn't add layer to container image Lambda with custom extension arn and custom layer arn", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
+      functionName: "container-lambda",
+      code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
+    });
+
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerArn: CUSTOM_PYTHON_LAYER_ARN,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.absent(),
+      Runtime: Match.absent(),
+      Handler: Match.absent(),
+    });
+  });
+
   it("returns errors if layer versions are not provided for corresponding Lambda runtimes", () => {
     const logSpy = jest.spyOn(log, "error").mockImplementation(() => ({}));
     const app = new App();
@@ -605,8 +697,8 @@ describe("isGovCloud", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errorsPython = applyLayers(stack, stack.region, pythonLambda, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
-    const errorsNode = applyLayers(stack, stack.region, nodeLambda, PYTHON_LAYER_VERSION, NODE_LAYER_VERSION);
+    const errorsPython = applyLayers(stack, stack.region, pythonLambda, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errorsNode = applyLayers(stack, stack.region, nodeLambda, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
 
     expect(errorsPython.length).toEqual(0);
     expect(errorsNode.length).toEqual(0);
