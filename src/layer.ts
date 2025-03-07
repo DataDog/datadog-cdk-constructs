@@ -30,6 +30,7 @@ export function applyLayers(
   lam: lambda.Function,
   pythonLayerVersion?: number,
   nodeLayerVersion?: number,
+  nodeLayerArn?: string,
   javaLayerVersion?: number,
   dotnetLayerVersion?: number,
   useLayersFromAccount?: string,
@@ -62,11 +63,26 @@ export function applyLayers(
       break;
 
     case RuntimeType.NODE:
-      if (nodeLayerVersion === undefined) {
+      if (nodeLayerVersion === undefined && nodeLayerArn === undefined) {
         handleLayerError(errors, lam.node.id, "Node.js", "node");
         return errors;
+      } else if (nodeLayerVersion !== undefined && nodeLayerArn !== undefined) {
+        const error = `Cannot have both nodeLayerVersion and nodeLayerArn defined. Please choose one or the other.`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      } else if (nodeLayerArn !== undefined) {
+        lambdaLayerArn = nodeLayerArn;
+      } else if (nodeLayerVersion !== undefined) {
+        lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
       }
-      lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
+
+      if (lambdaLayerArn === undefined) {
+        const error = `Failed to determine Node.js layer ARN`;
+        log.error(error)
+        errors.push(error);
+        return errors;
+      }
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
