@@ -120,7 +120,7 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
 
   lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
   // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
-  if (baseProps.extensionLayerVersion) {
+  if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
     lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
   } else {
     lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
@@ -133,7 +133,7 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
 }
 
 export function setDDEnvVariables(lam: lambda.Function, props: DatadogLambdaProps): void {
-  if (props.extensionLayerVersion) {
+  if (props.extensionLayerVersion || props.extensionLayerArn) {
     if (props.env) {
       lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
     }

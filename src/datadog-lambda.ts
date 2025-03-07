@@ -61,6 +61,7 @@ export class DatadogLambda extends Construct {
       apiKeySecretArn,
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
+      this.props.extensionLayerArn,
     );
   }
 
@@ -96,9 +97,13 @@ export class DatadogLambda extends Construct {
           region,
           lambdaFunction,
           this.props.pythonLayerVersion,
+          this.props.pythonLayerArn,
           this.props.nodeLayerVersion,
+          this.props.nodeLayerArn,
           this.props.javaLayerVersion,
+          this.props.javaLayerArn,
           this.props.dotnetLayerVersion,
+          this.props.dotnetLayerArn,
           this.props.useLayersFromAccount,
         );
         if (errors.length > 0) {
@@ -109,12 +114,13 @@ export class DatadogLambda extends Construct {
         }
       }
 
-      if (baseProps.extensionLayerVersion !== undefined) {
+      if (baseProps.extensionLayerVersion !== undefined || baseProps.extensionLayerArn !== undefined) {
         const errors = applyExtensionLayer(
           this.scope,
           region,
           lambdaFunction,
           baseProps.extensionLayerVersion,
+          baseProps.extensionLayerArn,
           this.props.useLayersFromAccount,
         );
         if (errors.length > 0) {
@@ -130,7 +136,7 @@ export class DatadogLambda extends Construct {
       }
 
       if (this.props.forwarderArn !== undefined) {
-        if (this.props.extensionLayerVersion !== undefined) {
+        if (this.props.extensionLayerVersion !== undefined || this.props.extensionLayerArn !== undefined) {
           log.debug(`Skipping adding subscriptions to the lambda log groups since the extension is enabled`);
         } else {
           log.debug(`Adding log subscriptions using provided Forwarder ARN: ${this.props.forwarderArn}`);
@@ -288,7 +294,7 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
       "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   }
-  if (props.extensionLayerVersion !== undefined) {
+  if (props.extensionLayerVersion !== undefined || props.extensionLayerArn !== undefined) {
     if (
       props.apiKey === undefined &&
       props.apiKeySecretArn === undefined &&
@@ -300,10 +306,10 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
   }
   if (
     (props.enableDatadogTracing === false && props.enableDatadogASM) ||
-    (props.extensionLayerVersion == undefined && props.enableDatadogASM)
+    (props.extensionLayerVersion === undefined && props.extensionLayerArn === undefined && props.enableDatadogASM)
   ) {
     throw new Error(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and `extensionLayerVersion` must also be enabled.",
+      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
     );
   }
 }
@@ -339,6 +345,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   let redirectHandler = props.redirectHandler;
   let grantSecretReadAccess = props.grantSecretReadAccess;
   const extensionLayerVersion = props.extensionLayerVersion;
+  const extensionLayerArn = props.extensionLayerArn;
 
   if (addLayers === undefined) {
     log.debug(`No value provided for addLayers, defaulting to ${DatadogLambdaDefaultProps.addLayers}`);
@@ -409,5 +416,6 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     redirectHandler: redirectHandler,
     grantSecretReadAccess: grantSecretReadAccess,
     extensionLayerVersion: extensionLayerVersion,
+    extensionLayerArn: extensionLayerArn,
   };
 }
