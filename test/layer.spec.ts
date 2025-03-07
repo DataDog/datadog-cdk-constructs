@@ -18,6 +18,7 @@ const CUSTOM_NODE_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:D
 const PYTHON_LAYER_VERSION = 73;
 const CUSTOM_PYTHON_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Python-custom:1`;
 const JAVA_LAYER_VERSION = 11;
+const CUSTOM_JAVA_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Java-custom:1`;
 const EXTENSION_LAYER_VERSION = 5;
 const CUSTOM_EXTENSION_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension-custom:1`;
 
@@ -860,6 +861,37 @@ describe("isGovCloud", () => {
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:dd-trace-java:${JAVA_LAYER_VERSION}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
+      ],
+    });
+  });
+
+  it("adds the ARM suffix to Extension layer but not custom Java", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.JAVA_21,
+      code: lambda.Code.fromAsset("test/lambda"),
+      handler: "example-lambda.handler",
+      architecture: Architecture.ARM_64,
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      javaLayerArn: CUSTOM_JAVA_LAYER_ARN,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKmsKey: "1234",
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [
+        CUSTOM_JAVA_LAYER_ARN,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
       ],
     });

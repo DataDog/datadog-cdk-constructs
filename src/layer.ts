@@ -33,6 +33,7 @@ export function applyLayers(
   nodeLayerVersion?: number,
   nodeLayerArn?: string,
   javaLayerVersion?: number,
+  javaLayerArn?: string,
   dotnetLayerVersion?: number,
   useLayersFromAccount?: string,
 ): string[] {
@@ -104,11 +105,26 @@ export function applyLayers(
       break;
 
     case RuntimeType.JAVA:
-      if (javaLayerVersion === undefined) {
+      if (javaLayerVersion === undefined && javaLayerArn === undefined) {
         handleLayerError(errors, lam.node.id, "Java", "java");
         return errors;
+      } else if (javaLayerVersion !== undefined && javaLayerArn !== undefined) {
+        const error = `Cannot have both javaLayerVersion and javaLayerArn defined. Please choose one or the other.`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      } else if (javaLayerArn !== undefined) {
+        lambdaLayerArn = javaLayerArn;
+      } else if (javaLayerVersion !== undefined) {
+        lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
       }
-      lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
+
+      if (lambdaLayerArn === undefined) {
+        const error = `Failed to determine Java layer ARN`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      }
       log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
