@@ -15,6 +15,7 @@ import {
   DD_HANDLER_ENV_VAR,
 } from "../src/index";
 const EXTENSION_LAYER_VERSION = 5;
+const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Extension-custom:1";
 const NODE_LAYER_VERSION = 91;
 const PYTHON_LAYER_VERSION = 73;
 
@@ -124,6 +125,40 @@ describe("SITE_URL_ENV_VAR", () => {
     });
   });
 
+  it("applies default site URL parameter if undefined and extensionLayerArn is set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [API_KEY_ENV_VAR]: "1234",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+        },
+      },
+    });
+  });
+
   it("applies site URL parameter correctly when extensionLayerVersion is set", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -138,6 +173,41 @@ describe("SITE_URL_ENV_VAR", () => {
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      site: "datadoghq.eu",
+      apiKey: "1234",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [SITE_URL_ENV_VAR]: "datadoghq.eu",
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [API_KEY_ENV_VAR]: "1234",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+        },
+      },
+    });
+  })
+
+  it("applies site URL parameter correctly when extensionLayerArn is set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
       site: "datadoghq.eu",
       apiKey: "1234",
       nodeLayerVersion: NODE_LAYER_VERSION,
@@ -295,6 +365,41 @@ describe("FLUSH_METRICS_TO_LOGS_ENV_VAR", () => {
       },
     });
   });
+
+  it("overrides log forwarding value to false when extensionLayerArn is set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKey: "1234",
+      flushMetricsToLogs: true,
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [API_KEY_ENV_VAR]: "1234",
+        },
+      },
+    });
+  });
 });
 
 describe("API_KEY_ENV_VAR", () => {
@@ -349,7 +454,43 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      extensionLayerVersion: 13,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+          [API_KEY_SECRET_ARN_ENV_VAR]: "some-resource:from:aws:secrets-manager:arn",
+        },
+      },
+    });
+  });
+
+  it("adds DD_API_KEY_SECRET_ARN environment variable for custom extension arn", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",

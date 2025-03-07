@@ -101,7 +101,8 @@ export function applyExtensionLayer(
   scope: Construct,
   region: string,
   lam: lambda.Function,
-  extensionLayerVersion: number,
+  extensionLayerVersion?: number,
+  extensionLayerArn?: string,
   useLayersFromAccount?: string,
 ): string[] {
   // TODO: check region availability
@@ -119,9 +120,32 @@ export function applyExtensionLayer(
     return errors;
   }
 
-  const extensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM, accountId);
-  log.debug(`Using extension layer: ${extensionLayerArn}`);
-  addLayer(extensionLayerArn, true, scope, lam, runtime);
+  let selectedExtensionLayerArn: string | undefined;
+  if (extensionLayerArn === undefined && extensionLayerVersion === undefined) {
+    const error = `Must have either extensionLayerArn or extensionLayerVersion defined in order to apply the extension layer`;
+    log.warn(error);
+    errors.push(error);
+    return errors;
+  } else if (extensionLayerArn !== undefined && extensionLayerVersion !== undefined) {
+    const error = `Cannot have both extensionLayerArn and extensionLayerVersion defined. Please choose one or the other.`;
+    log.warn(error);
+    errors.push(error);
+    return errors
+  } else if (extensionLayerArn !== undefined) {
+    selectedExtensionLayerArn = extensionLayerArn;
+  } else if (extensionLayerVersion !== undefined) {
+    selectedExtensionLayerArn = getExtensionLayerArn(region, extensionLayerVersion, isARM, accountId);
+  }
+
+  if (selectedExtensionLayerArn === undefined) {
+    const error = `Failed to determine extension layer ARN`;
+    log.warn(error);
+    errors.push(error);
+    return errors;
+  }
+
+  log.debug(`Using extension layer: ${selectedExtensionLayerArn}`);
+  addLayer(selectedExtensionLayerArn, true, scope, lam, runtime);
   return errors;
 }
 

@@ -538,6 +538,45 @@ describe("DD_TAGS_ENV_VAR", () => {
     });
   });
 
+  it("doesn't overwrite DD_TAGS when adding source code integration data with custom extension arn", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      captureLambdaPayload: true,
+      tags: "key:value",
+      // the below fields are needed or DD_TAGS won't get set
+      extensionLayerArn: "arn:aws:lambda:us-west-2:123456789012:layer:Datadog-Extension-custom:10",
+      apiKey: "test",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [API_KEY_ENV_VAR]: "test",
+        },
+      },
+    });
+  });
+
   it("doesnt add source code integration when config is set to false", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {

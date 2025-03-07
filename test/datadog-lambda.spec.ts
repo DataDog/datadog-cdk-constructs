@@ -12,6 +12,7 @@ import {
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
+const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Extension-custom:1";
 const NODE_LAYER_VERSION = 91;
 
 describe("validateProps", () => {
@@ -219,6 +220,42 @@ describe("validateProps", () => {
     );
   });
 
+  it("throws an error when the `extensionLayerArn` is set and neither the `apiKey` nor `apiKmsKey` is set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+        addLayers: true,
+        enableDatadogTracing: false,
+        flushMetricsToLogs: true,
+        site: "datadoghq.com",
+      });
+      datadogLambda.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual(
+      "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+    );
+  });
+
   it("throws an error if enableDatadogASM is enabled and enableDatadogTracing is not", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -233,7 +270,7 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and `extensionLayerVersion` must also be enabled.",
+      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
     );
   });
 
@@ -250,7 +287,7 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and `extensionLayerVersion` must also be enabled.",
+      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
     );
   });
 });
@@ -321,6 +358,33 @@ describe("addCdkConstructVersionTag", () => {
     datadogLambda.addLambdaFunctions([hello1]);
     Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 0);
   });
+  it("Does not call the addForwarder function when the custom extension is enabled", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello1 = new lambda.Function(stack, "HelloHandler1", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      forwarderArn: "forwarder-arn",
+      apiKey: "1234",
+    });
+
+    datadogLambda.addLambdaFunctions([hello1]);
+    Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 0);
+  });
 
   it("Does call the addForwarderToNonLambdaLogGrpoups function when the extension is enabled", () => {
     const app = new App();
@@ -335,6 +399,32 @@ describe("addCdkConstructVersionTag", () => {
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      addLayers: true,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
+      apiKey: "1234",
+    });
+
+    datadogLambda.addForwarderToNonLambdaLogGroups([helloLogGroup]);
+
+    Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 1);
+  });
+
+  it("Does call the addForwarderToNonLambdaLogGrpoups function when the custom extension is enabled", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+
+    const helloLogGroup = new LogGroup(stack, "helloLogGroup");
+
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
       addLayers: true,
       enableDatadogTracing: false,
       flushMetricsToLogs: true,
