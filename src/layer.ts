@@ -35,6 +35,7 @@ export function applyLayers(
   javaLayerVersion?: number,
   javaLayerArn?: string,
   dotnetLayerVersion?: number,
+  dotnetLayerArn?: string,
   useLayersFromAccount?: string,
 ): string[] {
   // TODO: check region availability
@@ -130,11 +131,26 @@ export function applyLayers(
       break;
 
     case RuntimeType.DOTNET:
-      if (dotnetLayerVersion === undefined) {
+      if (dotnetLayerVersion === undefined && dotnetLayerArn === undefined) {
         handleLayerError(errors, lam.node.id, ".NET", "dotnet");
         return errors;
+      } else if (dotnetLayerVersion !== undefined && dotnetLayerArn !== undefined) {
+        const error = `Cannot have both dotnetLayerVersion and dotnetLayerArn defined. Please choose one or the other.`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      } else if (dotnetLayerArn !== undefined) {
+        lambdaLayerArn = dotnetLayerArn;
+      } else if (dotnetLayerVersion !== undefined) {
+        lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
       }
-      lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
+
+      if (lambdaLayerArn === undefined) {
+        const error = `Failed to determine .NET layer ARN`;
+        log.error(error);
+        errors.push(error);
+        return errors;
+      }
       log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
