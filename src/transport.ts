@@ -51,7 +51,10 @@ export class Transport {
     this.extensionLayerArn = extensionLayerArn;
     // If the extension is used, metrics will be submitted via the extension.
     if (this.extensionLayerVersion !== undefined || this.extensionLayerArn !== undefined) {
-      const extensionInfo = this.extensionLayerArn !== undefined ? `ARN ${this.extensionLayerArn}` : `version ${this.extensionLayerVersion}`;
+      const extensionInfo =
+        this.extensionLayerArn !== undefined
+          ? `ARN ${this.extensionLayerArn}`
+          : `version ${this.extensionLayerVersion}`;
       log.debug(`Using extension ${extensionInfo}, metrics will be submitted via the extension`);
       this.flushMetricsToLogs = false;
     }
@@ -79,7 +82,8 @@ export class Transport {
     }
     if (this.apiKeySecretArn !== undefined) {
       const isNode = runtimeLookup[lam.runtime.name] === RuntimeType.NODE;
-      const isSendingSynchronousMetrics = (this.extensionLayerVersion === undefined && this.extensionLayerArn === undefined) && !this.flushMetricsToLogs;
+      const isSendingSynchronousMetrics =
+        this.extensionLayerVersion === undefined && this.extensionLayerArn === undefined && !this.flushMetricsToLogs;
       if (isSendingSynchronousMetrics && isNode) {
         throw new Error(
           `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,

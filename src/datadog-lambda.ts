@@ -308,7 +308,7 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
   }
   if (
     (props.enableDatadogTracing === false && props.enableDatadogASM) ||
-    ((props.extensionLayerVersion === undefined && props.extensionLayerArn === undefined) && props.enableDatadogASM)
+    (props.extensionLayerVersion === undefined && props.extensionLayerArn === undefined && props.enableDatadogASM)
   ) {
     throw new Error(
       "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",

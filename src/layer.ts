@@ -130,7 +130,7 @@ export function applyExtensionLayer(
     const error = `Cannot have both extensionLayerArn and extensionLayerVersion defined. Please choose one or the other.`;
     log.warn(error);
     errors.push(error);
-    return errors
+    return errors;
   } else if (extensionLayerArn !== undefined) {
     selectedExtensionLayerArn = extensionLayerArn;
   } else if (extensionLayerVersion !== undefined) {
