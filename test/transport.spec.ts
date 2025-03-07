@@ -19,6 +19,7 @@ const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Dat
 const NODE_LAYER_VERSION = 91;
 const CUSTOM_NODE_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Node-custom:1";
 const PYTHON_LAYER_VERSION = 73;
+const CUSTOM_PYTHON_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Python-custom:1";
 
 describe("SITE_URL_ENV_VAR", () => {
   it("applies site URL parameter correctly when flushMetricsToLogs is false", () => {
@@ -581,6 +582,40 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
       site: "datadoghq.com",
       apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       pythonLayerVersion: PYTHON_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [SITE_URL_ENV_VAR]: "datadoghq.com",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [API_KEY_SECRET_ARN_ENV_VAR]: "some-resource:from:aws:secrets-manager:arn",
+        },
+      },
+    });
+  });
+  it("adds DD_API_KEY_SECRET_ARN when using synchronous metrics in custom python", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_9,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      flushMetricsToLogs: false,
+      site: "datadoghq.com",
+      apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+      pythonLayerArn: CUSTOM_PYTHON_LAYER_ARN,
     });
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {

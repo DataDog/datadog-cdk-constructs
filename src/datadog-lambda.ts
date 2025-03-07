@@ -103,6 +103,7 @@ export class DatadogLambda extends Construct {
           region,
           lambdaFunction,
           this.props.pythonLayerVersion,
+          this.props.pythonLayerArn,
           this.props.nodeLayerVersion,
           this.props.nodeLayerArn,
           this.props.javaLayerVersion,
