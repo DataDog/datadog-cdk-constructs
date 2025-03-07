@@ -79,7 +79,7 @@ export function applyLayers(
 
       if (lambdaLayerArn === undefined) {
         const error = `Failed to determine Node.js layer ARN`;
-        log.error(error)
+        log.error(error);
         errors.push(error);
         return errors;
       }
