@@ -56,24 +56,19 @@ export function applyLayers(
   let lambdaLayerArn;
   switch (lambdaRuntimeType) {
     case RuntimeType.PYTHON:
-      if (pythonLayerVersion === undefined && pythonLayerArn === undefined) {
-        handleLayerError(errors, lam.node.id, "Python", "python");
-        return errors;
-      } else if (pythonLayerVersion !== undefined && pythonLayerArn !== undefined) {
-        const error = `Cannot have both pythonLayerVersion and pythonLayerArn defined. Please choose one or the other.`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      } else if (pythonLayerArn !== undefined) {
-        lambdaLayerArn = pythonLayerArn;
-      } else if (pythonLayerVersion !== undefined) {
-        lambdaLayerArn = getLambdaLayerArn(region, pythonLayerVersion, runtime, isARM, accountId);
-      }
-
+      lambdaLayerArn = tryToFigureOutLayerArn(
+        region,
+        accountId,
+        runtime,
+        isARM,
+        lam,
+        errors,
+        "Python",
+        "python",
+        pythonLayerVersion,
+        pythonLayerArn,
+      );
       if (lambdaLayerArn === undefined) {
-        const error = `Failed to determine Python layer ARN`;
-        log.error(error);
-        errors.push(error);
         return errors;
       }
       log.debug(`Using Python Lambda layer: ${lambdaLayerArn}`);
@@ -81,76 +76,64 @@ export function applyLayers(
       break;
 
     case RuntimeType.NODE:
-      if (nodeLayerVersion === undefined && nodeLayerArn === undefined) {
-        handleLayerError(errors, lam.node.id, "Node.js", "node");
+      lambdaLayerArn = tryToFigureOutLayerArn(
+        region,
+        accountId,
+        runtime,
+        false, // Node has no ARM layer
+        lam,
+        errors,
+        "Node.js",
+        "node",
+        nodeLayerVersion,
+        nodeLayerArn,
+      );
+      if (lambdaLayerArn === undefined) {
         return errors;
-      } else if (nodeLayerVersion !== undefined && nodeLayerArn !== undefined) {
-        const error = `Cannot have both nodeLayerVersion and nodeLayerArn defined. Please choose one or the other.`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      } else if (nodeLayerArn !== undefined) {
-        lambdaLayerArn = nodeLayerArn;
-      } else if (nodeLayerVersion !== undefined) {
-        lambdaLayerArn = getLambdaLayerArn(region, nodeLayerVersion, runtime, false, accountId); // Node has no ARM layer
       }
 
-      if (lambdaLayerArn === undefined) {
-        const error = `Failed to determine Node.js layer ARN`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      }
       log.debug(`Using Node Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
 
     case RuntimeType.JAVA:
-      if (javaLayerVersion === undefined && javaLayerArn === undefined) {
-        handleLayerError(errors, lam.node.id, "Java", "java");
+      lambdaLayerArn = tryToFigureOutLayerArn(
+        region,
+        accountId,
+        runtime,
+        false, // Java has no ARM layer
+        lam,
+        errors,
+        "Java",
+        "java",
+        javaLayerVersion,
+        javaLayerArn,
+      );
+      if (lambdaLayerArn === undefined) {
         return errors;
-      } else if (javaLayerVersion !== undefined && javaLayerArn !== undefined) {
-        const error = `Cannot have both javaLayerVersion and javaLayerArn defined. Please choose one or the other.`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      } else if (javaLayerArn !== undefined) {
-        lambdaLayerArn = javaLayerArn;
-      } else if (javaLayerVersion !== undefined) {
-        lambdaLayerArn = getLambdaLayerArn(region, javaLayerVersion, runtime, false, accountId); //Java has no ARM layer
       }
 
-      if (lambdaLayerArn === undefined) {
-        const error = `Failed to determine Java layer ARN`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      }
       log.debug(`Using dd-trace-java layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
 
     case RuntimeType.DOTNET:
-      if (dotnetLayerVersion === undefined && dotnetLayerArn === undefined) {
-        handleLayerError(errors, lam.node.id, ".NET", "dotnet");
+      lambdaLayerArn = tryToFigureOutLayerArn(
+        region,
+        accountId,
+        runtime,
+        isARM,
+        lam,
+        errors,
+        ".NET",
+        "dotnet",
+        dotnetLayerVersion,
+        dotnetLayerArn,
+      );
+      if (lambdaLayerArn === undefined) {
         return errors;
-      } else if (dotnetLayerVersion !== undefined && dotnetLayerArn !== undefined) {
-        const error = `Cannot have both dotnetLayerVersion and dotnetLayerArn defined. Please choose one or the other.`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      } else if (dotnetLayerArn !== undefined) {
-        lambdaLayerArn = dotnetLayerArn;
-      } else if (dotnetLayerVersion !== undefined) {
-        lambdaLayerArn = getLambdaLayerArn(region, dotnetLayerVersion, runtime, isARM, accountId);
       }
 
-      if (lambdaLayerArn === undefined) {
-        const error = `Failed to determine .NET layer ARN`;
-        log.error(error);
-        errors.push(error);
-        return errors;
-      }
       log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
@@ -211,6 +194,44 @@ export function applyExtensionLayer(
   log.debug(`Using extension layer: ${selectedExtensionLayerArn}`);
   addLayer(selectedExtensionLayerArn, true, scope, lam, runtime);
   return errors;
+}
+
+function tryToFigureOutLayerArn(
+  region: string,
+  accountId: string | undefined,
+  runtime: string,
+  isARM: boolean,
+  lam: lambda.Function,
+  errors: string[],
+  formalRuntime: string,
+  paramRuntime: string,
+  layerVersion?: number,
+  layerArn?: string,
+): string | undefined {
+  let lambdaLayerArn: string | undefined;
+
+  if (layerVersion === undefined && layerArn === undefined) {
+    handleLayerError(errors, lam.node.id, formalRuntime, paramRuntime);
+    return undefined;
+  } else if (layerVersion !== undefined && layerArn !== undefined) {
+    const error = `Cannot have both ${paramRuntime}LayerVersion and ${paramRuntime}LayerArn defined. Please choose one or the other.`;
+    log.error(error);
+    errors.push(error);
+    return undefined;
+  } else if (layerArn !== undefined) {
+    lambdaLayerArn = layerArn;
+  } else if (layerVersion !== undefined) {
+    lambdaLayerArn = getLambdaLayerArn(region, layerVersion, runtime, isARM, accountId); // Node has no ARM layer
+  }
+
+  if (lambdaLayerArn === undefined) {
+    const error = `Failed to determine ${formalRuntime} layer ARN`;
+    log.error(error);
+    errors.push(error);
+    return undefined;
+  }
+
+  return lambdaLayerArn;
 }
 
 function handleLayerError(errors: string[], nodeID: string, formalRuntime: string, paramRuntime: string): void {
