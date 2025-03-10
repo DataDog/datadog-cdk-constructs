@@ -40,6 +40,7 @@ export class DatadogLambda extends Construct {
   gitCommitShaOverride: string | undefined;
   gitRepoUrlOverride: string | undefined;
   lambdas: LambdaFunction[];
+  contextGitShaOverrideKey: string = "datadog-lambda.git-commit-sha-override";
 
   constructor(scope: Construct, id: string, props: DatadogLambdaProps) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() === "true") {
@@ -62,6 +63,11 @@ export class DatadogLambda extends Construct {
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
     );
+
+    const gitCommitShaOverride = this.node.tryGetContext(this.contextGitShaOverrideKey);
+    if (gitCommitShaOverride) {
+      this.overrideGitMetadata(gitCommitShaOverride);
+    }
   }
 
   public addLambdaFunctions(lambdaFunctions: LambdaFunction[], construct?: Construct): void {

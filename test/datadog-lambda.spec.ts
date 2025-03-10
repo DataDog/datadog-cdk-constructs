@@ -750,4 +750,31 @@ describe("overrideGitMetadata", () => {
       expect.arrayContaining(["git.repository_url:github.com/DataDog/datadog-cdk-constructs"]),
     );
   });
+
+  it("overrides using context", () => {
+    const app = new App({
+      context: {
+        "datadog-lambda.git-commit-sha-override": "fake-sha",
+      },
+    });
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+
+    datadogLambda.addLambdaFunctions([hello], stack);
+    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+      expect.arrayContaining(["git.commit.sha:fake-sha"]),
+    );
+  });
 });
