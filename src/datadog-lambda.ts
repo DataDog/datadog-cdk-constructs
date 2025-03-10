@@ -110,6 +110,8 @@ export class DatadogLambda extends Construct {
           this.props.javaLayerArn,
           this.props.dotnetLayerVersion,
           this.props.dotnetLayerArn,
+          this.props.rubyLayerVersion,
+          this.props.rubyLayerArn,
           this.props.useLayersFromAccount,
         );
         if (errors.length > 0) {

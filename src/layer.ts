@@ -36,6 +36,8 @@ export function applyLayers(
   javaLayerArn?: string,
   dotnetLayerVersion?: number,
   dotnetLayerArn?: string,
+  rubyLayerVersion?: number,
+  rubyLayerArn?: string,
   useLayersFromAccount?: string,
 ): string[] {
   // TODO: check region availability
@@ -135,6 +137,27 @@ export function applyLayers(
       }
 
       log.debug(`Using dd-trace-dotnet layer: ${lambdaLayerArn}`);
+      addLayer(lambdaLayerArn, false, scope, lam, runtime);
+      break;
+
+    case RuntimeType.RUBY:
+      lambdaLayerArn = tryToFigureOutLayerArn(
+        region,
+        accountId,
+        runtime,
+        isARM,
+        lam,
+        errors,
+        "Ruby",
+        "ruby",
+        rubyLayerVersion,
+        rubyLayerArn,
+      );
+      if (lambdaLayerArn === undefined) {
+        return errors;
+      }
+
+      log.debug(`Using Ruby Lambda layer: ${lambdaLayerArn}`);
       addLayer(lambdaLayerArn, false, scope, lam, runtime);
       break;
 

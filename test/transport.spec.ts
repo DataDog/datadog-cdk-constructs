@@ -194,7 +194,7 @@ describe("SITE_URL_ENV_VAR", () => {
         },
       },
     });
-  })
+  });
 
   it("applies site URL parameter correctly when extensionLayerArn is set", () => {
     const app = new App();

@@ -35,7 +35,15 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errors = applyLayers(
+      stack,
+      stack.region,
+      hello,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${NODE_LAYER_VERSION}`],
     });
@@ -155,10 +163,7 @@ describe("applyLayers", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Layers: [
-        CUSTOM_NODE_LAYER_ARN,
-        CUSTOM_EXTENSION_LAYER_ARN,
-      ],
+      Layers: [CUSTOM_NODE_LAYER_ARN, CUSTOM_EXTENSION_LAYER_ARN],
     });
   });
 
@@ -381,7 +386,15 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
     (hello as any).architecture = undefined;
-    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errors = applyLayers(
+      stack,
+      stack.region,
+      hello,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [`arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${NODE_LAYER_VERSION}`],
     });
@@ -411,9 +424,33 @@ describe("applyLayers", () => {
       handler: "example-lambda.handler",
     });
 
-    const errors1 = applyLayers(stack, stack.region, hello1, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
-    const errors2 = applyLayers(stack, stack.region, hello2, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
-    const errors3 = applyLayers(stack, stack.region, hello3, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errors1 = applyLayers(
+      stack,
+      stack.region,
+      hello1,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
+    const errors2 = applyLayers(
+      stack,
+      stack.region,
+      hello2,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
+    const errors3 = applyLayers(
+      stack,
+      stack.region,
+      hello3,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
 
     expect(errors1.length).toEqual(0);
     expect(errors2.length).toEqual(0);
@@ -441,7 +478,15 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
-    const errors = applyLayers(stack, stack.region, hello, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errors = applyLayers(
+      stack,
+      stack.region,
+      hello,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.absent(),
     });
@@ -698,8 +743,24 @@ describe("isGovCloud", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
-    const errorsPython = applyLayers(stack, stack.region, pythonLambda, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
-    const errorsNode = applyLayers(stack, stack.region, nodeLambda, PYTHON_LAYER_VERSION, undefined, NODE_LAYER_VERSION, undefined);
+    const errorsPython = applyLayers(
+      stack,
+      stack.region,
+      pythonLambda,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
+    const errorsNode = applyLayers(
+      stack,
+      stack.region,
+      nodeLambda,
+      PYTHON_LAYER_VERSION,
+      undefined,
+      NODE_LAYER_VERSION,
+      undefined,
+    );
 
     expect(errorsPython.length).toEqual(0);
     expect(errorsNode.length).toEqual(0);

@@ -187,10 +187,7 @@ describe("addLambdaFunctions", () => {
     NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
 
     Template.fromStack(NestStack).hasResourceProperties("AWS::Lambda::Function", {
-      Layers: [
-        `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:20`,
-        CUSTOM_EXTENSION_LAYER_ARN,
-      ],
+      Layers: [`arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:20`, CUSTOM_EXTENSION_LAYER_ARN],
     });
   });
 
@@ -224,10 +221,7 @@ describe("addLambdaFunctions", () => {
     NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
 
     Template.fromStack(NestStack).hasResourceProperties("AWS::Lambda::Function", {
-      Layers: [
-        CUSTOM_NODE_LAYER_ARN,
-        CUSTOM_EXTENSION_LAYER_ARN,
-      ],
+      Layers: [CUSTOM_NODE_LAYER_ARN, CUSTOM_EXTENSION_LAYER_ARN],
     });
   });
 });
