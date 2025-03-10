@@ -79,8 +79,8 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "provided": RuntimeType.CUSTOM,
   "provided.al2": RuntimeType.CUSTOM,
   "provided.al2023": RuntimeType.CUSTOM,
-  "ruby32": RuntimeType.RUBY,
-  "ruby33": RuntimeType.RUBY,
+  "ruby3.2": RuntimeType.RUBY,
+  "ruby3.3": RuntimeType.RUBY,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
