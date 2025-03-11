@@ -23,6 +23,7 @@ export enum RuntimeType {
   NODE,
   PYTHON,
   JAVA,
+  RUBY,
   CUSTOM,
   UNSUPPORTED,
 }
@@ -78,6 +79,8 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "provided": RuntimeType.CUSTOM,
   "provided.al2": RuntimeType.CUSTOM,
   "provided.al2023": RuntimeType.CUSTOM,
+  "ruby3.2": RuntimeType.RUBY,
+  "ruby3.3": RuntimeType.RUBY,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
@@ -101,6 +104,8 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "java11": "dd-trace-java",
   "java17": "dd-trace-java",
   "java21": "dd-trace-java",
+  "ruby32": "Datadog-Ruby3-2",
+  "ruby33": "Datadog-Ruby3-3",
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];

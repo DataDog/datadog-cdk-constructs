@@ -69,6 +69,7 @@ function getDDHandler(runtimeType: RuntimeType, addLayers: boolean): string | nu
     case RuntimeType.CUSTOM:
     case RuntimeType.JAVA:
     case RuntimeType.DOTNET:
+    case RuntimeType.RUBY:
     default:
       return null;
   }

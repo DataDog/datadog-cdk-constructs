@@ -11,10 +11,17 @@ import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
 export interface DatadogLambdaProps {
   readonly dotnetLayerVersion?: number;
+  readonly dotnetLayerArn?: string;
   readonly pythonLayerVersion?: number;
+  readonly pythonLayerArn?: string;
   readonly nodeLayerVersion?: number;
+  readonly nodeLayerArn?: string;
   readonly javaLayerVersion?: number;
+  readonly javaLayerArn?: string;
+  readonly rubyLayerVersion?: number;
+  readonly rubyLayerArn?: string;
   readonly extensionLayerVersion?: number;
+  readonly extensionLayerArn?: string;
   readonly addLayers?: boolean;
   readonly forwarderArn?: string;
   readonly flushMetricsToLogs?: boolean;
@@ -61,9 +68,13 @@ export interface DatadogLambdaStrictProps {
   readonly enableMergeXrayTraces: boolean;
   readonly grantSecretReadAccess: boolean;
   readonly pythonLayerVersion?: number;
+  readonly pythonLayerArn?: string;
   readonly nodeLayerVersion?: number;
+  readonly nodeLayerArn?: string;
   readonly javaLayerVersion?: number;
+  readonly javaLayerArn?: string;
   readonly extensionLayerVersion?: number;
+  readonly extensionLayerArn?: string;
   readonly forwarderArn?: string;
   readonly flushMetricsToLogs?: boolean;
   readonly site?: string;

@@ -157,6 +157,73 @@ describe("addLambdaFunctions", () => {
       ],
     });
   });
+
+  it("Adds a custom DD Lambda Extension when using a nested CDK stack", () => {
+    const app = new App();
+    const RootStack = new Stack(app, "RootStack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const NestStack = new NestedStack(RootStack, "NestedStack");
+
+    const NestedStackLambda = new lambda.Function(NestStack, "NestedStackLambda", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const CUSTOM_EXTENSION_LAYER_ARN = `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension-custom:1`;
+    const NestedStackDatadogCdk = new DatadogLambda(NestStack, "NestedStackDatadogCdk", {
+      nodeLayerVersion: 20,
+      pythonLayerVersion: 28,
+      addLayers: true,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKey: "1234",
+      enableDatadogTracing: true,
+      enableDatadogLogs: true,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
+
+    Template.fromStack(NestStack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [`arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:20`, CUSTOM_EXTENSION_LAYER_ARN],
+    });
+  });
+
+  it("Adds a custom DD Lambda Extension when using a nested CDK stack and a custom node layer", () => {
+    const app = new App();
+    const RootStack = new Stack(app, "RootStack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const NestStack = new NestedStack(RootStack, "NestedStack");
+
+    const NestedStackLambda = new lambda.Function(NestStack, "NestedStackLambda", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromAsset("test"),
+      handler: "hello.handler",
+    });
+    const CUSTOM_EXTENSION_LAYER_ARN = `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Extension-custom:1`;
+    const CUSTOM_NODE_LAYER_ARN = `arn:aws:lambda:sa-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x-custom:1`;
+    const NestedStackDatadogCdk = new DatadogLambda(NestStack, "NestedStackDatadogCdk", {
+      nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
+      pythonLayerVersion: 28,
+      addLayers: true,
+      extensionLayerArn: CUSTOM_EXTENSION_LAYER_ARN,
+      apiKey: "1234",
+      enableDatadogTracing: true,
+      enableDatadogLogs: true,
+      flushMetricsToLogs: true,
+      site: "datadoghq.com",
+    });
+    NestedStackDatadogCdk.addLambdaFunctions([NestedStackLambda]);
+
+    Template.fromStack(NestStack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: [CUSTOM_NODE_LAYER_ARN, CUSTOM_EXTENSION_LAYER_ARN],
+    });
+  });
 });
 
 describe("applyLayers", () => {
