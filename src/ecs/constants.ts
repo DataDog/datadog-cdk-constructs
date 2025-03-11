@@ -16,8 +16,6 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
   registry: "public.ecr.aws/datadog/agent",
   imageVersion: "latest",
 
-  site: "datadoghq.com",
-
   apm: {
     isEnabled: true,
     isSocketEnabled: true,

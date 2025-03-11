@@ -164,9 +164,9 @@ describe("DatadogECSFargateTaskDefinition", () => {
             }),
           ]),
           DockerLabels: Match.objectLike({
-            "com.datadoghq.tags.env": "test-env",
-            "com.datadoghq.tags.service": "test-service",
-            "com.datadoghq.tags.version": "test-version",
+            "tags.datadoghq.com/env": "test-env",
+            "tags.datadoghq.com/service": "test-service",
+            "tags.datadoghq.com/version": "test-version",
           }),
         }),
       ]),
