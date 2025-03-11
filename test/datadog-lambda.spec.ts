@@ -386,7 +386,7 @@ describe("addCdkConstructVersionTag", () => {
     Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 0);
   });
 
-  it("Does call the addForwarderToNonLambdaLogGrpoups function when the extension is enabled", () => {
+  it("Does call the addForwarderToNonLambdaLogGroups function when the extension is enabled", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -412,7 +412,7 @@ describe("addCdkConstructVersionTag", () => {
     Template.fromStack(stack).resourceCountIs("AWS::Logs::SubscriptionFilter", 1);
   });
 
-  it("Does call the addForwarderToNonLambdaLogGrpoups function when the custom extension is enabled", () => {
+  it("Does call the addForwarderToNonLambdaLogGroups function when the custom extension is enabled", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
