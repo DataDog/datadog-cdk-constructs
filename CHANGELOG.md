@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.1.0...v2-2.2.0) (2025-03-11)
+
+
+### Features
+
+* add support for custom layer ARNs and Ruby layers ([#381](https://github.com/DataDog/datadog-cdk-constructs/issues/381)) ([6cc7b62](https://github.com/DataDog/datadog-cdk-constructs/commit/6cc7b62353af6d5cec566c864ebeb78e1166d8bc))
+
 ## [2.1.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.0.0...v2-2.1.0) (2025-02-21)
 
 
