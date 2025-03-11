@@ -58,7 +58,7 @@ export function applyLayers(
   let lambdaLayerArn;
   switch (lambdaRuntimeType) {
     case RuntimeType.PYTHON:
-      lambdaLayerArn = tryToFigureOutLayerArn(
+      lambdaLayerArn = tryToFigureOutTracingLayerArn(
         region,
         accountId,
         runtime,
@@ -78,7 +78,7 @@ export function applyLayers(
       break;
 
     case RuntimeType.NODE:
-      lambdaLayerArn = tryToFigureOutLayerArn(
+      lambdaLayerArn = tryToFigureOutTracingLayerArn(
         region,
         accountId,
         runtime,
@@ -99,7 +99,7 @@ export function applyLayers(
       break;
 
     case RuntimeType.JAVA:
-      lambdaLayerArn = tryToFigureOutLayerArn(
+      lambdaLayerArn = tryToFigureOutTracingLayerArn(
         region,
         accountId,
         runtime,
@@ -120,7 +120,7 @@ export function applyLayers(
       break;
 
     case RuntimeType.DOTNET:
-      lambdaLayerArn = tryToFigureOutLayerArn(
+      lambdaLayerArn = tryToFigureOutTracingLayerArn(
         region,
         accountId,
         runtime,
@@ -141,7 +141,7 @@ export function applyLayers(
       break;
 
     case RuntimeType.RUBY:
-      lambdaLayerArn = tryToFigureOutLayerArn(
+      lambdaLayerArn = tryToFigureOutTracingLayerArn(
         region,
         accountId,
         runtime,
@@ -219,7 +219,7 @@ export function applyExtensionLayer(
   return errors;
 }
 
-function tryToFigureOutLayerArn(
+function tryToFigureOutTracingLayerArn(
   region: string,
   accountId: string | undefined,
   runtime: string,
