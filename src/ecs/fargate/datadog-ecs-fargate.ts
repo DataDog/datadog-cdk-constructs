@@ -210,6 +210,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     const agentContainer = super.addContainer(`datadog-agent-${this.family}`, {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
       containerName: "datadog-agent",
+      cpu: props.cpu,
+      memoryLimitMiB: props.memoryLimitMiB,
       environment: props.envVarManager.retrieveAll(),
       essential: props.isDatadogEssential,
       healthCheck: props.datadogHealthCheck,
@@ -251,6 +253,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           props.logCollection!.logDriverConfiguration!.imageVersion
         }`,
       ),
+      cpu: props.logCollection!.cpu,
+      memoryLimitMiB: props.logCollection!.memoryLimitMiB,
       essential: props.logCollection!.isLogRouterEssential,
       firelensConfig: {
         type: ecs.FirelensLogRouterType.FLUENTBIT,
@@ -321,6 +325,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     const cwsContainer = super.addContainer("cws-instrumentation", {
       containerName: "cws-instrumentation-init",
       image: ecs.ContainerImage.fromRegistry("datadog/cws-instrumentation:latest"),
+      cpu: this.datadogProps.cws!.cpu,
+      memoryLimitMiB: this.datadogProps.cws!.memoryLimitMiB,
       user: "0",
       essential: false,
       command: ["/cws-instrumentation", "setup", "--cws-volume-mount", "/cws-instrumentation-volume"],

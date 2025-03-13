@@ -36,6 +36,18 @@ export interface DatadogECSBaseProps {
   readonly imageVersion?: string;
 
   /**
+   * The minimum number of CPU units to reserve
+   * for the Datadog Agent container.
+   */
+  readonly cpu?: number;
+
+  /**
+   * The amount (in MiB) of memory to present
+   * to the Datadog Agent container.
+   */
+  readonly memoryLimitMiB?: number;
+
+  /**
    * Configure Datadog Agent container to be essential for the task.
    */
   readonly isDatadogEssential?: boolean;
@@ -150,6 +162,18 @@ export interface CWSFeatureConfig {
    * Enables CWS
    */
   readonly isEnabled?: boolean;
+
+  /**
+   * The minimum number of CPU units to reserve
+   * for the Datadog CWS init container.
+   */
+  readonly cpu?: number;
+
+  /**
+   * The amount (in MiB) of memory to present
+   * to the Datadog CWS init container.
+   */
+  readonly memoryLimitMiB?: number;
 }
 
 /**

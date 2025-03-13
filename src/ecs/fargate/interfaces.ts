@@ -35,6 +35,17 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
    * Health check configuration for the log router.
    */
   readonly logRouterHealthCheck?: HealthCheck;
+  /**
+   * The minimum number of CPU units to reserve
+   * for the Datadog fluent-bit container.
+   */
+  readonly cpu?: number;
+
+  /**
+   * The amount (in MiB) of memory to present
+   * to the Datadog fluent-bit container.
+   */
+  readonly memoryLimitMiB?: number;
 }
 
 /**
