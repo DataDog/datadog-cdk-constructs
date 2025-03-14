@@ -79,6 +79,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
   mergify: false,
   licensed: true,
   docgen: false,
+  depsUpgradeOptions: {
+    workflowOptions: {
+      schedule: javascript.UpgradeDependenciesSchedule.WEEKLY,
+    },
+  },
 });
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
