@@ -9,15 +9,15 @@
 import { App, Stack, StackProps } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
-import { DatadogLambda } from "../index";
+import { DatadogLambda } from "../../index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const lambdaNodejsFunction = new lambdaNodejs.NodejsFunction(this, "NodeJSHandler", {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      entry: "./src/sample/lambda_nodejs/hello_node.js",
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: "./src/sample/lambda/nodejs/hello_node.js",
       handler: "handler",
     });
 
