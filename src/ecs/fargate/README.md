@@ -195,10 +195,11 @@ The `DatadogECSFargate` construct is designed to simplify the integration of Dat
 If you contribute to this package you can run the tests using `yarn test`. This package also includes a sample application for manual testing:
 
 1. Open a seperate terminal.
-2. Run `yarn watch`, this will ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
-3. Navigate to `src/sample/ecs_fargate`, here you can edit `index.ts` to test your contributions manually.
+2. Run `yarn watch` to ensure the Typescript files in the `src` directory are compiled to Javascript in the `lib` directory.
+3. Navigate to `src/sample/ecs_fargate` and edit `index.ts` to test your contributions manually.
 4. At the root directory, run `npx cdk --app lib/sample/ecs_fargate/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
 Notes:
+
 - If you receive `... is not authorized to perform: ...` you might also need to authorize the commands with your AWS credentials.
 - The first time using CDK, you will need to [boostrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) your account.
