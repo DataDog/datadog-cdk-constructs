@@ -18,9 +18,9 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
   /**
    * Type of log collection.
    */
-  readonly datadogLoggingType?: LoggingType;
+  readonly loggingType?: LoggingType;
   /**
-   * Configuration for the Datadog fluentbit log driver.
+   * Configuration for the Datadog log driver.
    */
   readonly logDriverConfiguration?: DatadogECSLogDriverProps;
   /**
@@ -40,7 +40,6 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
    * for the Datadog fluent-bit container.
    */
   readonly cpu?: number;
-
   /**
    * The amount (in MiB) of memory to present
    * to the Datadog fluent-bit container.
@@ -63,6 +62,10 @@ export interface DatadogECSFargateInternalProps extends DatadogECSFargateProps {
  * Type of datadog logging configuration.
  */
 export enum LoggingType {
+  /**
+   * Forwarding logs to Datadog using Fluentbit container.
+   * Only compatible on Linux.
+   */
   FLUENTBIT = "fluentbit",
   /**
    * Currently unsupported within this construct,

@@ -6,6 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import { Tags } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
@@ -13,6 +14,8 @@ import { Construct } from "constructs";
 import log from "loglevel";
 import { siteList } from "./constants";
 import { DatadogECSBaseProps } from "./interfaces";
+import { TagKeys } from "../constants";
+import * as versionJson from "../../version.json";
 
 /**
  * Verifies that the provided props are valid for the Datadog ECS construct.
@@ -90,4 +93,11 @@ export function getSecretApiKey(scope: Construct, props: DatadogECSBaseProps): e
   } else {
     return undefined;
   }
+}
+
+export function addCdkConstructVersionTag(task: ecs.TaskDefinition): void {
+  log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
+  Tags.of(task).add(TagKeys.CDK, `v${versionJson.version}`, {
+    includeResourceTypes: ["AWS::ECS::TaskDefinition"],
+  });
 }

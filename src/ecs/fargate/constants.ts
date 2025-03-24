@@ -7,7 +7,7 @@
  */
 
 import { Duration } from "aws-cdk-lib";
-import { DatadogECSFargateProps, DatadogECSLogDriverProps } from "./interfaces";
+import { DatadogECSFargateProps, DatadogECSLogDriverProps, LoggingType } from "./interfaces";
 import { DatadogEcsBaseDefaultProps } from "../constants";
 
 /**
@@ -34,6 +34,7 @@ export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
   ...DatadogEcsBaseDefaultProps,
   logCollection: {
     isEnabled: false,
+    loggingType: LoggingType.FLUENTBIT,
     logDriverConfiguration: DatadogECSLogDriverDefaultProps,
     isLogRouterEssential: false,
     isLogRouterDependencyEnabled: false,

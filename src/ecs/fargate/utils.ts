@@ -6,7 +6,8 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { DatadogECSFargateProps } from "./interfaces";
+import log from "loglevel";
+import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } from "./interfaces";
 
 export function mergeFargateProps(
   lowerPrecedence: DatadogECSFargateProps,
@@ -39,4 +40,27 @@ export function mergeFargateProps(
   };
 
   return newProps;
+}
+
+export function validateECSFargateProps(props: DatadogECSFargateInternalProps): void {
+  if (process.env.DD_CDK_BYPASS_VALIDATION) {
+    log.debug("Bypassing props validation...");
+    return;
+  }
+
+  if (props.logCollection === undefined) {
+    throw new Error("The `logCollection` property must be defined.");
+  }
+
+  if (props.logCollection.isEnabled) {
+    if (props.logCollection.loggingType === undefined) {
+      throw new Error("The `loggingType` property must be defined when logging enabled.");
+    }
+    if (props.logCollection.logDriverConfiguration === undefined) {
+      throw new Error("The `logDriverConfiguration` property must be defined when logging enabled.");
+    }
+    if (props.logCollection.loggingType === LoggingType.FLUENTBIT && props.isLinux === false) {
+      throw new Error("Fluent Bit logging is only supported on Linux.");
+    }
+  }
 }

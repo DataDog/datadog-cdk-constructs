@@ -40,7 +40,6 @@ export interface DatadogECSBaseProps {
    * for the Datadog Agent container.
    */
   readonly cpu?: number;
-
   /**
    * The amount (in MiB) of memory to present
    * to the Datadog Agent container.
@@ -168,7 +167,6 @@ export interface CWSFeatureConfig {
    * for the Datadog CWS init container.
    */
   readonly cpu?: number;
-
   /**
    * The amount (in MiB) of memory to present
    * to the Datadog CWS init container.

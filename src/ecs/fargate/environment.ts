@@ -6,6 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import log from "loglevel";
 import { FargateDefaultEnvVars } from "./constants";
 import { DatadogECSFargateProps } from "./interfaces";
 import { EnvVarManager } from "../environment";
@@ -22,8 +23,8 @@ export class FargateEnvVarManager extends EnvVarManager {
     this.add("DD_SERVICE", props.service);
     this.add("DD_VERSION", props.version);
     if (props.globalTags && this.retrieve("DD_TAGS")) {
-      console.debug(
-        "Global tags are set in both the environment variable" +
+      log.debug(
+        "Global tags (DD_TAGS) are set in both the environment variable" +
           "and the props. The environment variable will be overwritten.",
       );
     }
@@ -34,6 +35,7 @@ export class FargateEnvVarManager extends EnvVarManager {
       this.add("DD_DOGSTATSD_ORIGIN_DETECTION", "true");
       this.add("DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT", "true");
     }
+    this.add("DD_DOGSTATSD_TAG_CARDINALITY", props.dogstatsd!.dogstatsdCardinality);
 
     if (props.cws!.isEnabled) {
       this.add("DD_RUNTIME_SECURITY_CONFIG_ENABLED", "true");

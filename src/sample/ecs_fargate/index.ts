@@ -57,7 +57,7 @@ export class ExampleStack extends Stack {
         isEnabled: true,
       },
       cws: {
-        isEnabled: false,
+        isEnabled: true,
       },
       logCollection: {
         isEnabled: true,
@@ -88,7 +88,7 @@ export class ExampleStack extends Stack {
     fargateTaskDefinition.addContainer("DatadogAPM", {
       containerName: "datadog-apm-app",
       image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-tracegen:main"),
-      essential: false,
+      essential: true,
     });
 
     fargateTaskDefinition.addContainer("DatadogCWS", {

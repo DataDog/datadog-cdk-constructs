@@ -8,12 +8,19 @@
 
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
+import log from "loglevel";
 import { DatadogEcsFargateDefaultProps } from "./constants";
 import { FargateEnvVarManager } from "./environment";
-import { DatadogECSFargateInternalProps, DatadogECSFargateProps } from "./interfaces";
-import { mergeFargateProps } from "./utils";
+import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } from "./interfaces";
+import { mergeFargateProps, validateECSFargateProps } from "./utils";
 import { entryPointPrefixCWS } from "../constants";
-import { configureEcsPolicies, getSecretApiKey, isOperatingSystemLinux, validateECSBaseProps } from "../utils";
+import {
+  addCdkConstructVersionTag,
+  configureEcsPolicies,
+  getSecretApiKey,
+  isOperatingSystemLinux,
+  validateECSBaseProps,
+} from "../utils";
 
 /**
  * The Datadog ECS Fargate construct manages the Datadog
@@ -60,6 +67,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     // Merge and validate datadog props
     this.datadogProps = this.getCompleteProps(props, datadogProps);
     validateECSBaseProps(this.datadogProps);
+    validateECSFargateProps(this.datadogProps);
 
     // Task-level datadog configuration
     this.datadogContainer = this.createAgentContainer(this.datadogProps);
@@ -80,11 +88,15 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
 
     // Container for log collection
-    if (this.datadogProps.logCollection!.isEnabled) {
+    if (
+      this.datadogProps.logCollection!.isEnabled &&
+      this.datadogProps.logCollection!.loggingType === LoggingType.FLUENTBIT
+    ) {
       this.logContainer = this.createLogContainer(this.datadogProps);
     }
 
     configureEcsPolicies(this);
+    addCdkConstructVersionTag(this);
   }
 
   /**
@@ -116,7 +128,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       if (instrumentedProps.entryPoint !== undefined) {
         instrumentedProps.entryPoint.unshift(...entryPointPrefixCWS);
       } else {
-        console.debug("Failed to add CWS entrypoint for container:", id);
+        log.debug("Failed to add CWS entrypoint for container:", id);
       }
     }
 
@@ -126,7 +138,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       this.datadogProps.logCollection!.logDriverConfiguration !== undefined
     ) {
       if (props.logging !== undefined) {
-        console.debug("Overriding logging configuration for container: ", id);
+        log.debug("Overriding logging configuration for container: ", id);
       }
       instrumentedProps.logging = this.createLogDriver();
     }
@@ -267,58 +279,61 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     return fluentbitContainer;
   }
 
-  private createLogDriver(): ecs.FireLensLogDriver {
+  private createLogDriver(): ecs.FireLensLogDriver | undefined {
     const logCollection = this.datadogProps.logCollection!;
 
     if (logCollection.logDriverConfiguration === undefined) {
       throw new Error("Log driver configuration is required for log collection.");
     }
 
-    let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
-    if (this.datadogProps.clusterName !== undefined) {
-      if (logTags === undefined) {
-        logTags = "";
-      } else {
-        logTags += ", ";
+    if (logCollection!.loggingType === LoggingType.FLUENTBIT) {
+      let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
+      if (this.datadogProps.clusterName !== undefined) {
+        if (logTags === undefined) {
+          logTags = "";
+        } else {
+          logTags += ", ";
+        }
+        logTags = logTags.concat("ecs_cluster_name:" + this.datadogProps.clusterName);
       }
-      logTags = logTags.concat("ecs_cluster_name:" + this.datadogProps.clusterName);
+
+      const logDriverProps = {
+        options: {
+          Name: "datadog",
+          provider: "ecs",
+          retry_limit: "2",
+          ...(logCollection.logDriverConfiguration.hostEndpoint !== undefined && {
+            Host: logCollection.logDriverConfiguration.hostEndpoint,
+          }),
+          ...(logCollection.logDriverConfiguration.tls !== undefined && {
+            TLS: logCollection.logDriverConfiguration.tls,
+          }),
+          ...(logCollection.logDriverConfiguration.serviceName !== undefined && {
+            dd_service: logCollection.logDriverConfiguration.serviceName,
+          }),
+          ...(logCollection.logDriverConfiguration.sourceName !== undefined && {
+            dd_source: logCollection.logDriverConfiguration.sourceName,
+          }),
+          ...(logCollection.logDriverConfiguration.messageKey !== undefined && {
+            dd_message_key: logCollection.logDriverConfiguration.messageKey,
+          }),
+          ...(logTags !== undefined && {
+            dd_tags: logTags,
+          }),
+          ...(this.datadogProps.apiKey !== undefined && {
+            apikey: this.datadogProps.apiKey,
+          }),
+        },
+        secretOptions: {
+          ...(this.datadogProps.datadogSecret !== undefined && {
+            apikey: this.datadogProps.datadogSecret!,
+          }),
+        },
+      };
+
+      return new ecs.FireLensLogDriver(logDriverProps);
     }
-
-    const logDriverProps = {
-      options: {
-        Name: "datadog",
-        provider: "ecs",
-        retry_limit: "2",
-        ...(logCollection.logDriverConfiguration.hostEndpoint !== undefined && {
-          Host: logCollection.logDriverConfiguration.hostEndpoint,
-        }),
-        ...(logCollection.logDriverConfiguration.tls !== undefined && {
-          TLS: logCollection.logDriverConfiguration.tls,
-        }),
-        ...(logCollection.logDriverConfiguration.serviceName !== undefined && {
-          dd_service: logCollection.logDriverConfiguration.serviceName,
-        }),
-        ...(logCollection.logDriverConfiguration.sourceName !== undefined && {
-          dd_source: logCollection.logDriverConfiguration.sourceName,
-        }),
-        ...(logCollection.logDriverConfiguration.messageKey !== undefined && {
-          dd_message_key: logCollection.logDriverConfiguration.messageKey,
-        }),
-        ...(logTags !== undefined && {
-          dd_tags: logTags,
-        }),
-        ...(this.datadogProps.apiKey !== undefined && {
-          apikey: this.datadogProps.apiKey,
-        }),
-      },
-      secretOptions: {
-        ...(this.datadogProps.datadogSecret !== undefined && {
-          apikey: this.datadogProps.datadogSecret!,
-        }),
-      },
-    };
-
-    return new ecs.FireLensLogDriver(logDriverProps);
+    return undefined;
   }
 
   private createCWSContainer(): ecs.ContainerDefinition {
