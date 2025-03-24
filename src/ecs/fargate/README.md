@@ -199,6 +199,6 @@ If you contribute to this package you can run the tests using `yarn test`. This 
 3. Navigate to `src/sample/ecs_fargate`, here you can edit `index.ts` to test your contributions manually.
 4. At the root directory, run `npx cdk --app lib/sample/ecs_fargate/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
-- Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
-
-- Note, the first time using CDK, you will need to [boostrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) your account.
+Notes:
+- If you receive `... is not authorized to perform: ...` you might also need to authorize the commands with your AWS credentials.
+- The first time using CDK, you will need to [boostrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) your account.
