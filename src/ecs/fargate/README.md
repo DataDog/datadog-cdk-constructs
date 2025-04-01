@@ -36,7 +36,7 @@ go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
 const ecsDatadog = new DatadogECSFargate({
   // One of the following 3 apiKey params are required
   apiKey: <STRING>
-  apiKeySecret: <STRING>,
+  apiKeySecret: <SECRET>,
   apiKeySecretArn: <STRING>,
   registry: <STRING>,
   imageVersion: <STRING>,
@@ -59,42 +59,113 @@ const ecsDatadog = new DatadogECSFargate({
 });
 const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(
   this,
-  "ExampleFargateTask",
-  {<TASK_DEFINITION_PROPS>}
+  "DatadogTypescriptTask",
+  {<TASK_DEFINITION_PROPS>}, // optional
+  {<DATADOG_ECS_FARGATE_PROPS>}, // optional override values
 );
 fargateTaskDefinition.addContainer(
-  "ContainerName",
-  {<CONTAINER_DEFINITION_PROPS>}
+  id=<STRING>,
+  containerProps={
+    image: ContainerImage.fromRegistry(<STRING>),
+    ...
+  }
+)
+
+// Or create task definition directly
+const fargateTaskDefinition = new DatadogECSFargateTaskDefinition(
+  this,
+  "DatadogTypescriptTask2",
+  // Fargate Task Definition Props
+  {
+      memoryLimitMiB: <NUMBER>,
+      ...
+  },
+  // Datadog ECS Fargate Props
+  {
+    apiKeySecret: <SECRET>,
+    ...
+  },
+)
+```
+
+### Python
+
+```python
+ecsDatadog = DatadogECSFargate(
+    api_key=os.getenv("DD_API_KEY"),
+    dogstatsd={
+        "is_origin_detection_enabled": bool,
+    },
+    global_tags=str,
+    ...
+)
+task = ecsDatadog.fargate_task_definition(
+  self,
+  "DatadogPythonTask",
+  # optional: props=aws_cdk.aws_ecs.FargateTaskDefinitionProps
+)
+task.add_container(
+    id=str,
+    image=ecs.ContainerImage.from_registry(str),
+    ...
+)
+```
+
+### Golang
+
+```golang
+datadog := ddcdkconstruct.NewDatadogECSFargate(
+  &ddcdkconstruct.DatadogECSFargateProps{
+    ApiKey: jsii.String(os.Getenv("DD_API_KEY")),
+  },
+)
+task := datadog.FargateTaskDefinition(
+  stack,
+  jsii.String("DatadogGolangTask"),
+  // optional: &awsecs.FargateTaskDefinitionProps{},
+  // optional: &ddcdkconstruct.DatadogECSFargateProps{},
+)
+task.AddContainer(
+  jsii.String(string), // id
+  &awsecs.ContainerDefinitionOptions{
+    Image: awsecs.ContainerImage_FromRegistry(
+      jsii.String(string),
+      &awsecs.RepositoryImageProps{...},
+    ),
+    ...
+  },
 )
 ```
 
 ## Configuration
 
+For more general information, reference the [Datadog ECS Fargate Docs](https://docs.datadoghq.com/integrations/ecs_fargate/). Custom configuration of the Datadog Agent is supported via the `environmentVariables` field of the props. The Datadog Agent container is available as a property of the `datadogFargateTaskDefinition` object which can be used to customize further as well. However, we recommend using the pre-defined configuration options within the interfaces when possible.
+
 ### DatadogECSFargateProps
 
-| Property                     | Type                                | Description                                                                                                   |
-| ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `apiKey`                     | `string`                            | The Datadog API key string. Must define at least 1 source for the API key.                                    |
-| `apiKeySecret`               | `secrets.ISecret`                   | The Datadog API key secret. Must define at least 1 source for the API key.                                    |
-| `apiKeySecretArn`            | `string`                            | The ARN of the Datadog API key secret. Must define at least 1 source for the API key.                         |
-| `registry`                   | `string`                            | The registry to pull the Datadog Agent container image from.                                                  |
-| `imageVersion`               | `string`                            | The version of the Datadog Agent container image to use.                                                      |
-| `cpu`                        | `number`                            | The minimum number of CPU units to reserve for the Datadog Agent container.                                   |
-| `memoryLimitMiB`             | `number`                            | The amount (in MiB) of memory to present to the Datadog Agent container.                                      |
-| `isDatadogEssential`         | `boolean`                           | Configure Datadog Agent container to be essential for the task.                                               |
-| `isDatadogDependencyEnabled` | `boolean`                           | Configure added containers to have container dependency on the Datadog Agent container.                       |
-| `datadogHealthCheck`         | `HealthCheck`                       | Configure health check for the Datadog Agent container.                                                       |
-| `site`                       | `string`                            | The Datadog site to send data to.                                                                             |
-| `clusterName`                | `string`                            | The cluster name to use for tagging.                                                                          |
-| `environmentVariables`       | `Record<string, string>`            | Datadog Agent environment variables.                                                                          |
-| `globalTags`                 | `string`                            | Global tags to apply to all data sent by the Agent. Overrides any `DD_TAGS` values in `environmentVariables`. |
-| `dogstatsd`                  | `DogstatsdFeatureConfig`            | DogStatsD feature configuration.                                                                              |
-| `apm`                        | `APMFeatureConfig`                  | APM feature configuration.                                                                                    |
-| `cws`                        | `CWSFeatureConfig`                  | CWS feature configuration.                                                                                    |
-| `logCollection`              | `FargateLogCollectionFeatureConfig` | Log collection configuration for Fargate.                                                                     |
-| `env`                        | `string`                            | The task environment name. Used for tagging (UST).                                                            |
-| `service`                    | `string`                            | The task service name. Used for tagging (UST).                                                                |
-| `version`                    | `string`                            | The task version. Used for tagging (UST).                                                                     |
+| Property                     | Type                                | Description                                                                                                                                                                                                                                                                       |
+| ---------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apiKey`                     | `string`                            | The Datadog API key string. Must define at least 1 source for the API key.                                                                                                                                                                                                        |
+| `apiKeySecret`               | `secrets.ISecret`                   | The Datadog API key secret. Must define at least 1 source for the API key.                                                                                                                                                                                                        |
+| `apiKeySecretArn`            | `string`                            | The ARN of the Datadog API key secret. Must define at least 1 source for the API key.                                                                                                                                                                                             |
+| `registry`                   | `string`                            | The registry to pull the Datadog Agent container image from.                                                                                                                                                                                                                      |
+| `imageVersion`               | `string`                            | The version of the Datadog Agent container image to use.                                                                                                                                                                                                                          |
+| `cpu`                        | `number`                            | The minimum number of CPU units to reserve for the Datadog Agent container.                                                                                                                                                                                                       |
+| `memoryLimitMiB`             | `number`                            | The amount (in MiB) of memory to present to the Datadog Agent container.                                                                                                                                                                                                          |
+| `isDatadogEssential`         | `boolean`                           | Configure Datadog Agent container to be essential for the task.                                                                                                                                                                                                                   |
+| `isDatadogDependencyEnabled` | `boolean`                           | Configure added containers to have container dependency on the Datadog Agent container. Requires a defined health check. (This is useful when capturing all metrics/traces/etc is critical to a task. This gaurantees that the agent is available and ready to process the data.) |
+| `datadogHealthCheck`         | `HealthCheck`                       | Configure health check for the Datadog Agent container.                                                                                                                                                                                                                           |
+| `site`                       | `string`                            | The Datadog site to send data to.                                                                                                                                                                                                                                                 |
+| `clusterName`                | `string`                            | The cluster name to use for tagging.                                                                                                                                                                                                                                              |
+| `environmentVariables`       | `Record<string, string>`            | Datadog Agent environment variables. Used to customize your Datadog Agent configuration.                                                                                                                                                                                          |
+| `globalTags`                 | `string`                            | Global tags to apply to all data sent by the Agent. Overrides any `DD_TAGS` values in `environmentVariables`.                                                                                                                                                                     |
+| `dogstatsd`                  | `DogstatsdFeatureConfig`            | DogStatsD feature configuration.                                                                                                                                                                                                                                                  |
+| `apm`                        | `APMFeatureConfig`                  | APM feature configuration.                                                                                                                                                                                                                                                        |
+| `cws`                        | `CWSFeatureConfig`                  | CWS feature configuration.                                                                                                                                                                                                                                                        |
+| `logCollection`              | `FargateLogCollectionFeatureConfig` | Log collection configuration for Fargate.                                                                                                                                                                                                                                         |
+| `env`                        | `string`                            | The task environment name. Used for tagging (UST).                                                                                                                                                                                                                                |
+| `service`                    | `string`                            | The task service name. Used for tagging (UST).                                                                                                                                                                                                                                    |
+| `version`                    | `string`                            | The task version. Used for tagging (UST).                                                                                                                                                                                                                                         |
 
 ### DogstatsdFeatureConfig
 
@@ -148,10 +219,9 @@ fargateTaskDefinition.addContainer(
 
 ### LoggingType Enum
 
-| Value             | Description                                                                         |
-| ----------------- | ----------------------------------------------------------------------------------- |
-| `FLUENTBIT`       | Forwarding logs to Datadog using Fluentbit container. Only compatible on Linux.     |
-| `LAMBDAFORWARDER` | Currently unsupported within this construct, must configure manually on containers. |
+| Value       | Description                                                                     |
+| ----------- | ------------------------------------------------------------------------------- |
+| `FLUENTBIT` | Forwarding logs to Datadog using Fluentbit container. Only compatible on Linux. |
 
 ### Cardinality
 
@@ -161,32 +231,30 @@ fargateTaskDefinition.addContainer(
 | `ORCHESTRATOR` | Orchestrator-level cardinality. (includes task_arn tag) |
 | `HIGH`         | High cardinality.                                       |
 
+### Misc
+
+- For configuring logging on windows, you must manually configure the [Datadog Lambda Log Forwarder](https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation). Please follow the instructions defined [here](https://docs.datadoghq.com/integrations/ecs_fargate/?tab=webui#aws-log-driver).
+
 ## How it works
 
 The `DatadogECSFargate` construct is designed to simplify the integration of Datadog monitoring into ECS Fargate workloads. It achieves this by managing the Datadog-specific configuration and creating a specialized task definition that extends the AWS ECS `TaskDefinition` class. Here's a breakdown of how it works:
 
-1. **Datadog Configuration Management**:
-
-   - The `DatadogECSFargate` construct acts as a configuration manager for Datadog-specific settings, such as API keys, log collection, APM, DogStatsD, and security monitoring (CWS).
-   - It accepts a `DatadogECSFargateProps` object, which defines all the necessary parameters for configuring the Datadog Agent and related features.
-   - The construct ensures that the Datadog Agent is properly configured with environment variables, resource limits (CPU and memory), and health checks.
-
-2. **Task Definition Extension**:
+1. **Task Definition Extension**:
 
    - The construct creates a `DatadogECSFargateTaskDefinition`, which extends the AWS ECS `TaskDefinition` class.
    - This specialized task definition automatically includes the Datadog Agent as a sidecar container, pre-configured with the settings provided in the `DatadogECSFargateProps`.
    - The `DatadogECSFargateTaskDefinition` also supports adding additional containers to the task definition, ensuring that they are properly configured to work alongside the Datadog Agent.
 
-3. **Feature Enablement**:
+2. **Feature Enablement**:
 
    - The construct provides granular control over Datadog features, such as:
      - **DogStatsD**: Enables custom metrics collection with configurable cardinality and socket support.
      - **APM**: Enables trace collection with optional Unix Domain Socket support.
-     - **CWS**: Adds a security monitoring init container and wraps added container entrypoints.
+     - **CWS**: Adds a security monitoring init container and wraps added container entrypoint.
      - **LogCollection**: Forwards logs to Datadog through the Fluentbit container.
    - These features are enabled or disabled based on the properties provided in the `DatadogECSFargateProps`.
 
-4. **Seamless Integration**:
+3. **Seamless Integration**:
    - The `DatadogECSFargate` construct abstracts away the complexity of configuring Datadog monitoring for ECS Fargate tasks.
    - Developers can focus on defining their application containers, while the construct handles the creation and configuration of the Datadog Agent and related components.
 
@@ -202,4 +270,4 @@ If you contribute to this package you can run the tests using `yarn test`. This 
 Notes:
 
 - If you receive `... is not authorized to perform: ...` you might also need to authorize the commands with your AWS credentials.
-- The first time using CDK, you will need to [boostrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) your account.
+- The first time using CDK, you will need to [cdk boostrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) your account.
