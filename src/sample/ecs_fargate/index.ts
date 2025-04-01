@@ -12,7 +12,7 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
-import { DatadogECSFargate } from "../../ecs/fargate/datadog-ecs-fargate";
+import { DatadogECSFargate, DatadogECSFargateTaskDefinition } from "../../ecs/fargate/datadog-ecs-fargate";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
@@ -114,6 +114,20 @@ export class ExampleStack extends Stack {
       },
       minHealthyPercent: 0,
     });
+
+    // Option 2: Create datadog task definition class directly
+    const task = new DatadogECSFargateTaskDefinition(
+      this,
+      "ExampleFargateTask2",
+      {
+        memoryLimitMiB: 512,
+      },
+      {
+        apiKeySecret: secret,
+        globalTags: "team:cont-p, owner:container-monitoring",
+      },
+    );
+    task.datadogContainer.addDockerLabel("custom_label", "custom_value");
   }
 }
 

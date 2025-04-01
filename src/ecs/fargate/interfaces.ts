@@ -72,7 +72,7 @@ export enum LoggingType {
    * must configure manually on containers.
    * https://docs.datadoghq.com/integrations/ecs_fargate/?tab=webui#aws-log-driver
    */
-  LAMBDAFORWARDER = "lambda",
+  // LAMBDAFORWARDER = "lambda",
 }
 
 /**
