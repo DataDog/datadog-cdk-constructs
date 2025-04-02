@@ -33,11 +33,19 @@ export class DatadogECSFargate {
     this.datadogProps = datadogProps;
   }
 
+  /**
+   * Creates a new Fargate Task Definition instrumented with Datadog.
+   * Merges the provided task's datadogProps with the class's datadogProps.
+   * @param scope
+   * @param id
+   * @param props optional: Fargate Task Definition properties
+   * @param datadogProps optional: Datadog ECS Fargate properties override values
+   */
   public fargateTaskDefinition(
     scope: Construct,
     id: string,
-    props: ecs.FargateTaskDefinitionProps,
-    datadogProps: DatadogECSFargateProps = {},
+    props?: ecs.FargateTaskDefinitionProps,
+    datadogProps?: DatadogECSFargateProps,
   ): DatadogECSFargateTaskDefinition {
     const mergedProps = mergeFargateProps(this.datadogProps, datadogProps);
     return new DatadogECSFargateTaskDefinition(scope, id, props, mergedProps);
@@ -58,8 +66,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   constructor(
     scope: Construct,
     id: string,
-    props: ecs.FargateTaskDefinitionProps,
-    datadogProps: DatadogECSFargateProps,
+    props?: ecs.FargateTaskDefinitionProps,
+    datadogProps?: DatadogECSFargateProps,
   ) {
     super(scope, id, props);
     this.scope = scope;
@@ -355,8 +363,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   }
 
   private getCompleteProps(
-    taskProps: ecs.FargateTaskDefinitionProps,
-    datadogProps: DatadogECSFargateProps,
+    taskProps: ecs.FargateTaskDefinitionProps | undefined,
+    datadogProps: DatadogECSFargateProps | undefined,
   ): DatadogECSFargateInternalProps {
     const mergedProps = mergeFargateProps(DatadogEcsFargateDefaultProps, datadogProps);
     const isLinux = isOperatingSystemLinux(taskProps);

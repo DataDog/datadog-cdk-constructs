@@ -14,8 +14,8 @@ import { Construct } from "constructs";
 import log from "loglevel";
 import { siteList } from "./constants";
 import { DatadogECSBaseProps } from "./interfaces";
-import { TagKeys } from "../constants";
 import * as versionJson from "../../version.json";
+import { TagKeys } from "../constants";
 
 /**
  * Verifies that the provided props are valid for the Datadog ECS construct.
@@ -63,7 +63,11 @@ export function validateECSBaseProps(props: DatadogECSBaseProps): void {
   }
 }
 
-export function isOperatingSystemLinux(props: ecs.FargateTaskDefinitionProps): boolean {
+export function isOperatingSystemLinux(props: ecs.FargateTaskDefinitionProps | undefined): boolean {
+  if (props === undefined) {
+    return true;
+  }
+
   if (props.runtimePlatform === undefined) {
     return true;
   }

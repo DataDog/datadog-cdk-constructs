@@ -11,8 +11,12 @@ import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } f
 
 export function mergeFargateProps(
   lowerPrecedence: DatadogECSFargateProps,
-  higherPrecedence: DatadogECSFargateProps,
+  higherPrecedence: DatadogECSFargateProps | undefined,
 ): DatadogECSFargateProps {
+  if (higherPrecedence === undefined) {
+    return lowerPrecedence;
+  }
+
   const newProps = {
     ...lowerPrecedence,
     ...higherPrecedence,
