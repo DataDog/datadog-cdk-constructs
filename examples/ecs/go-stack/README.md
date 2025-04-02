@@ -1,21 +1,21 @@
 # Datadog CDK Go Example
 
-Use this example Go stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library.
+Use this example Go stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library for ECS Fargate.
 
 ## Getting Started
 
 1. Get a Datadog API key to send monitoring data ([Datadog API keys documentation](https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token)).
-1. Run `export DD_API_KEY=<DATADOG_API_KEY>` to set the Datadog API key in your shell session.
-1. Run `cdk synth` to synthesize the CloudFormation template.
-1. Run `cdk diff` to see the resource and permission changes that are made.
-1. Run `cdk deploy` to deploy the stack to AWS.
-1. Invoke your ECS Task Defintions and look for them in [Datadog](https://app.datadoghq.com/) (metrics, traces, logs, orchestrator explorer, etc).
+1. Set the Datadog API key in your shell session: `export DD_API_KEY=<DATADOG_API_KEY>`.
+1. Synthesize the CloudFormation template: `cdk synth`.
+1. Review the proposed resource and permission changes: `cdk diff`.
+1. Deploy the stack to AWS: `cdk deploy`.
+1. Invoke your ECS Task Defintions and verify data in [Datadog](https://app.datadoghq.com/) (metrics, traces, logs, orchestrator explorer, etc).
 
 ## Testing
 
 1. Run `yarn build` to create the Python package.
-2. Run `cp -r dist/go/ddcdkconstruct examples/ecs/go-stack` to copy your local module.
-3. Run `cd examples/ecs/go-stack` to navigate to the stack.
+2. Copy your local module: `cp -r dist/go/ddcdkconstruct examples/ecs/go-stack`.
+3. Navigate to the example stack: `cd examples/ecs/go-stack`.
 4. In `go.mod` change the version of the dependency `ddcdkconstruct`:
 
     ```go
@@ -32,10 +32,10 @@ Use this example Go stack to try out the [datadog-cdk-constructs](https://github
     go get -d github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2@v2.0.0-unpublished
     ```
 
-6. Run `go get` to install dependencies.
-7. Run `cdk diff` to see the resource and permission changes that are made.
-8. Run `cdk deploy` to deploy the stack to AWS.
-9. Invoke your ECS Task Defintions and look for them in [Datadog](https://app.datadoghq.com/).
+6. Install dependencies: `go get`.
+7. Review the proposed resource and permission changes: `cdk diff`.
+8. Deploy the stack to AWS: `cdk deploy`.
+9. Invoke your ECS Task Defintions and verify data in [Datadog](https://app.datadoghq.com/).
 
 ## Resources
 

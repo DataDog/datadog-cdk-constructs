@@ -6,7 +6,6 @@ toolchain go1.23.1
 
 require (
 	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2 v2.0.0
-	// github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2 v2.0.0-unpublished
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.177.0
 	github.com/aws/constructs-go/constructs/v10 v10.4.2
 	github.com/aws/jsii-runtime-go v1.110.0
@@ -29,5 +28,3 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/tools v0.31.0 // indirect
 )
-
-replace github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2 v2.0.0-unpublished => ./ddcdkconstruct
