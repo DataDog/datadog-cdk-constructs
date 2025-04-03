@@ -168,4 +168,58 @@ describe("DatadogECSFargateTaskDefinition", () => {
       ]),
     });
   });
+
+  it("should enable origin detection when isOriginDetectionEnabled is true", () => {
+    datadogProps = {
+      ...datadogProps,
+      dogstatsd: {
+        isEnabled: true,
+        isOriginDetectionEnabled: true,
+      },
+    };
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the environment variable for origin detection is added
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: taskDefinition.datadogContainer.containerName,
+          Environment: Match.arrayWith([
+            Match.objectLike({
+              Name: "DD_DOGSTATSD_ORIGIN_DETECTION",
+              Value: "true",
+            }),
+          ]),
+        }),
+      ]),
+    });
+  });
+
+  it("should set the DogStatsD cardinality when dogstatsdCardinality is configured", () => {
+    datadogProps = {
+      ...datadogProps,
+      dogstatsd: {
+        isEnabled: true,
+        dogstatsdCardinality: ecsDatadog.Cardinality.LOW,
+      },
+    };
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the environment variable for DogStatsD cardinality is added
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: taskDefinition.datadogContainer.containerName,
+          Environment: Match.arrayWith([
+            Match.objectLike({
+              Name: "DD_DOGSTATSD_TAG_CARDINALITY",
+              Value: ecsDatadog.Cardinality.LOW,
+            }),
+          ]),
+        }),
+      ]),
+    });
+  });
 });
