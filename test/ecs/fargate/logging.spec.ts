@@ -177,4 +177,34 @@ describe("DatadogECSFargateLogging", () => {
       ]),
     });
   });
+
+  it("configures the log container with provided values", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+        cpu: 256,
+        memoryLimitMiB: 2048,
+        logDriverConfiguration: {
+          registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
+          imageVersion: "stable",
+        },
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the log container is configured with the custom cpu and memory values
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.logContainer!.containerName,
+          Cpu: 256,
+          Memory: 2048,
+          Image: "public.ecr.aws/aws-observability/aws-for-fluent-bit:stable",
+        }),
+      ]),
+    });
+  });
 });

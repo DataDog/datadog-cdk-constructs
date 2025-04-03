@@ -58,8 +58,10 @@ describe("DatadogECSFargateTaskDefinition", () => {
       memoryLimitMiB: 512,
       entryPoint: entryPoint,
     };
-    entryPoint.unshift(...ecsDatadog.entryPointPrefixCWS);
     taskDefinition.addContainer("app-container", containerProps);
+
+    // Expected entry point with CWS prefix
+    entryPoint.unshift(...ecsDatadog.entryPointPrefixCWS);
     const template = Template.fromStack(stack);
 
     // Validate that the entry point prefix and volume mount are added
@@ -75,6 +77,31 @@ describe("DatadogECSFargateTaskDefinition", () => {
               ReadOnly: false,
             }),
           ]),
+        }),
+      ]),
+    });
+  });
+
+  it("applies CWS container configurations", () => {
+    datadogProps = {
+      ...datadogProps,
+      cws: {
+        isEnabled: true,
+        cpu: 128,
+        memoryLimitMiB: 256,
+      },
+    };
+
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the cpu and memory parameters are applied to the CWS container
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: taskDefinition.cwsContainer!.containerName,
+          Cpu: 128,
+          Memory: 256,
         }),
       ]),
     });

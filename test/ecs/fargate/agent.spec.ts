@@ -60,6 +60,10 @@ describe("DatadogECSFargateTaskDefinition", () => {
       service: "test-service",
       version: "test-version",
       globalTags: "tag1:value1,tag2:value2",
+      environmentVariables: {
+        DD_TAGS: "old1:value1,old2:value2", // should be overwritten
+        DD_CUSTOM_ENV_VAR: "custom-value",
+      },
       clusterName: "test-cluster",
     };
 
@@ -72,31 +76,35 @@ describe("DatadogECSFargateTaskDefinition", () => {
         Match.objectLike({
           Name: task.datadogContainer.containerName,
           Environment: Match.arrayWith([
-            Match.objectLike({
-              Name: "DD_API_KEY",
-              Value: "test-api-key",
-            }),
-            Match.objectLike({
-              Name: "DD_SITE",
-              Value: "datadoghq.eu",
-            }),
-            Match.objectLike({
-              Name: "DD_ENV",
-              Value: "test-env",
-            }),
-            Match.objectLike({
-              Name: "DD_SERVICE",
-              Value: "test-service",
-            }),
-            Match.objectLike({
-              Name: "DD_VERSION",
-              Value: "test-version",
-            }),
-            Match.objectLike({
+            Match.objectEquals({
               Name: "DD_TAGS",
               Value: "tag1:value1,tag2:value2",
             }),
-            Match.objectLike({
+            Match.objectEquals({
+              Name: "DD_CUSTOM_ENV_VAR",
+              Value: "custom-value",
+            }),
+            Match.objectEquals({
+              Name: "DD_API_KEY",
+              Value: "test-api-key",
+            }),
+            Match.objectEquals({
+              Name: "DD_SITE",
+              Value: "datadoghq.eu",
+            }),
+            Match.objectEquals({
+              Name: "DD_ENV",
+              Value: "test-env",
+            }),
+            Match.objectEquals({
+              Name: "DD_SERVICE",
+              Value: "test-service",
+            }),
+            Match.objectEquals({
+              Name: "DD_VERSION",
+              Value: "test-version",
+            }),
+            Match.objectEquals({
               Name: "DD_CLUSTER_NAME",
               Value: "test-cluster",
             }),
@@ -196,6 +204,38 @@ describe("DatadogECSFargateTaskDefinition", () => {
               ContainerName: task.datadogContainer!.containerName,
             },
           ]),
+        }),
+      ]),
+    });
+  });
+
+  it("should add a custom health check to the Datadog Agent container", () => {
+    datadogProps = {
+      ...datadogProps,
+      datadogHealthCheck: {
+        command: ["CMD-SHELL", "curl -f http://localhost:8126 || exit 1"],
+        interval: cdk.Duration.seconds(35),
+        timeout: cdk.Duration.seconds(5),
+        retries: 7,
+        startPeriod: cdk.Duration.seconds(10),
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the custom health check is added to the Datadog Agent container
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.datadogContainer.containerName,
+          HealthCheck: {
+            Command: ["CMD-SHELL", "curl -f http://localhost:8126 || exit 1"],
+            Interval: 35,
+            Timeout: 5,
+            Retries: 7,
+            StartPeriod: 10,
+          },
         }),
       ]),
     });
