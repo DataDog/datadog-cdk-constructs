@@ -2,3 +2,9 @@
 
 # Documentation
 *.md  @DataDog/documentation
+
+# ECS
+examples/ecs  @DataDog/container-platform
+src/ecs  @DataDog/container-platform
+src/sample/ecs_fargate  @DataDog/container-platform
+test/ecs  @DataDog/container-platform
