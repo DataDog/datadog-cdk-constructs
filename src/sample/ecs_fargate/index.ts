@@ -127,6 +127,12 @@ export class ExampleStack extends Stack {
         globalTags: "team:cont-p, owner:container-monitoring",
       },
     );
+    task.addContainer("DatadogDogstatsd", {
+      containerName: "datadog-dogstatsd-app",
+      image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-dogstatsd:main"),
+      essential: true,
+    });
+
     task.datadogContainer.addDockerLabel("custom_label", "custom_value");
   }
 }
