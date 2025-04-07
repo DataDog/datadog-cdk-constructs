@@ -77,6 +77,10 @@ export interface DatadogECSBaseProps {
    * Overrides any DD_TAGS values in environmentVariables.
    */
   readonly globalTags?: string;
+  /**
+   * The Datadog Agent checks tag cardinality.
+   */
+  readonly checksCardinality?: Cardinality;
 
   /**
    * DogStatsD feature configuration

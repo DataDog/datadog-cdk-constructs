@@ -60,6 +60,7 @@ describe("DatadogECSFargateTaskDefinition", () => {
       service: "test-service",
       version: "test-version",
       globalTags: "tag1:value1,tag2:value2",
+      checksCardinality: ecsDatadog.Cardinality.ORCHESTRATOR,
       environmentVariables: {
         DD_TAGS: "old1:value1,old2:value2", // should be overwritten
         DD_CUSTOM_ENV_VAR: "custom-value",
@@ -103,6 +104,10 @@ describe("DatadogECSFargateTaskDefinition", () => {
             Match.objectEquals({
               Name: "DD_VERSION",
               Value: "test-version",
+            }),
+            Match.objectEquals({
+              Name: "DD_CHECKS_TAG_CARDINALITY",
+              Value: ecsDatadog.Cardinality.ORCHESTRATOR,
             }),
             Match.objectEquals({
               Name: "DD_CLUSTER_NAME",
