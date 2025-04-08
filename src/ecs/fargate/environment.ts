@@ -22,6 +22,7 @@ export class FargateEnvVarManager extends EnvVarManager {
     this.add("DD_ENV", props.env);
     this.add("DD_SERVICE", props.service);
     this.add("DD_VERSION", props.version);
+    this.add("DD_CHECKS_TAG_CARDINALITY", props.checksCardinality);
     if (props.globalTags && this.retrieve("DD_TAGS")) {
       log.debug(
         "Global tags (DD_TAGS) are set in both the environment variable" +
