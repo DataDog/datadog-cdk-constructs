@@ -194,29 +194,35 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 
 ### FargateLogCollectionFeatureConfig
 
+| Property          | Type              | Description                  |
+| ----------------- | ----------------- | ---------------------------- |
+| `isEnabled`       | `boolean`         | Enables log collection.      |
+| `loggingType`     | `LoggingType`     | Type of log collection.      |
+| `fluentbitConfig` | `FluentbitConfig` | Fluentbit log configuration. |
+
+### FluentbitConfig
+
 | Property                       | Type                       | Description                                                                      |
 | ------------------------------ | -------------------------- | -------------------------------------------------------------------------------- |
-| `isEnabled`                    | `boolean`                  | Enables log collection.                                                          |
-| `loggingType`                  | `LoggingType`              | Type of log collection.                                                          |
-| `logDriverConfiguration`       | `DatadogECSLogDriverProps` | Configuration for the Datadog log driver.                                        |
+| `logDriverConfig`              | `DatadogECSLogDriverProps` | Configuration for the Datadog fluentbit log driver.                              |
 | `isLogRouterEssential`         | `boolean`                  | Makes the log router essential.                                                  |
 | `isLogRouterDependencyEnabled` | `boolean`                  | Enables the log router health check.                                             |
 | `logRouterHealthCheck`         | `HealthCheck`              | Health check configuration for the log router.                                   |
 | `cpu`                          | `number`                   | The minimum number of CPU units to reserve for the Datadog fluent-bit container. |
 | `memoryLimitMiB`               | `number`                   | The amount (in MiB) of memory to present to the Datadog fluent-bit container.    |
+| `registry`                     | `string`                   | The registry to pull the Fluentbit container image from.                         |
+| `imageVersion`                 | `string`                   | The version of the Fluentbit container image to use.                             |
 
 ### DatadogECSLogDriverProps
 
-| Property       | Type     | Description                                              |
-| -------------- | -------- | -------------------------------------------------------- |
-| `registry`     | `string` | The registry to pull the Fluentbit container image from. |
-| `imageVersion` | `string` | The version of the Fluentbit container image to use.     |
-| `hostEndpoint` | `string` | Host endpoint for Fluentbit.                             |
-| `tls`          | `string` | TLS configuration for Fluentbit.                         |
-| `compress`     | `string` | Compression configuration for Fluentbit.                 |
-| `serviceName`  | `string` | Service name for Fluentbit.                              |
-| `sourceName`   | `string` | Source name for Fluentbit.                               |
-| `messageKey`   | `string` | Message key for Fluentbit.                               |
+| Property       | Type     | Description                              |
+| -------------- | -------- | ---------------------------------------- |
+| `hostEndpoint` | `string` | Host endpoint for Fluentbit.             |
+| `tls`          | `string` | TLS configuration for Fluentbit.         |
+| `compress`     | `string` | Compression configuration for Fluentbit. |
+| `serviceName`  | `string` | Service name for Fluentbit.              |
+| `sourceName`   | `string` | Source name for Fluentbit.               |
+| `messageKey`   | `string` | Message key for Fluentbit.               |
 
 ### LoggingType Enum
 

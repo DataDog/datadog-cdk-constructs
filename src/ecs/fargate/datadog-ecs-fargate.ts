@@ -141,10 +141,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
 
     // Log configuration on props
-    if (
-      this.datadogProps.logCollection!.isEnabled &&
-      this.datadogProps.logCollection!.logDriverConfiguration !== undefined
-    ) {
+    if (this.datadogProps.logCollection!.isEnabled) {
       if (props.logging !== undefined) {
         log.debug("Overriding logging configuration for container: ", id);
       }
@@ -167,7 +164,11 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
 
     // Log container dependencies
-    if (this.datadogProps.logCollection!.isEnabled && this.datadogProps.logCollection!.isLogRouterDependencyEnabled) {
+    if (
+      this.datadogProps.logCollection!.isEnabled &&
+      this.datadogProps.logCollection!.loggingType === LoggingType.FLUENTBIT &&
+      this.datadogProps.logCollection!.fluentbitConfig!.isLogRouterDependencyEnabled
+    ) {
       container.addContainerDependencies({
         container: this.logContainer!,
         condition: ecs.ContainerDependencyCondition.HEALTHY,
@@ -266,35 +267,27 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   }
 
   private createLogContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
-    const fluentbitContainer = this.addFirelensLogRouter(`fluentBit-${this.family}`, {
+    const fluentbitConfig = props.logCollection!.fluentbitConfig;
+    const fluentbitContainer = this.addFirelensLogRouter(`fluent-bit-${this.family}`, {
       containerName: "datadog-log-router",
-      image: ecs.ContainerImage.fromRegistry(
-        `${props.logCollection!.logDriverConfiguration!.registry}:${
-          props.logCollection!.logDriverConfiguration!.imageVersion
-        }`,
-      ),
-      cpu: props.logCollection!.cpu,
-      memoryLimitMiB: props.logCollection!.memoryLimitMiB,
-      essential: props.logCollection!.isLogRouterEssential,
+      image: ecs.ContainerImage.fromRegistry(`${fluentbitConfig!.registry}:${fluentbitConfig!.imageVersion}`),
+      cpu: fluentbitConfig!.cpu,
+      memoryLimitMiB: fluentbitConfig!.memoryLimitMiB,
+      essential: fluentbitConfig!.isLogRouterEssential,
       firelensConfig: {
         type: ecs.FirelensLogRouterType.FLUENTBIT,
         options: {
           enableECSLogMetadata: true,
         },
       },
-      healthCheck: props.logCollection!.logRouterHealthCheck,
+      healthCheck: fluentbitConfig!.logRouterHealthCheck,
     });
     return fluentbitContainer;
   }
 
   private createLogDriver(): ecs.FireLensLogDriver | undefined {
-    const logCollection = this.datadogProps.logCollection!;
-
-    if (logCollection.logDriverConfiguration === undefined) {
-      throw new Error("Log driver configuration is required for log collection.");
-    }
-
-    if (logCollection!.loggingType === LoggingType.FLUENTBIT) {
+    if (this.datadogProps.logCollection!.loggingType === LoggingType.FLUENTBIT) {
+      const fluentbitConfig = this.datadogProps.logCollection!.fluentbitConfig!.logDriverConfig!;
       let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
       if (this.datadogProps.clusterName !== undefined) {
         if (logTags === undefined) {
@@ -304,26 +297,25 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
         }
         logTags = logTags.concat("ecs_cluster_name:" + this.datadogProps.clusterName);
       }
-
       const logDriverProps = {
         options: {
           Name: "datadog",
           provider: "ecs",
           retry_limit: "2",
-          ...(logCollection.logDriverConfiguration.hostEndpoint !== undefined && {
-            Host: logCollection.logDriverConfiguration.hostEndpoint,
+          ...(fluentbitConfig.hostEndpoint !== undefined && {
+            Host: fluentbitConfig.hostEndpoint,
           }),
-          ...(logCollection.logDriverConfiguration.tls !== undefined && {
-            TLS: logCollection.logDriverConfiguration.tls,
+          ...(fluentbitConfig.tls !== undefined && {
+            TLS: fluentbitConfig.tls,
           }),
-          ...(logCollection.logDriverConfiguration.serviceName !== undefined && {
-            dd_service: logCollection.logDriverConfiguration.serviceName,
+          ...(fluentbitConfig.serviceName !== undefined && {
+            dd_service: fluentbitConfig.serviceName,
           }),
-          ...(logCollection.logDriverConfiguration.sourceName !== undefined && {
-            dd_source: logCollection.logDriverConfiguration.sourceName,
+          ...(fluentbitConfig.sourceName !== undefined && {
+            dd_source: fluentbitConfig.sourceName,
           }),
-          ...(logCollection.logDriverConfiguration.messageKey !== undefined && {
-            dd_message_key: logCollection.logDriverConfiguration.messageKey,
+          ...(fluentbitConfig.messageKey !== undefined && {
+            dd_message_key: fluentbitConfig.messageKey,
           }),
           ...(logTags !== undefined && {
             dd_tags: logTags,

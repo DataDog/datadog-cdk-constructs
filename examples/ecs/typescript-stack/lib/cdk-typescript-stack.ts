@@ -24,9 +24,11 @@ export class CdkTypeScriptStack extends Stack {
       },
       logCollection: {
         isEnabled: true,
-        logDriverConfiguration: {
-          serviceName: "datadog-cdk-test",
-          sourceName: "datadog-cdk-test",
+        fluentbitConfig: {
+          logDriverConfig: {
+            serviceName: "datadog-cdk-test",
+            sourceName: "datadog-cdk-test",
+          },
         },
       },
       env: "staging",

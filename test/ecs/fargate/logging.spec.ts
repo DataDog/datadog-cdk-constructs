@@ -29,10 +29,12 @@ describe("DatadogECSFargateLogging", () => {
       apiKey: "test-api-key",
       logCollection: {
         isEnabled: true,
-        logDriverConfiguration: {
+        fluentbitConfig: {
+          logDriverConfig: {
+            hostEndpoint: "http-intake.logs.datadoghq.com-test",
+          },
           registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
           imageVersion: "stable",
-          hostEndpoint: "http-intake.logs.datadoghq.com-test",
         },
       },
     };
@@ -104,11 +106,13 @@ describe("DatadogECSFargateLogging", () => {
       },
       logCollection: {
         isEnabled: true,
-        logDriverConfiguration: {
-          tls: "on",
-          serviceName: "service-test",
-          sourceName: "source-test",
-          messageKey: "message-test",
+        fluentbitConfig: {
+          logDriverConfig: {
+            tls: "on",
+            serviceName: "service-test",
+            sourceName: "source-test",
+            messageKey: "message-test",
+          },
         },
       },
       apiKeySecretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:my-secret-name-AbCdEf",
@@ -154,7 +158,9 @@ describe("DatadogECSFargateLogging", () => {
     datadogProps = {
       logCollection: {
         isEnabled: true,
-        isLogRouterDependencyEnabled: true,
+        fluentbitConfig: {
+          isLogRouterDependencyEnabled: true,
+        },
       },
     };
     const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
@@ -183,11 +189,11 @@ describe("DatadogECSFargateLogging", () => {
       ...datadogProps,
       logCollection: {
         isEnabled: true,
-        cpu: 256,
-        memoryLimitMiB: 2048,
-        logDriverConfiguration: {
+        fluentbitConfig: {
+          cpu: 256,
+          memoryLimitMiB: 2048,
           registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
-          imageVersion: "stable",
+          imageVersion: "latest-v2",
         },
       },
     };
@@ -202,7 +208,7 @@ describe("DatadogECSFargateLogging", () => {
           Name: task.logContainer!.containerName,
           Cpu: 256,
           Memory: 2048,
-          Image: "public.ecr.aws/aws-observability/aws-for-fluent-bit:stable",
+          Image: "public.ecr.aws/aws-observability/aws-for-fluent-bit:latest-v2",
         }),
       ]),
     });

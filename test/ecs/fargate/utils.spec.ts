@@ -9,9 +9,11 @@ describe("validateECSFargateProps", () => {
       logCollection: {
         isEnabled: true,
         loggingType: LoggingType.FLUENTBIT,
-        logDriverConfiguration: {
-          registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
-          imageVersion: "stable",
+        fluentbitConfig: {
+          logDriverConfig: {
+            registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
+            imageVersion: "stable",
+          },
         },
       },
       isLinux: true,
@@ -32,8 +34,8 @@ describe("validateECSFargateProps", () => {
     expect(() => validateECSFargateProps(props)).toThrow();
   });
 
-  it("should throw an error if logDriverConfiguration is undefined when logging is enabled", () => {
-    delete props.logCollection.logDriverConfiguration;
+  it("should throw an error if logDriverConfig is undefined when logging is enabled", () => {
+    delete props.logCollection.fluentbitConfig.logDriverConfig;
     expect(() => validateECSFargateProps(props)).toThrow();
   });
 
@@ -45,7 +47,7 @@ describe("validateECSFargateProps", () => {
   it("should not throw an error if logging is disabled", () => {
     props.logCollection.isEnabled = false;
     delete props.logCollection.loggingType;
-    delete props.logCollection.logDriverConfiguration;
+    delete props.logCollection.fluentbitConfig.logDriverConfig;
     expect(() => validateECSFargateProps(props)).not.toThrow();
   });
 });
