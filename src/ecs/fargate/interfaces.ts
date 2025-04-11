@@ -20,9 +20,16 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
    */
   readonly loggingType?: LoggingType;
   /**
+   * Fluentbit log collection configuration.
+   */
+  readonly fluentbitConfig?: FluentbitConfig;
+}
+
+export interface FluentbitConfig {
+  /**
    * Configuration for the Datadog log driver.
    */
-  readonly logDriverConfiguration?: DatadogECSLogDriverProps;
+  readonly logDriverConfig?: DatadogECSLogDriverProps;
   /**
    * Makes the log router essential.
    */
@@ -35,6 +42,14 @@ export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureC
    * Health check configuration for the log router.
    */
   readonly logRouterHealthCheck?: HealthCheck;
+  /**
+   * The registry to pull the Fluentbit container image from.
+   */
+  readonly registry?: string;
+  /**
+   * The version of the Fluentbit container image to use.
+   */
+  readonly imageVersion?: string;
   /**
    * The minimum number of CPU units to reserve
    * for the Datadog fluent-bit container.
@@ -80,15 +95,6 @@ export enum LoggingType {
  * https://docs.fluentbit.io/manual/pipeline/outputs/datadog
  */
 export interface DatadogECSLogDriverProps {
-  /**
-   * The registry to pull the Fluentbit container image from.
-   */
-  readonly registry?: string;
-  /**
-   * The version of the Fluentbit container image to use.
-   */
-  readonly imageVersion?: string;
-
   readonly hostEndpoint?: string;
   readonly tls?: string;
   readonly compress?: string;

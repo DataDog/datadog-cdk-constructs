@@ -61,11 +61,13 @@ export class ExampleStack extends Stack {
       },
       logCollection: {
         isEnabled: true,
-        isLogRouterDependencyEnabled: true,
-        logDriverConfiguration: {
-          tls: "on",
-          serviceName: "datadog-cdk-test",
-          sourceName: "datadog-cdk-test",
+        fluentbitConfig: {
+          isLogRouterDependencyEnabled: true,
+          logDriverConfig: {
+            tls: "on",
+            serviceName: "datadog-cdk-test",
+            sourceName: "datadog-cdk-test",
+          },
         },
       },
       env: "staging",

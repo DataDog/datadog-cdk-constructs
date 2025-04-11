@@ -25,4 +25,5 @@ export {
   DatadogECSLogDriverProps,
   LoggingType,
   FargateLogCollectionFeatureConfig,
+  FluentbitConfig,
 } from "./ecs/fargate/interfaces";

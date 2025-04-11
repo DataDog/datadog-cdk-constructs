@@ -22,8 +22,6 @@ export const FargateDefaultEnvVars = {
  * Default log driver configuration for ECS Fargate
  */
 const DatadogECSLogDriverDefaultProps: DatadogECSLogDriverProps = {
-  registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
-  imageVersion: "stable",
   hostEndpoint: "http-intake.logs.datadoghq.com",
 };
 
@@ -35,21 +33,25 @@ export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
   logCollection: {
     isEnabled: false,
     loggingType: LoggingType.FLUENTBIT,
-    logDriverConfiguration: DatadogECSLogDriverDefaultProps,
-    isLogRouterEssential: false,
-    isLogRouterDependencyEnabled: false,
-    logRouterHealthCheck: {
-      // Note: below is the recommended command for the health check,
-      // however, this requires changes to the fluent-bit.conf file to
-      // expose the health check endpoint. To ease configuration, the
-      // default command will only check that the container successfully
-      // started via "exit 0".
-      // command: ["curl -f http://127.0.0.1:2020/api/v1/health || exit 1"],
-      command: ["exit 0"],
-      interval: Duration.seconds(5),
-      retries: 3,
-      startPeriod: Duration.seconds(15),
-      timeout: Duration.seconds(5),
+    fluentbitConfig: {
+      logDriverConfig: DatadogECSLogDriverDefaultProps,
+      isLogRouterEssential: false,
+      isLogRouterDependencyEnabled: false,
+      logRouterHealthCheck: {
+        // Note: below is the recommended command for the health check,
+        // however, this requires changes to the fluent-bit.conf file to
+        // expose the health check endpoint. To ease configuration, the
+        // default command will only check that the container successfully
+        // started via "exit 0".
+        // command: ["curl -f http://127.0.0.1:2020/api/v1/health || exit 1"],
+        command: ["exit 0"],
+        interval: Duration.seconds(5),
+        retries: 3,
+        startPeriod: Duration.seconds(15),
+        timeout: Duration.seconds(5),
+      },
+      registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
+      imageVersion: "stable",
     },
   },
 };

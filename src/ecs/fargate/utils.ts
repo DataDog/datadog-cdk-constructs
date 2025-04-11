@@ -33,9 +33,13 @@ export function mergeFargateProps(
   newProps.logCollection = {
     ...lowerPrecedence.logCollection,
     ...higherPrecedence.logCollection,
-    logDriverConfiguration: {
-      ...lowerPrecedence.logCollection?.logDriverConfiguration,
-      ...higherPrecedence.logCollection?.logDriverConfiguration,
+    fluentbitConfig: {
+      ...lowerPrecedence.logCollection?.fluentbitConfig,
+      ...higherPrecedence.logCollection?.fluentbitConfig,
+      logDriverConfig: {
+        ...lowerPrecedence.logCollection?.fluentbitConfig?.logDriverConfig,
+        ...higherPrecedence.logCollection?.fluentbitConfig?.logDriverConfig,
+      },
     },
   };
   newProps.cws = {
@@ -60,11 +64,16 @@ export function validateECSFargateProps(props: DatadogECSFargateInternalProps): 
     if (props.logCollection.loggingType === undefined) {
       throw new Error("The `loggingType` property must be defined when logging enabled.");
     }
-    if (props.logCollection.logDriverConfiguration === undefined) {
-      throw new Error("The `logDriverConfiguration` property must be defined when logging enabled.");
-    }
-    if (props.logCollection.loggingType === LoggingType.FLUENTBIT && props.isLinux === false) {
-      throw new Error("Fluent Bit logging is only supported on Linux.");
+    if (props.logCollection.loggingType === LoggingType.FLUENTBIT) {
+      if (props.isLinux === false) {
+        throw new Error("Fluent Bit logging is only supported on Linux.");
+      }
+      if (props.logCollection.fluentbitConfig === undefined) {
+        throw new Error("The `fluentbitConfig` property must be defined when fluentbit logging enabled.");
+      }
+      if (props.logCollection.fluentbitConfig.logDriverConfig === undefined) {
+        throw new Error("The `logDriverConfig` property must be defined when logging enabled.");
+      }
     }
   }
 }
