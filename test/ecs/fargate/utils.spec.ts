@@ -16,6 +16,9 @@ describe("validateECSFargateProps", () => {
           },
         },
       },
+      cws: {
+        isEnabled: false,
+      },
       isLinux: true,
     };
   });

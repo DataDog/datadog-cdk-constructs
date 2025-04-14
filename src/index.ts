@@ -26,4 +26,5 @@ export {
   LoggingType,
   FargateLogCollectionFeatureConfig,
   FluentbitConfig,
+  FargateCWSFeatureConfig,
 } from "./ecs/fargate/interfaces";

@@ -28,10 +28,6 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
     dogstatsdCardinality: Cardinality.ORCHESTRATOR,
   },
 
-  cws: {
-    isEnabled: false,
-  },
-
   isDatadogEssential: false,
   isDatadogDependencyEnabled: false,
   datadogHealthCheck: {

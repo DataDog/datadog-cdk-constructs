@@ -129,7 +129,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // CWS configuration on props
     if (this.datadogProps.cws!.isEnabled) {
-      if (instrumentedProps.linuxParameters === undefined) {
+      if (instrumentedProps.linuxParameters === undefined && instrumentedProps.entryPoint !== undefined) {
         instrumentedProps.linuxParameters = new ecs.LinuxParameters(this, `LinuxParameters-${id}`, {});
         instrumentedProps.linuxParameters.addCapabilities(ecs.Capability.SYS_PTRACE);
       }

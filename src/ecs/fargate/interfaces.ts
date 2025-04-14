@@ -8,10 +8,24 @@
 
 import { HealthCheck, Secret } from "aws-cdk-lib/aws-ecs";
 import { EnvVarManager } from "../environment";
-import { DatadogECSBaseProps, LogCollectionFeatureConfig } from "../interfaces";
+import { CWSFeatureConfig, DatadogECSBaseProps, LogCollectionFeatureConfig } from "../interfaces";
 
 export interface DatadogECSFargateProps extends DatadogECSBaseProps {
   readonly logCollection?: FargateLogCollectionFeatureConfig;
+  readonly cws?: FargateCWSFeatureConfig;
+}
+
+export interface FargateCWSFeatureConfig extends CWSFeatureConfig {
+  /**
+   * The minimum number of CPU units to reserve
+   * for the Datadog CWS init container.
+   */
+  readonly cpu?: number;
+  /**
+   * The amount (in MiB) of memory to present
+   * to the Datadog CWS init container.
+   */
+  readonly memoryLimitMiB?: number;
 }
 
 export interface FargateLogCollectionFeatureConfig extends LogCollectionFeatureConfig {

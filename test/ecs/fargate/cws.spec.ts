@@ -27,6 +27,7 @@ describe("DatadogECSFargateTaskDefinition", () => {
       registry: "public.ecr.aws/datadog/agent",
       imageVersion: "latest",
       apiKey: "test-api-key",
+      isDatadogDependencyEnabled: true,
       cws: {
         isEnabled: true,
       },
