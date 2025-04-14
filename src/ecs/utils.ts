@@ -42,9 +42,6 @@ export function validateECSBaseProps(props: DatadogECSBaseProps): void {
   if (props.apm === undefined) {
     throw new Error("The `apm` property must be defined.");
   }
-  if (props.cws === undefined) {
-    throw new Error("The `cws` property must be defined.");
-  }
 
   // Agent container configuration validation
   if (props.registry === undefined) {

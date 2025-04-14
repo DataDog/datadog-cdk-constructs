@@ -54,4 +54,7 @@ export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
       imageVersion: "stable",
     },
   },
+  cws: {
+    isEnabled: false,
+  },
 };

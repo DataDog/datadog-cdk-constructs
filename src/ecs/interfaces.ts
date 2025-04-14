@@ -90,10 +90,6 @@ export interface DatadogECSBaseProps {
    * APM feature configuration
    */
   readonly apm?: APMFeatureConfig;
-  /**
-   * CWS feature configuration
-   */
-  readonly cws?: CWSFeatureConfig;
 
   /**
    * The task environment name. Used for tagging (UST).
@@ -165,17 +161,6 @@ export interface CWSFeatureConfig {
    * Enables CWS
    */
   readonly isEnabled?: boolean;
-
-  /**
-   * The minimum number of CPU units to reserve
-   * for the Datadog CWS init container.
-   */
-  readonly cpu?: number;
-  /**
-   * The amount (in MiB) of memory to present
-   * to the Datadog CWS init container.
-   */
-  readonly memoryLimitMiB?: number;
 }
 
 /**
