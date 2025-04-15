@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.2.0...v2-2.3.0) (2025-04-15)
+
+
+### Features
+
+* Base ECS Fargate CDK implementation ([#378](https://github.com/DataDog/datadog-cdk-constructs/issues/378)) ([ba17cf6](https://github.com/DataDog/datadog-cdk-constructs/commit/ba17cf6f8ca2d97bffc1060fe8d4896828bd1ec7))
+
+
+### Bug Fixes
+
+* Fix go package publish for v2-2.x.x ([#388](https://github.com/DataDog/datadog-cdk-constructs/issues/388)) ([62332a5](https://github.com/DataDog/datadog-cdk-constructs/commit/62332a5da0de7277024c1b9db608e7b8ba95eb14))
+
 ## [2.2.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.1.0...v2-2.2.0) (2025-03-11)
 
 
