@@ -82,6 +82,9 @@ export function validateECSFargateProps(props: DatadogECSFargateInternalProps): 
   }
 
   if (props.cws?.isEnabled) {
+    if (props.isLinux === false) {
+      throw new Error("CWS is only supported on Linux.");
+    }
     if (props.isDatadogDependencyEnabled === false) {
       throw new Error(
         "CWS configuration highly recommends Datadog Agent dependency enabled. The CWS tracer eventually exits the application if it can't connect to the Datadog Agent.",
