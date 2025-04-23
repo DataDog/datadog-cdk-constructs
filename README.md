@@ -9,6 +9,8 @@
 
 Use this Datadog CDK Construct Library to deploy serverless applications using AWS CDK .
 
+For more information on the **DatadogECSFargate** construct, see [here][23].
+
 This CDK library automatically configures ingestion of metrics, traces, and logs from your serverless applications by:
 
 - Installing and configuring the Datadog Lambda layers for your [.NET][19], [Java][15], [Node.js][2], and [Python][1] Lambda functions.
@@ -745,3 +747,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [20]: https://github.com/DataDog/datadog-cdk-constructs/tree/main/examples
 [21]: https://docs.datadoghq.com/security/application_security/
 [22]: https://www.datadoghq.com/blog/troubleshoot-lambda-function-request-response-payloads/
+[23]: https://github.com/DataDog/datadog-cdk-constructs/blob/main/src/ecs/fargate/README.md
