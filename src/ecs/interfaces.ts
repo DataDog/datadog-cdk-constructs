@@ -151,6 +151,12 @@ export interface APMFeatureConfig {
    * Falls back to TCP configuration for application containers when disabled
    */
   readonly isSocketEnabled?: boolean;
+  /**
+   * Enables inferred spans for proxy services like AWS API Gateway.
+   * When enabled, the tracer will create spans for proxy services by using headers
+   * passed from the proxy service to the application.
+   */
+  readonly traceInferredProxyServices?: boolean;
 }
 
 /**

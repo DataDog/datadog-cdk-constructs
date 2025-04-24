@@ -172,10 +172,11 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 
 | Property                   | Type          | Description                                                                      |
 | -------------------------- | ------------- | -------------------------------------------------------------------------------- |
-| `isEnabled`                | `boolean`     | Enables DogStatsD.                                                               |
-| `isOriginDetectionEnabled` | `boolean`     | Enables DogStatsD origin detection.                                              |
-| `dogstatsdCardinality`     | `Cardinality` | Controls the cardinality of custom DogStatsD metrics.                            |
-| `isSocketEnabled`          | `boolean`     | Enables DogStatsD traffic over Unix Domain Socket. Falls back to UDP when false. |
+| `isEnabled`                  | `boolean`     | Enables DogStatsD.                                                               |
+| `isOriginDetectionEnabled`   | `boolean`     | Enables DogStatsD origin detection.                                              |
+| `dogstatsdCardinality`       | `Cardinality` | Controls the cardinality of custom DogStatsD metrics.                            |
+| `isSocketEnabled`            | `boolean`     | Enables DogStatsD traffic over Unix Domain Socket. Falls back to UDP when false. |
+| `traceInferredProxyServices` | `boolean`     | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
 
 ### APMFeatureConfig
 
