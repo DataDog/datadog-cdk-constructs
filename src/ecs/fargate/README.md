@@ -35,7 +35,7 @@ go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
 ```typescript
 const ecsDatadog = new DatadogECSFargate({
   // One of the following 3 apiKey params are required
-  apiKey: <STRING>
+  apiKey: <STRING>,
   apiKeySecret: <SECRET>,
   apiKeySecretArn: <STRING>,
   registry: <STRING>,
@@ -53,9 +53,9 @@ const ecsDatadog = new DatadogECSFargate({
   apm: <APM_FEATURE_CONFIG>,
   cws: <CWS_FEATURE_CONFIG>,
   logCollection: <LOG_COLLECTION_FEATURE_CONFIG>
-  env: <STRING>
-  service: <STRING>
-  version: <STRING>
+  env: <STRING>,
+  service: <STRING>,
+  version: <STRING>,
 });
 const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(
   this,
