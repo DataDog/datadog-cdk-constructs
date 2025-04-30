@@ -60,3 +60,5 @@ junit.xml
 tsconfig.json
 !integration_tests/tsconfig.json
 !/.projenrc.js
+v1/
+v2/
