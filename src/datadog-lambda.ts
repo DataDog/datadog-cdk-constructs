@@ -291,6 +291,14 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
     );
   }
 
+  if (props.captureCloudServiceRequestPayloads !== undefined) {
+    validateCloudServicePayloadTagging(props.captureCloudServiceRequestPayloads);
+  }
+
+  if (props.captureCloudServiceResponsePayloads !== undefined) {
+    validateCloudServicePayloadTagging(props.captureCloudServiceResponsePayloads);
+  }
+
   if (
     props.apiKey === undefined &&
     props.apiKmsKey === undefined &&
@@ -322,6 +330,22 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
   }
 }
 
+export function validateCloudServicePayloadTagging(value: string): void {
+  // Check if the value is 'all'
+  if (value === "all") {
+    return;
+  }
+
+  // Check if the value is a valid JSONPath
+  // Simple validation for JSONPath - should start with $
+  if (!value.startsWith("$")) {
+    throw new Error(
+      "Invalid value for payload tagging settings. Must be either 'all' or a valid JSONPath starting with '$'.",
+    );
+  }
+  // Additional JSONPath validation could be added here in the future
+}
+
 export function checkForMultipleApiKeys(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
   let multipleApiKeysMessage;
   const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
@@ -349,6 +373,8 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   const logLevel = props.logLevel;
   let enableDatadogLogs = props.enableDatadogLogs;
   let captureLambdaPayload = props.captureLambdaPayload;
+  const captureCloudServiceRequestPayloads = props.captureCloudServiceRequestPayloads;
+  const captureCloudServiceResponsePayloads = props.captureCloudServiceResponsePayloads;
   let sourceCodeIntegration = props.sourceCodeIntegration;
   let redirectHandler = props.redirectHandler;
   let grantSecretReadAccess = props.grantSecretReadAccess;
@@ -420,6 +446,8 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     logLevel: logLevel,
     enableDatadogLogs: enableDatadogLogs,
     captureLambdaPayload: captureLambdaPayload,
+    captureCloudServiceRequestPayloads: captureCloudServiceRequestPayloads,
+    captureCloudServiceResponsePayloads: captureCloudServiceResponsePayloads,
     sourceCodeIntegration: sourceCodeIntegration,
     redirectHandler: redirectHandler,
     grantSecretReadAccess: grantSecretReadAccess,

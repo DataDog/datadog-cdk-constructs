@@ -8,6 +8,7 @@ import {
   DatadogLambda,
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
+  validateCloudServicePayloadTagging,
 } from "../src/index";
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
@@ -866,5 +867,159 @@ describe("overrideGitMetadata", () => {
     expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
       expect.arrayContaining(["git.commit.sha:fake-sha"]),
     );
+  });
+});
+
+
+
+describe("validateCloudServicePayloadTagging", () => {
+  it("throws error if value is not 'all' or doesn't start with $", () => {
+    expect(() => {
+      validateCloudServicePayloadTagging("invalid");
+    }).toThrowError(
+      "Invalid value for payload tagging settings. Must be either 'all' or a valid JSONPath starting with '$'.",
+    );
+  });
+
+  it("does not throw error if value is 'all'", () => {
+    expect(() => {
+      validateCloudServicePayloadTagging("all");
+    }).not.toThrow();
+  });
+
+  it("does not throw error if value starts with $", () => {
+    expect(() => {
+      validateCloudServicePayloadTagging("$.body.request");
+    }).not.toThrow();
+  });
+});
+
+describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
+  it("sets environment variable when captureCloudServiceRequestPayloads is 'all'", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: 91,
+      captureCloudServiceRequestPayloads: "all",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    // @ts-ignore - accessing environment property
+    expect(hello.environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("all");
+  });
+
+  it("sets environment variable when captureCloudServiceRequestPayloads is a JSONPath", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: 91,
+      captureCloudServiceRequestPayloads: "$.body.request",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    // @ts-ignore - accessing environment property
+    expect(hello.environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("$.body.request");
+  });
+
+  it("throws error when captureCloudServiceRequestPayloads is invalid", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    expect(() => {
+      new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: 91,
+        captureCloudServiceRequestPayloads: "invalid",
+      });
+    }).toThrowError(
+      "Invalid value for payload tagging settings. Must be either 'all' or a valid JSONPath starting with '$'.",
+    );
+  });
+
+  it("does not set environment variable when captureCloudServiceRequestPayloads is not provided", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: 91,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    // @ts-ignore - accessing environment property
+    expect(hello.environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]).toBeUndefined();
+  });
+});
+
+describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
+  it("sets environment variable when captureCloudServiceResponsePayloads is 'all'", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: 91,
+      captureCloudServiceResponsePayloads: "all",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    // @ts-ignore - accessing environment property
+    expect(hello.environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("all");
+  });
+
+  it("sets environment variable when captureCloudServiceResponsePayloads is a JSONPath", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: 91,
+      captureCloudServiceResponsePayloads: "$.body.Response",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    // @ts-ignore - accessing environment property
+    expect(hello.environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("$.body.Response");
+  });
+
+  it("throws error when captureCloudServiceResponsePayloads is invalid", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    expect(() => {
+      new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: 91,
+        captureCloudServiceResponsePayloads: "invalid",
+      });
+    }).toThrowError(
+      "Invalid value for payload tagging settings. Must be either 'all' or a valid JSONPath starting with '$'.",
+    );
+  });
+
+  it("does not set environment variable when captureCloudServiceResponsePayloads is not provided", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: 91,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    // @ts-ignore - accessing environment property
+    expect(hello.environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]).toBeUndefined();
   });
 });
