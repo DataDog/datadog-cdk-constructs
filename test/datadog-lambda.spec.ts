@@ -908,7 +908,6 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
       captureCloudServiceRequestPayloads: "all",
     });
     datadogLambda.addLambdaFunctions([hello]);
-    // @ts-ignore - accessing environment property
     expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("all");
   });
 
@@ -925,7 +924,6 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
       captureCloudServiceRequestPayloads: "$.body.request",
     });
     datadogLambda.addLambdaFunctions([hello]);
-    // @ts-ignore - accessing environment property
     expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("$.body.request");
   });
 
@@ -954,7 +952,6 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
       nodeLayerVersion: 91,
     });
     datadogLambda.addLambdaFunctions([hello]);
-    // @ts-ignore - accessing environment property
     expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]).toBeUndefined();
   });
 });
@@ -973,7 +970,6 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
       captureCloudServiceResponsePayloads: "all",
     });
     datadogLambda.addLambdaFunctions([hello]);
-    // @ts-ignore - accessing environment property
     expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("all");
   });
 
@@ -990,7 +986,6 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
       captureCloudServiceResponsePayloads: "$.body.Response",
     });
     datadogLambda.addLambdaFunctions([hello]);
-    // @ts-ignore - accessing environment property
     expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("$.body.Response");
   });
 
@@ -1019,7 +1014,6 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
       nodeLayerVersion: 91,
     });
     datadogLambda.addLambdaFunctions([hello]);
-    // @ts-ignore - accessing environment property
     expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]).toBeUndefined();
   });
 });
