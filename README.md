@@ -7,7 +7,7 @@
 [![Go](https://img.shields.io/github/v/tag/datadog/datadog-cdk-constructs-go?color=39a356&label=go+cdk+v2)](https://pkg.go.dev/github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
-Use this Datadog CDK Construct Library to deploy serverless applications using AWS CDK .
+Use this Datadog CDK Construct Library to deploy serverless applications using AWS CDK.
 
 For more information on the **DatadogECSFargate** construct, see [here][23].
 
