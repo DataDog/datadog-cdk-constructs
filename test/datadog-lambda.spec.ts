@@ -909,7 +909,7 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     // @ts-ignore - accessing environment property
-    expect(hello.environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("all");
+    expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("all");
   });
 
   it("sets environment variable when captureCloudServiceRequestPayloads is a JSONPath", () => {
@@ -926,7 +926,7 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     // @ts-ignore - accessing environment property
-    expect(hello.environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("$.body.request");
+    expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"].value).toEqual("$.body.request");
   });
 
   it("throws error when captureCloudServiceRequestPayloads is invalid", () => {
@@ -955,7 +955,7 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     // @ts-ignore - accessing environment property
-    expect(hello.environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]).toBeUndefined();
+    expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]).toBeUndefined();
   });
 });
 
@@ -974,7 +974,7 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     // @ts-ignore - accessing environment property
-    expect(hello.environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("all");
+    expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("all");
   });
 
   it("sets environment variable when captureCloudServiceResponsePayloads is a JSONPath", () => {
@@ -991,7 +991,7 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     // @ts-ignore - accessing environment property
-    expect(hello.environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("$.body.Response");
+    expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"].value).toEqual("$.body.Response");
   });
 
   it("throws error when captureCloudServiceResponsePayloads is invalid", () => {
@@ -1020,6 +1020,6 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
     });
     datadogLambda.addLambdaFunctions([hello]);
     // @ts-ignore - accessing environment property
-    expect(hello.environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]).toBeUndefined();
+    expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]).toBeUndefined();
   });
 });
