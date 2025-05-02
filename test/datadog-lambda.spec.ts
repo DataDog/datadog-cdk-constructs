@@ -904,7 +904,7 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerVersion: 91,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureCloudServiceRequestPayloads: "all",
     });
     datadogLambda.addLambdaFunctions([hello]);
@@ -920,7 +920,7 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerVersion: 91,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureCloudServiceRequestPayloads: "$.body.request",
     });
     datadogLambda.addLambdaFunctions([hello]);
@@ -931,10 +931,11 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     expect(() => {
-      new DatadogLambda(stack, "Datadog", {
-        nodeLayerVersion: 91,
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
         captureCloudServiceRequestPayloads: "invalid",
       });
+      datadogLambda.addLambdaFunctions([]);
     }).toThrowError(
       "Invalid value for payload tagging settings. Must be either 'all' or a valid JSONPath starting with '$'.",
     );
@@ -949,7 +950,7 @@ describe("DatadogLambda with captureCloudServiceRequestPayloads", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerVersion: 91,
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogLambda.addLambdaFunctions([hello]);
     expect((<any>hello).environment["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]).toBeUndefined();
@@ -966,7 +967,7 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerVersion: 91,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureCloudServiceResponsePayloads: "all",
     });
     datadogLambda.addLambdaFunctions([hello]);
@@ -982,7 +983,7 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerVersion: 91,
+      nodeLayerVersion: NODE_LAYER_VERSION,
       captureCloudServiceResponsePayloads: "$.body.Response",
     });
     datadogLambda.addLambdaFunctions([hello]);
@@ -993,10 +994,11 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     expect(() => {
-      new DatadogLambda(stack, "Datadog", {
-        nodeLayerVersion: 91,
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
         captureCloudServiceResponsePayloads: "invalid",
       });
+      datadogLambda.addLambdaFunctions([]);
     }).toThrowError(
       "Invalid value for payload tagging settings. Must be either 'all' or a valid JSONPath starting with '$'.",
     );
@@ -1011,7 +1013,7 @@ describe("DatadogLambda with captureCloudServiceResponsePayloads", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerVersion: 91,
+      nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogLambda.addLambdaFunctions([hello]);
     expect((<any>hello).environment["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]).toBeUndefined();
