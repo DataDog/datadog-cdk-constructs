@@ -76,17 +76,17 @@ function getGitData(): { hash: string; gitRepoUrl: string } {
     log.debug(`Failed to add source code integration. Error: ${e}`);
     return { hash: "", gitRepoUrl: "" };
   }
-  return { hash, gitRepoUrl: filterAndFormatGithubRemote(gitRepoUrl) };
+  return { hash, gitRepoUrl: filterAndFormatGitRemote(gitRepoUrl) };
 }
 
 // Removes sensitive info from the given git remote url and normalizes the url prefix.
 // "git@github.com:" and "https://github.com/" prefixes will be normalized into "github.com/"
-function filterAndFormatGithubRemote(rawRemote: string): string {
+function filterAndFormatGitRemote(rawRemote: string): string {
   rawRemote = filterSensitiveInfoFromRepository(rawRemote);
   if (!rawRemote) {
     return rawRemote;
   }
-  rawRemote = rawRemote.replace(/git@github\.com:|https:\/\/github\.com\//, "github.com/");
+  rawRemote = rawRemote.replace(/git@(github\.com|gitlab\.com):|https:\/\/(github\.com|gitlab\.com)\//, "$1$2/");
 
   return rawRemote;
 }
