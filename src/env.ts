@@ -81,12 +81,14 @@ function getGitData(): { hash: string; gitRepoUrl: string } {
 
 // Removes sensitive info from the given git remote url and normalizes the url prefix.
 // "git@github.com:" and "https://github.com/" prefixes will be normalized into "github.com/"
-function filterAndFormatGitRemote(rawRemote: string): string {
+export function filterAndFormatGitRemote(rawRemote: string): string {
   rawRemote = filterSensitiveInfoFromRepository(rawRemote);
   if (!rawRemote) {
     return rawRemote;
   }
-  rawRemote = rawRemote.replace(/git@(github\.com|gitlab\.com):|https:\/\/(github\.com|gitlab\.com)\//, "$1$2/");
+  rawRemote = rawRemote
+    .replace(/git@(github\.com|gitlab\.com):/, "$1/")
+    .replace(/https:\/\/(github\.com|gitlab\.com)\//, "$1/");
 
   return rawRemote;
 }
