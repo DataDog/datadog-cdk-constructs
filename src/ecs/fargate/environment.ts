@@ -9,6 +9,7 @@
 import log from "loglevel";
 import { FargateDefaultEnvVars } from "./constants";
 import { DatadogECSFargateProps } from "./interfaces";
+import * as versionJson from "../../../version.json";
 import { EnvVarManager } from "../environment";
 
 export class FargateEnvVarManager extends EnvVarManager {
@@ -16,6 +17,10 @@ export class FargateEnvVarManager extends EnvVarManager {
     super(FargateDefaultEnvVars);
 
     this.addAll(props.environmentVariables);
+
+    this.add("DD_INSTALL_INFO_TOOL", "cdk");
+    this.add("DD_INSTALL_INFO_TOOL_VERSION", "datadog-cdk-constructs");
+    this.add("DD_INSTALL_INFO_INSTALLER_VERSION", versionJson.version);
 
     this.add("DD_API_KEY", props.apiKey);
     this.add("DD_SITE", props.site);
