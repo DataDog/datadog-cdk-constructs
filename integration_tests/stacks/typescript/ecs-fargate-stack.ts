@@ -44,6 +44,8 @@ export class ExampleStack extends Stack {
     });
     serverTaskDefinition.addContainer('helloServer', {
       image: ecs.ContainerImage.fromRegistry('ecs-sample-image/hello-server'),
+      // this value will be overwritten by the task definition
+      environment: { DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED: 'true' },
     });
   }
 }

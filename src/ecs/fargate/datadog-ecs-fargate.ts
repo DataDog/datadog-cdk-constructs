@@ -202,9 +202,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     // APM configuration
     const traceInferredServices = this.datadogProps.apm!.traceInferredProxyServices;
     if (this.datadogProps.apm!.isEnabled && traceInferredServices !== undefined) {
-      if (props.environment?.DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED === undefined) {
-        container.addEnvironment("DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED", traceInferredServices.toString());
-      }
+      container.addEnvironment("DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED", traceInferredServices.toString());
     }
 
     // CWS configuration
