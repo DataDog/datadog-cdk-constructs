@@ -25,10 +25,10 @@ export class ExampleStack extends Stack {
     });
 
     // Sample Task Definition
-    const sampleTaskDefinition = ecsDatadog.fargateTaskDefinition(this, 'sampleTaskDefinition', {
-      memoryLimitMiB: 512,
-      cpu: 256,
-    });
+    const sampleTaskDefinition = ecsDatadog.fargateTaskDefinition(
+      this, 'sampleTaskDefinition',
+      { memoryLimitMiB: 512, cpu: 256 },
+    );
     sampleTaskDefinition.addContainer('ecsSample', {
       image: ecs.ContainerImage.fromRegistry('amazon/amazon-ecs-sample'),
     });
