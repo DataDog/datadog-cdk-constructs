@@ -24,20 +24,24 @@ export class ExampleStack extends Stack {
       },
     });
 
-    // Create Task Definition
-    const taskDefinition = ecsDatadog.fargateTaskDefinition(this, 'taskDefinition', {
+    // Sample Task Definition
+    const sampleTaskDefinition = ecsDatadog.fargateTaskDefinition(this, 'sampleTaskDefinition', {
       memoryLimitMiB: 512,
       cpu: 256,
     });
-
-    // Add service container to task definition.
-    taskDefinition.addContainer('ecsSample', {
+    sampleTaskDefinition.addContainer('ecsSample', {
       image: ecs.ContainerImage.fromRegistry('amazon/amazon-ecs-sample'),
     });
-    taskDefinition.addContainer('nameServer', {
+
+    // Server Task Definition
+    const serverTaskDefinition = ecsDatadog.fargateTaskDefinition(this, 'serverTaskDefinition', {
+      memoryLimitMiB: 512,
+      cpu: 256,
+    });
+    serverTaskDefinition.addContainer('nameServer', {
       image: ecs.ContainerImage.fromRegistry('ecs-sample-image/name-server'),
     });
-    taskDefinition.addContainer('helloServer', {
+    serverTaskDefinition.addContainer('helloServer', {
       image: ecs.ContainerImage.fromRegistry('ecs-sample-image/hello-server'),
     });
   }

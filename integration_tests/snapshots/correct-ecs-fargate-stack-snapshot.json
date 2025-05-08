@@ -1,6 +1,6 @@
 {
  "Resources": {
-  "taskDefinitionTaskRole3D7BF1E0": {
+  "sampleTaskDefinitionTaskRoleDF10472C": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -17,10 +17,10 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "ecs-fargate-stack/taskDefinition/TaskRole/Resource"
+    "aws:cdk:path": "ecs-fargate-stack/sampleTaskDefinition/TaskRole/Resource"
    }
   },
-  "taskDefinitionTaskRoleDefaultPolicyC7087DE1": {
+  "sampleTaskDefinitionTaskRoleDefaultPolicyE17E533C": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -37,18 +37,18 @@
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "taskDefinitionTaskRoleDefaultPolicyC7087DE1",
+    "PolicyName": "sampleTaskDefinitionTaskRoleDefaultPolicyE17E533C",
     "Roles": [
      {
-      "Ref": "taskDefinitionTaskRole3D7BF1E0"
+      "Ref": "sampleTaskDefinitionTaskRoleDF10472C"
      }
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "ecs-fargate-stack/taskDefinition/TaskRole/DefaultPolicy/Resource"
+    "aws:cdk:path": "ecs-fargate-stack/sampleTaskDefinition/TaskRole/DefaultPolicy/Resource"
    }
   },
-  "taskDefinitionD5BB2FFF": {
+  "sampleTaskDefinition9843F873": {
    "Type": "AWS::ECS::TaskDefinition",
    "Properties": {
     "ContainerDefinitions": [
@@ -148,6 +148,152 @@
        }
       ],
       "Name": "ecsSample"
+     }
+    ],
+    "Cpu": "256",
+    "Family": "ecsfargatestacksampleTaskDefinition8854A0AB",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "sampleTaskDefinitionTaskRoleDF10472C",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "Name": "dd-sockets"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/sampleTaskDefinition/Resource"
+   }
+  },
+  "serverTaskDefinitionTaskRole11FDE10A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/serverTaskDefinition/TaskRole/Resource"
+   }
+  },
+  "serverTaskDefinitionTaskRoleDefaultPolicy87068369": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "serverTaskDefinitionTaskRoleDefaultPolicy87068369",
+    "Roles": [
+     {
+      "Ref": "serverTaskDefinitionTaskRole11FDE10A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/serverTaskDefinition/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "serverTaskDefinition1098B265": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "ECS_FARGATE",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_API_KEY",
+        "Value": "exampleApiKey"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
+        "Value": "orchestrator"
+       }
+      ],
+      "Essential": false,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "/probe.sh"
+       ],
+       "Interval": 10,
+       "Retries": 3,
+       "StartPeriod": 60,
+       "Timeout": 5
+      },
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "datadog-agent",
+      "PortMappings": [
+       {
+        "ContainerPort": 8125,
+        "HostPort": 8125,
+        "Protocol": "udp"
+       },
+       {
+        "ContainerPort": 8126,
+        "HostPort": 8126,
+        "Protocol": "tcp"
+       }
+      ]
      },
      {
       "DockerLabels": {
@@ -217,7 +363,7 @@
      }
     ],
     "Cpu": "256",
-    "Family": "ecsfargatestacktaskDefinition95B550F2",
+    "Family": "ecsfargatestackserverTaskDefinition0BA84EC9",
     "Memory": "512",
     "NetworkMode": "awsvpc",
     "RequiresCompatibilities": [
@@ -231,7 +377,7 @@
     ],
     "TaskRoleArn": {
      "Fn::GetAtt": [
-      "taskDefinitionTaskRole3D7BF1E0",
+      "serverTaskDefinitionTaskRole11FDE10A",
       "Arn"
      ]
     },
@@ -242,7 +388,7 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "ecs-fargate-stack/taskDefinition/Resource"
+    "aws:cdk:path": "ecs-fargate-stack/serverTaskDefinition/Resource"
    }
   },
   "CDKMetadata": {
