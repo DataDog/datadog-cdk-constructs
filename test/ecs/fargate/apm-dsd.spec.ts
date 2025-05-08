@@ -289,7 +289,7 @@ describe("DatadogECSFargateTaskDefinition", () => {
 
     test.each(cases)(
       "should %s",
-      ({ isEnabled, traceInferredProxyServices, shouldSet, expectedValue, desc }) => {
+      ({ isEnabled, traceInferredProxyServices, shouldSet, expectedValue }) => {
         const template = createTaskWithApmProps({ isEnabled, traceInferredProxyServices });
         if (shouldSet) {
           template.hasResourceProperties("AWS::ECS::TaskDefinition", {
