@@ -1,0 +1,402 @@
+{
+ "Resources": {
+  "restApi7A1404E4": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "API Gateway v1 for forwarding requests to example.com",
+    "Name": "restApiName",
+    "Parameters": {
+     "integration.request.header.x-dd-proxy": "'aws-apigateway'",
+     "integration.request.header.x-dd-proxy-request-time-ms": "context.requestTimeEpoch",
+     "integration.request.header.x-dd-proxy-domain-name": "context.domainName",
+     "integration.request.header.x-dd-proxy-httpmethod": "context.httpMethod",
+     "integration.request.header.x-dd-proxy-path": "context.path",
+     "integration.request.header.x-dd-proxy-stage": "context.stage"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Resource"
+   }
+  },
+  "restApiCloudWatchRoleC655F201": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/CloudWatchRole/Resource"
+   }
+  },
+  "restApiAccountE2212149": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "restApiCloudWatchRoleC655F201",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "restApi7A1404E4"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Account"
+   }
+  },
+  "restApiDeploymentDF5D6018e8c7d5d4c4d72587f59755fc36c46d6a": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "API Gateway v1 for forwarding requests to example.com",
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    }
+   },
+   "DependsOn": [
+    "restApiANY8067E789",
+    "restApimagazinesidANYD7D67A4D",
+    "restApimagazinesid90EA28DD",
+    "restApimagazinesANY9C6F2898",
+    "restApimagazines22D3208B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Deployment/Resource"
+   }
+  },
+  "restApiDeploymentStageprod8D860928": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "restApiDeploymentDF5D6018e8c7d5d4c4d72587f59755fc36c46d6a"
+    },
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "restApiAccountE2212149"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "restApiANY8067E789": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "ConnectionType": "INTERNET",
+     "IntegrationHttpMethod": "ANY",
+     "Type": "HTTP_PROXY",
+     "Uri": "https://example.com"
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "restApi7A1404E4",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Default/ANY/Resource"
+   }
+  },
+  "restApimagazines22D3208B": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "restApi7A1404E4",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "magazines",
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Default/magazines/Resource"
+   }
+  },
+  "restApimagazinesANY9C6F2898": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "ConnectionType": "INTERNET",
+     "IntegrationHttpMethod": "ANY",
+     "Type": "HTTP_PROXY",
+     "Uri": "https://example.com"
+    },
+    "ResourceId": {
+     "Ref": "restApimagazines22D3208B"
+    },
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Default/magazines/ANY/Resource"
+   }
+  },
+  "restApimagazinesid90EA28DD": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "restApimagazines22D3208B"
+    },
+    "PathPart": "{id}",
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Default/magazines/{id}/Resource"
+   }
+  },
+  "restApimagazinesidANYD7D67A4D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "ConnectionType": "INTERNET",
+     "IntegrationHttpMethod": "ANY",
+     "Type": "HTTP_PROXY",
+     "Uri": "https://example.com"
+    },
+    "ResourceId": {
+     "Ref": "restApimagazinesid90EA28DD"
+    },
+    "RestApiId": {
+     "Ref": "restApi7A1404E4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/restApi/Default/magazines/{id}/ANY/Resource"
+   }
+  },
+  "httpApiC9FAD708": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "Description": "API Gateway v2 for forwarding requests to example.com",
+    "Name": "httpApiName",
+    "ProtocolType": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/httpApi/Resource"
+   }
+  },
+  "httpApiDefaultStage49B103A5": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "httpApiC9FAD708"
+    },
+    "AutoDeploy": true,
+    "StageName": "$default"
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/httpApi/DefaultStage/Resource"
+   }
+  },
+  "httpApiANYproxyHttpUrlIntegrationDB9C2143": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "httpApiC9FAD708"
+    },
+    "IntegrationMethod": "ANY",
+    "IntegrationType": "HTTP_PROXY",
+    "IntegrationUri": "https://example.com",
+    "PayloadFormatVersion": "1.0",
+    "RequestParameters": {
+     "append:header.x-dd-proxy": "aws-apigateway",
+     "append:header.x-dd-proxy-request-time-ms": "${context.requestTimeEpoch}000",
+     "append:header.x-dd-proxy-domain-name": "$context.domainName",
+     "append:header.x-dd-proxy-httpmethod": "$context.httpMethod",
+     "append:header.x-dd-proxy-path": "$context.path",
+     "append:header.x-dd-proxy-stage": "$context.stage"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/httpApi/ANY--{proxy+}/HttpUrlIntegration/Resource"
+   }
+  },
+  "httpApiANYproxy8B9839FD": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "httpApiC9FAD708"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "ANY /{proxy+}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "httpApiANYproxyHttpUrlIntegrationDB9C2143"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/httpApi/ANY--{proxy+}/Resource"
+   }
+  },
+  "httpApiANYbooks6B0F8FBF": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "httpApiC9FAD708"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "ANY /books",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "httpApiANYproxyHttpUrlIntegrationDB9C2143"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/httpApi/ANY--books/Resource"
+   }
+  },
+  "httpApiANYbooksidA0C498E3": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "httpApiC9FAD708"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "ANY /books/{id}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "httpApiANYproxyHttpUrlIntegrationDB9C2143"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/httpApi/ANY--books--{id}/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "vX:XXXXXX:XXXXXX"
+   },
+   "Metadata": {
+    "aws:cdk:path": "apigateway-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "restApiEndpoint3EABEE4A": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "restApi7A1404E4"
+      },
+      ".execute-api.sa-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "restApiDeploymentStageprod8D860928"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

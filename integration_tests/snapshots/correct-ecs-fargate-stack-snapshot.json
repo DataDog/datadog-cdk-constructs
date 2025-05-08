@@ -1,0 +1,292 @@
+{
+ "Resources": {
+  "taskDefinitionTaskRole3D7BF1E0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/taskDefinition/TaskRole/Resource"
+   }
+  },
+  "taskDefinitionTaskRoleDefaultPolicyC7087DE1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "taskDefinitionTaskRoleDefaultPolicyC7087DE1",
+    "Roles": [
+     {
+      "Ref": "taskDefinitionTaskRole3D7BF1E0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/taskDefinition/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "taskDefinitionD5BB2FFF": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "ECS_FARGATE",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_API_KEY",
+        "Value": "exampleApiKey"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
+        "Value": "orchestrator"
+       }
+      ],
+      "Essential": false,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "/probe.sh"
+       ],
+       "Interval": 10,
+       "Retries": 3,
+       "StartPeriod": 60,
+       "Timeout": 5
+      },
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "datadog-agent",
+      "PortMappings": [
+       {
+        "ContainerPort": 8125,
+        "HostPort": 8125,
+        "Protocol": "udp"
+       },
+       {
+        "ContainerPort": 8126,
+        "HostPort": 8126,
+        "Protocol": "tcp"
+       }
+      ]
+     },
+     {
+      "DockerLabels": {
+       "tags.datadoghq.com/env": "prod"
+      },
+      "Environment": [
+       {
+        "Name": "DD_DOGSTATSD_URL",
+        "Value": "unix:///var/run/datadog/dsd.socket"
+       },
+       {
+        "Name": "DD_TRACE_AGENT_URL",
+        "Value": "unix:///var/run/datadog/apm.socket"
+       },
+       {
+        "Name": "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       }
+      ],
+      "Essential": true,
+      "Image": "amazon/amazon-ecs-sample",
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "ecsSample"
+     },
+     {
+      "DockerLabels": {
+       "tags.datadoghq.com/env": "prod"
+      },
+      "Environment": [
+       {
+        "Name": "DD_DOGSTATSD_URL",
+        "Value": "unix:///var/run/datadog/dsd.socket"
+       },
+       {
+        "Name": "DD_TRACE_AGENT_URL",
+        "Value": "unix:///var/run/datadog/apm.socket"
+       },
+       {
+        "Name": "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       }
+      ],
+      "Essential": true,
+      "Image": "ecs-sample-image/name-server",
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "nameServer"
+     },
+     {
+      "DockerLabels": {
+       "tags.datadoghq.com/env": "prod"
+      },
+      "Environment": [
+       {
+        "Name": "DD_DOGSTATSD_URL",
+        "Value": "unix:///var/run/datadog/dsd.socket"
+       },
+       {
+        "Name": "DD_TRACE_AGENT_URL",
+        "Value": "unix:///var/run/datadog/apm.socket"
+       },
+       {
+        "Name": "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       }
+      ],
+      "Essential": true,
+      "Image": "ecs-sample-image/hello-server",
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "helloServer"
+     }
+    ],
+    "Cpu": "256",
+    "Family": "ecsfargatestacktaskDefinition95B550F2",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "taskDefinitionTaskRole3D7BF1E0",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "Name": "dd-sockets"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/taskDefinition/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "vX:XXXXXX:XXXXXX"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-fargate-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
