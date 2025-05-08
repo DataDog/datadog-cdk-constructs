@@ -47,6 +47,16 @@ export class ExampleStack extends Stack {
       // this value will be overwritten by the task definition
       environment: { DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED: 'true' },
     });
+
+    // Example Task Definition
+    const exampleTaskDefinition = ecsDatadog.fargateTaskDefinition(
+      this, 'exampleTaskDefinition',
+      { memoryLimitMiB: 512, cpu: 256 },
+      { apm: { isEnabled: false } },
+    );
+    exampleTaskDefinition.addContainer('ecsExample', {
+      image: ecs.ContainerImage.fromRegistry('amazon/amazon-ecs-sample'),
+    });
   }
 }
 
