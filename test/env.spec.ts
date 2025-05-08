@@ -14,6 +14,7 @@ import {
   ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
   SITE_URL_ENV_VAR,
   API_KEY_ENV_VAR,
+  filterAndFormatGitRemote,
 } from "../src/index";
 
 const NODE_LAYER_VERSION = 91;
@@ -671,5 +672,23 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
         },
       },
     });
+  });
+});
+
+describe("filterAndFormatGitRemote", () => {
+  it("should correctly format a Github repository URL", () => {
+    expect(filterAndFormatGitRemote("https://github.com/username/repository")).toBe("github.com/username/repository");
+    expect(filterAndFormatGitRemote("git@github.com:username/repository")).toBe("github.com/username/repository");
+    expect(filterAndFormatGitRemote("https://user:pass@github.com/username/repository")).toBe(
+      "github.com/username/repository",
+    );
+  });
+
+  it("should correctly format a Gitlab repository URL", () => {
+    expect(filterAndFormatGitRemote("https://gitlab.com/username/repository")).toBe("gitlab.com/username/repository");
+    expect(filterAndFormatGitRemote("git@gitlab.com:username/repository")).toBe("gitlab.com/username/repository");
+    expect(filterAndFormatGitRemote("https://user:pass@gitlab.com/username/repository")).toBe(
+      "gitlab.com/username/repository",
+    );
   });
 });
