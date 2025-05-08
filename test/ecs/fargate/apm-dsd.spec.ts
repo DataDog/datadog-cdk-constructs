@@ -243,12 +243,48 @@ describe("DatadogECSFargateTaskDefinition", () => {
 
   describe("DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED env var", () => {
     const cases = [
-      { isEnabled: true, traceInferredProxyServices: true, shouldSet: true, expectedValue: "true", desc: "isEnabled=true, traceInferredProxyServices=true" },
-      { isEnabled: true, traceInferredProxyServices: false, shouldSet: true, expectedValue: "false", desc: "isEnabled=true, traceInferredProxyServices=false" },
-      { isEnabled: true, traceInferredProxyServices: undefined, shouldSet: false, expectedValue: undefined, desc: "isEnabled=true, traceInferredProxyServices=undefined" },
-      { isEnabled: false, traceInferredProxyServices: true, shouldSet: false, expectedValue: undefined, desc: "isEnabled=false, traceInferredProxyServices=true" },
-      { isEnabled: false, traceInferredProxyServices: false, shouldSet: false, expectedValue: undefined, desc: "isEnabled=false, traceInferredProxyServices=false" },
-      { isEnabled: false, traceInferredProxyServices: undefined, shouldSet: false, expectedValue: undefined, desc: "isEnabled=false, traceInferredProxyServices=undefined" },
+      {
+        isEnabled: true,
+        traceInferredProxyServices: true,
+        shouldSet: true,
+        expectedValue: "true",
+        desc: "isEnabled=true, traceInferredProxyServices=true",
+      },
+      {
+        isEnabled: true,
+        traceInferredProxyServices: false,
+        shouldSet: true,
+        expectedValue: "false",
+        desc: "isEnabled=true, traceInferredProxyServices=false",
+      },
+      {
+        isEnabled: true,
+        traceInferredProxyServices: undefined,
+        shouldSet: false,
+        expectedValue: undefined,
+        desc: "isEnabled=true, traceInferredProxyServices=undefined",
+      },
+      {
+        isEnabled: false,
+        traceInferredProxyServices: true,
+        shouldSet: false,
+        expectedValue: undefined,
+        desc: "isEnabled=false, traceInferredProxyServices=true",
+      },
+      {
+        isEnabled: false,
+        traceInferredProxyServices: false,
+        shouldSet: false,
+        expectedValue: undefined,
+        desc: "isEnabled=false, traceInferredProxyServices=false",
+      },
+      {
+        isEnabled: false,
+        traceInferredProxyServices: undefined,
+        shouldSet: false,
+        expectedValue: undefined,
+        desc: "isEnabled=false, traceInferredProxyServices=undefined",
+      },
     ];
 
     test.each(cases)(
