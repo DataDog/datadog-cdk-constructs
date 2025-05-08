@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.3.0...v2-2.4.0) (2025-05-08)
+
+
+### Bug Fixes
+
+* normalise repository_url tag for gitlab.com ([#425](https://github.com/DataDog/datadog-cdk-constructs/issues/425)) ([2bad0f8](https://github.com/DataDog/datadog-cdk-constructs/commit/2bad0f8548bf061f7f73b9e642be3b2fef130fc1))
+
 ## [2.3.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.2.0...v2-2.3.0) (2025-04-15)
 
 
