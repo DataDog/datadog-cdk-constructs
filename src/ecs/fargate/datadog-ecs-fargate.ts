@@ -199,6 +199,12 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       container.addEnvironment("DD_AGENT_HOST", "127.0.0.1");
     }
 
+    // APM configuration
+    const traceInferredServices = this.datadogProps.apm!.traceInferredProxyServices;
+    if (this.datadogProps.apm!.isEnabled && traceInferredServices !== undefined) {
+      container.addEnvironment("DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED", traceInferredServices.toString());
+    }
+
     // CWS configuration
     if (this.datadogProps.cws!.isEnabled && props.entryPoint !== undefined) {
       container.addMountPoints({

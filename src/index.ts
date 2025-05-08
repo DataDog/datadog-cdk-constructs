@@ -28,3 +28,5 @@ export {
   FluentbitConfig,
   FargateCWSFeatureConfig,
 } from "./ecs/fargate/interfaces";
+
+export * from "./apigateway";

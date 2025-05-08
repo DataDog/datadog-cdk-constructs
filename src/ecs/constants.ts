@@ -19,6 +19,7 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
   apm: {
     isEnabled: true,
     isSocketEnabled: true,
+    traceInferredProxyServices: false,
   },
 
   dogstatsd: {
