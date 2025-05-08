@@ -34,10 +34,11 @@ export class ExampleStack extends Stack {
     });
 
     // Server Task Definition
-    const serverTaskDefinition = ecsDatadog.fargateTaskDefinition(this, 'serverTaskDefinition', {
-      memoryLimitMiB: 512,
-      cpu: 256,
-    });
+    const serverTaskDefinition = ecsDatadog.fargateTaskDefinition(
+      this, 'serverTaskDefinition',
+      { memoryLimitMiB: 512, cpu: 256 },
+      { apm: { traceInferredProxyServices: false } },
+    );
     serverTaskDefinition.addContainer('nameServer', {
       image: ecs.ContainerImage.fromRegistry('ecs-sample-image/name-server'),
     });

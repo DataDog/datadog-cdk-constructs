@@ -310,7 +310,7 @@
        },
        {
         "Name": "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
-        "Value": "true"
+        "Value": "false"
        },
        {
         "Name": "DD_ENV",
@@ -343,7 +343,7 @@
        },
        {
         "Name": "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
-        "Value": "true"
+        "Value": "false"
        },
        {
         "Name": "DD_ENV",
