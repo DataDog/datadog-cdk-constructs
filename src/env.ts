@@ -20,6 +20,8 @@ export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
 export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
 export const ENABLE_DD_LOGS_ENV_VAR = "DD_SERVERLESS_LOGS_ENABLED";
 export const CAPTURE_LAMBDA_PAYLOAD_ENV_VAR = "DD_CAPTURE_LAMBDA_PAYLOAD";
+export const DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING = "DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING";
+export const DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING = "DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING";
 export const DD_ENV_ENV_VAR = "DD_ENV";
 export const DD_SERVICE_ENV_VAR = "DD_SERVICE";
 export const DD_VERSION_ENV_VAR = "DD_VERSION";
@@ -127,6 +129,13 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
   }
   lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
   lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
+  if (baseProps.captureCloudServicePayload) {
+    lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
+    lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
+  } else {
+    lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
+    lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
+  }
   if (baseProps.logLevel) {
     lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
   }
