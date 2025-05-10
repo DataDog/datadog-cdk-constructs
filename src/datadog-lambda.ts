@@ -349,6 +349,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   const logLevel = props.logLevel;
   let enableDatadogLogs = props.enableDatadogLogs;
   let captureLambdaPayload = props.captureLambdaPayload;
+  let captureCloudServicePayload = props.captureCloudServicePayload;
   let sourceCodeIntegration = props.sourceCodeIntegration;
   let redirectHandler = props.redirectHandler;
   let grantSecretReadAccess = props.grantSecretReadAccess;
@@ -392,6 +393,12 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     );
     captureLambdaPayload = DatadogLambdaDefaultProps.captureLambdaPayload;
   }
+  if (captureCloudServicePayload === undefined) {
+    log.debug(
+      `No value provided for captureCloudServicePayload, default to ${DatadogLambdaDefaultProps.captureCloudServicePayload}`,
+    );
+    captureCloudServicePayload = DatadogLambdaDefaultProps.captureCloudServicePayload;
+  }
   if (sourceCodeIntegration === undefined) {
     log.debug(
       `No value provided for sourceCodeIntegration, default to ${DatadogLambdaDefaultProps.sourceCodeIntegration}`,
@@ -420,6 +427,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     logLevel: logLevel,
     enableDatadogLogs: enableDatadogLogs,
     captureLambdaPayload: captureLambdaPayload,
+    captureCloudServicePayload: captureCloudServicePayload,
     sourceCodeIntegration: sourceCodeIntegration,
     redirectHandler: redirectHandler,
     grantSecretReadAccess: grantSecretReadAccess,

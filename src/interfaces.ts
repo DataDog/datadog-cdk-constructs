@@ -37,6 +37,7 @@ export interface DatadogLambdaProps {
   readonly logLevel?: string;
   readonly enableDatadogLogs?: boolean;
   readonly captureLambdaPayload?: boolean;
+  readonly captureCloudServicePayload?: boolean;
   readonly env?: string;
   readonly service?: string;
   readonly version?: string;
@@ -62,6 +63,7 @@ export interface DatadogLambdaStrictProps {
   readonly addLayers: boolean;
   readonly enableDatadogLogs: boolean;
   readonly captureLambdaPayload: boolean;
+  readonly captureCloudServicePayload: boolean;
   readonly injectLogContext: boolean;
   readonly enableDatadogTracing: boolean;
   readonly enableDatadogASM: boolean;

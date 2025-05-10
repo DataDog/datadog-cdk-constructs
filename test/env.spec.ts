@@ -9,6 +9,8 @@ import {
   LOG_LEVEL_ENV_VAR,
   ENABLE_DD_LOGS_ENV_VAR,
   CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
+  DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING,
+  DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING,
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
   ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
@@ -52,6 +54,8 @@ describe("applyEnvVariables", () => {
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
         },
       },
@@ -87,6 +91,8 @@ describe("applyEnvVariables", () => {
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           ["DD_LOGS_INJECTION"]: "true",
           ["DD_LOG_LEVEL"]: "debug",
         },
@@ -123,6 +129,8 @@ describe("applyEnvVariables", () => {
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
         },
       },
     });
@@ -165,6 +173,8 @@ describe("setDDEnvVariables", () => {
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           ["DD_LOGS_INJECTION"]: "true",
           ["DD_LOG_LEVEL"]: "debug",
           ["DD_COLD_START_TRACING"]: "false",
@@ -205,6 +215,8 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -233,6 +245,8 @@ describe("ENABLE_DD_TRACING_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -267,6 +281,8 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -296,6 +312,8 @@ describe("ENABLE_XRAY_TRACE_MERGING_ENV_VAR", () => {
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -331,6 +349,8 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -362,6 +382,8 @@ describe("INJECT_LOG_CONTEXT_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -397,6 +419,8 @@ describe("LOG_LEVEL_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [LOG_LEVEL_ENV_VAR]: "debug",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -431,6 +455,8 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "false",
         },
@@ -459,6 +485,8 @@ describe("ENABLE_DD_LOGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -492,6 +520,8 @@ describe("DD_TAGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [DD_TAGS]: "git.commit.sha:1234,git.repository_url:1234",
@@ -528,6 +558,8 @@ describe("DD_TAGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
@@ -567,6 +599,8 @@ describe("DD_TAGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [DD_TAGS]: "key:value,git.commit.sha:1234,git.repository_url:1234",
@@ -603,6 +637,8 @@ describe("DD_TAGS_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -636,6 +672,8 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
@@ -667,6 +705,76 @@ describe("CAPTURE_LAMBDA_PAYLOAD_ENV_VAR", () => {
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+});
+
+describe("captureCloudServicePayload", () => {
+  it("sets DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING and DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING to 'all' when captureCloudServicePayload is set to true", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      captureCloudServicePayload: true,
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "all",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "all",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+
+  it("sets DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING and DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING to '$.*' when captureCloudServicePayload is set to true", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      captureCloudServicePayload: undefined,
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
         },
