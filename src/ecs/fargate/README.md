@@ -35,7 +35,7 @@ go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
 ```typescript
 const ecsDatadog = new DatadogECSFargate({
   // One of the following 3 apiKey params are required
-  apiKey: <STRING>
+  apiKey: <STRING>,
   apiKeySecret: <SECRET>,
   apiKeySecretArn: <STRING>,
   registry: <STRING>,
@@ -52,10 +52,10 @@ const ecsDatadog = new DatadogECSFargate({
   dogstatsd: <DOGSTATSD_FEATURE_CONFIG>,
   apm: <APM_FEATURE_CONFIG>,
   cws: <CWS_FEATURE_CONFIG>,
-  logCollection: <LOG_COLLECTION_FEATURE_CONFIG>
-  env: <STRING>
-  service: <STRING>
-  version: <STRING>
+  logCollection: <LOG_COLLECTION_FEATURE_CONFIG>,
+  env: <STRING>,
+  service: <STRING>,
+  version: <STRING>,
 });
 const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(
   this,
@@ -179,10 +179,11 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 
 ### APMFeatureConfig
 
-| Property          | Type      | Description                                                                       |
-| ----------------- | --------- | --------------------------------------------------------------------------------- |
-| `isEnabled`       | `boolean` | Enables APM.                                                                      |
-| `isSocketEnabled` | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false. |
+| Property                     | Type      | Description                                                                                                                                                                                      |
+| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isEnabled`                  | `boolean` | Enables APM.                                                                                                                                                                                     |
+| `isSocketEnabled`            | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false.                                                                                                                |
+| `traceInferredProxyServices` | `boolean` | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
 
 ### CWSFeatureConfig
 
