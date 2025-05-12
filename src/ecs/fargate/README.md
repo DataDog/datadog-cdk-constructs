@@ -52,7 +52,7 @@ const ecsDatadog = new DatadogECSFargate({
   dogstatsd: <DOGSTATSD_FEATURE_CONFIG>,
   apm: <APM_FEATURE_CONFIG>,
   cws: <CWS_FEATURE_CONFIG>,
-  logCollection: <LOG_COLLECTION_FEATURE_CONFIG>
+  logCollection: <LOG_COLLECTION_FEATURE_CONFIG>,
   env: <STRING>,
   service: <STRING>,
   version: <STRING>,
@@ -170,20 +170,20 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 
 ### DogstatsdFeatureConfig
 
-| Property                     | Type          | Description                                                                                                                                                                                      |
-| ---------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `isEnabled`                  | `boolean`     | Enables DogStatsD.                                                                                                                                                                               |
-| `isOriginDetectionEnabled`   | `boolean`     | Enables DogStatsD origin detection.                                                                                                                                                              |
-| `dogstatsdCardinality`       | `Cardinality` | Controls the cardinality of custom DogStatsD metrics.                                                                                                                                            |
-| `isSocketEnabled`            | `boolean`     | Enables DogStatsD traffic over Unix Domain Socket. Falls back to UDP when false.                                                                                                                 |
-| `traceInferredProxyServices` | `boolean`     | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
+| Property                   | Type          | Description                                                                      |
+| -------------------------- | ------------- | -------------------------------------------------------------------------------- |
+| `isEnabled`                | `boolean`     | Enables DogStatsD.                                                               |
+| `isOriginDetectionEnabled` | `boolean`     | Enables DogStatsD origin detection.                                              |
+| `dogstatsdCardinality`     | `Cardinality` | Controls the cardinality of custom DogStatsD metrics.                            |
+| `isSocketEnabled`          | `boolean`     | Enables DogStatsD traffic over Unix Domain Socket. Falls back to UDP when false. |
 
 ### APMFeatureConfig
 
-| Property          | Type      | Description                                                                       |
-| ----------------- | --------- | --------------------------------------------------------------------------------- |
-| `isEnabled`       | `boolean` | Enables APM.                                                                      |
-| `isSocketEnabled` | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false. |
+| Property                     | Type      | Description                                                                                                                                                                                      |
+| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isEnabled`                  | `boolean` | Enables APM.                                                                                                                                                                                     |
+| `isSocketEnabled`            | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false.                                                                                                                |
+| `traceInferredProxyServices` | `boolean` | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
 
 ### CWSFeatureConfig
 
