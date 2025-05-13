@@ -133,7 +133,7 @@ export class DatadogLambda extends Construct {
         );
         if (errors.length > 0) {
           log.warn(
-            `Failed to apply extention layer to the Lambda function ${lambdaFunction.functionName}. Skipping instrumenting it.`,
+            `Failed to apply extension layer to the Lambda function ${lambdaFunction.functionName}. Skipping instrumenting it.`,
           );
           continue;
         }
@@ -309,7 +309,9 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
       props.apiKmsKey === undefined &&
       !apiKeyArnOverride
     ) {
-      throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
+      throw new Error(
+        "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      );
     }
   }
   if (
@@ -389,7 +391,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   }
   if (captureLambdaPayload === undefined) {
     log.debug(
-      `No value provided for captureLambdaPayload, default to ${DatadogLambdaDefaultProps.captureLambdaPayload}`,
+      `No value provided for captureLambdaPayload, defaulting to ${DatadogLambdaDefaultProps.captureLambdaPayload}`,
     );
     captureLambdaPayload = DatadogLambdaDefaultProps.captureLambdaPayload;
   }
@@ -401,19 +403,19 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   }
   if (sourceCodeIntegration === undefined) {
     log.debug(
-      `No value provided for sourceCodeIntegration, default to ${DatadogLambdaDefaultProps.sourceCodeIntegration}`,
+      `No value provided for sourceCodeIntegration, defaulting to ${DatadogLambdaDefaultProps.sourceCodeIntegration}`,
     );
     sourceCodeIntegration = DatadogLambdaDefaultProps.sourceCodeIntegration;
   }
 
   if (redirectHandler === undefined) {
-    log.debug(`No value provided for redirectHandler, default to ${DatadogLambdaDefaultProps.redirectHandler}`);
+    log.debug(`No value provided for redirectHandler, defaulting to ${DatadogLambdaDefaultProps.redirectHandler}`);
     redirectHandler = DatadogLambdaDefaultProps.redirectHandler;
   }
 
   if (grantSecretReadAccess === undefined) {
     log.debug(
-      `No value provided for grantSecretReadAccess, default to ${DatadogLambdaDefaultProps.grantSecretReadAccess}`,
+      `No value provided for grantSecretReadAccess, defaulting to ${DatadogLambdaDefaultProps.grantSecretReadAccess}`,
     );
     grantSecretReadAccess = DatadogLambdaDefaultProps.grantSecretReadAccess;
   }
