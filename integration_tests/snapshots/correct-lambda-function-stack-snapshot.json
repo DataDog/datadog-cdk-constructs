@@ -49,6 +49,8 @@
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",
       "DD_CAPTURE_LAMBDA_PAYLOAD": "false",
+      "DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING": "$.*",
+      "DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING": "$.*",
       "DD_FLUSH_TO_LOG": "false",
       "DD_SITE": "datadoghq.com",
       "DD_API_KEY": "1234"

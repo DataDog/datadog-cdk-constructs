@@ -36,6 +36,7 @@ export const DatadogLambdaDefaultProps = {
   injectLogContext: true,
   enableDatadogLogs: true,
   captureLambdaPayload: false,
+  captureCloudServicePayload: false,
   sourceCodeIntegration: true,
   redirectHandler: true,
   grantSecretReadAccess: true,
