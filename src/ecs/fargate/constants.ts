@@ -9,6 +9,7 @@
 import { Duration } from "aws-cdk-lib";
 import { DatadogECSFargateProps, DatadogECSLogDriverProps, LoggingType } from "./interfaces";
 import { DatadogEcsBaseDefaultProps } from "../constants";
+import { FirelensConfigFileType } from "aws-cdk-lib/aws-ecs";
 
 /**
  * Default environment variables for the Agent in Fargate Tasks
@@ -52,9 +53,22 @@ export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
       },
       registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
       imageVersion: "stable",
+      firelensOptions: {
+        isParseJson: false,
+      },
     },
   },
   cws: {
     isEnabled: false,
   },
 };
+
+/**
+ * Config file type for the Firelens configuration parsing JSON
+ */
+export const ParseJsonFirelensConfigFileType = FirelensConfigFileType.FILE;
+
+/**
+ * Config file path for the Firelens configuration parsing JSON
+ */
+export const ParseJsonFirelensConfigFileValue = "/fluent-bit/configs/parse-json.conf";

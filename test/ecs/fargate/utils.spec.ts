@@ -2,6 +2,7 @@ import { LoggingType } from "../../../src/ecs/fargate/interfaces";
 import { validateECSFargateProps } from "../../../src/ecs/fargate/utils";
 
 describe("validateECSFargateProps", () => {
+  // no-dd-sa:typescript-best-practices/no-explicit-any
   let props: any;
 
   beforeEach(() => {
@@ -14,6 +15,7 @@ describe("validateECSFargateProps", () => {
             registry: "public.ecr.aws/aws-observability/aws-for-fluent-bit",
             imageVersion: "stable",
           },
+          firelensOptions: {},
         },
       },
       cws: {
@@ -39,6 +41,11 @@ describe("validateECSFargateProps", () => {
 
   it("should throw an error if logDriverConfig is undefined when logging is enabled", () => {
     delete props.logCollection.fluentbitConfig.logDriverConfig;
+    expect(() => validateECSFargateProps(props)).toThrow();
+  });
+
+  it("should throw an error if logDriverConfig is undefined when logging is enabled", () => {
+    delete props.logCollection.fluentbitConfig.firelensOptions;
     expect(() => validateECSFargateProps(props)).toThrow();
   });
 

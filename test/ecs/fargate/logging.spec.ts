@@ -213,4 +213,75 @@ describe("DatadogECSFargateLogging", () => {
       ]),
     });
   });
+
+  it("configures the log container with json formatting", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+        fluentbitConfig: {
+          firelensOptions: {
+            isParseJson: true,
+            configFileValue: "this/value/should/be/overridden.conf",
+          }
+        },
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the log container is configured with the custom cpu and memory values
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.logContainer!.containerName,
+          FirelensConfiguration: {
+            Type: "fluentbit",
+            Options: {
+              "enable-ecs-log-metadata": "true",
+              "config-file-type": "file",
+              "config-file-value": "/fluent-bit/configs/parse-json.conf",
+            }
+          }
+        }),
+      ]),
+    });
+  });
+
+  it("configures the log container with firelensOptions", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+        fluentbitConfig: {
+          firelensOptions: {
+            isParseJson: false,
+            configFileType: ecsDatadog.ParseJsonFirelensConfigFileType,
+            configFileValue: "some/other/value.conf",
+          }
+        },
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the log container is configured with the custom cpu and memory values
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.logContainer!.containerName,
+          FirelensConfiguration: {
+            Type: "fluentbit",
+            Options: {
+              "enable-ecs-log-metadata": "true",
+              "config-file-type": "file",
+              "config-file-value": "some/other/value.conf",
+            }
+          }
+        }),
+      ]),
+    });
+  });
 });

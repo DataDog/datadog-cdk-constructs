@@ -14,6 +14,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { DatadogECSFargate, DatadogECSFargateTaskDefinition } from "../../ecs/fargate/datadog-ecs-fargate";
 
+// no-dd-sa:typescript-best-practices/no-unnecessary-class
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -104,6 +105,7 @@ export class ExampleStack extends Stack {
       ],
     });
 
+    // no-dd-sa:typescript-code-style/no-new
     new ecs.FargateService(this, "NginxService", {
       serviceName: "NginxService",
       cluster,

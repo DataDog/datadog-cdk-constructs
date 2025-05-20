@@ -282,9 +282,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       essential: fluentbitConfig!.isLogRouterEssential,
       firelensConfig: {
         type: ecs.FirelensLogRouterType.FLUENTBIT,
-        options: {
-          enableECSLogMetadata: true,
-        },
+        options: fluentbitConfig!.firelensOptions,
       },
       healthCheck: fluentbitConfig!.logRouterHealthCheck,
     });

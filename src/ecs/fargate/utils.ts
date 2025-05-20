@@ -8,6 +8,7 @@
 
 import log from "loglevel";
 import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } from "./interfaces";
+import { ParseJsonFirelensConfigFileType, ParseJsonFirelensConfigFileValue } from "./constants";
 
 export function mergeFargateProps(
   lowerPrecedence: DatadogECSFargateProps,
@@ -30,6 +31,14 @@ export function mergeFargateProps(
     ...lowerPrecedence.dogstatsd,
     ...higherPrecedence.dogstatsd,
   };
+  const firelensOptions = {
+    ...lowerPrecedence.logCollection?.fluentbitConfig?.firelensOptions,
+    ...higherPrecedence.logCollection?.fluentbitConfig?.firelensOptions,
+  };
+  if (firelensOptions.isParseJson === true) {
+    firelensOptions.configFileType = ParseJsonFirelensConfigFileType;
+    firelensOptions.configFileValue = ParseJsonFirelensConfigFileValue;
+  }
   newProps.logCollection = {
     ...lowerPrecedence.logCollection,
     ...higherPrecedence.logCollection,
@@ -40,6 +49,7 @@ export function mergeFargateProps(
         ...lowerPrecedence.logCollection?.fluentbitConfig?.logDriverConfig,
         ...higherPrecedence.logCollection?.fluentbitConfig?.logDriverConfig,
       },
+      firelensOptions: firelensOptions,
     },
   };
   newProps.cws = {
@@ -73,6 +83,9 @@ export function validateECSFargateProps(props: DatadogECSFargateInternalProps): 
       }
       if (props.logCollection.fluentbitConfig.logDriverConfig === undefined) {
         throw new Error("The `logDriverConfig` property must be defined when logging enabled.");
+      }
+      if (props.logCollection.fluentbitConfig.firelensOptions === undefined) {
+        throw new Error("The `firelensOptions` property must be defined when logging enabled.");
       }
     }
   }
