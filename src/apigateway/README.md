@@ -26,12 +26,12 @@ const ecsDatadog = new DatadogECSFargate({
 
 3. Use a supported version of the Datadog tracer:
 
-| Tracer         | Minimum Version |
-| -------------- | -------------- |
-| dd-trace-js 5.x| 5.26.0         |
-| dd-trace-js 4.x| 4.50.0         |
-| dd-trace-go    | 1.72.1         |
-| dd-trace-py    | 3.1.0          |
+| Tracer          | Minimum Version |
+| --------------- | --------------- |
+| dd-trace-js 5.x | 5.26.0          |
+| dd-trace-js 4.x | 4.50.0          |
+| dd-trace-go     | 1.72.1          |
+| dd-trace-py     | 3.1.0           |
 
 ## Important Notes
 
@@ -61,6 +61,7 @@ const ecsDatadog = new DatadogECSFargate({
    Any sampling rules based on `resource_name` for the original web application now need to be updated for the resource name of the API Gateway service.
 
 4. The instrumentation adds several headers to track:
+
    - Request timing
    - Domain information
    - HTTP method
@@ -104,6 +105,7 @@ const api = new apigateway.RestApi(this, "MyApi", {
 ```
 
 Note: Resources with custom integrations will not inherit the default Datadog instrumentation. For these resources, you must either:
+
 - Add the instrumentation headers manually, or
 - Follow the per-resource integration steps in the next section
 
@@ -114,9 +116,9 @@ Alternatively, you can manually add the instrumentation to each resource when ca
 ```typescript
 api.root.addMethod("ANY", ddIntegration); // Instrumentation applied here
 const books = api.root.addResource("books");
-books.addMethod("ANY", ddIntegration);    // Instrumentation applied here
+books.addMethod("ANY", ddIntegration); // Instrumentation applied here
 const book = books.addResource("{id}");
-book.addMethod("ANY", ddIntegration);     // Instrumentation applied here
+book.addMethod("ANY", ddIntegration); // Instrumentation applied here
 ```
 
 ## API Gateway v2 (HTTP APIs)
@@ -127,31 +129,29 @@ You can add Datadog instrumentation by using the `DatadogAPIGatewayV2ParameterMa
 
 ```typescript
 // datadog integration definition
-const ddIntegration = new apigatewayv2_integrations.HttpUrlIntegration(
-  'HttpUrlIntegration',
-  'https://example.com',
-  { parameterMapping: DatadogAPIGatewayV2ParameterMapping },
-);
+const ddIntegration = new apigatewayv2_integrations.HttpUrlIntegration("HttpUrlIntegration", "https://example.com", {
+  parameterMapping: DatadogAPIGatewayV2ParameterMapping,
+});
 
-const httpApi = new apigatewayv2.HttpApi(this, 'httpApi', {
-  apiName: 'httpApiName',
-  description: 'API Gateway v2 for forwarding requests to example.com',
+const httpApi = new apigatewayv2.HttpApi(this, "httpApi", {
+  apiName: "httpApiName",
+  description: "API Gateway v2 for forwarding requests to example.com",
 });
 
 httpApi.addRoutes({
-  path: '/{proxy+}',
+  path: "/{proxy+}",
   methods: [apigatewayv2.HttpMethod.ANY],
-  integration: ddIntegration,  // Instrumentation applied here
+  integration: ddIntegration, // Instrumentation applied here
 });
 httpApi.addRoutes({
-  path: '/books',
+  path: "/books",
   methods: [apigatewayv2.HttpMethod.ANY],
-  integration: ddIntegration,  // Instrumentation applied here
+  integration: ddIntegration, // Instrumentation applied here
 });
 httpApi.addRoutes({
-  path: '/books/{id}',
+  path: "/books/{id}",
   methods: [apigatewayv2.HttpMethod.ANY],
-  integration: ddIntegration,  // Instrumentation applied here
+  integration: ddIntegration, // Instrumentation applied here
 });
 ```
 
