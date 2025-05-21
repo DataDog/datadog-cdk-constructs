@@ -125,5 +125,5 @@ export interface DatadogFirelensOptions extends FirelensOptions {
   /**
    * Overrides the config file type and value to support JSON parsing.
    */
-  isParseJson?: boolean;
+  readonly isParseJson?: boolean;
 }
