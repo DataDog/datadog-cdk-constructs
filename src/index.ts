@@ -26,6 +26,7 @@ export {
   LoggingType,
   FargateLogCollectionFeatureConfig,
   FluentbitConfig,
+  DatadogFirelensOptions,
   FargateCWSFeatureConfig,
 } from "./ecs/fargate/interfaces";
 

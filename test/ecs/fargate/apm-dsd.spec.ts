@@ -287,41 +287,38 @@ describe("DatadogECSFargateTaskDefinition", () => {
       },
     ];
 
-    test.each(cases)(
-      "should %s",
-      ({ isEnabled, traceInferredProxyServices, shouldSet, expectedValue }) => {
-        const template = createTaskWithApmProps({ isEnabled, traceInferredProxyServices });
-        if (shouldSet) {
-          template.hasResourceProperties("AWS::ECS::TaskDefinition", {
-            ContainerDefinitions: Match.arrayWith([
-              Match.objectLike({
-                Name: "app-container",
-                Environment: Match.arrayWith([
+    test.each(cases)("should %s", ({ isEnabled, traceInferredProxyServices, shouldSet, expectedValue }) => {
+      const template = createTaskWithApmProps({ isEnabled, traceInferredProxyServices });
+      if (shouldSet) {
+        template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+          ContainerDefinitions: Match.arrayWith([
+            Match.objectLike({
+              Name: "app-container",
+              Environment: Match.arrayWith([
+                Match.objectLike({
+                  Name: "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
+                  Value: expectedValue,
+                }),
+              ]),
+            }),
+          ]),
+        });
+      } else {
+        template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+          ContainerDefinitions: Match.arrayWith([
+            Match.objectLike({
+              Name: "app-container",
+              Environment: Match.not(
+                Match.arrayWith([
                   Match.objectLike({
                     Name: "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
-                    Value: expectedValue,
                   }),
                 ]),
-              }),
-            ]),
-          });
-        } else {
-          template.hasResourceProperties("AWS::ECS::TaskDefinition", {
-            ContainerDefinitions: Match.arrayWith([
-              Match.objectLike({
-                Name: "app-container",
-                Environment: Match.not(
-                  Match.arrayWith([
-                    Match.objectLike({
-                      Name: "DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED",
-                    }),
-                  ])
-                ),
-              }),
-            ]),
-          });
-        }
+              ),
+            }),
+          ]),
+        });
       }
-    );
+    });
   });
 });

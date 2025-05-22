@@ -63,6 +63,18 @@
         "Value": "true"
        },
        {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "2.4.0"
+       },
+       {
         "Name": "DD_API_KEY",
         "Value": "exampleApiKey"
        },
@@ -240,6 +252,18 @@
        {
         "Name": "ECS_FARGATE",
         "Value": "true"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "2.4.0"
        },
        {
         "Name": "DD_API_KEY",
@@ -452,6 +476,18 @@
        {
         "Name": "ECS_FARGATE",
         "Value": "true"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "2.4.0"
        },
        {
         "Name": "DD_API_KEY",

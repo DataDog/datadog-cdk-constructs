@@ -203,11 +203,18 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `loggingType`     | `LoggingType`     | Type of log collection.      |
 | `fluentbitConfig` | `FluentbitConfig` | Fluentbit log configuration. |
 
+### LoggingType Enum
+
+| Value       | Description                                                                     |
+| ----------- | ------------------------------------------------------------------------------- |
+| `FLUENTBIT` | Forwarding logs to Datadog using Fluentbit container. Only compatible on Linux. |
+
 ### FluentbitConfig
 
 | Property                       | Type                       | Description                                                                      |
 | ------------------------------ | -------------------------- | -------------------------------------------------------------------------------- |
-| `logDriverConfig`              | `DatadogECSLogDriverProps` | Configuration for the Datadog fluentbit log driver.                              |
+| `logDriverConfig`              | `DatadogECSLogDriverProps` | The configuration for the Datadog fluentbit log driver.                          |
+| `firelensOptions`              | `DatadogFirelensOptions`   | The Firelens configuration on the fluentbit container.                           |
 | `isLogRouterEssential`         | `boolean`                  | Makes the log router essential.                                                  |
 | `isLogRouterDependencyEnabled` | `boolean`                  | Enables the log router health check.                                             |
 | `logRouterHealthCheck`         | `HealthCheck`              | Health check configuration for the log router.                                   |
@@ -215,6 +222,15 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `memoryLimitMiB`               | `number`                   | The amount (in MiB) of memory to present to the Datadog fluent-bit container.    |
 | `registry`                     | `string`                   | The registry to pull the Fluentbit container image from.                         |
 | `imageVersion`                 | `string`                   | The version of the Fluentbit container image to use.                             |
+
+### DatadogFirelensOptions
+
+| Property               | Type                     | Description                                                          |
+| ---------------------- | ------------------------ | -------------------------------------------------------------------- |
+| `enableECSLogMetadata` | `bool`                   | Enable log metadata collection                                       |
+| `configFileType`       | `FirelensConfigFileType` | The file type for custom firelens configuration                      |
+| `configFileValue`      | `string`                 | The file value for custom firelens configuration                     |
+| `isParseJson`          | `bool`                   | Overrides the config file type and value to support JSON log parsing |
 
 ### DatadogECSLogDriverProps
 
@@ -226,12 +242,6 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `serviceName`  | `string` | Service name for Fluentbit.              |
 | `sourceName`   | `string` | Source name for Fluentbit.               |
 | `messageKey`   | `string` | Message key for Fluentbit.               |
-
-### LoggingType Enum
-
-| Value       | Description                                                                     |
-| ----------- | ------------------------------------------------------------------------------- |
-| `FLUENTBIT` | Forwarding logs to Datadog using Fluentbit container. Only compatible on Linux. |
 
 ### Cardinality
 
