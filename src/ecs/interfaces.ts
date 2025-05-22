@@ -157,6 +157,11 @@ export interface APMFeatureConfig {
    * passed from the proxy service to the application.
    */
   readonly traceInferredProxyServices?: boolean;
+  /**
+   * Enables Profile collection.
+   * Requires Datadog APM SSI instrumentation on your application containers.
+   */
+  readonly isProfilingEnabled?: boolean;
 }
 
 /**

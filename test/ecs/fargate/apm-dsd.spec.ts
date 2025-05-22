@@ -169,6 +169,38 @@ describe("DatadogECSFargateTaskDefinition", () => {
     });
   });
 
+  it("should inject DD_PROFILING_ENABLED when profiling is enabled", () => {
+    datadogProps = {
+      ...datadogProps,
+      apm: {
+        isEnabled: true,
+        isProfilingEnabled: true,
+      },
+    };
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    taskDefinition.addContainer("app-container", {
+      containerName: "app-container",
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+      memoryLimitMiB: 512,
+    });
+    const template = Template.fromStack(stack);
+
+    // Validate that the ports are configured on the datadog-agent container
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: "app-container",
+          Environment: Match.arrayWith([
+            Match.objectLike({
+              Name: "DD_PROFILING_ENABLED",
+              Value: "true",
+            }),
+          ]),
+        }),
+      ]),
+    });
+  });
+
   it("should enable origin detection when isOriginDetectionEnabled is true", () => {
     datadogProps = {
       ...datadogProps,
