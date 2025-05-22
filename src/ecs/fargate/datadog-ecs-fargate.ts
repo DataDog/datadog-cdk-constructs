@@ -9,11 +9,10 @@
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import log from "loglevel";
-import { DatadogEcsFargateDefaultProps } from "./constants";
+import { DatadogEcsFargateDefaultProps, EntryPointPrefixCWS } from "./constants";
 import { FargateEnvVarManager } from "./environment";
-import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } from "./interfaces";
+import { DatadogECSFargateProps, LoggingType } from "./interfaces";
 import { mergeFargateProps, validateECSFargateProps } from "./utils";
-import { entryPointPrefixCWS } from "../constants";
 import {
   addCdkConstructVersionTag,
   configureEcsPolicies,
@@ -21,6 +20,7 @@ import {
   isOperatingSystemLinux,
   validateECSBaseProps,
 } from "../utils";
+import { DatadogECSFargateInternalProps } from "./internal.interfaces";
 
 /**
  * The Datadog ECS Fargate construct manages the Datadog
@@ -134,7 +134,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
         instrumentedProps.linuxParameters.addCapabilities(ecs.Capability.SYS_PTRACE);
       }
       if (instrumentedProps.entryPoint !== undefined) {
-        instrumentedProps.entryPoint.unshift(...entryPointPrefixCWS);
+        instrumentedProps.entryPoint.unshift(...EntryPointPrefixCWS);
       } else {
         log.debug("Failed to add CWS entrypoint for container:", id);
       }

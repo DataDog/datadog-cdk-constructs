@@ -3,6 +3,7 @@ import { Template, Match } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import * as ecsDatadog from "../../../src/ecs";
+import { ParseJsonFirelensConfigFileType } from "../../../src/ecs/fargate/constants";
 
 describe("DatadogECSFargateLogging", () => {
   let app: cdk.App;
@@ -257,7 +258,7 @@ describe("DatadogECSFargateLogging", () => {
         fluentbitConfig: {
           firelensOptions: {
             isParseJson: false,
-            configFileType: ecsDatadog.ParseJsonFirelensConfigFileType,
+            configFileType: ParseJsonFirelensConfigFileType,
             configFileValue: "some/other/value.conf",
           },
         },

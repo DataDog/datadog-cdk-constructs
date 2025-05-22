@@ -6,8 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { HealthCheck, Secret, FirelensOptions } from "aws-cdk-lib/aws-ecs";
-import { EnvVarManager } from "../environment";
+import { HealthCheck, FirelensOptions } from "aws-cdk-lib/aws-ecs";
 import { CWSFeatureConfig, DatadogECSBaseProps, LogCollectionFeatureConfig } from "../interfaces";
 
 export interface DatadogECSFargateProps extends DatadogECSBaseProps {
@@ -78,17 +77,6 @@ export interface FluentbitConfig {
    * to the Datadog fluent-bit container.
    */
   readonly memoryLimitMiB?: number;
-}
-
-/**
- * Internal props for the Datadog ECS Fargate construct.
- */
-export interface DatadogECSFargateInternalProps extends DatadogECSFargateProps {
-  readonly envVarManager: EnvVarManager;
-  readonly isLinux: boolean;
-  readonly isSocketRequired: boolean;
-  readonly isProtocolRequired: boolean;
-  readonly datadogSecret?: Secret;
 }
 
 /**

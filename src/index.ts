@@ -18,16 +18,6 @@ export * from "./interfaces";
 export * from "./redirect";
 export * from "./transport";
 
-export * from "./ecs/interfaces";
-export * from "./ecs/fargate/datadog-ecs-fargate";
-export {
-  DatadogECSFargateProps,
-  DatadogECSLogDriverProps,
-  LoggingType,
-  FargateLogCollectionFeatureConfig,
-  FluentbitConfig,
-  DatadogFirelensOptions,
-  FargateCWSFeatureConfig,
-} from "./ecs/fargate/interfaces";
+export * from "./ecs";
 
 export * from "./apigateway";
