@@ -218,6 +218,12 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       });
     }
 
+    if (this.datadogProps.apm!.isEnabled) {
+      if (this.datadogProps.apm!.isProfilingEnabled) {
+        container.addEnvironment("DD_PROFILING_ENABLED", "true");
+      }
+    }
+
     // Universal Service Tagging configuration:
     if (this.datadogProps.env) {
       container.addEnvironment("DD_ENV", this.datadogProps.env);
