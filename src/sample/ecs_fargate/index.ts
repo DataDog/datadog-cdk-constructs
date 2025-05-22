@@ -82,20 +82,23 @@ export class ExampleStack extends Stack {
       memoryLimitMiB: 1024,
     });
 
-    fargateTaskDefinition.addContainer("DatadogDogstatsd", {
-      containerName: "datadog-dogstatsd-app",
+    // Dummy app emitting custom metrics
+    fargateTaskDefinition.addContainer("DummyDogstatsd", {
+      containerName: "dummy-dogstatsd-app",
       image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-dogstatsd:main"),
       essential: false,
     });
 
-    fargateTaskDefinition.addContainer("DatadogAPM", {
-      containerName: "datadog-apm-app",
+    // Dummy app emitting APM traces + logs
+    fargateTaskDefinition.addContainer("DummyAPM", {
+      containerName: "dummy-apm-app",
       image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-tracegen:main"),
       essential: true,
     });
 
-    fargateTaskDefinition.addContainer("DatadogCWS", {
-      containerName: "datadog-cws-app",
+    // Dummy app emitting CWS events + logs
+    fargateTaskDefinition.addContainer("DummyCWS", {
+      containerName: "dummy-cws-app",
       image: ecs.ContainerImage.fromRegistry("public.ecr.aws/ubuntu/ubuntu:22.04_stable"),
       essential: false,
       entryPoint: [
@@ -106,8 +109,8 @@ export class ExampleStack extends Stack {
     });
 
     // no-dd-sa:typescript-code-style/no-new
-    new ecs.FargateService(this, "NginxService", {
-      serviceName: "NginxService",
+    new ecs.FargateService(this, "DatadogMonitoredService", {
+      serviceName: "DatadogMonitoredService",
       cluster,
       taskDefinition: fargateTaskDefinition,
       desiredCount: 1,
@@ -131,8 +134,8 @@ export class ExampleStack extends Stack {
         globalTags: "team:cont-p, owner:container-monitoring",
       },
     );
-    task.addContainer("DatadogDogstatsd", {
-      containerName: "datadog-dogstatsd-app",
+    task.addContainer("DummyDogstatsd", {
+      containerName: "dummy-dogstatsd-app",
       image: ecs.ContainerImage.fromRegistry("ghcr.io/datadog/apps-dogstatsd:main"),
       essential: true,
     });

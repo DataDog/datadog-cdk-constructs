@@ -7,8 +7,8 @@
  */
 
 import log from "loglevel";
-import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } from "./interfaces";
 import { ParseJsonFirelensConfigFileType, ParseJsonFirelensConfigFileValue } from "./constants";
+import { DatadogECSFargateInternalProps, DatadogECSFargateProps, LoggingType } from "./interfaces";
 
 export function mergeFargateProps(
   lowerPrecedence: DatadogECSFargateProps,

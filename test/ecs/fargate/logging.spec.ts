@@ -223,7 +223,7 @@ describe("DatadogECSFargateLogging", () => {
           firelensOptions: {
             isParseJson: true,
             configFileValue: "this/value/should/be/overridden.conf",
-          }
+          },
         },
       },
     };
@@ -242,8 +242,8 @@ describe("DatadogECSFargateLogging", () => {
               "enable-ecs-log-metadata": "true",
               "config-file-type": "file",
               "config-file-value": "/fluent-bit/configs/parse-json.conf",
-            }
-          }
+            },
+          },
         }),
       ]),
     });
@@ -259,7 +259,7 @@ describe("DatadogECSFargateLogging", () => {
             isParseJson: false,
             configFileType: ecsDatadog.ParseJsonFirelensConfigFileType,
             configFileValue: "some/other/value.conf",
-          }
+          },
         },
       },
     };
@@ -278,8 +278,8 @@ describe("DatadogECSFargateLogging", () => {
               "enable-ecs-log-metadata": "true",
               "config-file-type": "file",
               "config-file-value": "some/other/value.conf",
-            }
-          }
+            },
+          },
         }),
       ]),
     });

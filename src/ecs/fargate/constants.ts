@@ -7,9 +7,9 @@
  */
 
 import { Duration } from "aws-cdk-lib";
+import { FirelensConfigFileType } from "aws-cdk-lib/aws-ecs";
 import { DatadogECSFargateProps, DatadogECSLogDriverProps, LoggingType } from "./interfaces";
 import { DatadogEcsBaseDefaultProps } from "../constants";
-import { FirelensConfigFileType } from "aws-cdk-lib/aws-ecs";
 
 /**
  * Default environment variables for the Agent in Fargate Tasks
