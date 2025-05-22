@@ -75,27 +75,36 @@ const ecsDatadog = new DatadogECSFargate({
 
 ## API Gateway v1 (REST APIs)
 
-There are two main ways to implement API Gateway instrumentation:
+There are three main ways to implement API Gateway instrumentation:
 
-### 1. Default Integration (Recommended)
+### 1. RestApi Parameters (Recommended)
 
-You can set up the instrumentation as a default integration when creating your RestApi object. This will automatically apply to all resources in your API unless a resource has a custom integration, in which case the default instrumentation will not be applied.
+This approach adds the necessary Datadog instrumentation headers to your API Gateway request parameters. These parameters will be applied to every resource, independent of any integrations also added.
 
 ```typescript
-// datadog integration definition
+import { DatadogAPIGatewayRequestParameters } from "datadog-cdk-constructs-v2";
+
+const api = new apigateway.RestApi(this, "MyApi", {
+  restApiName: "my-api-gateway",
+  deployOptions: { stageName: "prod" },
+  parameters: DatadogAPIGatewayRequestParameters, // Datadog instrumentation applied here
+});
+```
+
+### 2. Default Integration
+
+You can also set up the instrumentation as a default integration when creating your RestApi object. This will automatically apply to all resources in your API unless a resource has a custom integration, in which case the default instrumentation will not be applied.
+
+```typescript
+import { DatadogAPIGatewayRequestParameters } from "datadog-cdk-constructs-v2";
+
+// Datadog integration definition
 const ddIntegration = new apigateway.Integration({
   type: apigateway.IntegrationType.HTTP_PROXY,
   integrationHttpMethod: "ANY",
   options: {
     connectionType: apigateway.ConnectionType.INTERNET,
-    requestParameters: {
-      "integration.request.header.x-dd-proxy": "'aws-apigateway'",
-      "integration.request.header.x-dd-proxy-request-time-ms": "context.requestTimeEpoch",
-      "integration.request.header.x-dd-proxy-domain-name": "context.domainName",
-      "integration.request.header.x-dd-proxy-httpmethod": "context.httpMethod",
-      "integration.request.header.x-dd-proxy-path": "context.path",
-      "integration.request.header.x-dd-proxy-stage": "context.stage",
-    },
+    requestParameters: DatadogAPIGatewayRequestParameters,
   },
   uri: `http://${loadBalancer.loadBalancerDnsName}`,
 });
@@ -103,30 +112,30 @@ const ddIntegration = new apigateway.Integration({
 const api = new apigateway.RestApi(this, "MyApi", {
   restApiName: "my-api-gateway",
   deployOptions: { stageName: "prod" },
-  defaultIntegration: ddIntegration, // Instrumentation applied here
+  defaultIntegration: ddIntegration, // Datadog instrumentation applied here
 });
 ```
 
 Note: Resources with custom integrations will not inherit the default Datadog instrumentation. For these resources, you must either:
 
 - Add the instrumentation headers manually, or
-- Follow the per-resource integration steps in the next section
+- Follow the per-resource integration steps in the next section.
 
-### 2. Per-Resource Integration
+### 3. Per-Resource Integration
 
-Alternatively, you can manually add the instrumentation to each resource when calling `addMethod`:
+Alternatively, you can manually add the instrumentation to each resource when calling `addMethod`. This is necessary for resources with custom integrations:
 
 ```typescript
-api.root.addMethod("ANY", ddIntegration); // Instrumentation applied here
+api.root.addMethod("ANY", ddIntegration); // Datadog instrumentation applied here
 const books = api.root.addResource("books");
-books.addMethod("ANY", ddIntegration); // Instrumentation applied here
+books.addMethod("ANY", ddIntegration); // Datadog instrumentation applied here
 const book = books.addResource("{id}");
-book.addMethod("ANY", ddIntegration); // Instrumentation applied here
+book.addMethod("ANY", ddIntegration); // Datadog instrumentation applied here
 ```
 
 ## API Gateway v2 (HTTP APIs)
 
-You can add Datadog instrumentation by using the `DatadogAPIGatewayV2ParameterMapping` constant which contains the necessary parameter mappings for tracing.
+You can add Datadog instrumentation by using the `DatadogAPIGatewayV2ParameterMapping` constant, which contains the necessary parameter mappings for tracing.
 
 **Note:** For v2 APIs, `context.requestTimeEpoch` only provides second-level granularity, unlike v1 (REST APIs) which provides millisecond precision. This means the duration of synthetic spans for v2 APIs will be less accurate. While these spans are still valuable for Trace Maps and other attributes/tags, we recommend not relying on their duration values.
 
@@ -144,17 +153,17 @@ const httpApi = new apigatewayv2.HttpApi(this, "httpApi", {
 httpApi.addRoutes({
   path: "/{proxy+}",
   methods: [apigatewayv2.HttpMethod.ANY],
-  integration: ddIntegration, // Instrumentation applied here
+  integration: ddIntegration, // Datadog instrumentation applied here
 });
 httpApi.addRoutes({
   path: "/books",
   methods: [apigatewayv2.HttpMethod.ANY],
-  integration: ddIntegration, // Instrumentation applied here
+  integration: ddIntegration, // Datadog instrumentation applied here
 });
 httpApi.addRoutes({
   path: "/books/{id}",
   methods: [apigatewayv2.HttpMethod.ANY],
-  integration: ddIntegration, // Instrumentation applied here
+  integration: ddIntegration, // Datadog instrumentation applied here
 });
 ```
 
