@@ -4,6 +4,9 @@ Enable Datadog tracing for AWS API Gateway (REST and HTTP APIs) with synthetic s
 
 This directory contains utilities and configurations for instrumenting AWS API Gateway (both v1/REST and v2/HTTP) with Datadog tracing. The instrumentation injects headers into API Gateway integrations, enabling Datadog to trace and monitor your API traffic.
 
+> **⚠️ WARNING:**
+> This instrumentation is **NOT** intended for use with API Gateway endpoints that integrate with AWS Lambda functions. If your API Gateway is fronting a Lambda, use the [Datadog Lambda Layers](https://docs.datadoghq.com/serverless/aws_lambda/installation/) instead. The Lambda Layers provide out-of-the-box instrumentation, including synthetic spans, and applying this instrumentation in addition may result in duplicate or conflicting traces.
+
 ## Overview
 
 API Gateway synthetic spans allow you to track and monitor API requests through your API Gateway endpoints. This instrumentation adds necessary headers to your API Gateway integrations, enabling Datadog to properly trace and monitor your API traffic.
