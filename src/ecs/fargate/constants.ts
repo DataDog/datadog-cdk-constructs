@@ -64,6 +64,11 @@ export const DatadogEcsFargateDefaultProps: DatadogECSFargateProps = {
 };
 
 /**
+ * Default CWS entrypoint prefix for application containers
+ */
+export const EntryPointPrefixCWS = ["/cws-instrumentation-volume/cws-instrumentation", "trace", "--"];
+
+/**
  * Config file type for the Firelens configuration parsing JSON
  */
 export const ParseJsonFirelensConfigFileType = FirelensConfigFileType.FILE;

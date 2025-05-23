@@ -3,6 +3,7 @@ import { Template, Match } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import * as ecsDatadog from "../../../src/ecs";
+import { EntryPointPrefixCWS } from "../../../src/ecs/fargate/constants";
 
 describe("DatadogECSFargateTaskDefinition", () => {
   let app: cdk.App;
@@ -62,7 +63,7 @@ describe("DatadogECSFargateTaskDefinition", () => {
     taskDefinition.addContainer("app-container", containerProps);
 
     // Expected entry point with CWS prefix
-    entryPoint.unshift(...ecsDatadog.entryPointPrefixCWS);
+    entryPoint.unshift(...EntryPointPrefixCWS);
     const template = Template.fromStack(stack);
 
     // Validate that the entry point prefix and volume mount are added

@@ -41,11 +41,6 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
 };
 
 /**
- * Default CWS entrypoint prefix for application containers
- */
-export const entryPointPrefixCWS = ["/cws-instrumentation-volume/cws-instrumentation", "trace", "--"];
-
-/**
  * Valid Datadog site URLs
  */
 export const siteList: string[] = [
