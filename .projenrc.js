@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { awscdk, javascript } = require("projen");
+const { awscdk, javascript, github } = require("projen");
 
 const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs-v2",
@@ -82,6 +82,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
   depsUpgradeOptions: {
     workflowOptions: {
       schedule: javascript.UpgradeDependenciesSchedule.WEEKLY,
+      projenCredentials: github.GithubCredentials.fromApp({
+        appIdSecret: "GH_APP_ID",
+        privateKeySecret: "GH_APP_PRIVATE_KEY",
+      }),
     },
   },
 });
