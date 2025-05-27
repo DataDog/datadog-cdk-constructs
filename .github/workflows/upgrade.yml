@@ -45,6 +45,12 @@ jobs:
       contents: read
     if: ${{ needs.upgrade.outputs.patch_created }}
     steps:
+      - name: Generate token
+        id: generate_token
+        uses: actions/create-github-app-token@3ff1caaa28b64c9cc276ce0a02e2ff584f3900c5
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Download patch
@@ -62,7 +68,7 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
+          token: ${{ steps.generate_token.outputs.token }}
           commit-message: |-
             chore(deps): upgrade dependencies
 
