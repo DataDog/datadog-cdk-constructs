@@ -227,15 +227,15 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     // Universal Service Tagging configuration:
     if (this.datadogProps.env) {
       container.addEnvironment("DD_ENV", this.datadogProps.env);
-      container.addDockerLabel("tags.datadoghq.com/env", this.datadogProps.env);
+      container.addDockerLabel("com.datadoghq.tags.env", this.datadogProps.env);
     }
     if (this.datadogProps.service) {
       container.addEnvironment("DD_SERVICE", this.datadogProps.service);
-      container.addDockerLabel("tags.datadoghq.com/service", this.datadogProps.service);
+      container.addDockerLabel("com.datadoghq.tags.service", this.datadogProps.service);
     }
     if (this.datadogProps.version) {
       container.addEnvironment("DD_VERSION", this.datadogProps.version);
-      container.addDockerLabel("tags.datadoghq.com/version", this.datadogProps.version);
+      container.addDockerLabel("com.datadoghq.tags.version", this.datadogProps.version);
     }
   }
 
