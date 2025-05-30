@@ -72,7 +72,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
-        "Value": "2.5.0"
+        "Value": "X.X.X"
        },
        {
         "Name": "DD_API_KEY",
@@ -263,7 +263,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
-        "Value": "2.5.0"
+        "Value": "X.X.X"
        },
        {
         "Name": "DD_API_KEY",
@@ -487,7 +487,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
-        "Value": "2.5.0"
+        "Value": "X.X.X"
        },
        {
         "Name": "DD_API_KEY",

@@ -152,6 +152,10 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     if [ ! -e "$RAW_CFN_TEMPLATE" ]; then
         touch "$RAW_CFN_TEMPLATE"
     fi
+
+    # Normalize datadog-cdk-constructs version environment variable
+    perl -0777 -i -pe 's/("Name"\s*:\s*"DD_INSTALL_INFO_INSTALLER_VERSION"\s*,\s*\n)([ \t]*"Value"\s*:\s*")[^"]*"/$1$2X.X.X"/g' ${RAW_CFN_TEMPLATE}
+
     # Normalize LambdaVersion IDs
     perl -p -i -e 's/(LambdaVersion.*")/LambdaVersionXXXX"/g' ${RAW_CFN_TEMPLATE}
     # Normalize S3Key timestamps
