@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.4.0...v2-2.5.0) (2025-05-30)
+
+
+### Features
+
+* add captureCloudServicePayload parameter ([#427](https://github.com/DataDog/datadog-cdk-constructs/issues/427)) ([1bf847b](https://github.com/DataDog/datadog-cdk-constructs/commit/1bf847b33a5a94ce9c66f9710b303e2faa8ecccf))
+* ECS Fargate Profiling ([#432](https://github.com/DataDog/datadog-cdk-constructs/issues/432)) ([cf14316](https://github.com/DataDog/datadog-cdk-constructs/commit/cf14316865e38db9c91af38d52f9e3285ef95e35))
+* instrumenting API Gateway inferred spans. ([#426](https://github.com/DataDog/datadog-cdk-constructs/issues/426)) ([8276de1](https://github.com/DataDog/datadog-cdk-constructs/commit/8276de1a6c0ab560c25f10f36955912c866e1315))
+* Support FirelensOption + JSON Logs ([#429](https://github.com/DataDog/datadog-cdk-constructs/issues/429)) ([f264eb6](https://github.com/DataDog/datadog-cdk-constructs/commit/f264eb66f00d37f5164aa0bb7caaa75f5e50c200))
+
+
+### Bug Fixes
+
+* **ECS:** use correct UST docker labels ([#434](https://github.com/DataDog/datadog-cdk-constructs/issues/434)) ([eeef30a](https://github.com/DataDog/datadog-cdk-constructs/commit/eeef30a14f5d303a9cf2f23bd447276583728d25))
+
 ## [2.4.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.3.0...v2-2.4.0) (2025-05-08)
 
 
