@@ -49,13 +49,7 @@
       "error",
       2
     ],
-    "@stylistic/quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
-    ],
+    "@stylistic/quotes": "off",
     "@stylistic/comma-dangle": [
       "error",
       "always-multiline"
