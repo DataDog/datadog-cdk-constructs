@@ -16,7 +16,7 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
 
 1. Your application is instrumented with a [supported Datadog tracer version](#supported-versions-and-frameworks).
 
-1. `DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED` is set to `true` in your application environment. 
+1. `DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED` is set to `true` in your application environment.
    If you're using the Datadog ECS Fargate construct, you can enable this by setting the `traceInferredProxyServices` property in the APM configuration:
 
    ```typescript
@@ -27,15 +27,15 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
        traceInferredProxyServices: true, // this sets DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED=true
      },
    });
-```
+   ```
 
 ### Supported versions and web frameworks
 
-| Runtime | Datadog Tracer | Tracer version | Frameworks |
-| ------- | -------------- | ---------------| ---------- |
-| Node.js | `dd-trace-js` | v4.50.0+ or v5.26.0+ | express, fastify, hapi, koa, microgateway-core, next, paperplane, restify, router, apollo |
-| Go | `dd-trace-go` | v1.72.1+ | chi (v5), httptreemux (v5), echo (v3-v4), go-restful (v3), fiber (v2), gin, gorilla/mux, httprouter, fasthttp (v1), goji (v1), gqlgen |
-| Python | `dd-trace-py` | v3.1.0+ | aiohttp, asgi, bottle, cherrypy, django/djangorestframework, falcon, fastapi, flask, molten, pyramid, sanic, starlette, tornado, wsgi |
+| Runtime | Datadog Tracer | Tracer version       | Frameworks                                                                                                                            |
+| ------- | -------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Node.js | `dd-trace-js`  | v4.50.0+ or v5.26.0+ | express, fastify, hapi, koa, microgateway-core, next, paperplane, restify, router, apollo                                             |
+| Go      | `dd-trace-go`  | v1.72.1+             | chi (v5), httptreemux (v5), echo (v3-v4), go-restful (v3), fiber (v2), gin, gorilla/mux, httprouter, fasthttp (v1), goji (v1), gqlgen |
+| Python  | `dd-trace-py`  | v3.1.0+              | aiohttp, asgi, bottle, cherrypy, django/djangorestframework, falcon, fastapi, flask, molten, pyramid, sanic, starlette, tornado, wsgi |
 
 ## Important Notes
 
