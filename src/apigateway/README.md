@@ -4,11 +4,9 @@ Enable Datadog tracing for AWS API Gateway (REST and HTTP APIs) with synthetic s
 
 This directory contains utilities and configurations for instrumenting AWS API Gateway (both v1/REST and v2/HTTP) with Datadog tracing. The instrumentation injects headers into API Gateway integrations, enabling Datadog to trace and monitor your API traffic.
 
-<div class="alert alert-warning"> <p><strong>Not for Lambda-backed endpoints.</strong><br> If API Gateway fronts an AWS Lambda, use <a href="https://docs.datadoghq.com/serverless/aws_lambda/installation/">Datadog Lambda Layers</a> instead. Applying both mechanisms can create duplicate spans.</p> </div>
-
-## Overview
-
 API Gateway synthetic spans allow you to track and monitor API requests through your API Gateway endpoints. This instrumentation adds necessary headers to your API Gateway integrations, enabling Datadog to properly trace and monitor your API traffic.
+
+<div class="alert alert-warning"> <p><strong>Not for Lambda-backed endpoints.</strong><br> If API Gateway fronts an AWS Lambda, use <a href="https://docs.datadoghq.com/serverless/aws_lambda/installation/">Datadog Lambda Layers</a> instead. Applying both mechanisms can create duplicate spans.</p> </div>
 
 ## Prerequisites
 
@@ -36,39 +34,6 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
 | Node.js | `dd-trace-js`  | v4.50.0+ or v5.26.0+ | express, fastify, hapi, koa, microgateway-core, next, paperplane, restify, router, apollo                                             |
 | Go      | `dd-trace-go`  | v1.72.1+             | chi (v5), httptreemux (v5), echo (v3-v4), go-restful (v3), fiber (v2), gin, gorilla/mux, httprouter, fasthttp (v1), goji (v1), gqlgen |
 | Python  | `dd-trace-py`  | v3.1.0+              | aiohttp, asgi, bottle, cherrypy, django/djangorestframework, falcon, fastapi, flask, molten, pyramid, sanic, starlette, tornado, wsgi |
-
-## Important Notes
-
-1. Head-based sampling is still in effect when using this feature. Any sampling rules in use need to be adjusted for the new root span. The service name must match the API Gateway's name as seen in Datadog.
-
-   Example: If you were using a sampling rule like:
-
-   ```bash
-   DD_TRACE_SAMPLING_RULES='[{"service": "pythonapp", "sample_rate": 0.5}]'
-   ```
-
-   You will need to update your sampling rules:
-
-   - **Option 1:** Change the `service` value to match your API Gateway's name as it appears in Datadog:
-     ```bash
-     DD_TRACE_SAMPLING_RULES='[{"service": "my-api-gateway", "sample_rate": 0.5}]'
-     ```
-   - **Option 2:** Remove the `service` key to apply the rule to all root spans:
-     ```bash
-     DD_TRACE_SAMPLING_RULES='[{"sample_rate": 0.5}]'
-     ```
-
-   Any sampling rules based on `resource_name` for the original web application now need to be updated for the resource name of the API Gateway service.
-
-1. The instrumentation adds several headers to track:
-
-   - Request timing
-   - Domain information
-   - HTTP method
-   - Path
-   - Stage
-
-1. For proper tracing, ensure your backend services are also instrumented with the Datadog tracer.
 
 ## API Gateway v1 (REST APIs)
 
@@ -158,6 +123,39 @@ httpApi.addRoutes({
   integration: ddIntegration, // Datadog instrumentation applied here
 });
 ```
+
+## Important Notes
+
+1. Head-based sampling is still in effect when using this feature. Any sampling rules in use need to be adjusted for the new root span. The service name must match the API Gateway's name as seen in Datadog.
+
+   Example: If you were using a sampling rule like:
+
+   ```bash
+   DD_TRACE_SAMPLING_RULES='[{"service": "pythonapp", "sample_rate": 0.5}]'
+   ```
+
+   You will need to update your sampling rules:
+
+   - **Option 1:** Change the `service` value to match your API Gateway's name as it appears in Datadog:
+     ```bash
+     DD_TRACE_SAMPLING_RULES='[{"service": "my-api-gateway", "sample_rate": 0.5}]'
+     ```
+   - **Option 2:** Remove the `service` key to apply the rule to all root spans:
+     ```bash
+     DD_TRACE_SAMPLING_RULES='[{"sample_rate": 0.5}]'
+     ```
+
+   Any sampling rules based on `resource_name` for the original web application now need to be updated for the resource name of the API Gateway service.
+
+1. The instrumentation adds several headers to track:
+
+   - Request timing
+   - Domain information
+   - HTTP method
+   - Path
+   - Stage
+
+1. For proper tracing, ensure your backend services are also instrumented with the Datadog tracer.
 
 ## References
 
