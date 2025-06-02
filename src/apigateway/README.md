@@ -13,6 +13,7 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
 ## Prerequisites
 
 1. Your application is running a [supported web framework](#supported-versions-and-frameworks).
+
 1. Your application is instrumented with a [supported Datadog tracer version](#supported-versions-and-frameworks).
 
 1. `DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED` is set to `true` in your application environment. 
@@ -28,7 +29,6 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
    });
 ```
 
-
 ### Supported versions and web frameworks
 
 | Runtime | Datadog Tracer | Tracer version | Frameworks |
@@ -39,9 +39,7 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
 
 ## Important Notes
 
-
-
-3. Head-based sampling is still in effect when using this feature. Any sampling rules in use need to be adjusted for the new root span. The service name must match the API Gateway's name as seen in Datadog.
+1. Head-based sampling is still in effect when using this feature. Any sampling rules in use need to be adjusted for the new root span. The service name must match the API Gateway's name as seen in Datadog.
 
    Example: If you were using a sampling rule like:
 
@@ -62,7 +60,7 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
 
    Any sampling rules based on `resource_name` for the original web application now need to be updated for the resource name of the API Gateway service.
 
-4. The instrumentation adds several headers to track:
+1. The instrumentation adds several headers to track:
 
    - Request timing
    - Domain information
@@ -70,7 +68,7 @@ API Gateway synthetic spans allow you to track and monitor API requests through 
    - Path
    - Stage
 
-5. For proper tracing, ensure your backend services are also instrumented with the Datadog tracer.
+1. For proper tracing, ensure your backend services are also instrumented with the Datadog tracer.
 
 ## API Gateway v1 (REST APIs)
 
@@ -114,7 +112,6 @@ const api = new apigateway.RestApi(this, "MyApi", {
   defaultIntegration: ddIntegration, // Datadog instrumentation applied here
 });
 ```
-
 
 ### 3. Per-resource integration
 
@@ -161,53 +158,6 @@ httpApi.addRoutes({
   integration: ddIntegration, // Datadog instrumentation applied here
 });
 ```
-
-## Supported Web Frameworks
-
-### Node.js
-
-- express
-- fastify
-- hapi
-- koa
-- microgateway-core
-- next
-- paperplane
-- restify
-- router
-- apollo
-
-### Go
-
-- chi (v5)
-- dimfeld/httptreemux (v5)
-- echo (v3, v4)
-- emicklei/go-restful (v3)
-- fiber (v2)
-- gin-gonic/gin
-- gorilla/mux
-- julienschmidt/httprouter
-- valyala/fasthttp (v1)
-- zenazn/goji (v1)
-- 99designs/gqlgen
-
-### Python
-
-- aiohttp
-- asgi
-- bottle
-- cherrypy
-- django
-- djangorestframework
-- falcon
-- fastapi
-- flask
-- molten
-- pyramid
-- sanic
-- starlette
-- tornado
-- wsgi
 
 ## References
 
