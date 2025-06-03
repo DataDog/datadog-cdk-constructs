@@ -103,6 +103,7 @@ eslintConfig.addOverride("rules", {
   "@typescript-eslint/explicit-function-return-type": "off",
   "no-console": "off",
   "no-empty": "off",
+  "@stylistic/quotes": "off",
   "comma-dangle": [
     "error",
     {
@@ -120,7 +121,6 @@ project.addGitIgnore("!integration_tests/tsconfig.json");
 // Collapse the generated Go package on GitHub
 project.gitattributes.addAttributes("/dist/go/** linguist-generated");
 
-eslintConfig.addDeletionOverride("rules.quotes");
 /*
 TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
       project.removeScript("<scriptName>") calls once https://github.com/projen/projen/issues/631 is fixed.
