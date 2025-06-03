@@ -92,3 +92,5 @@ jobs:
           author: github-actions <github-actions@github.com>
           committer: github-actions <github-actions@github.com>
           signoff: true
+    environment:
+      name: protected-main-env

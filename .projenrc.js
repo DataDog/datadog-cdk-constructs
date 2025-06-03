@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { awscdk, javascript, github } = require("projen");
+const { awscdk, javascript, github, JsonPatch } = require("projen");
 
 const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs-v2",
@@ -89,6 +89,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
+
+// Use a protected environment for the upgrade workflow to access the environment secrets
+project.github?.tryFindWorkflow("upgrade")?.file?.patch(
+  JsonPatch.add("/jobs/pr/environment", {
+    name: "protected-main-env",
+  }),
+);
+
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
   "plugin:@typescript-eslint/recommended",
