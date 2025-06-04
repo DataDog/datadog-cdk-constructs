@@ -4,7 +4,6 @@ Enable Datadog tracing for AWS API Gateway (REST and HTTP APIs) with synthetic s
 
 This directory contains utilities and configurations for instrumenting AWS API Gateway (both v1/REST and v2/HTTP) with Datadog tracing. The instrumentation injects headers into API Gateway integrations, enabling Datadog to trace and monitor your API traffic.
 
-
 <div class="alert alert-warning"> <p><strong>Not for Lambda-backed endpoints.</strong><br> If API Gateway fronts an AWS Lambda, use <a href="https://docs.datadoghq.com/serverless/aws_lambda/installation/">Datadog Lambda Layers</a> instead. Applying both mechanisms can create duplicate spans.</p> </div>
 
 ## Prerequisites
