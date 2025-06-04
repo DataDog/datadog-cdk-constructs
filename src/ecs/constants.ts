@@ -39,15 +39,3 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
     timeout: Duration.seconds(5),
   },
 };
-
-/**
- * Valid Datadog site URLs
- */
-export const siteList: string[] = [
-  "datadoghq.com",
-  "datadoghq.eu",
-  "us3.datadoghq.com",
-  "us5.datadoghq.com",
-  "ap1.datadoghq.com",
-  "ddog-gov.com",
-];

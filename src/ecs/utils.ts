@@ -12,10 +12,9 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
-import { siteList } from "./constants";
 import { DatadogECSBaseProps } from "./interfaces";
 import * as versionJson from "../../version.json";
-import { TagKeys } from "../constants";
+import { invalidSiteError, siteList, TagKeys } from "../constants";
 
 /**
  * Verifies that the provided props are valid for the Datadog ECS construct.
@@ -32,7 +31,7 @@ export function validateECSBaseProps(props: DatadogECSBaseProps): void {
     !siteList.includes(props.site.toLowerCase()) &&
     !(props.site.startsWith("${Token[") && props.site.endsWith("]}"))
   ) {
-    throw new Error(`Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`);
+    throw new Error(invalidSiteError);
   }
 
   // Agent feature configurations must all be defined
