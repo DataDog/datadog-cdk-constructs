@@ -110,3 +110,18 @@ export const runtimeToLayerName: { [key: string]: string } = {
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];
+
+/**
+ * Valid Datadog site URLs
+ */
+export const siteList: string[] = [
+  "datadoghq.com",
+  "datadoghq.eu",
+  "us3.datadoghq.com",
+  "us5.datadoghq.com",
+  "ap1.datadoghq.com",
+  "ap2.datadoghq.com",
+  "ddog-gov.com",
+];
+
+export const invalidSiteError = `Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`;
