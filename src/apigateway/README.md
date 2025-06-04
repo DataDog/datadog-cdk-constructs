@@ -4,7 +4,6 @@ Enable Datadog tracing for AWS API Gateway (REST and HTTP APIs) with synthetic s
 
 This directory contains utilities and configurations for instrumenting AWS API Gateway (both v1/REST and v2/HTTP) with Datadog tracing. The instrumentation injects headers into API Gateway integrations, enabling Datadog to trace and monitor your API traffic.
 
-API Gateway synthetic spans allow you to track and monitor API requests through your API Gateway endpoints. This instrumentation adds necessary headers to your API Gateway integrations, enabling Datadog to properly trace and monitor your API traffic.
 
 <div class="alert alert-warning"> <p><strong>Not for Lambda-backed endpoints.</strong><br> If API Gateway fronts an AWS Lambda, use <a href="https://docs.datadoghq.com/serverless/aws_lambda/installation/">Datadog Lambda Layers</a> instead. Applying both mechanisms can create duplicate spans.</p> </div>
 
@@ -41,7 +40,7 @@ There are three ways to implement API Gateway instrumentation:
 
 ### 1. RestApi parameters (recommended)
 
-Add Datadog instrumentation headers to your API Gateway request parameters. These parameters are applied to every resource.
+Add Datadog instrumentation headers to your API Gateway request parameters. These parameters apply to every resource.
 
 ```typescript
 import { DatadogAPIGatewayRequestParameters } from "datadog-cdk-constructs-v2";
@@ -94,7 +93,7 @@ book.addMethod("ANY", ddIntegration); // Datadog instrumentation applied here
 
 Add Datadog instrumentation by using the `DatadogAPIGatewayV2ParameterMapping` constant, which contains the necessary parameter mappings for tracing.
 
-<div class="alert alert-info">`context.requestTimeEpoch` on v2 APIs provides only second-level granularity, so the synthetic-span duration is approximate. This does not affect tags, Trace Maps, or span linkage.</div>
+<div class="alert alert-info"> <p><code>context.requestTimeEpoch</code> on v2 APIs provides only second-level granularity, so synthetic span duration is approximate. This does not affect tags, Trace Maps, or span linkage.</p> </div>
 
 ```typescript
 // Datadog integration definition
@@ -124,7 +123,7 @@ httpApi.addRoutes({
 });
 ```
 
-## Important Notes
+## Tracing behavior and configuration notes
 
 1. Head-based sampling is still in effect when using this feature. Any sampling rules in use need to be adjusted for the new root span. The service name must match the API Gateway's name as seen in Datadog.
 
@@ -145,9 +144,9 @@ httpApi.addRoutes({
      DD_TRACE_SAMPLING_RULES='[{"sample_rate": 0.5}]'
      ```
 
-   Any sampling rules based on `resource_name` for the original web application now need to be updated for the resource name of the API Gateway service.
+   Any sampling rules based on `resource_name` for the original web application must be updated for the resource name of the API Gateway service.
 
-1. The instrumentation adds several headers to track:
+1. The instrumentation adds headers to track the following:
 
    - Request timing
    - Domain information
