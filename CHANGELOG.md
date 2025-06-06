@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.5.0...v2-2.6.0) (2025-06-06)
+
+
+### Features
+
+* Use GitHub App for upgrade workflow ([#435](https://github.com/DataDog/datadog-cdk-constructs/issues/435)) ([d90c45e](https://github.com/DataDog/datadog-cdk-constructs/commit/d90c45e962a0ace3641c4e372309e13b116d99a5))
+
+
+### Bug Fixes
+
+* Update Integration Tests for Fixed DockerLabels ([#437](https://github.com/DataDog/datadog-cdk-constructs/issues/437)) ([b7a9aa7](https://github.com/DataDog/datadog-cdk-constructs/commit/b7a9aa75a8d40a89718481fecf8f41e175f5704f))
+
 ## [2.5.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.4.0...v2-2.5.0) (2025-05-30)
 
 
