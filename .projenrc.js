@@ -86,6 +86,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
         appIdSecret: "GH_APP_ID",
         privateKeySecret: "GH_APP_PRIVATE_KEY",
       }),
+      gitIdentity: {
+        name: "github-actions-upgrade",
+      },
+      email: "github-actions-upgrade@github.com",
     },
   },
 });
