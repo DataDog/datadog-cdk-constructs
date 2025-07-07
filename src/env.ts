@@ -115,89 +115,70 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
 }
 
 export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
-  // log.debug("applyEnvVariables called");
   // log.debug(`Setting environment variables...`);
-  // const lam2 : any = lam; //cast to any to access the environment variable like in setGitEnvironmentVariables
+  const lam2: any = lam; //cast to any to access the environment variable like in setGitEnvironmentVariables
 
-  // //for each env variable, only set to default if it is NOT already set by user
-  // if(lam2.environment[ENABLE_DD_TRACING_ENV_VAR] === undefined) {
-  //   lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
-  // }
-  // if(lam2.environment[ENABLE_DD_ASM_ENV_VAR] === undefined) {
-  //   lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
-  // }
-
-  // if(lam2.environment[AWS_LAMBDA_EXEC_WRAPPER_KEY] === undefined) {
-  //   if (baseProps.enableDatadogASM) {
-  //     lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
-  //   }
-  // }
-
-  // if(lam2.environment[ENABLE_XRAY_TRACE_MERGING_ENV_VAR] === undefined) {
-  //   lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
-  // }
-
-  // if(lam2.environment[INJECT_LOG_CONTEXT_ENV_VAR] === undefined) {
-  //   if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
-  //     lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
-  //   } else {
-  //     lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
-  //   }
-  // }
-
-  // if(lam2.environment[ENABLE_DD_LOGS_ENV_VAR] === undefined) {
-  //   lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
-  // }
-  // if(lam2.environment[CAPTURE_LAMBDA_PAYLOAD_ENV_VAR] === undefined) {
-  //   log.debug("overriding\n")
-  //   lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, "HERE");
-  // }
-  
-  // if(lam2.environment[DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING] === undefined && lam2.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING] === undefined) {
-  //   if (baseProps.captureCloudServicePayload) {
-  //     lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
-  //     lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
-  //   } else {
-  //     lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
-  //     lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
-  //   }
-  // } else {
-  //   console.log("Error! lam2.environment[DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING] is set or undefined:", lam2.environment[DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]);
-  //   console.log("Error! lam2.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING] is set or undefined:", lam2.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]);
-  //   log.debug("one or both of DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING and DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING are already set");
-  // }
-
-  // if(lam2.environment[LOG_LEVEL_ENV_VAR] === undefined) {
-  //   if (baseProps.logLevel) {
-  //     lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
-  //   }
-  // }
-
-
-  lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
-  lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
-  if (baseProps.enableDatadogASM) {
-    lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+  //for each env variable, only set to default if it is NOT already set by user
+  if (lam2.environment[ENABLE_DD_TRACING_ENV_VAR] === undefined) {
+    lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
+  }
+  if (lam2.environment[ENABLE_DD_ASM_ENV_VAR] === undefined) {
+    lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
   }
 
-  lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
-  // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
-  if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
-    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
-  } else {
-    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+  if (lam2.environment[AWS_LAMBDA_EXEC_WRAPPER_KEY] === undefined) {
+    if (baseProps.enableDatadogASM) {
+      lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+    }
   }
-  lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
-  lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
-  if (baseProps.captureCloudServicePayload) {
-    lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
-    lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
-  } else {
-    lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
-    lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
+
+  if (lam2.environment[ENABLE_XRAY_TRACE_MERGING_ENV_VAR] === undefined) {
+    lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
   }
-  if (baseProps.logLevel) {
-    lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
+
+  if (lam2.environment[INJECT_LOG_CONTEXT_ENV_VAR] === undefined) {
+    if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
+      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
+    } else {
+      lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+    }
+  }
+
+  if (lam2.environment[ENABLE_DD_LOGS_ENV_VAR] === undefined) {
+    lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
+  }
+  if (lam2.environment[CAPTURE_LAMBDA_PAYLOAD_ENV_VAR] === undefined) {
+    lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
+  }
+
+  //Cloud Payload Tagging - handles request and response separately (baseProps defaults to false)
+  if (lam2.environment[DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING] === undefined) {
+    log.debug(
+      "Cloud request payload tagging not userdefined; setting to ",
+      baseProps.captureCloudServicePayload ? "all" : "$.*",
+    );
+    if (baseProps.captureCloudServicePayload) {
+      lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
+    } else {
+      lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
+    }
+  }
+  if (lam2.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING] === undefined) {
+    log.debug(
+      "Cloud response payload tagging not userdefined; setting to %v",
+      baseProps.captureCloudServicePayload ? "all" : "$.*",
+    );
+    if (baseProps.captureCloudServicePayload) {
+      lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
+    } else {
+      lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
+    }
+  }
+
+  if (lam2.environment[LOG_LEVEL_ENV_VAR] === undefined) {
+    if (baseProps.logLevel) {
+      lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
+    }
   }
 }
 
