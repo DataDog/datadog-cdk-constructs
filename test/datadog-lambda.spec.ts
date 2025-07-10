@@ -52,6 +52,77 @@ describe("validateProps", () => {
     );
   });
 
+  it("throws an error when llmObsEnabled is true without llmObsMlApp", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        enableDatadogTracing: false,
+        flushMetricsToLogs: false,
+        llmObsEnabled: true,
+      });
+      datadogLambda.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual("When `llmObsEnabled` is true, `llmObsMlApp` must also be set.");
+  });
+
+  it("throws an error when llmObsMlApp is set to an invalid value", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    let threwError = false;
+    let thrownError: Error | undefined;
+    try {
+      const datadogLambda = new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+        enableDatadogTracing: false,
+        flushMetricsToLogs: false,
+        llmObsEnabled: true,
+        llmObsMlApp: "invalid-app-name!",
+      });
+      datadogLambda.addLambdaFunctions([hello]);
+    } catch (e) {
+      threwError = true;
+      if (e instanceof Error) {
+        thrownError = e;
+      }
+    }
+    expect(threwError).toBe(true);
+    expect(thrownError?.message).toEqual(
+      "`llmObsMlApp` must be only contain up to 193 alphanumeric characters, hyphens, underscores, periods, and slashes.",
+    );
+  });
+
   it("doesn't throw an error when the site is invalid and DD_CDK_BYPASS_SITE_VALIDATION is true", () => {
     process.env.DD_CDK_BYPASS_SITE_VALIDATION = "true";
     const app = new App();
