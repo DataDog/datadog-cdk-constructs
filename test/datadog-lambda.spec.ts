@@ -805,9 +805,9 @@ describe("overrideGitMetadata", () => {
     datadogLambda.overrideGitMetadata("fake-sha");
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
-    [hello, goodbye].forEach((f) => { //check if each expected tag is present in the lambda function's tags
-      const expectedTags = ["git.commit.sha:fake-sha", 
-                            "git.repository_url:github.com/DataDog/datadog-cdk-constructs"];
+    [hello, goodbye].forEach((f) => {
+      //check if each expected tag is present in the lambda function's tags
+      const expectedTags = ["git.commit.sha:fake-sha", "git.repository_url:github.com/DataDog/datadog-cdk-constructs"];
       const fTags = (<any>f).environment[DD_TAGS].value.split(",");
       expectedTags.forEach((tag) => {
         expect(fTags.some((item: string) => item.includes(tag))).toEqual(true);
@@ -837,7 +837,9 @@ describe("overrideGitMetadata", () => {
       (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.commit.sha")),
     ).toEqual(true);
     expect(
-      (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.repository_url:github.com/DataDog/datadog-cdk-constructs")),
+      (<any>hello).environment[DD_TAGS].value
+        .split(",")
+        .some((item: string) => item.includes("git.repository_url:github.com/DataDog/datadog-cdk-constructs")),
     ).toEqual(true);
   });
 
