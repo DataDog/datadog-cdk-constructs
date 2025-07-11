@@ -115,7 +115,7 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
 }
 
 export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
-  // log.debug(`Setting environment variables...`);
+  log.debug(`Setting environment variables...`);
   const lam2: any = lam; //cast to any to access the environment variable like in setGitEnvironmentVariables
 
   //for each env variable, only set to default if it is NOT already set by user
@@ -165,7 +165,7 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
   }
   if (lam2.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING] === undefined) {
     log.debug(
-      "Cloud response payload tagging not userdefined; setting to %v",
+      "Cloud response payload tagging not user defined; setting to ",
       baseProps.captureCloudServicePayload ? "all" : "$.*",
     );
     if (baseProps.captureCloudServicePayload) {
