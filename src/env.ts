@@ -116,27 +116,27 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
 
 export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
   log.debug(`Setting environment variables...`);
-  const lam2: any = lam; //cast to any to access the environment variable like in setGitEnvironmentVariables
+  const lam_with_env_vars: any = lam; //cast to any to access the private environment fields like in setGitEnvironmentVariables
 
   //for each env variable, only set to default if it is NOT already set by user
-  if (lam2.environment[ENABLE_DD_TRACING_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[ENABLE_DD_TRACING_ENV_VAR] === undefined) {
     lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
   }
-  if (lam2.environment[ENABLE_DD_ASM_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[ENABLE_DD_ASM_ENV_VAR] === undefined) {
     lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
   }
 
-  if (lam2.environment[AWS_LAMBDA_EXEC_WRAPPER_KEY] === undefined) {
+  if (lam_with_env_vars.environment[AWS_LAMBDA_EXEC_WRAPPER_KEY] === undefined) {
     if (baseProps.enableDatadogASM) {
       lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
     }
   }
 
-  if (lam2.environment[ENABLE_XRAY_TRACE_MERGING_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[ENABLE_XRAY_TRACE_MERGING_ENV_VAR] === undefined) {
     lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
   }
 
-  if (lam2.environment[INJECT_LOG_CONTEXT_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[INJECT_LOG_CONTEXT_ENV_VAR] === undefined) {
     if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
       lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
     } else {
@@ -144,15 +144,15 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
     }
   }
 
-  if (lam2.environment[ENABLE_DD_LOGS_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[ENABLE_DD_LOGS_ENV_VAR] === undefined) {
     lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
   }
-  if (lam2.environment[CAPTURE_LAMBDA_PAYLOAD_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[CAPTURE_LAMBDA_PAYLOAD_ENV_VAR] === undefined) {
     lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
   }
 
   //Cloud Payload Tagging - handles request and response separately (baseProps defaults to false)
-  if (lam2.environment[DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING] === undefined) {
+  if (lam_with_env_vars.environment[DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING] === undefined) {
     log.debug(
       "Cloud request payload tagging not userdefined; setting to ",
       baseProps.captureCloudServicePayload ? "all" : "$.*",
@@ -163,7 +163,7 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
       lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
     }
   }
-  if (lam2.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING] === undefined) {
+  if (lam_with_env_vars.environment[DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING] === undefined) {
     log.debug(
       "Cloud response payload tagging not user defined; setting to ",
       baseProps.captureCloudServicePayload ? "all" : "$.*",
@@ -175,7 +175,7 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
     }
   }
 
-  if (lam2.environment[LOG_LEVEL_ENV_VAR] === undefined) {
+  if (lam_with_env_vars.environment[LOG_LEVEL_ENV_VAR] === undefined) {
     if (baseProps.logLevel) {
       lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
     }
