@@ -162,6 +162,9 @@ describe("setDDEnvVariables", () => {
       decodeAuthorizerContext: false,
       apmFlushDeadline: "20",
       nodeLayerVersion: NODE_LAYER_VERSION,
+      llmObsEnabled: true,
+      llmObsMlApp: "myLLMApp",
+      llmObsAgentlessEnabled: false,
     });
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -184,6 +187,9 @@ describe("setDDEnvVariables", () => {
           ["DD_ENCODE_AUTHORIZER_CONTEXT"]: "false",
           ["DD_DECODE_AUTHORIZER_CONTEXT"]: "false",
           ["DD_APM_FLUSH_DEADLINE_MILLISECONDS"]: "20",
+          ["DD_LLMOBS_ENABLED"]: "true",
+          ["DD_LLMOBS_ML_APP"]: "myLLMApp",
+          ["DD_LLMOBS_AGENTLESS_ENABLED"]: "false",
         },
       },
     });
