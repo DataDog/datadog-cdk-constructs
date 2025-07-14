@@ -319,7 +319,7 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
     const llmObsMlAppRegex = /^[a-zA-Z0-9_\-:\.\/]{1,193}$/;
     if (!llmObsMlAppRegex.test(props.llmObsMlApp)) {
       throw new Error(
-        "`llmObsMlApp` must be only contain up to 193 alphanumeric characters, hyphens, underscores, periods, and slashes.",
+        "`llmObsMlApp` must only contain up to 193 alphanumeric characters, hyphens, underscores, periods, and slashes.",
       );
     }
   }
