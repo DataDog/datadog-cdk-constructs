@@ -4,22 +4,26 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import {
   DatadogLambda,
   ENABLE_DD_TRACING_ENV_VAR,
+  ENABLE_DD_ASM_ENV_VAR,
+  AWS_LAMBDA_EXEC_WRAPPER_KEY,
+  AWS_LAMBDA_EXEC_WRAPPER_VAL,
+  ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
   INJECT_LOG_CONTEXT_ENV_VAR,
-  FLUSH_METRICS_TO_LOGS_ENV_VAR,
-  LOG_LEVEL_ENV_VAR,
   ENABLE_DD_LOGS_ENV_VAR,
   CAPTURE_LAMBDA_PAYLOAD_ENV_VAR,
   DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING,
   DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING,
+  LOG_LEVEL_ENV_VAR,
+  FLUSH_METRICS_TO_LOGS_ENV_VAR,
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
-  ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
   SITE_URL_ENV_VAR,
   API_KEY_ENV_VAR,
   filterAndFormatGitRemote,
 } from "../src/index";
 
 const NODE_LAYER_VERSION = 91;
+const EXTENSION_LAYER_VERSION = 5;
 
 jest.mock("child_process", () => {
   return {
@@ -50,13 +54,200 @@ describe("applyEnvVariables", () => {
         Variables: {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+
+          //all default values set in fn
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_ASM_ENV_VAR]: "false",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
           [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
           [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+        },
+      },
+    });
+  });
+
+  it("does not override user-defined env variables before datadogLambda.addLambdaFunctions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    hello.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "False");
+    hello.addEnvironment(ENABLE_DD_ASM_ENV_VAR, "True");
+    hello.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+    hello.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
+    hello.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
+    hello.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, "False");
+    hello.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, "True");
+    hello.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
+    hello.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
+    hello.addEnvironment(LOG_LEVEL_ENV_VAR, "debug");
+
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "False",
+          [ENABLE_DD_ASM_ENV_VAR]: "True",
+          [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
+          [ENABLE_DD_LOGS_ENV_VAR]: "False",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "True",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "all",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "all",
+          [LOG_LEVEL_ENV_VAR]: "debug",
+        },
+      },
+    });
+  });
+
+  it("does not override user-defined env variables after datadogLambda.addLambdaFunctions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+
+    hello.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "False");
+    hello.addEnvironment(ENABLE_DD_ASM_ENV_VAR, "True");
+    hello.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+    hello.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
+    hello.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
+    hello.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, "False");
+    hello.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, "True");
+    hello.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
+    hello.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
+    hello.addEnvironment(LOG_LEVEL_ENV_VAR, "debug");
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
+          [ENABLE_DD_TRACING_ENV_VAR]: "False",
+          [ENABLE_DD_ASM_ENV_VAR]: "True",
+          [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
+          [ENABLE_DD_LOGS_ENV_VAR]: "False",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "True",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "all",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "all",
+          [LOG_LEVEL_ENV_VAR]: "debug",
+        },
+      },
+    });
+  });
+
+  it("does not override custom user-defined env variables per lambda when different values are set in the DatadogLambda constructor", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    //constructor sets to opposite of default
+    // hello1 sets nothing, should default to constructor values
+    // hello2 sets some values, should override constructor values
+    const hello1 = new lambda.Function(stack, "HelloHandler1", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const hello2 = new lambda.Function(stack, "HelloHandler2", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      enableDatadogTracing: true,
+      enableDatadogASM: true,
+      enableDatadogLogs: true,
+      captureLambdaPayload: true,
+      // testing injectLogContext, enableMergeXrayTraces are handled accordingly by applyEnvVariables
+      logLevel: "constructor-set",
+      captureCloudServicePayload: true,
+    });
+
+    hello2.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "True");
+    hello2.addEnvironment(ENABLE_DD_ASM_ENV_VAR, "False");
+    hello2.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, "user-set value");
+    hello2.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
+    hello2.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
+    hello2.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, "False");
+    hello2.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, "False");
+    hello2.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
+    hello2.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
+    hello2.addEnvironment(LOG_LEVEL_ENV_VAR, "debug");
+
+    datadogLambda.addLambdaFunctions([hello1, hello2]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      //match hello2
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false", //extension layer is set
+          [ENABLE_DD_TRACING_ENV_VAR]: "True",
+          [ENABLE_DD_ASM_ENV_VAR]: "False",
+          [AWS_LAMBDA_EXEC_WRAPPER_KEY]: "user-set value",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
+          [ENABLE_DD_LOGS_ENV_VAR]: "False",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "False",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
+          [LOG_LEVEL_ENV_VAR]: "debug",
+        },
+      },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      //first hello1, constructor + applyEnvVariables default values
+      Environment: {
+        Variables: {
+          [DD_HANDLER_ENV_VAR]: "hello.handler",
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false", //extension layer is set
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_DD_ASM_ENV_VAR]: "true",
+          [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false", //extension layer is set (an applyenvVariables branch statement)
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
+          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "all",
+          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "all",
+          [LOG_LEVEL_ENV_VAR]: "constructor-set",
         },
       },
     });
@@ -91,8 +282,8 @@ describe("applyEnvVariables", () => {
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
-          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
-          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
           ["DD_LOGS_INJECTION"]: "true",
           ["DD_LOG_LEVEL"]: "debug",
         },
@@ -129,8 +320,8 @@ describe("applyEnvVariables", () => {
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
-          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
-          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
         },
       },
     });
@@ -176,8 +367,8 @@ describe("setDDEnvVariables", () => {
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
-          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
-          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
           ["DD_LOGS_INJECTION"]: "true",
           ["DD_LOG_LEVEL"]: "debug",
           ["DD_COLD_START_TRACING"]: "false",
