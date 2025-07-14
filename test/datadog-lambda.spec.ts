@@ -119,7 +119,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "`llmObsMlApp` must be only contain up to 193 alphanumeric characters, hyphens, underscores, periods, and slashes.",
+      "`llmObsMlApp` must only contain up to 193 alphanumeric characters, hyphens, underscores, periods, and slashes.",
     );
   });
 
