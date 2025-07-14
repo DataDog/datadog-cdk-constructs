@@ -43,6 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
     if: ${{ needs.upgrade.outputs.patch_created }}
     steps:
       - name: Generate token

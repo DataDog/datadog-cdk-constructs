@@ -101,6 +101,10 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   }),
 );
 
+project.github
+  ?.tryFindWorkflow("upgrade")
+  ?.file?.patch(JsonPatch.add("/jobs/pr/permissions/pull-requests", github.workflows.JobPermission.WRITE));
+
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
   "plugin:@typescript-eslint/recommended",
