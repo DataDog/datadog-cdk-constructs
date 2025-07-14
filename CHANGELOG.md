@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.6.0...v2-2.7.0) (2025-07-14)
+
+
+### Features
+
+* Add LLM Observability env vars ([#451](https://github.com/DataDog/datadog-cdk-constructs/issues/451)) ([f0c12e0](https://github.com/DataDog/datadog-cdk-constructs/commit/f0c12e0b5e69d878ff6a0b6e5bb10518f347e125))
+
 ## [2.6.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.5.0...v2-2.6.0) (2025-06-06)
 
 
