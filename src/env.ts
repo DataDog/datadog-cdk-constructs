@@ -119,30 +119,39 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
 
 export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
   log.debug(`Setting environment variables...`);
-  lam.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing.toString().toLowerCase());
-  lam.addEnvironment(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM.toString().toLowerCase());
+  const lam_with_env_vars: any = lam; //cast to any to access the private environment fields like in setGitEnvironmentVariables
+  const setEnvIfUndefined = (envVar: string, value: string | boolean) => {
+    if (lam_with_env_vars.environment[envVar] === undefined) {
+      lam.addEnvironment(envVar, value.toString().toLowerCase());
+    }
+  };
+
+  //for each env variable, only set to default if it is NOT already set by user
+  setEnvIfUndefined(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing);
+  setEnvIfUndefined(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM);
+
   if (baseProps.enableDatadogASM) {
-    lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+    setEnvIfUndefined(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
   }
 
-  lam.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces.toString().toLowerCase());
-  // Check for extensionLayerVersion and set INJECT_LOG_CONTEXT_ENV_VAR accordingly
+  setEnvIfUndefined(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces);
+
   if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
-    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "false");
+    setEnvIfUndefined(INJECT_LOG_CONTEXT_ENV_VAR, "false");
   } else {
-    lam.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext.toString().toLowerCase());
+    setEnvIfUndefined(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext);
   }
-  lam.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs.toString().toLowerCase());
-  lam.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload.toString().toLowerCase());
-  if (baseProps.captureCloudServicePayload) {
-    lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
-    lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
-  } else {
-    lam.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
-    lam.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
-  }
+
+  setEnvIfUndefined(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs);
+  setEnvIfUndefined(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload);
+
+  //Cloud Payload Tagging - (baseProps defaults to false aka "$.*" environment variable values)
+  const CLOUD_PAYLOAD_TAGGING_VALUE = baseProps.captureCloudServicePayload ? "all" : "$.*";
+  setEnvIfUndefined(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
+  setEnvIfUndefined(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
+
   if (baseProps.logLevel) {
-    lam.addEnvironment(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
+    setEnvIfUndefined(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
   }
 }
 
