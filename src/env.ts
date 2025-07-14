@@ -145,14 +145,10 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
   setEnvIfUndefined(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs);
   setEnvIfUndefined(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload);
 
-  //Cloud Payload Tagging - handles request and response separately (baseProps defaults to false)
-  if (baseProps.captureCloudServicePayload) {
-    setEnvIfUndefined(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
-    setEnvIfUndefined(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
-  } else {
-    setEnvIfUndefined(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
-    setEnvIfUndefined(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
-  }
+  //Cloud Payload Tagging - (baseProps defaults to false aka "$.*" environment variable values)
+  const CLOUD_PAYLOAD_TAGGING_VALUE = baseProps.captureCloudServicePayload ? "all" : "$.*";
+  setEnvIfUndefined(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
+  setEnvIfUndefined(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
 
   if (baseProps.logLevel) {
     setEnvIfUndefined(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
