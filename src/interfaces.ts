@@ -54,6 +54,9 @@ export interface DatadogLambdaProps {
   readonly redirectHandler?: boolean;
   readonly grantSecretReadAccess?: boolean;
   readonly useLayersFromAccount?: string;
+  readonly llmObsEnabled?: boolean;
+  readonly llmObsMlApp?: string;
+  readonly llmObsAgentlessEnabled?: boolean;
 }
 
 /*

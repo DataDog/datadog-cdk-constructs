@@ -312,6 +312,17 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
       "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
     );
   }
+  if (props.llmObsEnabled === true && (props.llmObsMlApp === undefined || props.llmObsMlApp === "")) {
+    throw new Error("When `llmObsEnabled` is true, `llmObsMlApp` must also be set.");
+  }
+  if (props.llmObsMlApp !== undefined && props.llmObsMlApp !== "") {
+    const llmObsMlAppRegex = /^[a-zA-Z0-9_\-:\.\/]{1,193}$/;
+    if (!llmObsMlAppRegex.test(props.llmObsMlApp)) {
+      throw new Error(
+        "`llmObsMlApp` must only contain up to 193 alphanumeric characters, hyphens, underscores, periods, and slashes.",
+      );
+    }
+  }
 }
 
 export function checkForMultipleApiKeys(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
