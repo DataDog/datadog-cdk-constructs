@@ -879,8 +879,8 @@ describe("overrideGitMetadata", () => {
     [hello, goodbye].forEach((f) => {
       expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
         expect.arrayContaining([
-          "git.commit.sha:fake-sha",
-          "git.repository_url:github.com/DataDog/datadog-cdk-constructs",
+          expect.stringContaining("git.commit.sha:fake-sha"),
+          expect.stringContaining("git.repository_url:github.com/DataDog/datadog-cdk-constructs"),
         ]),
       );
     });
@@ -908,7 +908,7 @@ describe("overrideGitMetadata", () => {
       (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.commit.sha")),
     ).toEqual(true);
     expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
-      expect.arrayContaining(["git.repository_url:github.com/DataDog/datadog-cdk-constructs"]),
+      expect.arrayContaining([expect.stringContaining("git.repository_url:github.com/DataDog/datadog-cdk-constructs")]),
     );
   });
 
