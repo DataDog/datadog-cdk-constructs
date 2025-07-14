@@ -33,6 +33,9 @@ export const DD_PROFILING_ENABLED = "DD_PROFILING_ENABLED";
 export const DD_ENCODE_AUTHORIZER_CONTEXT = "DD_ENCODE_AUTHORIZER_CONTEXT";
 export const DD_DECODE_AUTHORIZER_CONTEXT = "DD_DECODE_AUTHORIZER_CONTEXT";
 export const DD_APM_FLUSH_DEADLINE_MILLISECONDS = "DD_APM_FLUSH_DEADLINE_MILLISECONDS";
+export const DD_LLMOBS_ENABLED = "DD_LLMOBS_ENABLED";
+export const DD_LLMOBS_ML_APP = "DD_LLMOBS_ML_APP";
+export const DD_LLMOBS_AGENTLESS_ENABLED = "DD_LLMOBS_AGENTLESS_ENABLED";
 
 const execSync = require("child_process").execSync;
 
@@ -191,5 +194,15 @@ export function setDDEnvVariables(lam: lambda.Function, props: DatadogLambdaProp
   }
   if (props.apmFlushDeadline !== undefined) {
     lam.addEnvironment(DD_APM_FLUSH_DEADLINE_MILLISECONDS, props.apmFlushDeadline.toString().toLowerCase());
+  }
+
+  if (props.llmObsEnabled !== undefined) {
+    lam.addEnvironment(DD_LLMOBS_ENABLED, props.llmObsEnabled.toString().toLowerCase());
+  }
+  if (props.llmObsMlApp !== undefined) {
+    lam.addEnvironment(DD_LLMOBS_ML_APP, props.llmObsMlApp);
+  }
+  if (props.llmObsAgentlessEnabled !== undefined) {
+    lam.addEnvironment(DD_LLMOBS_AGENTLESS_ENABLED, props.llmObsAgentlessEnabled.toString().toLowerCase());
   }
 }
