@@ -1,1 +1,3 @@
-* @DataDog/serverless
+datadog-cloudformation-macro/                    @DataDog/serverless-onboarding-enablement
+serverless-remote-instrumentation/               @DataDog/serverless-onboarding-enablement
+*                                                @DataDog/serverless
