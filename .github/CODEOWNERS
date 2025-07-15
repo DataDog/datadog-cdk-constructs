@@ -1,6 +1,3 @@
-# Serverless CI components
+*                                                @DataDog/serverless
 datadog-cloudformation-macro/                    @DataDog/serverless-onboarding-enablement
 serverless-remote-instrumentation/               @DataDog/serverless-onboarding-enablement
-
-# Default ownership for other files
-*                                               @DataDog/serverless

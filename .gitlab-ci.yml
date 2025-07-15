@@ -15,3 +15,4 @@ serverless-remote-instrumentation ci image:
     DOCKER_TARGET: registry.ddbuild.io/ci/serverless-remote-instrumentation:latest
   script:
     - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f serverless-remote-instrumentation/Dockerfile serverless-remote-instrumentation/
+    
