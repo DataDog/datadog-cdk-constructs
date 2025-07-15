@@ -18,3 +18,7 @@ RUN unzip awscliv2.zip && ./aws/install
 
 # Install gh
 RUN apt-get install gh -y
+
+# Copy scripts directory to the image
+COPY scripts/ /etc/serverless-remote-instrumentation/scripts/
+RUN chmod +x /etc/serverless-remote-instrumentation/scripts/*.sh
