@@ -8,8 +8,7 @@
 set -e
 
 # Move into the root directory, so this script can be called from any directory
-SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $SCRIPTS_DIR/..
+cd $SCRIPTS_PATH/..
 
 LAYER_DIR=".layers"
 LAYER_FILES=("datadog_serverless_remote_instrumentation_arm64.zip")
@@ -40,7 +39,7 @@ do
     echo "${LAYER_FILE}"
     echo "-------------------------"
 
-    LAYER_LOCAL_PATH="scripts/${LAYER_DIR}/${LAYER_FILE}"
+    LAYER_LOCAL_PATH="${SCRIPTS_PATH}/${LAYER_DIR}/${LAYER_FILE}"
     # Upload the layer to S3 for signing
     echo "Uploading layer to S3 for signing..."
     UUID=$(uuidgen)

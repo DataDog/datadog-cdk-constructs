@@ -43,19 +43,18 @@ if [ -z $ARCHITECTURE ]; then
 fi
 
 # Move into the root directory
-SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $SCRIPTS_DIR/..
+cd $SCRIPTS_PATH/..
 
 echo "Checking that you have access to the commercial AWS account"
 aws-vault exec sso-prod-engineering -- aws sts get-caller-identity
 
-VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ./scripts/build_layer.sh
+VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ${SCRIPTS_PATH}/build_layer.sh
 
 echo "Signing the layer"
-aws-vault exec sso-prod-engineering -- ./scripts/sign_layers.sh prod
+aws-vault exec sso-prod-engineering -- ${SCRIPTS_PATH}/sign_layers.sh prod
 
 echo "Publishing layers to commercial AWS regions"
-aws-vault exec sso-prod-engineering --no-session -- ./scripts/publish_layers.sh
+aws-vault exec sso-prod-engineering --no-session -- ${SCRIPTS_PATH}/publish_layers.sh
 
 echo "Creating tag in the Serverless-Remote-Instrumentation repository for release on GitHub"
 git tag "v$VERSION"

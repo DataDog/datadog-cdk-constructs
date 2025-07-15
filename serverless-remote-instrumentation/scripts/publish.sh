@@ -9,10 +9,6 @@
 
 set -e
 
-# Move into the root directory
-# SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-# cd $SCRIPTS_DIR/../..
-
 # A region needs to be set to track versions, it should be
 # the same across all versions in prod so just pick one
 REGION="us-east-1"
@@ -42,12 +38,12 @@ fi
 VERSION=$(($LAST_LAYER_VERSION+1))
 echo "Will publish new layer version as $VERSION"
 
-VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ./scripts/build_layer.sh
+VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ${SCRIPTS_PATH}/build_layer.sh
 
 # Sign the layer
-./scripts/sign_layers.sh
+${SCRIPTS_PATH}/sign_layers.sh
 
 # Publish the layer
-VERSION=$VERSION ./scripts/publish_layers.sh
+VERSION=$VERSION ${SCRIPTS_PATH}/publish_layers.sh
 
-TEMPLATE_VERSION=$TEMPLATE_VERSION VERSION=$VERSION ./scripts/publish_template.sh
+TEMPLATE_VERSION=$TEMPLATE_VERSION VERSION=$VERSION ${SCRIPTS_PATH}/publish_template.sh

@@ -22,7 +22,7 @@ if [ $MATCHING_GITHUB_VERSION ]; then
 fi
 
 # Update the template version to be whatever was in the args
-node ./scripts/update_template_version.js $RELEASE_VERSION
+node ${SCRIPTS_PATH}/update_template_version.js $RELEASE_VERSION
 
 # Create a commit with all of the commit info for commits in this release
 git add template.yaml

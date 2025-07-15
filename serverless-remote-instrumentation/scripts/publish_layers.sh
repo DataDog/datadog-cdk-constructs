@@ -15,8 +15,7 @@
 set -e
 
 # Move into the root directory, so this script can be called from any directory
-SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $SCRIPTS_DIR
+cd $SCRIPTS_PATH
 
 if [ "$ARCHITECTURE" == "amd64" ]; then
   echo "ARCHITECTURE should not be amd64. The remote instrumenter only works for amd64."

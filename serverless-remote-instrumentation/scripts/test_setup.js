@@ -77,7 +77,7 @@ if (require.main === module) {
 
   const { region, stackName } = config;
 
-  execSync(`APPROVE=y REGION=${region} ./scripts/publish_sandbox.sh`, {
+  execSync(`APPROVE=y REGION=${region} ${process.env.SCRIPTS_PATH}/publish_sandbox.sh`, {
     encoding: "utf-8",
     stdio: "inherit",
   });
