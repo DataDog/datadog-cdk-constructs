@@ -1,0 +1,178 @@
+variables:
+  DOCKER_TARGET_IMAGE: registry.ddbuild.io/ci/serverless-remote-instrumentation
+  DOCKER_TARGET_VERSION: latest
+  SELF_MONITORING: true
+
+.defined_rules:
+  merge_into_prod:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      when: on_success
+  feature_branch:
+    - if: $CI_COMMIT_BRANCH != "prod" && $CI_PIPELINE_SOURCE == "push"
+      when: always
+      variables:
+        SELF_MONITORING: false
+
+stages:
+  - build
+  - deploy
+  - test
+  - cleanup
+  - publish
+
+lint:
+  stage: test
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  tags: ["arch:arm64"]
+  rules:
+    - !reference [.defined_rules, feature_branch]
+  before_script:
+    - yarn install
+  script:
+    - yarn lint
+    - yarn lint-yaml
+
+unit tests:
+  stage: test
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  tags: ["arch:arm64"]
+  rules:
+    - !reference [.defined_rules, feature_branch]
+  before_script:
+    - yarn install
+  script:
+    - yarn test
+
+ci image:
+  stage: build
+  image: registry.ddbuild.io/images/docker:20.10
+  tags: ["arch:arm64"]
+  resource_group: pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - .gitlab/Dockerfile
+      when: on_success
+  when: manual
+  variables:
+    DOCKER_TARGET: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  script:
+    - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f .gitlab/Dockerfile .
+
+integration test setup:
+  stage: deploy
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  allow_failure: false
+  tags: ["arch:arm64"]
+  resource_group: pipeline
+  when: manual
+  rules:
+    - !reference [.defined_rules, merge_into_prod]
+    - !reference [.defined_rules, feature_branch]
+  artifacts:
+    untracked: true
+  variables:
+    ACCOUNT: sandbox
+  before_script:
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+  script:
+    - yarn install
+    - yarn integ-test-setup
+
+integration tests:
+  stage: test
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  allow_failure: false
+  tags: ["arch:arm64"]
+  resource_group: pipeline
+  when: manual
+  rules:
+    - !reference [.defined_rules, merge_into_prod]
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_NAME == "self-monitoring"'
+      when: always
+    - !reference [.defined_rules, feature_branch]
+  variables:
+    ACCOUNT: sandbox
+  before_script:
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+  script:
+    - yarn install
+    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - yarn integ
+
+metrics validation:
+  stage: test
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  allow_failure: false
+  tags: ["arch:arm64"]
+  resource_group: pipeline
+  needs: [integration tests]
+  when: manual
+  rules:
+    - !reference [.defined_rules, merge_into_prod]
+  variables:
+    ACCOUNT: sandbox
+  before_script:
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+  script:
+    - yarn install
+    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - yarn metrics-validations
+
+integration test teardown:
+  stage: cleanup
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  allow_failure: false
+  tags: ["arch:arm64"]
+  needs: [integration tests, integration test setup]
+  dependencies: [integration test setup]
+  rules:
+    - !reference [.defined_rules, feature_branch]
+  before_script:
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+  script:
+    - yarn install
+    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - yarn integ-test-teardown
+
+publish (sandbox):
+  stage: publish
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  allow_failure: false
+  tags: ["arch:arm64"]
+  needs: [metrics validation]
+  when: manual
+  rules:
+    - !reference [.defined_rules, merge_into_prod]
+  variables:
+    ACCOUNT: sandbox
+    BUCKET: datadog-cloudformation-template-serverless-sandbox
+    OBJECT_PREFIX: aws/remote-instrument-dev/
+  before_script:
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+  script:
+    - yarn install
+    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - bash scripts/publish.sh
+
+publish (prod):
+  stage: publish
+  image: ${DOCKER_TARGET_IMAGE}:${DOCKER_TARGET_VERSION}
+  allow_failure: false
+  tags: ["arch:arm64"]
+  resource_group: pipeline
+  needs: [publish (sandbox)]
+  when: manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      when: on_success
+  variables:
+    ACCOUNT: prod
+    BUCKET: datadog-cloudformation-template
+    OBJECT_PREFIX: aws/remote-instrument/
+  before_script:
+    - EXTERNAL_ID_NAME=prod-publish-externalid ROLE_TO_ASSUME=dd-serverless-layer-deployer-role AWS_ACCOUNT=464622532012 source .gitlab/scripts/get_secrets.sh
+  script:
+    - yarn install
+    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - bash scripts/publish.sh
