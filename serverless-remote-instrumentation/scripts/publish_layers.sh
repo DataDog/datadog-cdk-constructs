@@ -15,7 +15,7 @@
 set -e
 
 # Move into the root directory, so this script can be called from any directory
-cd $SCRIPTS_PATH
+cd $CI_PROJECT_DIR
 
 if [ "$ARCHITECTURE" == "amd64" ]; then
   echo "ARCHITECTURE should not be amd64. The remote instrumenter only works for amd64."
@@ -23,7 +23,7 @@ if [ "$ARCHITECTURE" == "amd64" ]; then
 fi
 
 echo "Publishing arm64 layer"
-LAYER_PATHS=(".layers/datadog_serverless_remote_instrumentation_arm64.zip")
+LAYER_PATHS=("${SCRIPTS_PATH}/.layers/datadog_serverless_remote_instrumentation_arm64.zip")
 LAYER_NAMES=("Datadog-Serverless-Remote-Instrumentation-ARM")
 #fi
 
@@ -72,7 +72,7 @@ ARCHITECTURE_MESSAGE="arm64 only"
 #    ARCHITECTURE_MESSAGE="both architectures"
 #fi
 
-echo $VERSION &> ".layers/version"
+echo $VERSION &> "${SCRIPTS_PATH}/.layers/version"
 
 index_of_layer() {
     layer_name=$1

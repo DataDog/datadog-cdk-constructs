@@ -5,11 +5,11 @@ serverless-remote-instrumentation ci image:
   stage: build
   image: registry.ddbuild.io/images/docker:20.10
   tags: ["arch:arm64"]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - serverless-remote-instrumentation/Dockerfile
-      when: on_success
+  # rules:
+  #   - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+  #     changes:
+  #       - serverless-remote-instrumentation/Dockerfile
+  #     when: on_success
   when: manual
   variables:
     DOCKER_TARGET: registry.ddbuild.io/ci/serverless-remote-instrumentation:latest

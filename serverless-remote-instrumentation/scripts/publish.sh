@@ -5,7 +5,7 @@
 # This product includes software developed at Datadog (https://www.datadoghq.com/).
 # Copyright 2025 Datadog, Inc.
 
-# From repo root, execute the script with `VERSION=<DESIRED_VERSION> ./scripts/publish_prod.sh`
+# From repo root, execute the script with `VERSION=<DESIRED_VERSION> ./scripts/publish.sh`
 
 set -e
 
