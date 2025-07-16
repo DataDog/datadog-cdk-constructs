@@ -262,7 +262,6 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | `llmObsAgentlessEnabled`      | `llm_obs_agentless_enabled`      | Only required if you are not using the Datadog Lambda Extension, in which case this should be set to `true`.  Defaults to `false`. |
 
 
-**Note**: Using the parameters above may override corresponding function level `DD_XXX` environment variables.
 
 #### Tracing
 
