@@ -58,7 +58,7 @@ if [ -z $VERSION ]; then
 fi
 
 # Move into the root directory
-cd $SCRIPTS_PATH/..
+cd $CI_PROJECT_DIR
 
 VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ${SCRIPTS_PATH}/build_layer.sh
 
