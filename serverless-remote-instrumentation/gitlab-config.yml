@@ -62,6 +62,7 @@ integration test setup:
   script:
     - yarn install
     - yarn integ-test-setup
+    - cp ${SCRIPTS_PATH}/.layers/version $CI_PROJECT_DIR/version
 
 integration tests:
   stage: test
@@ -115,6 +116,8 @@ integration test teardown:
   before_script:
     - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
+    - mkdir -p $SCRIPTS_PATH/.layers
+    - cp $CI_PROJECT_DIR/version $SCRIPTS_PATH/.layers/version
     - yarn install
     - node -e "require('${SCRIPTS_PATH}/test_setup').generateTestConfig()"
     - yarn integ-test-teardown
