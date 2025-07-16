@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.7.0...v2-2.8.0) (2025-07-16)
+
+
+### Bug Fixes
+
+* Do not override user-declared environment variables in CDK Lambda ([#453](https://github.com/DataDog/datadog-cdk-constructs/issues/453)) ([6b7d549](https://github.com/DataDog/datadog-cdk-constructs/commit/6b7d54938b0c0273cabad29f28fcb0865fa99e4a))
+
 ## [2.7.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.6.0...v2-2.7.0) (2025-07-14)
 
 
