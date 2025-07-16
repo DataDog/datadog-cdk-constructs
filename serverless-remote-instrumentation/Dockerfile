@@ -22,10 +22,3 @@ RUN apt-get install gh -y
 # Copy scripts directory to the image
 COPY scripts/ /etc/serverless-remote-instrumentation/scripts/
 RUN chmod +x /etc/serverless-remote-instrumentation/scripts/*.sh
-
-# Copy package.json for dependency installation
-COPY package.json /etc/serverless-remote-instrumentation/
-WORKDIR /etc/serverless-remote-instrumentation
-
-# Install dependencies
-RUN yarn install

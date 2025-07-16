@@ -8,7 +8,7 @@
 set -e
 
 # Move into the root directory, so this script can be called from any directory
-cd $CI_PROJECT_DIR
+cd $SCRIPTS_PATH/..
 
 LAYER_DIR=".layers"
 LAYER_FILES=("datadog_serverless_remote_instrumentation_arm64.zip")

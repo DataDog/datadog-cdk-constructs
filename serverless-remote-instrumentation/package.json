@@ -1,7 +1,0 @@
-{
-  "name": "serverless-remote-instrumentation-scripts",
-  "version": "1.0.0",
-  "dependencies": {
-    "yaml-cfn": "^0.3.2"
-  }
-} 
