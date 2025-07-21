@@ -2,6 +2,7 @@ variables:
   DOCKER_TARGET_IMAGE: registry.ddbuild.io/ci/serverless-remote-instrumentation
   DOCKER_TARGET_VERSION: latest
   SELF_MONITORING: true
+  SCRIPTS_PATH: /etc/serverless-remote-instrumentation/scripts
 
 .defined_rules:
   merge_into_prod:
@@ -57,10 +58,11 @@ integration test setup:
   variables:
     ACCOUNT: sandbox
   before_script:
-    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
     - yarn install
     - yarn integ-test-setup
+    - cp ${SCRIPTS_PATH}/.layers/version $CI_PROJECT_DIR/version
 
 integration tests:
   stage: test
@@ -77,10 +79,10 @@ integration tests:
   variables:
     ACCOUNT: sandbox
   before_script:
-    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
     - yarn install
-    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - node -e "require('${SCRIPTS_PATH}/test_setup').generateTestConfig()"
     - yarn integ
 
 metrics validation:
@@ -96,10 +98,10 @@ metrics validation:
   variables:
     ACCOUNT: sandbox
   before_script:
-    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
     - yarn install
-    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - node -e "require('${SCRIPTS_PATH}/test_setup').generateTestConfig()"
     - yarn metrics-validations
 
 integration test teardown:
@@ -112,10 +114,12 @@ integration test teardown:
   rules:
     - !reference [.defined_rules, feature_branch]
   before_script:
-    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
+    - mkdir -p $SCRIPTS_PATH/.layers
+    - cp $CI_PROJECT_DIR/version $SCRIPTS_PATH/.layers/version
     - yarn install
-    - node -e "require('./scripts/test_setup').generateTestConfig()"
+    - node -e "require('${SCRIPTS_PATH}/test_setup').generateTestConfig()"
     - yarn integ-test-teardown
 
 publish (sandbox):
@@ -132,11 +136,11 @@ publish (sandbox):
     BUCKET: datadog-cloudformation-template-serverless-sandbox
     OBJECT_PREFIX: aws/remote-instrument-dev/
   before_script:
-    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source .gitlab/scripts/get_secrets.sh
+    - EXTERNAL_ID_NAME=sandbox-publish-externalid ROLE_TO_ASSUME=sandbox-layer-deployer AWS_ACCOUNT=425362996713 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
     - yarn install
-    - node -e "require('./scripts/test_setup').generateTestConfig()"
-    - bash scripts/publish.sh
+    - node -e "require('${SCRIPTS_PATH}/test_setup').generateTestConfig()"
+    - bash ${SCRIPTS_PATH}/publish.sh
 
 publish (prod):
   stage: publish
@@ -154,8 +158,8 @@ publish (prod):
     BUCKET: datadog-cloudformation-template
     OBJECT_PREFIX: aws/remote-instrument/
   before_script:
-    - EXTERNAL_ID_NAME=prod-publish-externalid ROLE_TO_ASSUME=dd-serverless-layer-deployer-role AWS_ACCOUNT=464622532012 source .gitlab/scripts/get_secrets.sh
+    - EXTERNAL_ID_NAME=prod-publish-externalid ROLE_TO_ASSUME=dd-serverless-layer-deployer-role AWS_ACCOUNT=464622532012 source ${SCRIPTS_PATH}/get_secrets.sh
   script:
     - yarn install
-    - node -e "require('./scripts/test_setup').generateTestConfig()"
-    - bash scripts/publish.sh
+    - node -e "require('${SCRIPTS_PATH}/test_setup').generateTestConfig()"
+    - bash ${SCRIPTS_PATH}/publish.sh

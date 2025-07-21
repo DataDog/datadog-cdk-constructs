@@ -8,9 +8,9 @@
 # This script is only tested on MacBook Pro M1
 
 rm -rf node_modules
-rm -rf scripts/.layers
+rm -rf ${SCRIPTS_PATH}/.layers
 yarn install --production
-mkdir -p scripts/.layers
+mkdir -p ${SCRIPTS_PATH}/.layers
 
 if [ ! -d "node_modules" ]; then
   yarn workspaces focus --production
@@ -27,5 +27,5 @@ mkdir -p nodejs/node_modules/datadog-remote-instrument
 
 # put src/* into node_modules/package-name/ as a package without copy src directory itself
 cp -a src/. nodejs/node_modules/datadog-remote-instrument/
-zip -r -q scripts/.layers/datadog_serverless_remote_instrumentation_arm64.zip nodejs
+zip -r -q ${SCRIPTS_PATH}/.layers/datadog_serverless_remote_instrumentation_arm64.zip nodejs
 rm -rf nodejs

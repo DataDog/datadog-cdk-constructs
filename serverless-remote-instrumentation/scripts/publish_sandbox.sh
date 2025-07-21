@@ -58,14 +58,13 @@ if [ -z $VERSION ]; then
 fi
 
 # Move into the root directory
-SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $SCRIPTS_DIR/..
+cd $CI_PROJECT_DIR
 
-VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ./scripts/build_layer.sh
+VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE ${SCRIPTS_PATH}/build_layer.sh
 
 echo "Publishing layers to sandbox"
 if [ $GITLAB_CI ]; then
-    VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE REGIONS=$REGION ./scripts/publish_layers.sh
+    VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE REGIONS=$REGION ${SCRIPTS_PATH}/publish_layers.sh
 else
-    VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE REGIONS=$REGION aws-vault exec sso-serverless-sandbox-account-admin -- ./scripts/publish_layers.sh
+    VERSION=$VERSION ARCHITECTURE=$ARCHITECTURE REGIONS=$REGION aws-vault exec sso-serverless-sandbox-account-admin -- ${SCRIPTS_PATH}/publish_layers.sh
 fi

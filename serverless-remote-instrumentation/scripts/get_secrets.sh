@@ -37,7 +37,7 @@ export GH_INSTALLATION_ID=$(vault kv get -field="gh_installation_id" kv/k8s/gitl
 PRIVATE_KEY_FILE=$(mktemp)
 echo "$GH_PRIVATE_KEY" > "$PRIVATE_KEY_FILE"
 
-export JWT_TOKEN=$(bash .gitlab/scripts/generate_jwt.sh $GH_APP_ID $PRIVATE_KEY_FILE)
+export JWT_TOKEN=$(bash ${SCRIPTS_PATH}/generate_jwt.sh $GH_APP_ID $PRIVATE_KEY_FILE)
 
 export GH_TOKEN=$(curl -s -X POST \
     -H "Authorization: Bearer $JWT_TOKEN" \

@@ -3,6 +3,9 @@ const { existsSync, readFileSync, writeFileSync } = require("fs");
 const { yamlParse } = require("yaml-cfn");
 
 const generateTestConfig = () => {
+  process.env.SCRIPTS_PATH = process.env.SCRIPTS_PATH || "./scripts";
+  process.env.CI_PROJECT_DIR = process.env.CI_PROJECT_DIR || ".";
+
   const configPath = "integration-tests/config.json";
   const template = yamlParse(
     readFileSync("template.yaml", { encoding: "utf8", flag: "r" }),
@@ -77,7 +80,7 @@ if (require.main === module) {
 
   const { region, stackName } = config;
 
-  execSync(`APPROVE=y REGION=${region} ./scripts/publish_sandbox.sh`, {
+  execSync(`APPROVE=y REGION=${region} ${process.env.SCRIPTS_PATH}/publish_sandbox.sh`, {
     encoding: "utf-8",
     stdio: "inherit",
   });
