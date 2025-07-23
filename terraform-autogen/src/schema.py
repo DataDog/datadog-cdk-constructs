@@ -98,6 +98,19 @@ def is_user_attribute(name: str, computed: bool) -> bool:
     return not computed or name in USER_FACING_ATTRIBUTES
 
 
+def is_sensitive(typ: TerraformType) -> bool:
+    """Check if the type is sensitive."""
+    match typ:
+        case TerraformPrimitive(_, _, _, sensitive):
+            return sensitive
+        case TerraformContainer(_, element_type, _, _, sensitive):
+            return sensitive or is_sensitive(element_type)
+        case TerraformObject(fields, _, _, _, sensitive):
+            return sensitive or any(is_sensitive(field) for field in fields.values())
+        case _:
+            return False
+
+
 def extract_type(
     schema: TypeSchema, optional: bool = False, description: str | None = None, sensitive: bool = False
 ) -> TerraformType:
