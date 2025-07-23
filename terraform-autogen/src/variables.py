@@ -1,12 +1,4 @@
-#!/usr/bin/env python3
-
-
-from .schema import (
-    TerraformContainer,
-    TerraformObject,
-    TerraformPrimitive,
-    TerraformType,
-)
+from src.schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
 
 RESOURCE_VARIABLES_FILE = "resource_variables.tf"
 
@@ -22,9 +14,7 @@ def display_tf_type(tf_type: TerraformType) -> str:
         case TerraformContainer(typ, e):
             type_str = f"{typ}({display_tf_type(e)})"
         case TerraformObject(fields):
-            field_str = ",\n".join(
-                f"{k} = {display_tf_type(v)}" for k, v in fields.items()
-            )
+            field_str = ",\n".join(f"{k} = {display_tf_type(v)}" for k, v in fields.items())
             type_str = f"object({{\n{field_str}\n}})"
         case _:
             raise ValueError(f"Unknown Terraform type: {tf_type}")
@@ -43,9 +33,7 @@ def generate_variables_file(resource: TerraformObject) -> str:
         optional_str = "\ndefault = null\n  nullable = true" if typ.optional else ""
         description_str = ""
         if typ.description:
-            description_str = (
-                f"\n  description = <<DESCRIPTION\n{typ.description}\nDESCRIPTION"
-            )
+            description_str = f"\n  description = <<DESCRIPTION\n{typ.description}\nDESCRIPTION"
         typ.optional = False  # reset optional to false for the top variable definition level, we use nullable instead
         content.append(
             f"""variable "{param}" {{
