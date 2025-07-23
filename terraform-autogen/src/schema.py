@@ -12,6 +12,7 @@ class AttributeSchema(TypedDict):
     description: str
     optional: NotRequired[bool]
     computed: NotRequired[bool]
+    sensitive: NotRequired[bool]
 
 
 class BlockSchema(TypedDict):
@@ -59,6 +60,7 @@ class TerraformPrimitive:
     type: Literal["string", "bool", "number"]
     optional: bool = False
     description: str | None = None
+    sensitive: bool = False
 
 
 @dataclass
@@ -69,6 +71,7 @@ class TerraformContainer:
     element_type: TerraformType
     optional: bool = False
     description: str | None = None
+    sensitive: bool = False
 
 
 @dataclass
@@ -77,6 +80,7 @@ class TerraformObject:
     is_block: bool
     optional: bool = False
     description: str | None = None
+    sensitive: bool = False
 
 
 def get_resource_schema(provider: str, resource: str) -> BlockSchema:
@@ -94,20 +98,23 @@ def is_user_attribute(name: str, computed: bool) -> bool:
     return not computed or name in USER_FACING_ATTRIBUTES
 
 
-def extract_type(schema: TypeSchema, optional: bool = False, description: str | None = None) -> TerraformType:
+def extract_type(
+    schema: TypeSchema, optional: bool = False, description: str | None = None, sensitive: bool = False
+) -> TerraformType:
     """
     Recursive function to unpack all Terraform type from the attributeschema's type.
     Returns a TerraformType object
     """
     match schema:
         case "string" | "bool" | "number":
-            return TerraformPrimitive(type=schema, optional=optional, description=description)
+            return TerraformPrimitive(type=schema, optional=optional, description=description, sensitive=sensitive)
         case ["list" | "set" | "map", element_type]:
             return TerraformContainer(
                 schema[0],
                 extract_type(element_type),
                 optional=optional,
                 description=description,
+                sensitive=sensitive,
             )
         case ["object", dict(fields)]:
             return TerraformObject(
@@ -115,6 +122,7 @@ def extract_type(schema: TypeSchema, optional: bool = False, description: str | 
                 is_block=False,
                 optional=optional,
                 description=description,
+                sensitive=sensitive,
             )
     raise ValueError(f"Unknown schema type: {schema}")
 
@@ -182,6 +190,7 @@ def extract_block(
             attribute["type"],
             optional=attribute.get("optional", False),
             description=attribute.get("description", None),
+            sensitive=attribute.get("sensitive", False),
         )
         for name, attribute in block.get("attributes", {}).items()
         if include_attribute(name, attribute.get("computed", False))
