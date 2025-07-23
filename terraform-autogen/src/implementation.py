@@ -22,12 +22,13 @@ def generate_field(
 ) -> str:
     field_value = get_field_value(impl_path, in_block)
     match typ:
+        # this is the special case for multiple blocks, represented as a list of objects
         case TerraformContainer(_, TerraformObject(fields, is_block)) if is_block:
             inner_fields = "\n".join(
                 generate_field(k, v, f"{name}.value.{k}", in_block=True) for k, v in fields.items()
             )
             return f"""dynamic "{name}" {{
-                        for_each = {field_value}
+                        for_each = {field_value} != null ? {field_value} : []
                         content {{
                             {inner_fields}
                         }}
