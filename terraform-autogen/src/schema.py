@@ -3,8 +3,6 @@ from json import loads
 from subprocess import PIPE, run
 from typing import Literal, NotRequired, TypedDict
 
-
-
 USER_FACING_ATTRIBUTES = set()
 
 
@@ -84,16 +82,11 @@ class TerraformObject:
 def get_resource_schema(provider: str, resource: str) -> BlockSchema:
     result = run(["terraform", "providers", "schema", "-json"], check=True, stdout=PIPE)
     schema = loads(result.stdout)
-    resource_schema = schema["provider_schemas"]["registry.terraform.io/" + provider][
-        "resource_schemas"
-    ][resource]
+    resource_schema = schema["provider_schemas"]["registry.terraform.io/" + provider]["resource_schemas"][resource]
     # Combine block and attribute inputs
     if "block" not in resource_schema:
-        raise KeyError(
-            f"Resource '{resource}' does not have a 'block' key in its schema."
-        )
+        raise KeyError(f"Resource '{resource}' does not have a 'block' key in its schema.")
     return resource_schema["block"]
-
 
 
 def is_user_attribute(name: str, computed: bool) -> bool:
@@ -101,18 +94,14 @@ def is_user_attribute(name: str, computed: bool) -> bool:
     return not computed and name not in USER_FACING_ATTRIBUTES
 
 
-def extract_type(
-    schema: TypeSchema, optional: bool = False, description: str | None = None
-) -> TerraformType:
+def extract_type(schema: TypeSchema, optional: bool = False, description: str | None = None) -> TerraformType:
     """
     Recursive function to unpack all Terraform type from the attributeschema's type.
     Returns a TerraformType object
     """
     match schema:
         case "string" | "bool" | "number":
-            return TerraformPrimitive(
-                type=schema, optional=optional, description=description
-            )
+            return TerraformPrimitive(type=schema, optional=optional, description=description)
         case ["list" | "set" | "map", element_type]:
             return TerraformContainer(
                 schema[0],
@@ -144,15 +133,13 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
         raise ValueError(f"Nested block {nested_block} has no nesting mode")
     min_items = nested_block.get("min_items", None)
     max_items = nested_block.get("max_items", None)
-    required: bool = (
-        min_items is not None and min_items == 1
-    )  # required = opposite of optional, required if min = 1
-    singleton: bool = (
-        max_items is not None and max_items == 1
-    )  # make an object, not a list
+    required: bool = min_items is not None and min_items == 1  # required = opposite of optional, required if min = 1
+    singleton: bool = max_items is not None and max_items == 1  # make an object, not a list
 
     match nesting_mode:
-        case "single":  # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
+        case (
+            "single"
+        ):  # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
             return extract_block(
                 nested_block.get("block", {}),
                 optional=True,
@@ -166,9 +153,7 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
                     description=nested_block.get("description", None),
                 )
             # has to be a list, so the outside container is optional, internal objects would be required/not optional if they are passed in, and also no description
-            inside_block = extract_block(
-                nested_block.get("block", {}), optional=False
-            )
+            inside_block = extract_block(nested_block.get("block", {}), optional=False)
             return TerraformContainer(
                 collection_type="list",
                 element_type=inside_block,
@@ -201,13 +186,10 @@ def extract_block(
         for name, attribute in block.get("attributes", {}).items()
         if include_attribute(name, attribute.get("computed", False))
     }
-    blocks = {
-        k: extract_nested_block(v) for k, v in block.get("block_types", {}).items()
-    }
+    blocks = {k: extract_nested_block(v) for k, v in block.get("block_types", {}).items()}
     return TerraformObject(
         fields={**attributes, **blocks},
         is_block=True,
         optional=optional,
         description=description,
     )
-

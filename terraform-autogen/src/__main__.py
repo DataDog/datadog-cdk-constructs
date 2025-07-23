@@ -1,15 +1,12 @@
 from json import load
 from subprocess import PIPE, run
 
-from .schema import (
-    USER_FACING_ATTRIBUTES,
-    extract_block,
-    get_resource_schema,
-)
-from .variables import update_variables
-from .versions import update_provider
-from .implementation import IMPL_VARIABLES, update_implementation
-from .outputs import update_outputs
+from src.implementation import IMPL_VARIABLES, update_implementation
+from src.outputs import update_outputs
+from src.schema import USER_FACING_ATTRIBUTES, extract_block, get_resource_schema
+from src.variables import update_variables
+from src.versions import update_provider
+
 
 def main():
     with open("autogen_config.json") as file:

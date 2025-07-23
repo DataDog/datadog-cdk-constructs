@@ -29,17 +29,13 @@ def get_max_version(versions: list[dict[str, str]]) -> str:
     """get the maximum version through tuple comparison
     e.g. "1.2.3" -> (1, 2, 3)"""
     # split each version string by `.`, convert to int, find the max tuple, and convert back to string
-    version_tuples = (
-        tuple(map(safe_int, entry["version"].split("."))) for entry in versions
-    )
+    version_tuples = (tuple(map(safe_int, entry["version"].split("."))) for entry in versions)
     valid_versions = filter(lambda t: None not in t, version_tuples)
     return ".".join(map(str, max(valid_versions)))
 
 
 def get_provider_version(provider: str) -> str:
-    with urlopen(
-        f"https://registry.terraform.io/v1/providers/{provider}/versions"
-    ) as response:
+    with urlopen(f"https://registry.terraform.io/v1/providers/{provider}/versions") as response:
         if response.status != 200:
             raise ValueError(f"Failed to fetch provider versions: {response.status}")
         data = loads(response.read())

@@ -1,9 +1,4 @@
-from .schema import (
-    TerraformContainer,
-    TerraformObject,
-    TerraformPrimitive,
-    TerraformType,
-)
+from src.schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
 
 RESOURCE_IMPLEMENTATION_FILE = "resource_impl.tf"
 
@@ -28,8 +23,7 @@ def generate_field(
     match typ:
         case TerraformContainer(_, TerraformObject(fields, is_block)) if is_block:
             inner_fields = "\n".join(
-                generate_field(k, v, f"{name}.value.{k}", in_block=True)
-                for k, v in fields.items()
+                generate_field(k, v, f"{name}.value.{k}", in_block=True) for k, v in fields.items()
             )
             return f"""dynamic "{name}" {{
                         for_each = {field_value}
@@ -39,12 +33,9 @@ def generate_field(
                     }}"""
         case TerraformPrimitive() | TerraformContainer():
             return f"{name} = {field_value}"
-        case TerraformObject(fields, is_block, is_optional_block) if (
-            is_block and is_optional_block
-        ):
+        case TerraformObject(fields, is_block, is_optional_block) if is_block and is_optional_block:
             inner_fields = "\n".join(
-                generate_field(key, val, f"{impl_path}.{key}", in_block)
-                for key, val in fields.items()
+                generate_field(key, val, f"{impl_path}.{key}", in_block) for key, val in fields.items()
             )
             return f"""dynamic "{name}" {{
                     for_each = {field_value} != null ? [true] : []
@@ -54,8 +45,7 @@ def generate_field(
                 }}"""
         case TerraformObject(fields, is_block):
             inner_fields = "\n".join(
-                generate_field(key, val, f"{impl_path}.{key}", in_block)
-                for key, val in fields.items()
+                generate_field(key, val, f"{impl_path}.{key}", in_block) for key, val in fields.items()
             )
             object_separator = "" if is_block else "="
             return f"{name} {object_separator} {{\n{inner_fields}\n}}"
@@ -74,9 +64,5 @@ def update_implementation(resource_name: str, resource: TerraformObject) -> None
     """
     with open(RESOURCE_IMPLEMENTATION_FILE, "w") as file:
         file.write(f'resource "{resource_name}" "this" {{\n')
-        file.write(
-            "\n".join(
-                generate_field(name, typ, name) for name, typ in resource.fields.items()
-            )
-        )
+        file.write("\n".join(generate_field(name, typ, name) for name, typ in resource.fields.items()))
         file.write("\n}\n")
