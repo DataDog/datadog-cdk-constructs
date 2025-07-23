@@ -1,0 +1,16 @@
+[project]
+name = "terraform-autogen"
+version = "0.1.0"
+description = "A tool for automatic Terraform Wrapper Module generation"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+packages = ["src"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+tf-autogen = "src.__main__:main"
