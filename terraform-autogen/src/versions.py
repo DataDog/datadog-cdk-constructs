@@ -1,11 +1,15 @@
 from json import loads
 from urllib.request import urlopen
 
+from src.constants import DO_NOT_EDIT_HEADER
+
 VERSIONS_FILE = "versions.tf"
 
 
 def generate_versions_file(provider: str, version: str) -> str:
-    return f"""terraform {{
+    return f"""{DO_NOT_EDIT_HEADER}
+
+terraform {{
   required_version = ">= 1.5.0"
 
   required_providers {{

@@ -1,3 +1,4 @@
+from src.constants import DO_NOT_EDIT_HEADER
 from src.schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
 
 RESOURCE_VARIABLES_FILE = "resource_variables.tf"
@@ -28,7 +29,7 @@ def generate_variables_file(resource: TerraformObject) -> str:
     """
     Prints the Terraform variables in a format suitable for Terraform configuration files.
     """
-    content = []
+    content = [DO_NOT_EDIT_HEADER]
     for param, typ in resource.fields.items():
         optional_str = "\ndefault = null\n  nullable = true" if typ.optional else ""
         description_str = ""

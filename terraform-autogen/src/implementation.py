@@ -1,3 +1,4 @@
+from src.constants import DO_NOT_EDIT_HEADER
 from src.schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
 
 RESOURCE_IMPLEMENTATION_FILE = "resource_impl.tf"
@@ -63,6 +64,7 @@ def update_implementation(resource_name: str, resource: TerraformObject) -> None
         variables (list[TerraformVariable]): The list of variables discovered from the resource schema.
     """
     with open(RESOURCE_IMPLEMENTATION_FILE, "w") as file:
-        file.write(f'resource "{resource_name}" "this" {{\n')
+        file.write(DO_NOT_EDIT_HEADER)
+        file.write(f'\n\nresource "{resource_name}" "this" {{\n')
         file.write("\n".join(generate_field(name, typ, name) for name, typ in resource.fields.items()))
         file.write("\n}\n")

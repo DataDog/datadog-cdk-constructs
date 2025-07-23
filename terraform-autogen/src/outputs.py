@@ -1,10 +1,11 @@
+from src.constants import DO_NOT_EDIT_HEADER
 from src.schema import BlockSchema, TerraformObject, extract_block
 
 RESOURCE_OUTPUTS_FILE = "outputs.tf"
 
 
 def generate_outputs_file(resource_name: str, resource: TerraformObject) -> str:
-    content = []
+    content = [DO_NOT_EDIT_HEADER]
     for param, typ in resource.fields.items():
         description_str = ""
         if typ.description:
