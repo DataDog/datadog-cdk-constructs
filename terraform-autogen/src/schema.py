@@ -166,16 +166,16 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
                     optional=not required,
                     description=nested_block.get("description", None),
                 )
-            else:  # has to be a list, so the outside container is optional, internal objects would be required/not optional if they are passed in, and also no description
-                inside_block = extract_block(
-                    nested_block.get("block", {}), optional=False
-                )
-                return TerraformContainer(
-                    collection_type="list",
-                    element_type=inside_block,
-                    optional=not required,
-                    description=nested_block.get("description", None),
-                )
+            # has to be a list, so the outside container is optional, internal objects would be required/not optional if they are passed in, and also no description
+            inside_block = extract_block(
+                nested_block.get("block", {}), optional=False
+            )
+            return TerraformContainer(
+                collection_type="list",
+                element_type=inside_block,
+                optional=not required,
+                description=nested_block.get("description", None),
+            )
 
         case "set":  # no min, max constraints from the one env vars example
             inside_block = extract_block(nested_block.get("block", {}))

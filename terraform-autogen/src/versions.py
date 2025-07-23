@@ -41,7 +41,7 @@ def get_provider_version(provider: str) -> str:
         f"https://registry.terraform.io/v1/providers/{provider}/versions"
     ) as response:
         if response.status != 200:
-            raise Exception(f"Failed to fetch provider versions: {response.status}")
+            raise ValueError(f"Failed to fetch provider versions: {response.status}")
         data = loads(response.read())
     versions = data.get("versions", [])
     if not versions:
