@@ -90,8 +90,8 @@ def get_resource_schema(provider: str, resource: str) -> BlockSchema:
 
 
 def is_user_attribute(name: str, computed: bool) -> bool:
-    """An attribute is user facing if it is not a computed-only attribute"""
-    return not computed and name not in USER_FACING_ATTRIBUTES
+    """An attribute is user facing if it is not a computed-only attribute, with some exceptions."""
+    return not computed or name in USER_FACING_ATTRIBUTES
 
 
 def extract_type(schema: TypeSchema, optional: bool = False, description: str | None = None) -> TerraformType:
