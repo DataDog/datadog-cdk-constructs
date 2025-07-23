@@ -1,3 +1,4 @@
+from copy import deepcopy
 from json import load
 from subprocess import PIPE, run
 
@@ -24,7 +25,7 @@ def main():
     run(["terraform", "init", "-upgrade"], check=True, stdout=PIPE)
     schema = get_resource_schema(provider, resource_name)
     resource = extract_block(schema)
-    update_variables(resource)
+    update_variables(deepcopy(resource)) # deepcopy because update_variables mutates the resource
     update_implementation(resource_name, resource)
     update_outputs(resource_name, schema)
 
