@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from json import loads
 from subprocess import PIPE, run
-import sys
 from typing import Literal, NotRequired, TypedDict
 
 

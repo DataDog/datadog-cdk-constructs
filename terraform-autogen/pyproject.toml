@@ -6,11 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 
 [tool.setuptools]
-packages = ["terraform_autogen"]
+packages = ["src"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.scripts]
-tf-autogen = "terraform_autogen.__main__:main"
+tf-autogen = "src.__main__:main"
