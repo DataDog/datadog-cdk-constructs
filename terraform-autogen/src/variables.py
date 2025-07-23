@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
 
-from .schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
+from .schema import (
+    TerraformContainer,
+    TerraformObject,
+    TerraformPrimitive,
+    TerraformType,
+)
 
 RESOURCE_VARIABLES_FILE = "resource_variables.tf"
 
@@ -10,20 +15,23 @@ def display_tf_type(tf_type: TerraformType) -> str:
     """
     Returns a string representation of the Terraform type.
     """
+    type_str = ""
     match tf_type:
-        case TerraformPrimitive(e, optional):
-            if optional:
-                return f"optional({e})"
-            return e
+        case TerraformPrimitive(e):
+            type_str = e
         case TerraformContainer(typ, e):
-            return f"{typ}({display_tf_type(e)})"
+            type_str = f"{typ}({display_tf_type(e)})"
         case TerraformObject(fields):
             field_str = ",\n".join(
                 f"{k} = {display_tf_type(v)}" for k, v in fields.items()
             )
-            return f"object({{\n{field_str}\n}})"
+            type_str = f"object({{\n{field_str}\n}})"
         case _:
             raise ValueError(f"Unknown Terraform type: {tf_type}")
+
+    if tf_type.optional:
+        return f"optional({type_str})"
+    return type_str
 
 
 def generate_variables_file(resource: TerraformObject) -> str:
