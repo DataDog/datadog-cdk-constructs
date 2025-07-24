@@ -51,7 +51,7 @@ def main():
         default=False,
     )
     args = parser.parse_args()
-    generate(config_path=args.config, regenerate=args.regen)
+    generate(config_path=args.config, regenerate=args.regenerate)
 
 
 if __name__ == "__main__":
