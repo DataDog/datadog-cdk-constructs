@@ -1,0 +1,12 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.4
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--config, terraform-autogen/pyproject.toml]
+        files: ^terraform-autogen/
+      # Run the formatter
+      - id: ruff-format
+        args: [--config, terraform-autogen/pyproject.toml]
+        files: ^terraform-autogen/

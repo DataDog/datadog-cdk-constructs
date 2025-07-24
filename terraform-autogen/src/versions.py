@@ -6,6 +6,7 @@ from src.constants import DO_NOT_EDIT_HEADER
 
 VERSIONS_FILE = "versions.tf"
 
+
 class TfProvider(TypedDict):
     name: str
     version: str

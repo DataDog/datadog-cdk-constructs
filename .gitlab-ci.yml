@@ -1,9 +1,16 @@
-stages:
-  - build
+variables:
+  DOCKER_IMAGE: registry.ddbuild.io/images/docker:20.10
+  TERRAFORM_AUTOGEN_IMAGE: registry.ddbuild.io/ci/terraform-autogen:latest
 
+stages:
+  - ci-image
+  - lint
+
+
+# ------------- CI IMAGES -------------
 serverless-remote-instrumentation ci image:
-  stage: build
-  image: registry.ddbuild.io/images/docker:20.10
+  stage: ci-image
+  image: $DOCKER_IMAGE
   tags: ["arch:arm64"]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -15,4 +22,31 @@ serverless-remote-instrumentation ci image:
     DOCKER_TARGET: registry.ddbuild.io/ci/serverless-remote-instrumentation:latest
   script:
     - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f serverless-remote-instrumentation/Dockerfile serverless-remote-instrumentation/
-    
+
+terraform-autogen-ci-image:
+  stage: ci-image
+  image: $DOCKER_IMAGE
+  tags: ['arch:amd64']
+  rules:
+    - when: manual
+      allow_failure: true
+  when: manual
+  script:
+    - docker buildx build --platform linux/amd64 --tag "$TERRAFORM_AUTOGEN_IMAGE" -f terraform-autogen/Dockerfile ./terraform-autogen/ --push
+
+
+# ------------- Linting checks -------------
+terraform-autogen-lint:
+  image: $TERRAFORM_AUTOGEN_IMAGE
+  stage: lint
+  tags: ['arch:amd64']
+  script:
+    - ruff check
+
+terraform-autogen-format:
+  image: $TERRAFORM_AUTOGEN_IMAGE
+  stage: lint
+  tags: ['arch:amd64']
+  script:
+    - ruff format --diff
+

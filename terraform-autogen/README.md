@@ -11,10 +11,10 @@ pip install --editable .
 
 note: if using pyenv, this will get you set up:
 ```sh
-pyenv install 3.13.3
+pyenv install 3.12.3
 brew install pyenv-virtualenv # if not already installed
 pyenv virtualenv 
-pyenv virtualenv 3.13.3 terraform
+pyenv virtualenv 3.12.3 terraform
 pyenv shell terraform
 pip install --editable .
 ```
