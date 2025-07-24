@@ -160,13 +160,16 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
     singleton: bool = max_items is not None and max_items == 1  # make an object, not a list
 
     match nesting_mode:
-        case "single":  # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
+        # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
+        case "single":
             return extract_block(
                 nested_block.get("block", {}),
                 optional=True,
                 description=nested_block.get("description", None),
             )
-        case "list":  # min items, max items can both occur
+
+        # min items, max items can both occur
+        case "list":
             if singleton:  # if max = 1, make return value a single object
                 return extract_block(
                     nested_block.get("block", {}),
@@ -182,7 +185,8 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
                 description=nested_block.get("description", None),
             )
 
-        case "set":  # no min, max constraints from the one env vars example
+        # no min, max constraints from the one env vars example
+        case "set":
             inside_block = extract_block(nested_block.get("block", {}))
             return TerraformContainer(
                 collection_type="set",
