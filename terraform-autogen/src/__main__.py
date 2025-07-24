@@ -2,19 +2,28 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from copy import deepcopy
 from json import load
 from subprocess import PIPE, run
+from typing import NotRequired, TypedDict
 
 from src.implementation import IMPL_VARIABLES, update_implementation
 from src.outputs import update_outputs
 from src.schema import USER_FACING_ATTRIBUTES, extract_block, get_resource_schema
 from src.variables import update_variables
-from src.versions import update_provider
+from src.versions import TfProvider, update_provider
 
 DEFAULT_CONFIG_PATH = "autogen_config.json"
 
 
+class Config(TypedDict):
+    provider: str
+    resource: str
+    impl: NotRequired[list[str]]
+    user_input: NotRequired[list[str]]
+    additional_providers: NotRequired[list[TfProvider]]
+
+
 def generate(config_path: str, regenerate: bool):
     with open(config_path) as file:
-        config = load(file)
+        config: Config = load(file)
     provider = config["provider"]
     resource_name = config["resource"]
     IMPL_VARIABLES.clear()
@@ -22,7 +31,7 @@ def generate(config_path: str, regenerate: bool):
     USER_FACING_ATTRIBUTES.clear()
     USER_FACING_ATTRIBUTES.update(config.get("user_input", []))
 
-    if not update_provider(provider) and not regenerate:
+    if not update_provider(provider, config.get("additional_providers", [])) and not regenerate:
         return
 
     run(["terraform", "init", "-upgrade"], check=True, stdout=PIPE)

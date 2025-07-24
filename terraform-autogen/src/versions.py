@@ -1,22 +1,32 @@
 from json import loads
+from typing import TypedDict
 from urllib.request import urlopen
 
 from src.constants import DO_NOT_EDIT_HEADER
 
 VERSIONS_FILE = "versions.tf"
 
+class TfProvider(TypedDict):
+    name: str
+    version: str
 
-def generate_versions_file(provider: str, version: str) -> str:
+
+def generate_versions_file(provider: str, version: str, additional_providers: list[TfProvider]) -> str:
+    providers = [TfProvider(name=provider, version=version), *additional_providers]
+    providers_str = "\n".join(
+        f"""    {p["name"].split("/")[1]} = {{
+      source  = "{p["name"]}"
+      version = ">= {p["version"]}"
+    }}"""
+        for p in providers
+    )
     return f"""{DO_NOT_EDIT_HEADER}
 
 terraform {{
   required_version = ">= 1.5.0"
 
   required_providers {{
-    {provider.split("/")[1]} = {{
-      source  = "{provider}"
-      version = ">= {version}"
-    }}
+    {providers_str}
   }}
 }}
 """
@@ -49,7 +59,7 @@ def get_provider_version(provider: str) -> str:
     return get_max_version(versions)
 
 
-def update_provider(provider: str) -> bool:
+def update_provider(provider: str, additional_providers: list[TfProvider]) -> bool:
     """
     Update the Terraform provider configuration.
 
@@ -58,7 +68,7 @@ def update_provider(provider: str) -> bool:
     version = get_provider_version(provider)
     with open(VERSIONS_FILE) as file:
         current_content = file.read()
-    new_content = generate_versions_file(provider, version)
+    new_content = generate_versions_file(provider, version, additional_providers)
     if current_content == new_content:
         print(f"No update needed for provider '{provider}'.")
         return False
