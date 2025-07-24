@@ -27,7 +27,7 @@ terraform {{
   required_version = ">= 1.5.0"
 
   required_providers {{
-    {providers_str}
+{providers_str}
   }}
 }}
 """
