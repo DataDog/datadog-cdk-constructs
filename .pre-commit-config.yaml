@@ -4,9 +4,11 @@ repos:
     hooks:
       # Run the linter
       - id: ruff
+        name: terraform-autogen lint
         args: [--config, terraform-autogen/pyproject.toml]
         files: ^terraform-autogen/
       # Run the formatter
       - id: ruff-format
+        name: terraform-autogen format
         args: [--config, terraform-autogen/pyproject.toml]
         files: ^terraform-autogen/
