@@ -41,6 +41,7 @@ terraform-autogen-lint:
   stage: lint
   tags: ['arch:amd64']
   script:
+    - cd terraform-autogen
     - ruff check
 
 terraform-autogen-format:
@@ -48,5 +49,13 @@ terraform-autogen-format:
   stage: lint
   tags: ['arch:amd64']
   script:
+    - cd terraform-autogen
     - ruff format --diff
 
+terraform-autogen-typecheck:
+  image: $TERRAFORM_AUTOGEN_IMAGE
+  stage: lint
+  tags: ['arch:amd64']
+  script:
+    - cd terraform-autogen
+    - pyright
