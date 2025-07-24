@@ -4,7 +4,7 @@ variables:
 
 stages:
   - ci-image
-  - lint
+  - test
 
 
 # ------------- CI IMAGES -------------
@@ -35,10 +35,10 @@ terraform-autogen-ci-image:
     - docker buildx build --platform linux/amd64 --tag "$TERRAFORM_AUTOGEN_IMAGE" -f terraform-autogen/Dockerfile ./terraform-autogen/ --push
 
 
-# ------------- Linting checks -------------
+# ------------- Testing/Validation -------------
 terraform-autogen-lint:
   image: $TERRAFORM_AUTOGEN_IMAGE
-  stage: lint
+  stage: test
   tags: ['arch:amd64']
   script:
     - cd terraform-autogen
@@ -46,7 +46,7 @@ terraform-autogen-lint:
 
 terraform-autogen-format:
   image: $TERRAFORM_AUTOGEN_IMAGE
-  stage: lint
+  stage: test
   tags: ['arch:amd64']
   script:
     - cd terraform-autogen
@@ -54,7 +54,7 @@ terraform-autogen-format:
 
 terraform-autogen-typecheck:
   image: $TERRAFORM_AUTOGEN_IMAGE
-  stage: lint
+  stage: test
   tags: ['arch:amd64']
   script:
     - cd terraform-autogen
