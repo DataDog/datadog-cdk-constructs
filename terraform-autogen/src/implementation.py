@@ -10,7 +10,7 @@ def get_field_value(impl_path: str, in_block: bool) -> str:
     if in_block:
         return impl_path  # special case for dynamic blocks
     if impl_path in IMPL_VARIABLES:
-        return f"locals.{impl_path.replace('.', '_')}"  # overrides from locals
+        return f"local.{impl_path.replace('.', '_')}"  # overrides from locals
     return f"var.{impl_path}"  # default case for variables
 
 

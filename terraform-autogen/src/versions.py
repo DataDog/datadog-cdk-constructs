@@ -6,6 +6,7 @@ from src.constants import DO_NOT_EDIT_HEADER
 
 VERSIONS_FILE = "versions.tf"
 
+
 class TfProvider(TypedDict):
     name: str
     version: str
@@ -26,7 +27,7 @@ terraform {{
   required_version = ">= 1.5.0"
 
   required_providers {{
-    {providers_str}
+{providers_str}
   }}
 }}
 """
