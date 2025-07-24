@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from copy import deepcopy
 from json import load
 from subprocess import PIPE, run
@@ -36,12 +36,12 @@ def generate(config_path: str, regenerate: bool):
 
 
 def main():
-    parser = ArgumentParser(description="Terraform autogen script")
+    parser = ArgumentParser(description="Terraform autogen script", formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         "--config",
         type=str,
         default=DEFAULT_CONFIG_PATH,
-        help="Path to the autogen configuration file (default: autogen_config.json)",
+        help="Path to the autogen configuration file",
     )
     parser.add_argument(
         "-r",
