@@ -1,15 +1,13 @@
-from src.constants import DO_NOT_EDIT_HEADER
+from src.constants import DO_NOT_EDIT_HEADER, FIELDS_CONFIG
 from src.schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
 
 RESOURCE_IMPLEMENTATION_FILE = "resource_impl.tf"
-
-IMPL_VARIABLES: set[str] = set()
 
 
 def get_field_value(impl_path: str, in_block: bool) -> str:
     if in_block:
         return impl_path  # special case for dynamic blocks
-    if impl_path in IMPL_VARIABLES:
+    if impl_path in FIELDS_CONFIG.get("impl", []):
         return f"local.{impl_path.replace('.', '_')}"  # overrides from locals
     return f"var.{impl_path}"  # default case for variables
 
@@ -69,3 +67,4 @@ def update_implementation(resource_name: str, resource: TerraformObject) -> None
         file.write(f'\n\nresource "{resource_name}" "this" {{\n')
         file.write("\n".join(generate_field(name, typ, name) for name, typ in resource.fields.items()))
         file.write("\n}\n")
+    print(f"Updated {RESOURCE_IMPLEMENTATION_FILE} with resource implementation")

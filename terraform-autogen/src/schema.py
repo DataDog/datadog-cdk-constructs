@@ -3,7 +3,7 @@ from json import loads
 from subprocess import PIPE, run
 from typing import Literal, NotRequired, TypedDict
 
-USER_FACING_ATTRIBUTES = set()
+from src.constants import FIELDS_CONFIG
 
 
 # Terraform Resource Schema
@@ -95,7 +95,9 @@ def get_resource_schema(provider: str, resource: str) -> BlockSchema:
 
 def is_user_attribute(name: str, computed: bool) -> bool:
     """An attribute is user facing if it is not a computed-only attribute, with some exceptions."""
-    return not computed or name in USER_FACING_ATTRIBUTES
+    if name in FIELDS_CONFIG.get("never_allow", []):
+        return False
+    return not computed or name in FIELDS_CONFIG.get("always_allow", [])
 
 
 def is_sensitive(typ: TerraformType) -> bool:
@@ -158,9 +160,7 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
     singleton: bool = max_items is not None and max_items == 1  # make an object, not a list
 
     match nesting_mode:
-        case (
-            "single"
-        ):  # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
+        case "single":  # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
             return extract_block(
                 nested_block.get("block", {}),
                 optional=True,
