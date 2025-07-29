@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-3.0.0...v2-3.1.0) (2025-07-29)
+
 ## [3.0.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.8.0...v2-3.0.0) (2025-07-21)
 
 ## [2.8.0](https://github.com/DataDog/datadog-cdk-constructs/compare/v2-2.7.0...v2-2.8.0) (2025-07-16)
