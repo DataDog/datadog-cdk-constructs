@@ -1,4 +1,4 @@
-from src.constants import DO_NOT_EDIT_HEADER
+from src.constants import DO_NOT_EDIT_HEADER, FIELDS_CONFIG
 from src.schema import BlockSchema, TerraformObject, extract_block, is_sensitive
 
 RESOURCE_OUTPUTS_FILE = "outputs.tf"
@@ -18,6 +18,7 @@ value = {resource_name}.this.{param}{sensitive_str}
 
 
 def update_outputs(resource_name: str, schema: BlockSchema) -> None:
-    resource = extract_block(schema, include_attribute=lambda *_: True)
+    resource = extract_block(schema, include_attribute=lambda name, _: name not in FIELDS_CONFIG.get("never_allow", []))
     with open(RESOURCE_OUTPUTS_FILE, "w") as file:
         file.write(generate_outputs_file(resource_name, resource))
+    print(f"Updated {RESOURCE_OUTPUTS_FILE} with resource outputs")

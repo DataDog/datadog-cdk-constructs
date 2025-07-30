@@ -1,4 +1,5 @@
 from json import loads
+from os import path
 from typing import TypedDict
 from urllib.request import urlopen
 
@@ -67,13 +68,15 @@ def update_provider(provider: str, additional_providers: list[TfProvider]) -> bo
     Returns whether an update was needed or not.
     """
     version = get_provider_version(provider)
-    with open(VERSIONS_FILE) as file:
-        current_content = file.read()
+
+    current_content = None
+    if path.exists(VERSIONS_FILE):
+        with open(VERSIONS_FILE) as file:
+            current_content = file.read()
+
     new_content = generate_versions_file(provider, version, additional_providers)
     if current_content == new_content:
-        print(f"No update needed for provider '{provider}'.")
         return False
     with open(VERSIONS_FILE, "w") as file:
         file.write(new_content)
-    print(f"Updated provider '{provider}' to version '{version}'.")
     return True

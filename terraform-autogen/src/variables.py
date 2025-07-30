@@ -48,3 +48,4 @@ type = {display_tf_type(typ)}{optional_str}{description_str}{sensitive_str}
 def update_variables(resource: TerraformObject) -> None:
     with open(RESOURCE_VARIABLES_FILE, "w") as file:
         file.write(generate_variables_file(resource))
+    print(f"Updated {RESOURCE_VARIABLES_FILE} resource variables")
