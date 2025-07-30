@@ -18,8 +18,6 @@ class Config(TypedDict):
     provider: str
     resource: str
     fields: NotRequired[FieldsConfig]
-    impl: NotRequired[list[str]]
-    user_input: NotRequired[list[str]]
     additional_providers: NotRequired[list[TfProvider]]
 
 
