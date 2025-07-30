@@ -10,6 +10,8 @@ class FieldsConfig(TypedDict, total=False):
     always_allow: list[str]
     # Fields that are never included (even if not computed) in the user input variables (or implemented), due to support/deprecation issues
     never_allow: list[str]
+    # Fields that should always be marked sensitive in the outputs
+    always_sensitive: dict[str, bool]
 
 
 FIELDS_CONFIG: FieldsConfig = {}

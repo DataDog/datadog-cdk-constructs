@@ -8,7 +8,8 @@ def generate_outputs_file(resource_name: str, resource: TerraformObject) -> str:
     content = [DO_NOT_EDIT_HEADER]
     for param, typ in resource.fields.items():
         description_str = f"\n  description = <<DESCRIPTION\n{typ.description}\nDESCRIPTION" if typ.description else ""
-        sensitive_str = "\nsensitive = true" if is_sensitive(typ) else ""
+        sensitive = is_sensitive(typ) or param in FIELDS_CONFIG.get("always_sensitive", [])
+        sensitive_str = "\nsensitive = true" if sensitive else ""
         content.append(
             f"""output "{param}" {{{description_str}
 value = {resource_name}.this.{param}{sensitive_str}
