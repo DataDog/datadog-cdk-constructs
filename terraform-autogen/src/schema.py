@@ -1,9 +1,10 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 from json import loads
 from subprocess import PIPE, run
 from typing import Literal, NotRequired, TypedDict
 
-from src.constants import FIELDS_CONFIG
+from src.config import Config
 
 
 # Terraform Resource Schema
@@ -83,21 +84,23 @@ class TerraformObject:
     sensitive: bool = False
 
 
-def get_resource_schema(provider: str, resource: str) -> BlockSchema:
+def get_resource_schema(config: Config) -> BlockSchema:
     result = run(["terraform", "providers", "schema", "-json"], check=True, stdout=PIPE)
     schema = loads(result.stdout)
-    resource_schema = schema["provider_schemas"]["registry.terraform.io/" + provider]["resource_schemas"][resource]
+    resource_schema = schema["provider_schemas"]["registry.terraform.io/" + config.provider]["resource_schemas"][
+        config.resource
+    ]
     # Combine block and attribute inputs
     if "block" not in resource_schema:
-        raise KeyError(f"Resource '{resource}' does not have a 'block' key in its schema.")
+        raise KeyError(f"Resource '{config.resource}' does not have a 'block' key in its schema.")
     return resource_schema["block"]
 
 
-def is_user_attribute(name: str, computed: bool) -> bool:
+def is_user_attribute(config: Config, name: str, computed: bool) -> bool:
     """An attribute is user facing if it is not a computed-only attribute, with some exceptions."""
-    if name in FIELDS_CONFIG.get("never_allow", []):
+    if name in config.fields.never_allow:
         return False
-    return not computed or name in FIELDS_CONFIG.get("always_allow", [])
+    return not computed or name in config.fields.always_allow
 
 
 def is_sensitive(typ: TerraformType) -> bool:
@@ -142,7 +145,7 @@ def extract_type(
     raise ValueError(f"Unknown schema type: {schema}")
 
 
-def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
+def extract_nested_block(config: Config, nested_block: NestedBlock) -> TerraformType:
     """
     Extracts a nested block from inside a block's block_types, unpacks it, and returns entire thing as a Terraform.
     Either returns a TerraformObject or TerraformContainer, depending on the nesting mode.
@@ -163,6 +166,7 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
         # given the timeouts block as the only example, assume optional and at most 1, return a TerraformObject
         case "single":
             return extract_block(
+                config,
                 nested_block.get("block", {}),
                 optional=True,
                 description=nested_block.get("description", None),
@@ -172,12 +176,13 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
         case "list":
             if singleton:  # if max = 1, make return value a single object
                 return extract_block(
+                    config,
                     nested_block.get("block", {}),
                     optional=not required,
                     description=nested_block.get("description", None),
                 )
             # has to be a list, so the outside container is optional, internal objects would be required/not optional if they are passed in, and also no description
-            inside_block = extract_block(nested_block.get("block", {}), optional=False)
+            inside_block = extract_block(config, nested_block.get("block", {}), optional=False)
             return TerraformContainer(
                 collection_type="list",
                 element_type=inside_block,
@@ -187,7 +192,7 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
 
         # no min, max constraints from the one env vars example
         case "set":
-            inside_block = extract_block(nested_block.get("block", {}))
+            inside_block = extract_block(config, nested_block.get("block", {}))
             return TerraformContainer(
                 collection_type="set",
                 element_type=inside_block,
@@ -197,10 +202,11 @@ def extract_nested_block(nested_block: NestedBlock) -> TerraformType:
 
 
 def extract_block(
+    config: Config,
     block: BlockSchema,
     optional: bool = False,
     description: str | None = None,
-    include_attribute=is_user_attribute,
+    include_attribute: Callable[[Config, str, bool], bool] = is_user_attribute,
 ) -> TerraformObject:
     attributes = {
         name: extract_type(
@@ -210,9 +216,9 @@ def extract_block(
             sensitive=attribute.get("sensitive", False),
         )
         for name, attribute in block.get("attributes", {}).items()
-        if include_attribute(name, attribute.get("computed", False))
+        if include_attribute(config, name, attribute.get("computed", False))
     }
-    blocks = {k: extract_nested_block(v) for k, v in block.get("block_types", {}).items()}
+    blocks = {k: extract_nested_block(config, v) for k, v in block.get("block_types", {}).items()}
     return TerraformObject(
         fields={**attributes, **blocks},
         is_block=True,
