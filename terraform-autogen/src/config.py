@@ -47,9 +47,6 @@ class Config(BaseModel):
     )
 
 
-CONFIG: Config = Config(provider="", resource="")
-
-
 def write_config_schema() -> None:
     """Write the configuration schema to a JSON file."""
     with open("autogen_config_schema.json", "w") as file:
