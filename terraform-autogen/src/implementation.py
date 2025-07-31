@@ -1,29 +1,31 @@
-from src.constants import DO_NOT_EDIT_HEADER, FIELDS_CONFIG
+from src.config import Config
+from src.constants import DO_NOT_EDIT_HEADER
 from src.schema import TerraformContainer, TerraformObject, TerraformPrimitive, TerraformType
 
 RESOURCE_IMPLEMENTATION_FILE = "resource_impl.tf"
 
 
-def get_field_value(impl_path: str, in_block: bool) -> str:
+def get_field_value(impl_fields: list[str], impl_path: str, in_block: bool) -> str:
     if in_block:
         return impl_path  # special case for dynamic blocks
-    if impl_path in FIELDS_CONFIG.get("impl", []):
+    if impl_path in impl_fields:
         return f"local.{impl_path.replace('.', '_')}"  # overrides from locals
     return f"var.{impl_path}"  # default case for variables
 
 
 def generate_field(
+    impl_fields: list[str],
     name: str,
     typ: TerraformType,
     impl_path: str,
     in_block: bool = False,
 ) -> str:
-    field_value = get_field_value(impl_path, in_block)
+    field_value = get_field_value(impl_fields, impl_path, in_block)
     match typ:
         # this is the special case for multiple blocks, represented as a list of objects
         case TerraformContainer(_, TerraformObject(fields, is_block)) if is_block:
             inner_fields = "\n".join(
-                generate_field(k, v, f"{name}.value.{k}", in_block=True) for k, v in fields.items()
+                generate_field(impl_fields, k, v, f"{name}.value.{k}", in_block=True) for k, v in fields.items()
             )
             return f"""dynamic "{name}" {{
                         for_each = {field_value} != null ? {field_value} : []
@@ -35,7 +37,7 @@ def generate_field(
             return f"{name} = {field_value}"
         case TerraformObject(fields, is_block, is_optional_block) if is_block and is_optional_block:
             inner_fields = "\n".join(
-                generate_field(key, val, f"{impl_path}.{key}", in_block) for key, val in fields.items()
+                generate_field(impl_fields, key, val, f"{impl_path}.{key}", in_block) for key, val in fields.items()
             )
             return f"""dynamic "{name}" {{
                     for_each = {field_value} != null ? [true] : []
@@ -45,7 +47,7 @@ def generate_field(
                 }}"""
         case TerraformObject(fields, is_block):
             inner_fields = "\n".join(
-                generate_field(key, val, f"{impl_path}.{key}", in_block) for key, val in fields.items()
+                generate_field(impl_fields, key, val, f"{impl_path}.{key}", in_block) for key, val in fields.items()
             )
             object_separator = "" if is_block else "="
             return f"{name} {object_separator} {{\n{inner_fields}\n}}"
@@ -53,7 +55,7 @@ def generate_field(
             raise ValueError(f"Unknown Terraform type: {typ}")
 
 
-def update_implementation(resource_name: str, resource: TerraformObject) -> None:
+def update_implementation(config: Config, resource: TerraformObject) -> None:
     """
     Updates the Terraform resource implementation file with the specified resource and implemenation of fields.
 
@@ -64,7 +66,9 @@ def update_implementation(resource_name: str, resource: TerraformObject) -> None
     """
     with open(RESOURCE_IMPLEMENTATION_FILE, "w") as file:
         file.write(DO_NOT_EDIT_HEADER)
-        file.write(f'\n\nresource "{resource_name}" "this" {{\n')
-        file.write("\n".join(generate_field(name, typ, name) for name, typ in resource.fields.items()))
+        file.write(f'\n\nresource "{config.resource}" "this" {{\n')
+        file.write(
+            "\n".join(generate_field(config.fields.impl, name, typ, name) for name, typ in resource.fields.items())
+        )
         file.write("\n}\n")
     print(f"Updated {RESOURCE_IMPLEMENTATION_FILE} with resource implementation")

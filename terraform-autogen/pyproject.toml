@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A tool for automatic Terraform Wrapper Module generation"
 readme = "README.md"
 requires-python = ">=3.12"
-
+dependencies = ["pydantic==2.11.7"]
 
 [project.optional-dependencies]
 dev = ["ruff==0.12.5", "pyright==1.1.403"]
