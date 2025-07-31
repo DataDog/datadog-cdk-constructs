@@ -31,7 +31,7 @@ def generate_variables_file(resource: TerraformObject) -> str:
     """
     content = [DO_NOT_EDIT_HEADER]
     for param, typ in resource.fields.items():
-        optional_str = "\ndefault = null\n  nullable = true" if typ.optional else ""
+        optional_str = "default = null" if typ.optional else "nullable = false"
         sensitive_str = "\nsensitive = true" if typ.sensitive else ""
         description_str = ""
         if typ.description:
@@ -39,7 +39,8 @@ def generate_variables_file(resource: TerraformObject) -> str:
         typ.optional = False  # reset optional to false for the top variable definition level, we use nullable instead
         content.append(
             f"""variable "{param}" {{
-type = {display_tf_type(typ)}{optional_str}{description_str}{sensitive_str}
+type = {display_tf_type(typ)}
+{optional_str}{description_str}{sensitive_str}
 }}"""
         )
     return "\n\n".join(content)
