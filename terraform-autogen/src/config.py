@@ -1,4 +1,5 @@
 from json import dumps
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -9,23 +10,41 @@ class TfProvider(BaseModel):
 
 
 class FieldsConfig(BaseModel):
-    # Fields to implement in locals
-    impl: list[str] = Field(default_factory=list)
-    # Fields that are always included (even if computed) in the user input variables and implemented, even if computed
-    always_allow: list[str] = Field(default_factory=list)
-    # Fields that are never included (even if not computed) in the user input variables (or implemented), due to support/deprecation issues
-    never_allow: list[str] = Field(default_factory=list)
-    # Fields that should always be marked sensitive in the outputs
-    always_sensitive: list[str] = Field(default_factory=list)
+    impl: list[str] = Field(default_factory=list, description="Fields to implement in locals")
+    always_allow: list[str] = Field(
+        default_factory=list,
+        description="Fields that are always included in user input variables and implemented, even if computed",
+    )
+    never_allow: list[str] = Field(
+        default_factory=list,
+        description="Fields that are never included in user input variables or implemented, often due to support/deprecation issues",
+    )
+    always_sensitive: list[str] = Field(
+        default_factory=list, description="Fields that should always be marked sensitive in the outputs"
+    )
 
 
 class Config(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    provider: str
-    resource: str
-    fields: FieldsConfig = Field(default_factory=FieldsConfig)
-    additional_providers: list[TfProvider] = Field(default_factory=list)
+    provider: Annotated[
+        str,
+        Field(
+            description="Terraform provider name to pull the resource from",
+            examples=["hashicorp/azurerm", "hashicorp/google"],
+        ),
+    ]
+    resource: Annotated[
+        str,
+        Field(
+            description="Terraform resource from the specified provider to generate a wrapper module",
+            examples=["azurerm_windows_web_app", "google_cloud_run_v2_service"],
+        ),
+    ]
+    fields: FieldsConfig = Field(default_factory=FieldsConfig, description="Configuration for logic related to fields")
+    additional_providers: list[TfProvider] = Field(
+        default_factory=list, description="Additional providers to include in the generated version file"
+    )
 
 
 CONFIG: Config = Config(provider="", resource="")
