@@ -25,8 +25,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     packageName: "ddcdkconstruct",
   },
   peerDeps: [],
-  cdkVersion: "2.177.0",
-  cdkCliVersion: "^2.177.0",
+  cdkVersion: "2.208.0",
+  cdkCliVersion: "^2.208.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
@@ -34,6 +34,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "prettier",
     "eslint-config-prettier",
     "eslint-plugin-prettier",
+    "esbuild",
     "standard-version",
     "@aws-cdk/aws-lambda-python-alpha@^2.134.0-alpha.0",
   ],

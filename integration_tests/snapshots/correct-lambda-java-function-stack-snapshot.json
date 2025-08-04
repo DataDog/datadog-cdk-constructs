@@ -175,7 +175,8 @@
     "resttestANYXXXXXXXX"
    ],
    "Metadata": {
-    "aws:cdk:path": "lambda-java-function-stack/rest-test/Deployment/Resource"
+    "aws:cdk:path": "lambda-java-function-stack/rest-test/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
    }
   },
   "resttestDeploymentStageprodXXXXXXXX": {
