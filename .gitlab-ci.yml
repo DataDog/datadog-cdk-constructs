@@ -15,7 +15,7 @@ serverless-remote-instrumentation ci image:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - serverless-remote-instrumentation/Dockerfile
+        - serverless-remote-instrumentation/**/*
       when: on_success
   when: manual
   variables:
