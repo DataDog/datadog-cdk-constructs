@@ -89,7 +89,8 @@
     "restApimagazines22D3208B"
    ],
    "Metadata": {
-    "aws:cdk:path": "apigateway-stack/restApi/Deployment/Resource"
+    "aws:cdk:path": "apigateway-stack/restApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
    }
   },
   "restApiDeploymentStageprod8D860928": {
