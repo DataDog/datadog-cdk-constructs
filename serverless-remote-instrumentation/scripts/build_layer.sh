@@ -25,6 +25,12 @@ mkdir -p nodejs
 cp -r node_modules nodejs/
 mkdir -p nodejs/node_modules/datadog-remote-instrument
 
+# Remove azure and google cloud dependencies to get the layer size down
+# These are unused and pulled in as transitive dependencies of datadog-ci
+rm -rf nodejs/node_modules/@azure
+rm -rf nodejs/node_modules/@google-cloud
+
+
 # put src/* into node_modules/package-name/ as a package without copy src directory itself
 cp -a src/. nodejs/node_modules/datadog-remote-instrument/
 zip -r -q ${SCRIPTS_PATH}/.layers/datadog_serverless_remote_instrumentation_arm64.zip nodejs
