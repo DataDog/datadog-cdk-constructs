@@ -22,6 +22,8 @@ jobs:
           node-version: 18.18.0
       - name: Install dependencies
         run: yarn install --check-files --frozen-lockfile
+      - name: Upgrade CDK versions
+        run: node scripts/upgrade-cdk.js
       - name: Upgrade dependencies
         run: npx projen upgrade
       - name: Find mutations
