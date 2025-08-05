@@ -1,2 +1,3 @@
 node_modules/
-scripts/.layers/ 
+scripts/.layers/
+.DS_Store
