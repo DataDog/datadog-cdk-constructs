@@ -1,0 +1,434 @@
+[
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "@aws-cdk/cloud-assembly-schema"
+    },
+    "replacement": {
+      "name": "@aws-cdk/cloud-assembly-schema",
+      "origin": "@aws-cdk/cloud-assembly-schema",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2018-2025 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "@aws-sdk/client-s3"
+    },
+    "replacement": {
+      "name": "@aws-sdk/client-s3",
+      "origin": "@aws-sdk/client-s3",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2018-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+    {
+    "override_type": "replace",
+    "target": {
+      "origin": "@aws-sdk/client-secrets-manager"
+    },
+    "replacement": {
+      "name": "@aws-sdk/client-secrets-manager",
+      "origin": "@aws-sdk/client-secrets-manager",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2018-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+      {
+    "override_type": "replace",
+    "target": {
+      "origin": "@aws-sdk/client-resource-groups-tagging-api"
+    },
+    "replacement": {
+      "name": "@aws-sdk/client-resource-groups-tagging-api",
+      "origin": "@aws-sdk/client-resource-groups-tagging-api",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2018-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "@aws-sdk/s3-request-presigner"
+    },
+    "replacement": {
+      "name": "@aws-sdk/s3-request-presigner",
+      "origin": "@aws-sdk/s3-request-presigner",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "aws-cdk"
+    },
+    "replacement": {
+      "name": "aws-cdk",
+      "origin": "aws-cdk",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2018-2025 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "aws-cdk-lib"
+    },
+    "replacement": {
+      "name": "aws-cdk-lib",
+      "origin": "aws-cdk-lib",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Copyright 2018-2025 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "string-width-cjs"
+    },
+    "replacement": {
+      "name": "string-width-cjs",
+      "origin": "string-width-cjs",
+      "license": [
+        "ISC"
+      ],
+      "copyright": [
+        "Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "strip-ansi-cjs"
+    },
+    "replacement": {
+      "name": "strip-ansi-cjs",
+      "origin": "strip-ansi-cjs",
+      "license": [
+        "ISC"
+      ],
+      "copyright": [
+        "Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "wrap-ansi-cjs"
+    },
+    "replacement": {
+      "name": "wrap-ansi-cjs",
+      "origin": "wrap-ansi-cjs",
+      "license": [
+        "ISC"
+      ],
+      "copyright": [
+        "Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "@ampproject/remapping"
+    },
+    "replacement": {
+      "name": "@ampproject/remapping",
+      "origin": "@ampproject/remapping",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Justin Ridgewell (https://www.npmjs.com/package/@ampproject/remapping)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "@aws-crypto/sha1-browser"
+    },
+    "replacement": {
+      "name": "@aws-crypto/sha1-browser",
+      "origin": "@aws-crypto/sha1-browser",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+         "Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved."
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "@pkgr/core"
+    },
+    "replacement": {
+      "name": "@pkgr/core",
+      "origin": "@pkgr/core",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "Copyright (c) 2019 JounQin/UnTS"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "caniuse-lite"
+    },
+    "replacement": {
+      "name": "caniuse-lite",
+      "origin": "caniuse-lite",
+      "license": [
+        "CC-BY-4.0"
+      ],
+      "copyright": [
+        "Ben Briggs (https://github.com/browserslist/caniuse-lite)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "dedent"
+    },
+    "replacement": {
+      "name": "dedent",
+      "origin": "dedent",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "Desmond Brand (https://github.com/dmnd/dedent)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "dlv"
+    },
+    "replacement": {
+      "name": "dlv",
+      "origin": "dlv",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "Jason Miller (https://github.com/developit/dlv)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "eastasianwidth"
+    },
+    "replacement": {
+      "name": "eastasianwidth",
+      "origin": "eastasianwidth",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "Masaki Komagata (https://github.com/komagata/eastasianwidth)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "eslint-visitor-keys"
+    },
+    "replacement": {
+      "name": "eslint-visitor-keys",
+      "origin": "eslint-visitor-keys",
+      "license": [
+        "Apache-2.0"
+      ],
+      "copyright": [
+        "Toru Nagashima (https://github.com/eslint/js/tree/main/packages/eslint-visitor-keys)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "json-stable-stringify-without-jsonify"
+    },
+    "replacement": {
+      "name": "json-stable-stringify-without-jsonify",
+      "origin": "json-stable-stringify-without-jsonify",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "James Halliday (https://github.com/samn/json-stable-stringify)"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "prettier-eslint"
+    },
+    "replacement": {
+      "name": "prettier-eslint",
+      "origin": "prettier-eslint",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "Copyright (c) 2016 Kent C. Dodds"
+      ]
+    }
+  },
+  {
+    "override_type": "replace",
+    "target": {
+      "origin": "require-relative"
+    },
+    "replacement": {
+      "name": "require-relative",
+      "origin": "require-relative",
+      "license": [
+        "MIT"
+      ],
+      "copyright": [
+        "Valerio Proietti (https://github.com/kamicane/require-relative)"
+      ]
+    }
+  },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@humanwhocodes/config-array"
+     },
+     "replacement": {
+       "name": "@humanwhocodes/config-array",
+       "origin": "@humanwhocodes/config-array",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+         "Nicholas C. Zakas (https://github.com/humanwhocodes/config-array)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@humanwhocodes/module-importer"
+     },
+     "replacement": {
+       "name": "@humanwhocodes/module-importer",
+       "origin": "@humanwhocodes/module-importer",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+         "Nicholas C. Zaks (https://github.com/humanwhocodes/module-importer)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "ts-api-utils"
+     },
+     "replacement": {
+       "name": "ts-api-utils",
+       "origin": "ts-api-utils",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+         "JoshuaKGoldberg (https://www.npmjs.com/package/ts-api-utils)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "text-table"
+     },
+     "replacement": {
+       "name": "text-table",
+       "origin": "text-table",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+         "James Halliday (https://www.npmjs.com/package/text-table)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "yaml-cfn"
+     },
+     "replacement": {
+       "name": "yaml-cfn",
+       "origin": "yaml-cfn",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+         "Copyright 2023 Grist Labs, Inc."
+       ]
+     }
+   },
+      {
+     "override_type": "replace",
+     "target": {
+       "origin": "wordwrap"
+     },
+     "replacement": {
+       "name": "wordwrap",
+       "origin": "wordwrap",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+         "publisher"
+       ]
+     }
+   }
+ ] 
