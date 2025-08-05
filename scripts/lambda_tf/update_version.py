@@ -2,6 +2,7 @@
 
 import os
 import sys
+from subprocess import run
 
 os.chdir(os.path.expanduser("~/dd/terraform-aws-lambda-datadog"))
 
@@ -33,3 +34,16 @@ with open("README.md", "r+") as f:
     f.write(readme.replace(current_version, new_version))
     f.truncate()
 
+create_pr = input("Create a PR with these changes? (y/n): ").strip().lower()
+if create_pr == "y":
+    run("git checkout main", check=True)
+    if run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.strip():
+        print("You have uncommitted changes. Please commit or stash them before proceeding.")
+        sys.exit(1)
+    run(f"git checkout -b '{os.environ['USER']}/update-version-{new_version}'", check=True)
+    run("git add main.tf README.md", check=True)
+    run(f"git commit -m 'chore: update version to {new_version}'", check=True)
+    run("git push origin HEAD", check=True)
+    run("gh pr create --fill", check=True)
+
+print("Done ✅")
