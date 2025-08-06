@@ -1,5 +1,5 @@
+*                                                @DataDog/serverless
 datadog-cdk-constructs/                          @DataDog/serverless-onboarding-enablement
 datadog-cloudformation-macro/                    @DataDog/serverless-onboarding-enablement
 serverless-plugin-datadog/                       @DataDog/serverless-onboarding-enablement
 serverless-remote-instrumentation/               @DataDog/serverless-onboarding-enablement
-*                                                @DataDog/serverless
