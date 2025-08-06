@@ -49,6 +49,20 @@ datadog-cdk-constructs ci image:
   script:
     - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f datadog-cdk-constructs/Dockerfile datadog-cdk-constructs/
 
+serverless-plugin-datadog ci image:
+  stage: ci-image
+  image: $DOCKER_IMAGE
+  tags: ["arch:arm64"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - serverless-plugin-datadog/Dockerfile
+      when: on_success
+  when: manual
+  variables:
+    DOCKER_TARGET: registry.ddbuild.io/ci/serverless-plugin-datadog:latest
+  script:
+    - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f serverless-plugin-datadog/Dockerfile serverless-plugin-datadog/
 
 # ------------- Testing/Validation -------------
 terraform-autogen-lint:
