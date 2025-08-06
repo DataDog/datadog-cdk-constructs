@@ -415,7 +415,7 @@
        ]
      }
    },
-      {
+    {
      "override_type": "replace",
      "target": {
        "origin": "wordwrap"
@@ -428,6 +428,511 @@
        ],
        "copyright": [
          "publisher"
+       ]
+     }
+   },
+    {
+     "override_type": "replace",
+     "target": {
+       "origin": "@eslint/config-helpers"
+     },
+     "replacement": {
+       "name": "@eslint/config-helpers",
+       "origin": "@eslint/config-helpers",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+         "'Nicholas C. Zakas (https://github.com/eslint/rewrite/tree/main/packages/config-helpers#readme)"
+       ]
+     }
+   },
+    {
+     "override_type": "replace",
+     "target": {
+       "origin": "@eslint/core"
+     },
+     "replacement": {
+       "name": "@eslint/core",
+       "origin": "@eslint/core",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+          "Nicholas C. Zakas (https://github.com/eslint/rewrite/tree/main/packages/core#readme)"
+       ]
+     }
+   },
+    {
+     "override_type": "replace",
+     "target": {
+       "origin": "@eslint/object-schema"
+     },
+     "replacement": {
+       "name": "@eslint/object-schema",
+       "origin": "@eslint/object-schema",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+          "Nicholas C. Zakas (https://github.com/eslint/rewrite/tree/main/packages/object-schema#readme)"
+       ]
+     }
+   },
+    {
+     "override_type": "replace",
+     "target": {
+       "origin": "@eslint/plugin-kit"
+     },
+     "replacement": {
+       "name": "@eslint/plugin-kit",
+       "origin": "@eslint/plugin-kit",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+          "Nicholas C. Zakas (https://github.com/eslint/rewrite/tree/main/packages/plugin-kit#readme)"
+       ]
+     }
+   },
+    {
+     "override_type": "replace",
+     "target": {
+       "origin": "@humanfs/core"
+     },
+     "replacement": {
+       "name": "@humanfs/core",
+       "origin": "@humanfs/core",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+          "Nicholas C. Zakas (https://www.npmjs.com/package/@humanfs/core)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@humanfs/node"
+     },
+     "replacement": {
+       "name": "@humanfs/node",
+       "origin": "@humanfs/node",
+       "license": [
+         "Apache-2.0"
+       ],
+       "copyright": [
+          "Nicholas C. Zakas (https://www.npmjs.com/package/@humanfs/node)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@jest/globals"
+     },
+     "replacement": {
+       "name": "@jest/globals",
+       "origin": "@jest/globals",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) Meta Platforms, Inc. and affiliates.",
+          "Copyright Contributors to the Jest project."
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@tybys/wasm-util"
+     },
+     "replacement": {
+       "name": "@tybys/wasm-util",
+       "origin": "@tybys/wasm-util",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "toyobayashi (https://github.com/toyobayashi/wasm-util)"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-android-arm-eabi"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-android-arm-eabi",
+       "origin": "@unrs/resolver-binding-android-arm-eabi",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-android-arm64"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-android-arm64",
+       "origin": "@unrs/resolver-binding-android-arm64",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-darwin-arm64"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-darwin-arm64",
+       "origin": "@unrs/resolver-binding-darwin-arm64",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-darwin-x64"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-darwin-x64",
+       "origin": "@unrs/resolver-binding-darwin-x64",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-freebsd-x64"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-freebsd-x64",
+       "origin": "@unrs/resolver-binding-freebsd-x64",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-arm-gnueabihf"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-arm-gnueabihf",
+       "origin": "@unrs/resolver-binding-linux-arm-gnueabihf",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-arm-musleabihf"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-arm-musleabihf",
+       "origin": "@unrs/resolver-binding-linux-arm-musleabihf",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-arm64-gnu"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-arm64-gnu",
+       "origin": "@unrs/resolver-binding-linux-arm64-gnu",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-arm64-musl"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-arm64-musl",
+       "origin": "@unrs/resolver-binding-linux-arm64-musl",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-ppc64-gnu"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-ppc64-gnu",
+       "origin": "@unrs/resolver-binding-linux-ppc64-gnu",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-riscv64-gnu"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-riscv64-gnu",
+       "origin": "@unrs/resolver-binding-linux-riscv64-gnu",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-riscv64-musl"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-riscv64-musl",
+       "origin": "@unrs/resolver-binding-linux-riscv64-musl",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-s390x-gnu"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-s390x-gnu",
+       "origin": "@unrs/resolver-binding-linux-s390x-gnu",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-x64-gnu"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-x64-gnu",
+       "origin": "@unrs/resolver-binding-linux-x64-gnu",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-linux-x64-musl"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-linux-x64-musl",
+       "origin": "@unrs/resolver-binding-linux-x64-musl",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-wasm32-wasi"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-wasm32-wasi",
+       "origin": "@unrs/resolver-binding-wasm32-wasi",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-win32-arm64-msvc"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-win32-arm64-msvc",
+       "origin": "@unrs/resolver-binding-win32-arm64-msvc",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-win32-ia32-msvc"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-win32-ia32-msvc",
+       "origin": "@unrs/resolver-binding-win32-ia32-msvc",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "@unrs/resolver-binding-win32-x64-msvc"
+     },
+     "replacement": {
+       "name": "@unrs/resolver-binding-win32-x64-msvc",
+       "origin": "@unrs/resolver-binding-win32-x64-msvc",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "unrs-resolver"
+     },
+     "replacement": {
+       "name": "unrs-resolver",
+       "origin": "unrs-resolver",
+       "license": [
+         "Apache-2.0 AND MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2025-present UnRS & Contributors",
+          "Copyright (c) 2024 VoidZero Inc. & Contributors",
+          "Copyright (c) 2023 Boshen"
+       ]
+     }
+   },
+   {
+     "override_type": "replace",
+     "target": {
+       "origin": "ci-info"
+     },
+     "replacement": {
+       "name": "ci-info",
+       "origin": "ci-info",
+       "license": [
+         "MIT"
+       ],
+       "copyright": [
+          "Copyright (c) 2016 Thomas Watson Steen"
        ]
      }
    }
