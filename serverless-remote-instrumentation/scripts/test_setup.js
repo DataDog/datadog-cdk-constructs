@@ -49,7 +49,6 @@ const generateTestConfig = () => {
       functionName: `remote-instrumenter-testing-${namingSeed}`,
       bucketName: `remote-instrumenter-testing-bucket-${region}-${namingSeed}`,
       roleName: `remote-instrumenter-testing-${region}-${namingSeed}`,
-      trailName: `datadog-serverless-instrumentation-trail-testing-${namingSeed}`,
       namingSeed,
       ddSite: "datad0g.com",
       version,
