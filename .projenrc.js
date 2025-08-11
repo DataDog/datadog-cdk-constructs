@@ -25,8 +25,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     packageName: "ddcdkconstruct",
   },
   peerDeps: [],
-  cdkVersion: "2.204.0",
-  cdkCliVersion: "^2.204.0",
+  cdkVersion: "2.205.0",
+  cdkCliVersion: "^2.205.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
