@@ -43,7 +43,7 @@ type = {display_tf_type(typ)}
 {optional_str}{description_str}{sensitive_str}
 }}"""
         )
-    return "\n\n".join(content)
+    return "\n\n".join(content) + "\n"
 
 
 def update_variables(resource: TerraformObject) -> None:

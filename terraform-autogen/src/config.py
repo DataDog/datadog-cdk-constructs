@@ -50,4 +50,4 @@ class Config(BaseModel):
 def write_config_schema() -> None:
     """Write the configuration schema to a JSON file."""
     with open("autogen_config_schema.json", "w") as file:
-        file.write(dumps(Config.model_json_schema(), indent=2))
+        file.write(dumps(Config.model_json_schema(), indent=2) + "\n")
