@@ -16,7 +16,7 @@ def generate_outputs_file(config: Config, resource: TerraformObject) -> str:
 value = {config.resource}.this.{param}{sensitive_str}
 }}"""
         )
-    return "\n\n".join(content)
+    return "\n\n".join(content) + "\n"
 
 
 def update_outputs(config: Config, schema: BlockSchema) -> None:
