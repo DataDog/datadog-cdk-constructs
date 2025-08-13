@@ -191,6 +191,15 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
+    exec: "ls -a /etc || echo 'no /etc'",
+  },
+  {
+    exec: "ls -a /",
+  },
+  {
+    exec: "pwd",
+  },
+  {
     exec: "ls -a /etc/serverless-ci",
   },
   {
