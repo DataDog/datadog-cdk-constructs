@@ -1,5 +1,4 @@
 from json import loads
-from os import path
 from urllib.request import urlopen
 
 from src.config import Config, TfProvider
@@ -56,7 +55,7 @@ def get_provider_version(provider: str) -> str:
     return get_max_version(versions)
 
 
-def update_provider(config: Config) -> bool:
+def update_provider(config: Config) -> None:
     """
     Update the Terraform provider configuration.
 
@@ -64,14 +63,5 @@ def update_provider(config: Config) -> bool:
     """
     version = get_provider_version(config.provider)
 
-    current_content = None
-    if path.exists(VERSIONS_FILE):
-        with open(VERSIONS_FILE) as file:
-            current_content = file.read()
-
-    new_content = generate_versions_file(config.provider, version, config.additional_providers)
-    if current_content == new_content:
-        return False
     with open(VERSIONS_FILE, "w") as file:
-        file.write(new_content)
-    return True
+        file.write(generate_versions_file(config.provider, version, config.additional_providers))
