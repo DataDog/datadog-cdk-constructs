@@ -203,6 +203,12 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "echo $CI_PROJECT_PATH",
   },
   {
+    exec: "ls -a /etc",
+  },
+  {
+    exec: "ls -a $CI_CONFIG_PATH",
+  },
+  {
     exec: "jest --passWithNoTests --all",
   },
   {
