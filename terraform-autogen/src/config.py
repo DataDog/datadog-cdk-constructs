@@ -45,6 +45,10 @@ class Config(BaseModel):
     additional_providers: list[TfProvider] = Field(
         default_factory=list, description="Additional providers to include in the generated version file"
     )
+    scrape_docs: bool = Field(
+        default=False,
+        description="(Experimental) Scrape documentation for the resource field descriptions.",
+    )
 
 
 def write_config_schema() -> None:

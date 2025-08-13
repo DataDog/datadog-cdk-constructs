@@ -3,6 +3,7 @@ from copy import deepcopy
 from subprocess import PIPE, run
 
 from src.config import Config, write_config_schema
+from src.docs import enrich_resource
 from src.implementation import update_implementation
 from src.outputs import update_outputs
 from src.schema import extract_block, get_resource_schema
@@ -24,6 +25,9 @@ def generate(config_path: str):
 
     schema = get_resource_schema(config)
     parsed_resource = extract_block(config, schema)
+    if config.scrape_docs:
+        print("📝 Scraping documentation for field descriptions...")
+        enrich_resource(config.provider, config.resource, parsed_resource)
     update_variables(deepcopy(parsed_resource))  # deepcopy because update_variables mutates the resource
     update_implementation(config, parsed_resource)
     update_outputs(config, schema)
