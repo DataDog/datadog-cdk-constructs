@@ -1,7 +1,7 @@
 from datetime import datetime
 from os import getenv
 
-license = getenv("LICENSE", "Apache-2.0")
+license = getenv("LICENSE", default="Apache-2.0")
 
 DO_NOT_EDIT_HEADER = f"""# Unless explicitly stated otherwise all files in this repository are licensed under the {license} License.
 # This product includes software developed at Datadog (https://www.datadoghq.com/) Copyright {datetime.now().year} Datadog, Inc.
