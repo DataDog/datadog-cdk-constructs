@@ -76,6 +76,8 @@ echo "$GH_PRIVATE_KEY" > "$PRIVATE_KEY_FILE"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export JWT_TOKEN=$(bash "$SCRIPT_DIR/generate_jwt.sh" "$GH_APP_ID" "$PRIVATE_KEY_FILE")
 
+rm -f "$PRIVATE_KEY_FILE"
+
 export GH_TOKEN=$(curl -s -X POST \
     -H "Authorization: Bearer $JWT_TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
