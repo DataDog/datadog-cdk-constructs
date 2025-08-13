@@ -26,3 +26,4 @@ RUN unzip awscliv2.zip && ./aws/install
 # Install gh
 RUN apt-get install gh=2.4.0+dfsg1-2 -y
 
+COPY ./ /etc/serverless-ci/
