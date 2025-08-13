@@ -191,6 +191,9 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
+    exec: "ls -a && pwd"
+  },
+  {
     exec: "jest --passWithNoTests --all",
   },
   {
