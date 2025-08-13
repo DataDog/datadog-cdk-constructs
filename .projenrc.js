@@ -191,25 +191,7 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
-    exec: "ls -a && pwd",
-  },
-  {
-    exec: "echo $CI_PROJECT_DIR",
-  },
-  {
-    exec: "ls -a /go/src/github.com/DataDog",
-  },
-  {
-    exec: "echo $CI_CONFIG_PATH",
-  },
-  {
-    exec: "echo $CI_PROJECT_PATH",
-  },
-  {
-    exec: "ls -a /etc",
-  },
-  {
-    exec: "ls -a $CI_CONFIG_PATH",
+    exec: "bash /etc/serverless-ci/utilities/login-github.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --app-id gh_app_id --private-key gh_private_key --installation-id gh_installation_id",
   },
   {
     exec: "jest --passWithNoTests --all",
