@@ -197,6 +197,12 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "echo $CI_PROJECT_DIR",
   },
   {
+    exec: "echo $CI_CONFIG_PATH",
+  },
+  {
+    exec: "echo $CI_PROJECT_PATH",
+  },
+  {
     exec: "jest --passWithNoTests --all",
   },
   {
