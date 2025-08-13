@@ -197,6 +197,9 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "echo $CI_PROJECT_DIR",
   },
   {
+    exec: "ls -a /go/src/github.com/DataDog",
+  },
+  {
     exec: "echo $CI_CONFIG_PATH",
   },
   {
