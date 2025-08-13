@@ -1,13 +1,35 @@
 variables:
   DOCKER_IMAGE: registry.ddbuild.io/ci/datadog-cdk-constructs:latest
 
-stages:
-  - placeholder
 
-hello:
-  stage: placeholder
+.defined_rules:
+  is_release_commit:
+    - if: '$CI_COMMIT_MESSAGE =~ /release: \d+\.\d+\.\d+/ && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+    # For now, allow manual runs of the pipeline to test while we're working on the release pipeline
+    - if: '$CI == "true"'
+      when: manual
+
+stages:
+  - tests
+
+lint:
+  stage: tests
   image: ${DOCKER_IMAGE}
   tags: ["arch:arm64"]
+  rules:
+    - !reference [.defined_rules, is_release_commit]
+  before_script:
+    - yarn install
   script:
-    - echo "Hello World!"
-  when: manual
+    - yarn eslint
+
+unit tests:
+  stage: tests
+  image: ${DOCKER_IMAGE}
+  tags: ["arch:arm64"]
+  rules:
+    - !reference [.defined_rules, is_release_commit]
+  before_script:
+    - yarn install
+  script:
+    - yarn test
