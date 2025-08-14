@@ -1,0 +1,27 @@
+campaigner_settings:
+  name: terraform-autogen-campaigner
+  owner: "#serverless-onboarding-and-enablement"
+  slack_channel: serverless-onboarding-and-enablement-ops
+  description: "Campaigner for Terraform Autogen"
+  manual_refresh: false
+  make_edits: true
+  draft: false
+  batch_pr: true
+  allow_automerge: false
+github:
+  repos:
+    - repo: terraform-azurerm-web-app-datadog
+      branch: main
+  pull_request:
+    branch_name: terraform-autogen
+    title: "chore: Regenerate Terraform Autogen"
+    description: "Latest changes to the terraform modules"
+    default_commit_msg: "run tf-autogen"
+    labels: []
+    use_existing_branch: false
+    use_existing_branch_delete_commit_history: false
+changes:
+  - op: custom/script
+    name: terraform-autogen
+    image: registry.ddbuild.io/ci/terraform-autogen:latest
+    cmd: /terraform-autogen/campaign.sh
