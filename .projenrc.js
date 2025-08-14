@@ -191,16 +191,7 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
-    exec: "ls -a /etc || echo 'no /etc'",
-  },
-  {
-    exec: "ls -a /",
-  },
-  {
-    exec: "pwd",
-  },
-  {
-    exec: "ls -a /etc/serverless-ci",
+    exec: "vault status",
   },
   {
     exec: "bash /etc/serverless-ci/utilities/login-github.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --app-id gh_app_id --private-key gh_private_key --installation-id gh_installation_id",
