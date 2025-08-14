@@ -1,5 +1,6 @@
 from src.config import Config
 from src.constants import DO_NOT_EDIT_HEADER
+from src.docs import enrich_resource
 from src.schema import BlockSchema, TerraformObject, extract_block, is_sensitive
 
 RESOURCE_OUTPUTS_FILE = "outputs.tf"
@@ -23,6 +24,8 @@ def update_outputs(config: Config, schema: BlockSchema) -> None:
     resource = extract_block(
         config, schema, include_attribute=lambda config, name, _: name not in config.fields.never_allow
     )
+    if config.scrape_docs:
+        enrich_resource(config.provider, config.resource, resource)
     with open(RESOURCE_OUTPUTS_FILE, "w") as file:
         file.write(generate_outputs_file(config, resource))
     print(f"Updated {RESOURCE_OUTPUTS_FILE} with resource outputs")
