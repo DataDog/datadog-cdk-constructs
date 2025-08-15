@@ -194,10 +194,10 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "vault status",
   },
   {
-    exec: "vault kv get -field=test kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets",
+    exec: "bash /etc/serverless-ci/utilities/login-github.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --app-id gh_app_id --private-key gh_private_key --installation-id gh_installation_id",
   },
   {
-    exec: "bash /etc/serverless-ci/utilities/login-github.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --app-id gh_app_id --private-key gh_private_key --installation-id gh_installation_id",
+    exec: "gh auth status",
   },
   {
     exec: "jest --passWithNoTests --all",
