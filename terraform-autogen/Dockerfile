@@ -1,9 +1,9 @@
 FROM registry.ddbuild.io/images/mirror/ubuntu:24.04
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3.12 python3-pip python3.12-venv
+RUN apt-get install -y unzip wget git
 
 # Install Terraform
-RUN apt-get install -y unzip wget
 RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
 RUN unzip terraform.zip -d /usr/local/bin/
 RUN rm terraform.zip

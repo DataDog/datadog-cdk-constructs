@@ -17,6 +17,13 @@ else
 	tf-autogen
 fi
 
+if ! git diff --name-only | grep -qv '^.*versions\.tf$'; then
+    echo "❎ Only versions.tf changed, skipping commit"
+    # clear any changes to the working tree
+    git add -A && git reset --hard HEAD > /dev/null
+    exit 0
+fi
+
 # Regenerate docs
 echo "Regenerating documentation..."
 find modules -type d -maxdepth 1 -mindepth 1 -exec terraform-docs {} --config .terraform-docs.yml \;
