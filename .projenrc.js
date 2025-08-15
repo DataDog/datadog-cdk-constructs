@@ -191,9 +191,6 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
-    exec: "bash /etc/serverless-ci/datadog-cdk-constructs/release.sh",
-  },
-  {
     exec: "jest --runInBand --verbose --passWithNoTests --all",
   },
   {
