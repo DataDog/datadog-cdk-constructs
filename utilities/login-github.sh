@@ -61,8 +61,6 @@ fi
 if [[ -z "${CI:-}" ]]; then
   echo "Running in local environment"
   VAULT_ADDR="https://vault.us1.ddbuild.io"
-else
-  VAULT_ADDR=""
 fi
 
 export GH_APP_ID=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$APP_ID" "$VAULT_PREFIX")

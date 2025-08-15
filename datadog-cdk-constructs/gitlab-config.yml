@@ -1,5 +1,6 @@
 variables:
   DOCKER_IMAGE: registry.ddbuild.io/ci/datadog-cdk-constructs:latest
+  SERVERLESS_CI_DIR: /etc/serverless-ci
 
 
 .defined_rules:
@@ -41,4 +42,4 @@ github login:
   rules:
     - !reference [.defined_rules, is_release_commit]
   script:
-    - bash utilities/login-github.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --app-id gh_app_id --private-key gh_private_key --installation-id gh_installation_id
+    - bash ${SERVERLESS_CI_DIR}/utilities/login-github.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --app-id gh_app_id --private-key gh_private_key --installation-id gh_installation_id

@@ -41,13 +41,14 @@ datadog-cdk-constructs ci image:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - datadog-cdk-constructs/Dockerfile
+        - datadog-cdk-constructs/**/*
+        - utilities/**/*
       when: on_success
   when: manual
   variables:
     DOCKER_TARGET: registry.ddbuild.io/ci/datadog-cdk-constructs:latest
   script:
-    - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f datadog-cdk-constructs/Dockerfile datadog-cdk-constructs/
+    - docker buildx build --platform linux/amd64,linux/arm64 --no-cache --pull --push --tag ${DOCKER_TARGET} -f datadog-cdk-constructs/Dockerfile ./
 
 serverless-plugin-datadog ci image:
   stage: ci-image
