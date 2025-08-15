@@ -98,4 +98,4 @@ terraform-autogen-campaigner:
   tags: ['arch:amd64']
   rules:
     - if: '$RUN_TERRAFORM_AUTOGEN == "true"'
-  script: campaigns start --config-file /terraform-autogen/campaigner_config.yaml
+  script: campaigns --no-config start --config-file /terraform-autogen/campaigner_config.yaml
