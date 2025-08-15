@@ -17,7 +17,7 @@ else
 	tf-autogen
 fi
 
-if ! git diff --name-only | grep -v '^.*versions\.tf$' | grep -q .; then
+if ! git diff --name-only | grep -qv '^.*versions\.tf$'; then
     echo "❎ Only versions.tf changed, skipping commit"
     # clear any changes to the working tree
     git add -A && git reset --hard HEAD > /dev/null
