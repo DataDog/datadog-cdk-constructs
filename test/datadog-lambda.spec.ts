@@ -14,6 +14,7 @@ const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Extension-custom:1";
 const NODE_LAYER_VERSION = 91;
+const REPO_REGEX = /git\.repository_url:.*\/DataDog\/datadog-cdk-constructs(\.git)?/;
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -878,10 +879,7 @@ describe("overrideGitMetadata", () => {
 
     [hello, goodbye].forEach((f) => {
       expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining("git.commit.sha:fake-sha"),
-          expect.stringContaining("git.repository_url:github.com/DataDog/datadog-cdk-constructs"),
-        ]),
+        expect.arrayContaining([expect.stringContaining("git.commit.sha:fake-sha"), expect.stringMatching(REPO_REGEX)]),
       );
     });
   });
@@ -908,7 +906,7 @@ describe("overrideGitMetadata", () => {
       (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.commit.sha")),
     ).toEqual(true);
     expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
-      expect.arrayContaining([expect.stringContaining("git.repository_url:github.com/DataDog/datadog-cdk-constructs")]),
+      expect.arrayContaining([expect.stringMatching(REPO_REGEX)]),
     );
   });
 

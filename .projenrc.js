@@ -191,7 +191,7 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
-    exec: "jest --passWithNoTests --all",
+    exec: "jest --runInBand --verbose --passWithNoTests --all",
   },
   {
     spawn: "eslint",
