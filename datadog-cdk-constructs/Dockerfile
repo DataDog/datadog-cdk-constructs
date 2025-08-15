@@ -26,4 +26,5 @@ RUN unzip awscliv2.zip && ./aws/install
 # Install gh
 RUN apt-get install gh=2.4.0+dfsg1-2 -y
 
-COPY ./ /etc/serverless-ci/
+COPY ./datadog-cdk-constructs/ /etc/serverless-ci/datadog-cdk-constructs/
+COPY ./utilities/ /etc/serverless-ci/utilities/
