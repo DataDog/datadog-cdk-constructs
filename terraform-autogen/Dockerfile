@@ -14,6 +14,13 @@ RUN tar -xzf terraform-docs.tar.gz -C /usr/local/bin/
 RUN chmod +x /usr/local/bin/terraform-docs
 RUN rm terraform-docs.tar.gz
 
+# Install Campaigner
+RUN curl -OL https://binaries.ddbuild.io/dd-source/campaigns/v0.0.16/campaigns-tar.tar.gz
+RUN tar -xzf campaigns-tar.tar.gz
+RUN chmod +x campaigns-linux-amd64
+RUN mv campaigns-linux-amd64 /usr/local/bin/campaigns
+RUN rm campaigns-darwin* campaigns-linux* campaigns-tar.tar.gz
+
 # Install deps
 RUN python3.12 -m venv /venv
 RUN . /venv/bin/activate
