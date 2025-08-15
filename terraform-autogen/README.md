@@ -37,10 +37,24 @@ implements the main resource
 supplemental implementation (`locals { }`) should live here, along with any additional variables for datadog-specific implementation
 
 
-# Scheduled Runs
+# Scheduled PR creation
 
 Scheduled runs of this utilize [Campaigner](https://datadoghq.atlassian.net/wiki/spaces/DEVX/pages/2916025668/Campaigns+CLI) to run the script and create PRs, and are [scheduled through GitLab](https://gitlab.ddbuild.io/DataDog/serverless-ci/-/pipeline_schedules). Editing the schedule is done in gitlab, and changes to terraform autogen (or related scripts) are published through the `terraform-autogen-ci-image` CI job, or by manually running the following command within this directory:
 
 ```bash
 docker buildx build --platform linux/amd64 --tag registry.ddbuild.io/ci/terraform-autogen:latest . --push
+```
+
+## Run Campaigner Manually
+
+If you would like to trigger campaigner manully, you can either trigger it from the gitlab GUI listed above, or you can do so manually:
+
+Install campaigns CLI:
+```bash
+brew update && brew install campaigns
+```
+
+Start the campaign (this will use the CI image built in the previous step):
+```bash
+campaigns --no-config start --config-file campaigner_config.yaml
 ```
