@@ -5,6 +5,7 @@ variables:
 stages:
   - ci-image
   - test
+  - run
 
 
 # ------------- CI IMAGES -------------
@@ -89,3 +90,12 @@ terraform-autogen-typecheck:
   script:
     - cd terraform-autogen
     - pyright
+
+# ------------- Scheduled Jobs -------------
+terraform-autogen-campaigner:
+  image: $TERRAFORM_AUTOGEN_IMAGE
+  stage: run
+  tags: ['arch:amd64']
+  rules:
+    - if: '$RUN_TERRAFORM_AUTOGEN == "true"'
+  script: campaigns start --config-file /terraform-autogen/campaigner_config.yaml
