@@ -47,7 +47,7 @@ docker buildx build --platform linux/amd64 --tag registry.ddbuild.io/ci/terrafor
 
 ## Run Campaigner Manually
 
-If you would like to trigger campaigner manully, you can either trigger it from the gitlab GUI listed above, or you can do so manually:
+If you would like to trigger campaigner manually, you can either trigger it from the gitlab GUI listed above, or you can do so manually:
 
 Install campaigns CLI:
 ```bash
