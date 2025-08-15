@@ -191,6 +191,9 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
+    exec: "bash /etc/serverless-ci/utilities/login-npm.sh --vault kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets --npm-token npm_token",
+  },
+  {
     exec: "jest --runInBand --verbose --passWithNoTests --all",
   },
   {
