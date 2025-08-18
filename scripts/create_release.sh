@@ -30,9 +30,9 @@ $(echo "$INCLUDED_COMMITS")
 "
 
 # Tag it and push to a release branch
-git tag "v$RELEASE_VERSION"
-git push --atomic origin "$(git rev-parse --abbrev-ref HEAD):release-v$RELEASE_VERSION" v$RELEASE_VERSION
+git tag "v2-$RELEASE_VERSION"
+git push --atomic origin "$(git rev-parse --abbrev-ref HEAD):release-v2-$RELEASE_VERSION" v$RELEASE_VERSION
 
 # Log information to create a PR
 echo "Go to the following URL to create a PR for the release.  Please add a comprehensive description"
-echo "https://github.com/DataDog/datadog-cdk-constructs/compare/release-v$RELEASE_VERSION?expand=1"
+echo "https://github.com/DataDog/datadog-cdk-constructs/compare/release-v2-$RELEASE_VERSION?expand=1"
