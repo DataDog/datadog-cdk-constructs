@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 [--vault VAULT_PREFIX] [--app-id VAULT_NAME_FOR_APP_ID] [--private-key VAULT_NAME_FOR_PRIVATE_KEY] [--installation-id VAULT_NAME_FOR_INSTALLATION_ID]" 1>&2
+  echo "Usage: login-github.sh [--vault VAULT_PREFIX] [--app-id VAULT_NAME_FOR_APP_ID] [--private-key VAULT_NAME_FOR_PRIVATE_KEY] [--installation-id VAULT_NAME_FOR_INSTALLATION_ID]" 1>&2
   echo ""
   echo "  --vault VAULT_PREFIX                              The Vault path prefix where secrets are stored (e.g., kv/k8s/gitlab-runner/serverless-remote-instrumentation/secrets)"
   echo "  --app-id VAULT_NAME_FOR_APP_ID                    The Vault field name for the GitHub App ID (e.g., gh_app_id)"
@@ -59,7 +59,6 @@ if [[ -z "$APP_ID" || -z "$INSTALLATION_ID" || -z "$PRIVATE_KEY" || -z "$VAULT_P
 fi
 
 if [[ -z "${CI:-}" ]]; then
-  echo "Running in local environment"
   VAULT_ADDR="https://vault.us1.ddbuild.io"
 fi
 
@@ -71,7 +70,7 @@ export GH_INSTALLATION_ID=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$INSTALL
 PRIVATE_KEY_FILE=$(mktemp)
 echo "$GH_PRIVATE_KEY" > "$PRIVATE_KEY_FILE"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 export JWT_TOKEN=$(bash "$SCRIPT_DIR/generate_jwt.sh" "$GH_APP_ID" "$PRIVATE_KEY_FILE")
 
 rm -f "$PRIVATE_KEY_FILE"
