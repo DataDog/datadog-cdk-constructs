@@ -41,6 +41,15 @@
         }
       ]
     },
+    "create-release": {
+      "name": "create-release",
+      "steps": [
+        {
+          "exec": "bash scripts/create_release.sh",
+          "receiveArgs": true
+        }
+      ]
+    },
     "default": {
       "name": "default",
       "description": "Synthesize project files",
