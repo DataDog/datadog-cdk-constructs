@@ -22,7 +22,6 @@ if [ $MATCHING_GITHUB_VERSION ]; then
 fi
 
 # Create a commit with all of the commit info for commits in this release
-# git add template.yaml LICENSE-3rdparty.csv
 INCLUDED_COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --oneline)
 git commit -m "Release v$RELEASE_VERSION
 
