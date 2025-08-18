@@ -23,7 +23,7 @@ fi
 
 # Create a commit with all of the commit info for commits in this release
 INCLUDED_COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --oneline)
-git commit -m "Release v$RELEASE_VERSION
+git commit -m "Release v2-$RELEASE_VERSION
 
 This release includes the following commits:
 $(echo "$INCLUDED_COMMITS")
