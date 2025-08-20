@@ -5,7 +5,7 @@ variables:
 
 .defined_rules:
   is_release_commit:
-    - if: '$CI_COMMIT_MESSAGE =~ /release: \d+\.\d+\.\d+/ && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG =~ /v2-\d+\.\d+\.\d+/ && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
     # For now, allow manual runs of the pipeline to test while we're working on the release pipeline
     - if: '$CI == "true"'
       when: manual
@@ -43,4 +43,4 @@ release:
   rules:
     - !reference [.defined_rules, is_release_commit]
   script:
-    - bash ${SERVERLESS_CI_DIR}/datadog-cdk-constructs/release.sh
+    - VERSION=$(printf %s "$CI_COMMIT_TAG" | sed -nE 's/.*v2-([0-9]+\.[0-9]+\.[0-9]+).*/\1/p') && bash ${SERVERLESS_CI_DIR}/datadog-cdk-constructs/release.sh "$VERSION"

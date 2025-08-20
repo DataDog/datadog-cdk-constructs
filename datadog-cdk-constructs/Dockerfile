@@ -1,14 +1,17 @@
 FROM registry.ddbuild.io/images/docker:24.0.5
 
 RUN apt-get update && apt-get install -y curl=7.81.0-1ubuntu1.20
-RUN apt-get update && apt-get install -y gcc=4:11.2.0-1ubuntu1
-RUN apt-get update && apt-get install -y g++=4:11.2.0-1ubuntu1
-RUN apt-get update && apt-get install -y make=4.3-4.1build1
-RUN apt-get update && apt-get install -y cmake=3.22.1-1ubuntu1.22.04.2
-RUN apt-get update && apt-get install -y unzip=6.0-26ubuntu3.2
-RUN apt-get update && apt-get install -y openssl=3.0.2-0ubuntu1.19
-RUN apt-get update && apt-get install -y uuid-runtime=2.37.2-4ubuntu3.4
-RUN apt-get update && apt-get install -y xxd=2:8.2.3995-1ubuntu2.24
+RUN apt-get install -y gcc=4:11.2.0-1ubuntu1
+RUN apt-get install -y g++=4:11.2.0-1ubuntu1
+RUN apt-get install -y make=4.3-4.1build1
+RUN apt-get install -y cmake=3.22.1-1ubuntu1.22.04.2
+RUN apt-get install -y unzip=6.0-26ubuntu3.2
+RUN apt-get install -y openssl=3.0.2-0ubuntu1.19
+RUN apt-get install -y uuid-runtime=2.37.2-4ubuntu3.4
+RUN apt-get install -y xxd=2:8.2.3995-1ubuntu2.24
+RUN apt-get install -y python3.10-full=3.10.12-1~22.04.10
+RUN apt-get install -y golang-1.23-go=1.23.1-1~22.04
+RUN update-alternatives --install /usr/bin/go go /usr/lib/go-1.23/bin/go 1
 
 # Install NodeJS 20.x
 RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
