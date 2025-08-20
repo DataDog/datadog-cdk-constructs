@@ -21,9 +21,15 @@ if [ $MATCHING_GITHUB_VERSION ]; then
     exit 1
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+VERSION_FILE="$SCRIPT_DIR/../version.json"
+jq --arg v "$RELEASE_VERSION" '.version = $v' "$VERSION_FILE" > "$VERSION_FILE.tmp" && mv "$VERSION_FILE.tmp" "$VERSION_FILE"
+
+git add $VERSION_FILE
+
 # Create a commit with all of the commit info for commits in this release
 INCLUDED_COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --oneline)
-git commit -m "Release v2-$RELEASE_VERSION
+git commit -m "chore: Release v2-$RELEASE_VERSION
 
 This release includes the following commits:
 $(echo "$INCLUDED_COMMITS")
