@@ -24,7 +24,6 @@ git config --global user.name "datadog-cdk-constructs-bot[bot]"
 git config --global user.email "datadog-cdk-constructs-bot[bot]@users.noreply.github.com"
 
 yarn install
-yarn standard-version --tag-prefix "v2-" --release-as $VERSION
 yarn build
 
 # JS Publishing
