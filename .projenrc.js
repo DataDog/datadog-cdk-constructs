@@ -204,5 +204,9 @@ npmScripts.addDeletionOverride("scripts.release");
 npmScripts.addDeletionOverride("scripts.bump");
 npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
+project.addTask("create-release", {
+  exec: "bash scripts/create_release.sh",
+  receiveArgs: true,
+});
 
 project.synth();

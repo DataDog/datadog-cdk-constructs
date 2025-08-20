@@ -9,6 +9,7 @@
     "build": "npx projen build",
     "check-formatting": "npx projen check-formatting",
     "compile": "npx projen compile",
+    "create-release": "npx projen create-release",
     "default": "npx projen default",
     "eject": "npx projen eject",
     "eslint": "npx projen eslint",
