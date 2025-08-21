@@ -50,4 +50,4 @@ fi
 
 NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_PREFIX")
 
-yarn config set npmAuthToken "$NPM_TOKEN_VAL" --silent
+echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
