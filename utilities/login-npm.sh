@@ -56,8 +56,12 @@ echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > .npmrc
 echo "CI_SERVER_HOST: $CI_SERVER_HOST"
 echo "CI_PROJECT_ID: $CI_PROJECT_ID"
 
-echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > ~/.npmrc
+# echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > ~/.npmrc
 echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
 
-echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > .npmrc
+# echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > .npmrc
 echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
+
+echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
+echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
+
