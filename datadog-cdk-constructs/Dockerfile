@@ -33,6 +33,6 @@ RUN apt-get install gh=2.4.0+dfsg1-2 -y
 COPY ./datadog-cdk-constructs/ /etc/serverless-ci/datadog-cdk-constructs/
 COPY ./utilities/ /etc/serverless-ci/utilities/
 
-RUN python3.10 -m pip --version
-RUN python3.10 -m pip install twine
+RUN python3.10 -m pip3.10 --version
+RUN python3.10 -m pip3.10 install twine
 
