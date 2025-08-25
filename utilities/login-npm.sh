@@ -50,7 +50,9 @@ fi
 
 NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_PREFIX")
 
-# echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
+echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
+echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > .npmrc
+
 echo "CI_SERVER_HOST: $CI_SERVER_HOST"
 echo "CI_PROJECT_ID: $CI_PROJECT_ID"
 
