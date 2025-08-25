@@ -10,7 +10,6 @@ RUN apt-get install -y openssl=3.0.2-0ubuntu1.19
 RUN apt-get install -y uuid-runtime=2.37.2-4ubuntu3.4
 RUN apt-get install -y xxd=2:8.2.3995-1ubuntu2.24
 RUN apt-get install -y python3.10-full=3.10.12-1~22.04.11
-RUN apt-get install -y software-properties-common=0.99.22
 RUN apt-get install -y golang-1.23-go=1.23.1-1~22.04
 RUN update-alternatives --install /usr/bin/go go /usr/lib/go-1.23/bin/go 1
 
