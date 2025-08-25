@@ -51,10 +51,8 @@ fi
 NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_PREFIX")
 
 # echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
-ls -a
-pwd
-
-ls -a ~
+echo "CI_SERVER_HOST: $CI_SERVER_HOST"
+echo "CI_PROJECT_ID: $CI_PROJECT_ID"
 
 echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > ~/.npmrc
 echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
