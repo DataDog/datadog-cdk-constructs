@@ -14,6 +14,8 @@ serverless-remote-instrumentation ci image:
   image: $DOCKER_IMAGE
   tags: ["arch:arm64"]
   rules:
+    - if: '$CI == "true"'
+      when: manual
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - serverless-remote-instrumentation/**/*
