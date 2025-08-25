@@ -50,4 +50,15 @@ fi
 
 NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_PREFIX")
 
-echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
+# echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
+ls -a
+pwd
+
+ls -a ~
+
+
+echo "@scope:registry=https://gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/" > ~/.npmrc
+echo "//gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
+
+echo "@scope:registry=https://gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/" > .npmrc
+echo "//gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
