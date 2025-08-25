@@ -56,9 +56,8 @@ pwd
 
 ls -a ~
 
+echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > ~/.npmrc
+echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
 
-echo "@scope:registry=https://gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/" > ~/.npmrc
-echo "//gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
-
-echo "@scope:registry=https://gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/" > .npmrc
-echo "//gitlab.ddbuild.io/api/v4/projects/1776/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
+echo "@datadog:registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > .npmrc
+echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
