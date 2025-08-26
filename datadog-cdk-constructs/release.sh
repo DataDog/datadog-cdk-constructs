@@ -34,6 +34,11 @@ yarn publish $JS_TARBALL_PATH --new-version "$VERSION"
 # python3 -m twine upload -u __token__ ./dist/python/*
 
 # Go Publishing
+gh auth status
+
+git config --global credential.helper store
+
+
 GITHUB_TOKEN=$GH_TOKEN npx -p publib@latest publib-golang
 
 # Create the github release
