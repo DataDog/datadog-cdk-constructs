@@ -37,4 +37,4 @@ yarn publish $JS_TARBALL_PATH --new-version "$VERSION"
 npx -p publib@latest publib-golang
 
 # Create the github release
-gh release create -d "v2-$VERSION" --generate-notes
+# gh release create -d "v2-$VERSION" --generate-notes
