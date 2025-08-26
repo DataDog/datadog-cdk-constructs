@@ -19,7 +19,8 @@ source $SCRIPT_DIR/../utilities/login-pypi.sh \
   --vault $VAULT_PREFIX \
   --pypi-token pypi_token
 
-git remote set-url origin https://github.com/DataDog/datadog-cdk-constructs.git
+# git remote set-url origin https://github.com/DataDog/datadog-cdk-constructs.git
+git remote set-url origin "https://x-access-token:$GH_TOKEN@github.com/DataDog/datadog-cdk-constructs.git"
 git config --global user.name "datadog-cdk-constructs-bot[bot]"
 git config --global user.email "datadog-cdk-constructs-bot[bot]@users.noreply.github.com"
 
