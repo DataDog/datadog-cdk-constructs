@@ -44,7 +44,7 @@ if [[ -z "$NPM_TOKEN" || -z "$VAULT_PREFIX" ]]; then
   usage
 fi
 
-if [[ -z "${CI:-}" ]]; then
+if [[ -z "$CI-}" ]]; then
   VAULT_ADDR="https://vault.us1.ddbuild.io"
 fi
 
@@ -55,15 +55,17 @@ NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_
 # yarn config set _authToken $NPM_TOKEN_VAL
 
 
-echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > ~/.npmrc
-echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN_VAL}" > .npmrc
+echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" > ~/.npmrc
+echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" > .npmrc
+
+# echo "\"_authToken\" $NPM_TOKEN_VAL" > .npmrc
 
 echo "registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > ~/.npmrc
-echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
+echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
 
 echo "registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" > .npmrc
-echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
+echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 
-echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> ~/.npmrc
-echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=${NPM_TOKEN_VAL}" >> .npmrc
+echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
+echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 
