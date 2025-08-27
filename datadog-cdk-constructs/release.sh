@@ -1,6 +1,7 @@
 set -euo pipefail
 
 echo "START 203"
+echo "Using from repo commit: $(git rev-parse --short HEAD || true)"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VAULT_PREFIX="kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets"
