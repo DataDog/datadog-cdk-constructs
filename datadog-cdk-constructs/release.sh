@@ -32,7 +32,7 @@ yarn build
 
 # JS Publishing
 JS_TARBALL_PATH=./dist/js/datadog-cdk-constructs-v2@$VERSION.jsii.tgz
-yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --registry https://registry.npmjs.org/
+yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --registry https://registry.npmjs.org/ --verbose
 
 # Python Publishing
 # python3 -m twine upload -u __token__ ./dist/python/*
