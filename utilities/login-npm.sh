@@ -55,7 +55,7 @@ yarn config set registry https://registry.npmjs.org/
 yarn config set _authToken $NPM_TOKEN_VAL
 
 
-echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" > ~/.npmrc
+echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
 echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 
 echo "\"_authToken\" $NPM_TOKEN_VAL" >> .npmrc
