@@ -32,7 +32,7 @@ yarn build
 
 # JS Publishing
 JS_TARBALL_PATH=./dist/js/datadog-cdk-constructs-v2@$VERSION.jsii.tgz
-echo "Publishing JS package"
+echo "Publishing JS package 121"
 yarn config get registry
 yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
 echo "JS package published"
