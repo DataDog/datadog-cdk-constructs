@@ -55,12 +55,20 @@ NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_
 # yarn config set _authToken $NPM_TOKEN_VAL --silent
 
 
-# echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
-# echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
-# echo "registry=https://registry.npmjs.org/" >> .npmrc
+# Ensure npm registry and token are configured so Yarn can publish non-interactively
+npm config set registry https://registry.npmjs.org/ --silent
+npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN_VAL" --silent
+npm config set always-auth true --silent
+
+# Also set Yarn's registry for completeness
 yarn config set registry https://registry.npmjs.org/
-yarn config set //registry.npmjs.org/:_authToken $NPM_TOKEN_VAL --silent
-# echo "_authToken $NPM_TOKEN_VAL" >> .npmrc
+
+# Ensure a project-level .npmrc is present (some CI environments ignore user config)
+{
+  echo "registry=https://registry.npmjs.org/"
+  echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL"
+  echo "always-auth=true"
+} > .npmrc
 
 # echo "registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" >> ~/.npmrc
 # echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
@@ -72,3 +80,7 @@ yarn config set //registry.npmjs.org/:_authToken $NPM_TOKEN_VAL --silent
 # echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 
 export NPM_TOKEN_VAL=$NPM_TOKEN_VAL
+export NPM_TOKEN=$NPM_TOKEN_VAL
+export YARN_NPM_AUTH_TOKEN=$NPM_TOKEN_VAL
+export YARN_NPM_REGISTRY_SERVER=https://registry.npmjs.org/
+export YARN_NPM_ALWAYS_AUTH=true
