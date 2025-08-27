@@ -58,8 +58,7 @@ NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_
 # echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
 echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 echo "registry=https://registry.npmjs.org/" >> .npmrc
-
-echo "\"_authToken\" $NPM_TOKEN_VAL" >> .npmrc
+echo "_authToken $NPM_TOKEN_VAL" >> .npmrc
 
 # echo "registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" >> ~/.npmrc
 # echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
