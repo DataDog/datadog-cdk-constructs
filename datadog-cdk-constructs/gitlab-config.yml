@@ -48,4 +48,5 @@ release:
   rules:
     - !reference [.defined_rules, is_release_commit]
   script:
+    - echo "START 230"
     - VERSION=$(printf %s "$CI_COMMIT_TAG" | sed -nE 's/.*v2-([0-9]+\.[0-9]+\.[0-9]+).*/\1/p') && bash ${SERVERLESS_CI_DIR}/datadog-cdk-constructs/release.sh "$VERSION"
