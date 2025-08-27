@@ -69,3 +69,4 @@ echo "//$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=
 echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc
 echo "//registry.npmjs.org/api/v4/projects/$CI_PROJECT_ID/packages/npm/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 
+export NPM_TOKEN_VAL=$NPM_TOKEN_VAL
