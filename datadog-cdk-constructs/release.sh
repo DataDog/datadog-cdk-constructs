@@ -45,8 +45,8 @@ echo "JS package published"
 # Go Publishing
 
 
-git config --global remote.origin.url "https://x-access-token:$GH_TOKEN@github.com/DataDog/datadog-cdk-constructs-go.git"
-GITHUB_TOKEN=$GH_TOKEN npx -p publib@latest publib-golang
+# git config --global remote.origin.url "https://x-access-token:$GH_TOKEN@github.com/DataDog/datadog-cdk-constructs-go.git"
+# GITHUB_TOKEN=$GH_TOKEN npx -p publib@latest publib-golang
 
 git status
 
