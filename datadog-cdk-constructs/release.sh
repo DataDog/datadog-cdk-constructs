@@ -1,11 +1,13 @@
 set -euo pipefail
 
+echo "START 203"
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VAULT_PREFIX="kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets"
 
 VERSION=$1
 
-source $SCRIPT_DIR/../utilities/login-github.sh \
+source $SCRIPT_DIR/../utilxities/login-github.sh \
   --vault $VAULT_PREFIX \
   --app-id gh_app_id \
   --private-key gh_private_key \
@@ -34,7 +36,7 @@ yarn build
 JS_TARBALL_PATH=./dist/js/datadog-cdk-constructs-v2@$VERSION.jsii.tgz
 echo "Publishing JS package 143"
 yarn config get registry
-yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
+# yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
 echo "JS package published"
 
 # npm publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
