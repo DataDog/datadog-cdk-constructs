@@ -20,7 +20,6 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesourc
 RUN apt-get update && apt-get install nodejs=20.18.0-1nodesource1 -y
 
 RUN npm install --global yarn typescript
-RUN npm install --global publib
 
 # Install AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
