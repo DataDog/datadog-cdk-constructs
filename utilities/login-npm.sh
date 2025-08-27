@@ -52,7 +52,7 @@ NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_
 
 
 yarn config set registry https://registry.npmjs.org/
-yarn config set _authToken $NPM_TOKEN_VAL
+yarn config set _authToken $NPM_TOKEN_VAL --silent
 
 
 echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> ~/.npmrc

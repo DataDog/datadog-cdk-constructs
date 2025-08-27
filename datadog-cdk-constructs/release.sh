@@ -32,7 +32,8 @@ yarn build
 
 # JS Publishing
 JS_TARBALL_PATH=./dist/js/datadog-cdk-constructs-v2@$VERSION.jsii.tgz
-yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
+# yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
+npx -p publib@latest publib-npm
 
 # Python Publishing
 # python3 -m twine upload -u __token__ ./dist/python/*
@@ -41,6 +42,8 @@ yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
 
 
 GITHUB_TOKEN=$GH_TOKEN npx -p publib@latest publib-golang
+
+git status
 
 # Create the github release
 # gh release create -d "v2-$VERSION" --generate-notes
