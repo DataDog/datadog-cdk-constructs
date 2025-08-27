@@ -59,7 +59,7 @@ NPM_TOKEN_VAL=$(VAULT_ADDR=$VAULT_ADDR vault kv get -field="$NPM_TOKEN" "$VAULT_
 # echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_VAL" >> .npmrc
 # echo "registry=https://registry.npmjs.org/" >> .npmrc
 npm config set registry=https://registry.npmjs.org/
-npm config set _authToken=$NPM_TOKEN_VAL
+npm config set //registry.yarnpkg.com/:_authToken=$NPM_TOKEN_VAL
 # echo "_authToken $NPM_TOKEN_VAL" >> .npmrc
 
 # echo "registry=https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/packages/npm/" >> ~/.npmrc
