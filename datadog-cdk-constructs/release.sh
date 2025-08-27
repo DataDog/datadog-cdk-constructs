@@ -32,7 +32,10 @@ yarn build
 
 # JS Publishing
 JS_TARBALL_PATH=./dist/js/datadog-cdk-constructs-v2@$VERSION.jsii.tgz
+echo "Publishing JS package"
 yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
+echo "JS package published"
+
 # npm publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
 # NPM_TOKEN=$NPM_TOKEN_VAL NPM_REGISTRY=https://registry.npmjs.org/ npx -p publib@latest publib-npm
 
