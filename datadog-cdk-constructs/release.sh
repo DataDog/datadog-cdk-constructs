@@ -1,6 +1,6 @@
 set -euo pipefail
 
-echo "START 203"
+echo "START 235"
 echo "Using from repo commit: $(git rev-parse --short HEAD || true)"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -8,7 +8,7 @@ VAULT_PREFIX="kv/k8s/gitlab-runner/datadog-cdk-constructs/secrets"
 
 VERSION=$1
 
-source $SCRIPT_DIR/../utilxities/login-github.sh \
+source $SCRIPT_DIR/../utilities/login-github.sh \
   --vault $VAULT_PREFIX \
   --app-id gh_app_id \
   --private-key gh_private_key \
