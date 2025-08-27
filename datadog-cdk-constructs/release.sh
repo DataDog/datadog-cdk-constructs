@@ -38,6 +38,7 @@ yarn publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
 echo "JS package published"
 
 
+
 # npm publish $JS_TARBALL_PATH --new-version "$VERSION" --verbose
 # NPM_TOKEN=$NPM_TOKEN_VAL NPM_REGISTRY=https://registry.npmjs.org/ npx -p publib@latest publib-npm
 
