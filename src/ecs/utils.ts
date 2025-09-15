@@ -47,7 +47,7 @@ export function validateECSBaseProps(props: DatadogECSBaseProps): void {
     throw new Error("The `registry` property must be defined.");
   }
   if (props.imageVersion === undefined) {
-    throw new Error("The `version` property must be defined.");
+    throw new Error("The `imageVersion` property must be defined.");
   }
 
   // Health check validation
