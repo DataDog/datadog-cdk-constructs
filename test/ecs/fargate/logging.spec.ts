@@ -292,7 +292,7 @@ describe("DatadogECSFargateLogging", () => {
       logCollection: {
         isEnabled: true,
         fluentbitConfig: {
-          fireLensLogDriver: new ecs.FireLensLogDriver({
+          firelensLogDriver: new ecs.FireLensLogDriver({
             options: {
               Name: "custom-firelens",
               provider: "ecs",
@@ -331,7 +331,7 @@ describe("DatadogECSFargateLogging", () => {
       logCollection: {
         isEnabled: true,
         fluentbitConfig: {
-          fireLensLogDriver: new ecs.FireLensLogDriver({
+          firelensLogDriver: new ecs.FireLensLogDriver({
             options: {
               Name: "custom-firelens",
               provider: "ecs",

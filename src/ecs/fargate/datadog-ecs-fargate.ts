@@ -301,8 +301,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
 
     const fluentbitConfig = this.datadogProps.logCollection!.fluentbitConfig!;
-    if (fluentbitConfig.fireLensLogDriver) {
-      return fluentbitConfig.fireLensLogDriver;
+    if (fluentbitConfig.firelensLogDriver) {
+      return fluentbitConfig.firelensLogDriver;
     }
 
     // Otherwise, create a FireLenseLogDriver using the provided config
