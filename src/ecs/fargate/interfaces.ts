@@ -6,7 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { HealthCheck, FirelensOptions } from "aws-cdk-lib/aws-ecs";
+import { HealthCheck, FirelensOptions, FireLensLogDriver } from "aws-cdk-lib/aws-ecs";
 import { CWSFeatureConfig, DatadogECSBaseProps, LogCollectionFeatureConfig } from "../interfaces";
 
 export interface DatadogECSFargateProps extends DatadogECSBaseProps {
@@ -43,6 +43,10 @@ export interface FluentbitConfig {
    * Configuration for the Datadog log driver.
    */
   readonly logDriverConfig?: DatadogECSLogDriverProps;
+  /**
+   * Supply own FireLensLogDriver. Either this or logDriverConfig can be provided but not both.
+   */
+  readonly firelensLogDriver?: FireLensLogDriver;
   /**
    * Firelens options for the Fluentbit container.
    */
