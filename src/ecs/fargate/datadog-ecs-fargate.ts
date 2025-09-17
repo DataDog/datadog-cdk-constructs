@@ -296,54 +296,62 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   }
 
   private createLogDriver(): ecs.FireLensLogDriver | undefined {
-    if (this.datadogProps.logCollection!.loggingType === LoggingType.FLUENTBIT) {
-      const fluentbitConfig = this.datadogProps.logCollection!.fluentbitConfig!.logDriverConfig!;
-      let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
-      if (this.datadogProps.clusterName !== undefined) {
-        if (logTags === undefined) {
-          logTags = "";
-        } else {
-          logTags += ", ";
-        }
-        logTags = logTags.concat("ecs_cluster_name:" + this.datadogProps.clusterName);
-      }
-      const logDriverProps = {
-        options: {
-          Name: "datadog",
-          provider: "ecs",
-          retry_limit: "2",
-          ...(fluentbitConfig.hostEndpoint !== undefined && {
-            Host: fluentbitConfig.hostEndpoint,
-          }),
-          ...(fluentbitConfig.tls !== undefined && {
-            TLS: fluentbitConfig.tls,
-          }),
-          ...(fluentbitConfig.serviceName !== undefined && {
-            dd_service: fluentbitConfig.serviceName,
-          }),
-          ...(fluentbitConfig.sourceName !== undefined && {
-            dd_source: fluentbitConfig.sourceName,
-          }),
-          ...(fluentbitConfig.messageKey !== undefined && {
-            dd_message_key: fluentbitConfig.messageKey,
-          }),
-          ...(logTags !== undefined && {
-            dd_tags: logTags,
-          }),
-          ...(this.datadogProps.apiKey !== undefined && {
-            apikey: this.datadogProps.apiKey,
-          }),
-        },
-        secretOptions: {
-          ...(this.datadogProps.datadogSecret !== undefined && {
-            apikey: this.datadogProps.datadogSecret!,
-          }),
-        },
-      };
-
-      return new ecs.FireLensLogDriver(logDriverProps);
+    if (this.datadogProps.logCollection!.loggingType !== LoggingType.FLUENTBIT) {
+      return undefined;
     }
-    return undefined;
+
+    const fluentbitConfig = this.datadogProps.logCollection!.fluentbitConfig!;
+    if (fluentbitConfig.firelensLogDriver) {
+      return fluentbitConfig.firelensLogDriver;
+    }
+
+    // Otherwise, create a FireLenseLogDriver using the provided config
+    const fluentbitLogDriverConfig = fluentbitConfig.logDriverConfig!;
+    let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
+    if (this.datadogProps.clusterName !== undefined) {
+      if (logTags === undefined) {
+        logTags = "";
+      } else {
+        logTags += ", ";
+      }
+      logTags = logTags.concat("ecs_cluster_name:" + this.datadogProps.clusterName);
+    }
+
+    const logDriverProps = {
+      options: {
+        Name: "datadog",
+        provider: "ecs",
+        retry_limit: "2",
+        ...(fluentbitLogDriverConfig.hostEndpoint !== undefined && {
+          Host: fluentbitLogDriverConfig.hostEndpoint,
+        }),
+        ...(fluentbitLogDriverConfig.tls !== undefined && {
+          TLS: fluentbitLogDriverConfig.tls,
+        }),
+        ...(fluentbitLogDriverConfig.serviceName !== undefined && {
+          dd_service: fluentbitLogDriverConfig.serviceName,
+        }),
+        ...(fluentbitLogDriverConfig.sourceName !== undefined && {
+          dd_source: fluentbitLogDriverConfig.sourceName,
+        }),
+        ...(fluentbitLogDriverConfig.messageKey !== undefined && {
+          dd_message_key: fluentbitLogDriverConfig.messageKey,
+        }),
+        ...(logTags !== undefined && {
+          dd_tags: logTags,
+        }),
+        ...(this.datadogProps.apiKey !== undefined && {
+          apikey: this.datadogProps.apiKey,
+        }),
+      },
+      secretOptions: {
+        ...(this.datadogProps.datadogSecret !== undefined && {
+          apikey: this.datadogProps.datadogSecret!,
+        }),
+      },
+    };
+
+    return new ecs.FireLensLogDriver(logDriverProps);
   }
 
   private createCWSContainer(): ecs.ContainerDefinition {
