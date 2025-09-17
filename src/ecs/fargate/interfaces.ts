@@ -46,7 +46,7 @@ export interface FluentbitConfig {
   /**
    * Supply own FireLensLogDriver. Either this or logDriverConfig can be provided but not both.
    */
-  readonly firelensLogDriver?: FireLensLogDriver;
+  readonly fireLensLogDriver?: FireLensLogDriver;
   /**
    * Firelens options for the Fluentbit container.
    */
