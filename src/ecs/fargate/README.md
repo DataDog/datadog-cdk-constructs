@@ -213,7 +213,7 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 ### FluentbitConfig
 
 | Property                       | Type                       | Description                                                                            |
-| ------------------------------ | -------------------------- |----------------------------------------------------------------------------------------|
+| ------------------------------ | -------------------------- | -------------------------------------------------------------------------------------- |
 | `logDriverConfig`              | `DatadogECSLogDriverProps` | The configuration for the Datadog fluentbit log driver.                                |
 | `firelensLogDriver`            | `FireLensLogDriver`        | A supplied log driver that is used instead of creating one with the log driver config. |
 | `firelensOptions`              | `DatadogFirelensOptions`   | The Firelens configuration on the fluentbit container.                                 |
