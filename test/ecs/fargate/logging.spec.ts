@@ -285,4 +285,86 @@ describe("DatadogECSFargateLogging", () => {
       ]),
     });
   });
+
+  it("configures log driver using provided FireLensLogDriver", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+        fluentbitConfig: {
+          firelensLogDriver: new ecs.FireLensLogDriver({
+            options: {
+              Name: "custom-firelens",
+              provider: "ecs",
+              TLS: "on",
+              Host: "http-intake.logs.datadoghq.com-test",
+            },
+          }),
+        },
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Image: task.datadogContainer.imageName,
+          LogConfiguration: {
+            LogDriver: "awsfirelens",
+            Options: Match.objectLike({
+              Name: "custom-firelens",
+              Host: "http-intake.logs.datadoghq.com-test",
+              TLS: "on",
+              provider: "ecs",
+            }),
+          },
+        }),
+      ]),
+    });
+  });
+
+  it("configures log driver with provided FireLensLogDriver even if logDriverConfig is set", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+        fluentbitConfig: {
+          firelensLogDriver: new ecs.FireLensLogDriver({
+            options: {
+              Name: "custom-firelens",
+              provider: "ecs",
+              TLS: "on",
+              Host: "http-intake.logs.datadoghq.com-test",
+            },
+          }),
+          logDriverConfig: {
+            tls: "off",
+            hostEndpoint: "http-intake.logs.datadoghq.com",
+          },
+        },
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Image: task.datadogContainer.imageName,
+          LogConfiguration: {
+            LogDriver: "awsfirelens",
+            Options: Match.objectLike({
+              Name: "custom-firelens",
+              Host: "http-intake.logs.datadoghq.com-test",
+              TLS: "on",
+              provider: "ecs",
+            }),
+          },
+        }),
+      ]),
+    });
+  });
 });
