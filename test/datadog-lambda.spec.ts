@@ -1,4 +1,4 @@
-import { App, Stack, Token } from "aws-cdk-lib";
+import { App, Fn, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
@@ -660,7 +660,10 @@ describe("addLambdaFunctions", () => {
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
       // unresolved Node runtime. Its name is like '${Token[TOKEN.330]}'.
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: new lambda.Runtime(Fn.importValue(lambda.Runtime.NODEJS_LATEST.name), lambda.RuntimeFamily.NODEJS, {
+        supportsInlineCode: true,
+        isVariable: true,
+      }),
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
