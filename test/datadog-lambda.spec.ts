@@ -288,7 +288,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   });
 
@@ -324,7 +324,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
     );
   });
 
