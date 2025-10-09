@@ -342,7 +342,7 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
   });
 
@@ -359,8 +359,24 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
+  });
+
+  it("throws an error if enableDatadogASM and datadogAppSecMode are both set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    expect(
+      () =>
+        new DatadogLambda(stack, "Datadog", {
+          enableDatadogASM: true,
+          datadogAppSecMode: "on",
+        }),
+    ).toThrow("`datadogAppSecMode` and `enableDatadogASM` are mutually exclusive; set only `datadogAppSecMode`.");
   });
 });
 

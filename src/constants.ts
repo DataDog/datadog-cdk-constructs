@@ -6,6 +6,8 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import { DatadogAppSecMode } from "./interfaces";
+
 export const LAYER_PREFIX = "DatadogLayer";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
 export const DD_ACCOUNT_ID = "464622532012";
@@ -31,7 +33,7 @@ export enum RuntimeType {
 export const DatadogLambdaDefaultProps = {
   addLayers: true,
   enableDatadogTracing: true,
-  enableDatadogASM: false,
+  datadogAppSecMode: "off" as DatadogAppSecMode,
   enableMergeXrayTraces: false,
   injectLogContext: true,
   enableDatadogLogs: true,
@@ -125,3 +127,5 @@ export const siteList: string[] = [
 ];
 
 export const invalidSiteError = `Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`;
+
+export const datadogAppSecModes = ["off", "on", "extension", "tracer"];

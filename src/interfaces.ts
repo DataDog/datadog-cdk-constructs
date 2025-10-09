@@ -9,6 +9,8 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
+export type DatadogAppSecMode = "off" | "on" | "extension" | "tracer";
+
 export interface DatadogLambdaProps {
   readonly dotnetLayerVersion?: number;
   readonly dotnetLayerArn?: string;
@@ -32,6 +34,7 @@ export interface DatadogLambdaProps {
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
   readonly enableDatadogASM?: boolean;
+  readonly datadogAppSecMode?: DatadogAppSecMode;
   readonly enableMergeXrayTraces?: boolean;
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
@@ -69,7 +72,7 @@ export interface DatadogLambdaStrictProps {
   readonly captureCloudServicePayload: boolean;
   readonly injectLogContext: boolean;
   readonly enableDatadogTracing: boolean;
-  readonly enableDatadogASM: boolean;
+  readonly datadogAppSecMode: DatadogAppSecMode;
   readonly enableMergeXrayTraces: boolean;
   readonly grantSecretReadAccess: boolean;
   readonly pythonLayerVersion?: number;

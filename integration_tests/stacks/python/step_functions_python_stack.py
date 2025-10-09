@@ -104,7 +104,7 @@ class StepFunctionsPythonStack(Stack):
             add_layers=True,
             api_key="1234",
             enable_datadog_tracing=True,
-            enable_datadog_asm=True,
+            datadog_app_sec_mode="on",
             flush_metrics_to_logs=True,
             site="datadoghq.com",
             env="dev",

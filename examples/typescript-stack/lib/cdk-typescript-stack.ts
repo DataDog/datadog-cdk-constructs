@@ -17,7 +17,7 @@ export class CdkTypeScriptStack extends CdkTypeScriptStackBase {
       addLayers: true,
       apiKey: process.env.DD_API_KEY,
       enableDatadogTracing: true,
-      enableDatadogASM: true,
+      datadogAppSecMode: "on",
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     };
