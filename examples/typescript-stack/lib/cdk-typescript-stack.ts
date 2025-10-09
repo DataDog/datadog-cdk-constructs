@@ -1,6 +1,6 @@
 import { StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { DatadogLambda, DatadogLambdaProps } from "datadog-cdk-constructs-v2";
+import { DatadogLambda, DatadogAppSecMode, DatadogLambdaProps } from "datadog-cdk-constructs-v2";
 import { CdkTypeScriptStackBase } from "./cdk-typescript-stack-base";
 
 export class CdkTypeScriptStack extends CdkTypeScriptStackBase {
@@ -17,7 +17,7 @@ export class CdkTypeScriptStack extends CdkTypeScriptStackBase {
       addLayers: true,
       apiKey: process.env.DD_API_KEY,
       enableDatadogTracing: true,
-      datadogAppSecMode: "on",
+      datadogAppSecMode: DatadogAppSecMode.ON,
       flushMetricsToLogs: true,
       site: "datadoghq.com",
     };

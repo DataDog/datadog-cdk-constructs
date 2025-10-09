@@ -5,6 +5,7 @@ import { LogGroup } from "aws-cdk-lib/aws-logs";
 import {
   addCdkConstructVersionTag,
   checkForMultipleApiKeys,
+  DatadogAppSecMode,
   DatadogLambda,
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
@@ -374,7 +375,7 @@ describe("validateProps", () => {
       () =>
         new DatadogLambda(stack, "Datadog", {
           enableDatadogASM: true,
-          datadogAppSecMode: "on",
+          datadogAppSecMode: DatadogAppSecMode.ON,
         }),
     ).toThrow("`datadogAppSecMode` and `enableDatadogASM` are mutually exclusive; set only `datadogAppSecMode`.");
   });

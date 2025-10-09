@@ -9,7 +9,11 @@ from aws_cdk import (
 )
 import os
 from constructs import Construct
-from datadog_cdk_constructs_v2 import DatadogStepFunctions, DatadogLambda
+from datadog_cdk_constructs_v2 import (
+    DatadogStepFunctions,
+    DatadogLambda,
+    DatadogAppSecMode,
+)
 
 
 class StepFunctionsPythonStack(Stack):
@@ -104,7 +108,7 @@ class StepFunctionsPythonStack(Stack):
             add_layers=True,
             api_key="1234",
             enable_datadog_tracing=True,
-            datadog_app_sec_mode="on",
+            datadog_app_sec_mode=DatadogAppSecMode.ON,
             flush_metrics_to_logs=True,
             site="datadoghq.com",
             env="dev",

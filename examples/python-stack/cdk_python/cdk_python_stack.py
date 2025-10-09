@@ -1,5 +1,9 @@
 from constructs import Construct
-from datadog_cdk_constructs_v2 import DatadogLambda, DatadogLambdaProps
+from datadog_cdk_constructs_v2 import (
+    DatadogLambda,
+    DatadogLambdaProps,
+    DatadogAppSecMode,
+)
 import os
 from cdk_python.cdk_python_stack_base import CdkPythonStackBase
 
@@ -18,7 +22,7 @@ class CdkPythonStack(CdkPythonStackBase):
             add_layers=True,
             api_key=os.getenv("DD_API_KEY"),
             enable_datadog_tracing=True,
-            datadog_app_sec_mode="on",
+            datadog_app_sec_mode=DatadogAppSecMode.ON,
             flush_metrics_to_logs=True,
             site="datadoghq.com",
         )

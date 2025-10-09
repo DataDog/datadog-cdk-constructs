@@ -20,6 +20,7 @@ import {
   SITE_URL_ENV_VAR,
   API_KEY_ENV_VAR,
   filterAndFormatGitRemote,
+  DatadogAppSecMode,
 } from "../src/index";
 
 const NODE_LAYER_VERSION = 91;
@@ -344,7 +345,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      datadogAppSecMode: "on",
+      datadogAppSecMode: DatadogAppSecMode.ON,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       pythonLayerVersion: PYTHON_LAYER_VERSION,
       apiKey: "test",
@@ -397,7 +398,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      datadogAppSecMode: "on",
+      datadogAppSecMode: DatadogAppSecMode.ON,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       pythonLayerVersion: 110,
       apiKey: "test",
@@ -433,7 +434,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      datadogAppSecMode: "on",
+      datadogAppSecMode: DatadogAppSecMode.ON,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       pythonLayerArn: "some-arn",
       apiKey: "test",
@@ -469,7 +470,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      datadogAppSecMode: "extension",
+      datadogAppSecMode: DatadogAppSecMode.EXTENSION,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "test",
       nodeLayerVersion: NODE_LAYER_VERSION,
@@ -505,7 +506,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      datadogAppSecMode: "tracer",
+      datadogAppSecMode: DatadogAppSecMode.TRACER,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "test",
       nodeLayerVersion: NODE_LAYER_VERSION,

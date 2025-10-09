@@ -14,7 +14,6 @@ import { Construct } from "constructs";
 import log from "loglevel";
 import {
   applyLayers,
-  datadogAppSecModes,
   redirectHandlers,
   addForwarder,
   addForwarderToLogGroups,
@@ -315,14 +314,19 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
     }
   }
 
-  const datadogAppSecMode: DatadogAppSecMode =
-    props.datadogAppSecMode ?? (props.enableDatadogASM ? "extension" : DatadogLambdaDefaultProps.datadogAppSecMode);
-
-  if (!datadogAppSecModes.includes(datadogAppSecMode)) {
+  if (
+    props.datadogAppSecMode !== undefined &&
+    !(Object.values(DatadogAppSecMode) as string[]).includes(props.datadogAppSecMode)
+  ) {
     throw new Error("`datadogAppSecMode` must be one of: 'off', 'on', 'extension', 'tracer'.");
   }
 
-  const appSecEnabled = ["on", "tracer", "extension"].includes(datadogAppSecMode);
+  const appSecEnabled =
+    props.enableDatadogASM ||
+    (props.datadogAppSecMode &&
+      ([DatadogAppSecMode.ON, DatadogAppSecMode.EXTENSION, DatadogAppSecMode.TRACER] as string[]).includes(
+        props.datadogAppSecMode,
+      ));
   if (
     (props.enableDatadogTracing === false && appSecEnabled) ||
     (props.extensionLayerVersion === undefined && props.extensionLayerArn === undefined && appSecEnabled)
@@ -391,7 +395,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   }
   if (props.datadogAppSecMode === undefined) {
     if (props.enableDatadogASM) {
-      datadogAppSecMode = "extension";
+      datadogAppSecMode = DatadogAppSecMode.EXTENSION;
       log.debug("`enableDatadogASM` set, defaulting datadogAppSecMode to extension.");
     } else {
       log.debug(
@@ -400,7 +404,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
       datadogAppSecMode = DatadogLambdaDefaultProps.datadogAppSecMode;
     }
   } else {
-    datadogAppSecMode = props.datadogAppSecMode;
+    datadogAppSecMode = props.datadogAppSecMode as DatadogAppSecMode;
   }
   if (enableMergeXrayTraces === undefined) {
     log.debug(

@@ -33,7 +33,7 @@ export enum RuntimeType {
 export const DatadogLambdaDefaultProps = {
   addLayers: true,
   enableDatadogTracing: true,
-  datadogAppSecMode: "off" as DatadogAppSecMode,
+  datadogAppSecMode: DatadogAppSecMode.OFF,
   enableMergeXrayTraces: false,
   injectLogContext: true,
   enableDatadogLogs: true,
@@ -127,5 +127,3 @@ export const siteList: string[] = [
 ];
 
 export const invalidSiteError = `Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`;
-
-export const datadogAppSecModes = ["off", "on", "extension", "tracer"];
