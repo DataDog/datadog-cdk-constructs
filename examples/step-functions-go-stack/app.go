@@ -43,12 +43,12 @@ func NewCdkStepFunctionsGoStack(scope constructs.Construct, id *string, props *A
 	})
 	invokeChildStateMachineTask := sfntasks.NewStepFunctionsStartExecution(stack, jsii.String("InvokeChildStateMachineTask"), &sfntasks.StepFunctionsStartExecutionProps{
 		StateMachine: childStateMachine,
-		Input: sfn.TaskInput_FromObject(stateMachineTaskInput),
+		Input:        sfn.TaskInput_FromObject(stateMachineTaskInput),
 	})
 
 	helloLambdaFunction := awslambda.NewFunction(stack, jsii.String("HelloWorldFunction"), &awslambda.FunctionProps{
 		Runtime: awslambda.Runtime_NODEJS_20_X(),
-		Timeout: awscdk.Duration_Seconds(jsii.Number(10)), 
+		Timeout: awscdk.Duration_Seconds(jsii.Number(10)),
 		Handler: jsii.String("index.handler"),
 		Code: awslambda.Code_FromInline(jsii.String(`
 		  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -67,7 +67,7 @@ func NewCdkStepFunctionsGoStack(scope constructs.Construct, id *string, props *A
 	})
 	lambdaTask := sfntasks.NewLambdaInvoke(stack, jsii.String("MyLambdaTask"), &sfntasks.LambdaInvokeProps{
 		LambdaFunction: helloLambdaFunction,
-		Payload: sfn.TaskInput_FromObject(lambdaPayload),
+		Payload:        sfn.TaskInput_FromObject(lambdaPayload),
 	})
 
 	parentStateMachine := sfn.NewStateMachine(stack, jsii.String("CdkGoTestStateMachine"), &sfn.StateMachineProps{
@@ -75,28 +75,28 @@ func NewCdkStepFunctionsGoStack(scope constructs.Construct, id *string, props *A
 	})
 
 	/* Instrument the lambda functions and the state machines */
-	
+
 	datadogSfn := ddcdkconstruct.NewDatadogStepFunctions(stack, jsii.String("DatadogSfn"), &ddcdkconstruct.DatadogStepFunctionsProps{
-		Env:            jsii.String("dev"),
-		Service:        jsii.String("cdk-test-service"),
-		Version:        jsii.String("1.0.0"),
-		ForwarderArn:   jsii.String(os.Getenv("DD_FORWARDER_ARN")),
-		Tags:           jsii.String("custom-tag-1:tag-value-1,custom-tag-2:tag-value-2"),
+		Env:          jsii.String("dev"),
+		Service:      jsii.String("cdk-test-service"),
+		Version:      jsii.String("1.0.0"),
+		ForwarderArn: jsii.String(os.Getenv("DD_FORWARDER_ARN")),
+		Tags:         jsii.String("custom-tag-1:tag-value-1,custom-tag-2:tag-value-2"),
 	})
 	datadogSfn.AddStateMachines(&[]sfn.StateMachine{childStateMachine, parentStateMachine}, nil)
 
 	datadogLambda := ddcdkconstruct.NewDatadogLambda(stack, jsii.String("DatadogLambda"), &ddcdkconstruct.DatadogLambdaProps{
 		NodeLayerVersion:      jsii.Number(113),
 		ExtensionLayerVersion: jsii.Number(65),
-		AddLayers:            jsii.Bool(true),
-		ApiKey:               jsii.String(os.Getenv("DD_API_KEY")),
-		EnableDatadogTracing: jsii.Bool(true),
-		EnableDatadogASM:     jsii.Bool(true),
-		FlushMetricsToLogs:   jsii.Bool(true),
-		Site:                 jsii.String("datadoghq.com"),
-		Env:                  jsii.String("dev"),
-		Service:              jsii.String("cdk-test-service"),
-		Version:              jsii.String("1.0.0"),
+		AddLayers:             jsii.Bool(true),
+		ApiKey:                jsii.String(os.Getenv("DD_API_KEY")),
+		EnableDatadogTracing:  jsii.Bool(true),
+		DatadogAppSecMode:     jsii.String("on"),
+		FlushMetricsToLogs:    jsii.Bool(true),
+		Site:                  jsii.String("datadoghq.com"),
+		Env:                   jsii.String("dev"),
+		Service:               jsii.String("cdk-test-service"),
+		Version:               jsii.String("1.0.0"),
 	})
 	datadogLambda.AddLambdaFunctions(&[]interface{}{helloLambdaFunction}, nil)
 

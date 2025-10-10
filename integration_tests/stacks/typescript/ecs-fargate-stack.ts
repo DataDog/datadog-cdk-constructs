@@ -16,8 +16,8 @@ export class ExampleStack extends Stack {
 
     // Create Datadog ECS Fargate
     const ecsDatadog = new DatadogECSFargate({
-      apiKey: 'exampleApiKey',
-      env: 'prod',
+      apiKey: "exampleApiKey",
+      env: "prod",
       apm: {
         isEnabled: true,
         traceInferredProxyServices: true,
@@ -25,37 +25,39 @@ export class ExampleStack extends Stack {
     });
 
     // Sample Task Definition
-    const sampleTaskDefinition = ecsDatadog.fargateTaskDefinition(
-      this, 'sampleTaskDefinition',
-      { memoryLimitMiB: 512, cpu: 256 },
-    );
-    sampleTaskDefinition.addContainer('ecsSample', {
-      image: ecs.ContainerImage.fromRegistry('amazon/amazon-ecs-sample'),
+    const sampleTaskDefinition = ecsDatadog.fargateTaskDefinition(this, "sampleTaskDefinition", {
+      memoryLimitMiB: 512,
+      cpu: 256,
+    });
+    sampleTaskDefinition.addContainer("ecsSample", {
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
     });
 
     // Server Task Definition
     const serverTaskDefinition = ecsDatadog.fargateTaskDefinition(
-      this, 'serverTaskDefinition',
+      this,
+      "serverTaskDefinition",
       { memoryLimitMiB: 512, cpu: 256 },
       { apm: { traceInferredProxyServices: false } },
     );
-    serverTaskDefinition.addContainer('nameServer', {
-      image: ecs.ContainerImage.fromRegistry('ecs-sample-image/name-server'),
+    serverTaskDefinition.addContainer("nameServer", {
+      image: ecs.ContainerImage.fromRegistry("ecs-sample-image/name-server"),
     });
-    serverTaskDefinition.addContainer('helloServer', {
-      image: ecs.ContainerImage.fromRegistry('ecs-sample-image/hello-server'),
+    serverTaskDefinition.addContainer("helloServer", {
+      image: ecs.ContainerImage.fromRegistry("ecs-sample-image/hello-server"),
       // this value will be overwritten by the task definition
-      environment: { DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED: 'true' },
+      environment: { DD_TRACE_INFERRED_PROXY_SERVICES_ENABLED: "true" },
     });
 
     // Example Task Definition
     const exampleTaskDefinition = ecsDatadog.fargateTaskDefinition(
-      this, 'exampleTaskDefinition',
+      this,
+      "exampleTaskDefinition",
       { memoryLimitMiB: 512, cpu: 256 },
       { apm: { isEnabled: false } },
     );
-    exampleTaskDefinition.addContainer('ecsExample', {
-      image: ecs.ContainerImage.fromRegistry('amazon/amazon-ecs-sample'),
+    exampleTaskDefinition.addContainer("ecsExample", {
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
     });
   }
 }

@@ -9,6 +9,22 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 
+export enum DatadogAppSecMode {
+  /** Disable App and API Protection */
+  OFF = "off",
+  /** Enable App and API Protection */
+  ON = "on",
+  /** Enable App and API Protection using the Datadog Lambda Extension implementation. */
+  EXTENSION = "extension",
+  /** Enable App and API Protection using the Datadog Lambda Library implementation.
+   *
+   * **Warning**: This option forces tracer enablement for cases where the Datadog CDK Constructs
+   * cannot safely detect that you are using a compatible library. Ensure that you are using the
+   * Datadog Lambda Library for Python version "8.114.0" or above.
+   */
+  TRACER = "tracer",
+}
+
 export interface DatadogLambdaProps {
   readonly dotnetLayerVersion?: number;
   readonly dotnetLayerArn?: string;
@@ -32,6 +48,7 @@ export interface DatadogLambdaProps {
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
   readonly enableDatadogASM?: boolean;
+  readonly datadogAppSecMode?: DatadogAppSecMode;
   readonly enableMergeXrayTraces?: boolean;
   readonly injectLogContext?: boolean;
   readonly logLevel?: string;
@@ -69,7 +86,7 @@ export interface DatadogLambdaStrictProps {
   readonly captureCloudServicePayload: boolean;
   readonly injectLogContext: boolean;
   readonly enableDatadogTracing: boolean;
-  readonly enableDatadogASM: boolean;
+  readonly datadogAppSecMode: DatadogAppSecMode;
   readonly enableMergeXrayTraces: boolean;
   readonly grantSecretReadAccess: boolean;
   readonly pythonLayerVersion?: number;

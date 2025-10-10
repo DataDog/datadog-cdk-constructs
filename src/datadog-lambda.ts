@@ -30,7 +30,7 @@ import {
   siteList,
   invalidSiteError,
 } from "./index";
-import { LambdaFunction } from "./interfaces";
+import { DatadogAppSecMode, LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
 
 const versionJson = require("../version.json");
@@ -304,14 +304,38 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
       throw new Error("When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.");
     }
   }
+
+  if (props.enableDatadogASM !== undefined) {
+    log.warn("Warning: `enableDatadogASM` is deprecated, set `datadogAppSecMode` instead");
+    if (props.datadogAppSecMode !== undefined) {
+      throw new Error(
+        "`datadogAppSecMode` and `enableDatadogASM` are mutually exclusive; set only `datadogAppSecMode`.",
+      );
+    }
+  }
+
   if (
-    (props.enableDatadogTracing === false && props.enableDatadogASM) ||
-    (props.extensionLayerVersion === undefined && props.extensionLayerArn === undefined && props.enableDatadogASM)
+    props.datadogAppSecMode !== undefined &&
+    !(Object.values(DatadogAppSecMode) as string[]).includes(props.datadogAppSecMode)
+  ) {
+    throw new Error("`datadogAppSecMode` must be one of: 'off', 'on', 'extension', 'tracer'.");
+  }
+
+  const appSecEnabled =
+    props.enableDatadogASM ||
+    (props.datadogAppSecMode &&
+      ([DatadogAppSecMode.ON, DatadogAppSecMode.EXTENSION, DatadogAppSecMode.TRACER] as string[]).includes(
+        props.datadogAppSecMode,
+      ));
+  if (
+    (props.enableDatadogTracing === false && appSecEnabled) ||
+    (props.extensionLayerVersion === undefined && props.extensionLayerArn === undefined && appSecEnabled)
   ) {
     throw new Error(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
   }
+
   if (props.llmObsEnabled === true && (props.llmObsMlApp === undefined || props.llmObsMlApp === "")) {
     throw new Error("When `llmObsEnabled` is true, `llmObsMlApp` must also be set.");
   }
@@ -346,7 +370,7 @@ export function checkForMultipleApiKeys(props: DatadogLambdaProps, apiKeyArnOver
 export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLambdaStrictProps {
   let addLayers = props.addLayers;
   let enableDatadogTracing = props.enableDatadogTracing;
-  let enableDatadogASM = props.enableDatadogASM;
+  let datadogAppSecMode: DatadogAppSecMode;
   let enableMergeXrayTraces = props.enableMergeXrayTraces;
   let injectLogContext = props.injectLogContext;
   const logLevel = props.logLevel;
@@ -369,9 +393,18 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     );
     enableDatadogTracing = DatadogLambdaDefaultProps.enableDatadogTracing;
   }
-  if (enableDatadogASM === undefined) {
-    log.debug(`No value provided for enableDatadogASM, defaulting to ${DatadogLambdaDefaultProps.enableDatadogASM}`);
-    enableDatadogASM = DatadogLambdaDefaultProps.enableDatadogASM;
+  if (props.datadogAppSecMode === undefined) {
+    if (props.enableDatadogASM) {
+      datadogAppSecMode = DatadogAppSecMode.EXTENSION;
+      log.debug("`enableDatadogASM` set, defaulting datadogAppSecMode to extension.");
+    } else {
+      log.debug(
+        `No value provided for datadogAppSecMode, defaulting to ${DatadogLambdaDefaultProps.datadogAppSecMode}`,
+      );
+      datadogAppSecMode = DatadogLambdaDefaultProps.datadogAppSecMode;
+    }
+  } else {
+    datadogAppSecMode = props.datadogAppSecMode as DatadogAppSecMode;
   }
   if (enableMergeXrayTraces === undefined) {
     log.debug(
@@ -424,7 +457,7 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
   return {
     addLayers: addLayers,
     enableDatadogTracing: enableDatadogTracing,
-    enableDatadogASM,
+    datadogAppSecMode,
     enableMergeXrayTraces: enableMergeXrayTraces,
     injectLogContext: injectLogContext,
     logLevel: logLevel,
@@ -436,5 +469,6 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     grantSecretReadAccess: grantSecretReadAccess,
     extensionLayerVersion: extensionLayerVersion,
     extensionLayerArn: extensionLayerArn,
+    pythonLayerVersion: props.pythonLayerVersion,
   };
 }
