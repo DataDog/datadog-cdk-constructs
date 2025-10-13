@@ -501,7 +501,7 @@ describe("applyEnvVariables", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.PYTHON_3_12,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -509,7 +509,7 @@ describe("applyEnvVariables", () => {
       datadogAppSecMode: DatadogAppSecMode.TRACER,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "test",
-      nodeLayerVersion: NODE_LAYER_VERSION,
+      pythonLayerArn: "arn123",
     });
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {

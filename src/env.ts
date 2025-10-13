@@ -131,9 +131,17 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
   //for each env variable, only set to default if it is NOT already set by user
   setEnvIfUndefined(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing);
 
+  const runtimeType = runtimeLookup[lam.runtime.name];
+
+  if (baseProps.datadogAppSecMode === "tracer" && runtimeType !== RuntimeType.PYTHON) {
+    throw new Error(
+      `\`datadogAppSecMode\` is set to \`tracer\`. This requires the function to be a Python runtime. Found: ${runtimeType}`,
+    );
+  }
+
   if (
     (baseProps.datadogAppSecMode === "on" &&
-      runtimeLookup[lam.runtime.name] === RuntimeType.PYTHON &&
+      runtimeType === RuntimeType.PYTHON &&
       baseProps.pythonLayerVersion &&
       baseProps.pythonLayerVersion >= 114) ||
     baseProps.datadogAppSecMode === "tracer"
