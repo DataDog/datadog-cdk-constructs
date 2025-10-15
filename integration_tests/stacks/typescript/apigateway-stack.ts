@@ -20,49 +20,49 @@ export class ExampleStack extends Stack {
     // API Gateway v1
     const integrationV1 = new apigateway.Integration({
       type: apigateway.IntegrationType.HTTP_PROXY,
-      integrationHttpMethod: 'ANY',
+      integrationHttpMethod: "ANY",
       options: { connectionType: apigateway.ConnectionType.INTERNET },
-      uri: 'https://example.com',
+      uri: "https://example.com",
     });
 
-    const restApi = new apigateway.RestApi(this, 'restApi', {
-      restApiName: 'restApiName',
-      description: 'API Gateway v1 for forwarding requests to example.com',
-      deployOptions: { stageName: 'prod' },
+    const restApi = new apigateway.RestApi(this, "restApi", {
+      restApiName: "restApiName",
+      description: "API Gateway v1 for forwarding requests to example.com",
+      deployOptions: { stageName: "prod" },
       defaultIntegration: integrationV1,
       parameters: DatadogAPIGatewayRequestParameters,
     });
 
-    restApi.root.addMethod('ANY');
-    const magazines = restApi.root.addResource('magazines');
-    magazines.addMethod('ANY');
-    const magazine = magazines.addResource('{id}');
-    magazine.addMethod('ANY');
+    restApi.root.addMethod("ANY");
+    const magazines = restApi.root.addResource("magazines");
+    magazines.addMethod("ANY");
+    const magazine = magazines.addResource("{id}");
+    magazine.addMethod("ANY");
 
     // API Gateway v2
     const integrationV2 = new apigatewayv2_integrations.HttpUrlIntegration(
-      'HttpUrlIntegration',
-      'https://example.com',
+      "HttpUrlIntegration",
+      "https://example.com",
       { parameterMapping: DatadogAPIGatewayV2ParameterMapping },
     );
 
-    const httpApi = new apigatewayv2.HttpApi(this, 'httpApi', {
-      apiName: 'httpApiName',
-      description: 'API Gateway v2 for forwarding requests to example.com',
+    const httpApi = new apigatewayv2.HttpApi(this, "httpApi", {
+      apiName: "httpApiName",
+      description: "API Gateway v2 for forwarding requests to example.com",
     });
 
     httpApi.addRoutes({
-      path: '/{proxy+}',
+      path: "/{proxy+}",
       methods: [apigatewayv2.HttpMethod.ANY],
       integration: integrationV2,
     });
     httpApi.addRoutes({
-      path: '/books',
+      path: "/books",
       methods: [apigatewayv2.HttpMethod.ANY],
       integration: integrationV2,
     });
     httpApi.addRoutes({
-      path: '/books/{id}',
+      path: "/books/{id}",
       methods: [apigatewayv2.HttpMethod.ANY],
       integration: integrationV2,
     });
