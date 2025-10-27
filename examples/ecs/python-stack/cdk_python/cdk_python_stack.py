@@ -17,7 +17,14 @@ class CdkPythonStack(Stack):
             global_tags="owner:datadog, team:contp",
         )
 
-        task = ecsDatadog.fargate_task_definition(self, "PythonFargateTask")
+        task = ecsDatadog.fargate_task_definition(
+            self,
+            "PythonFargateTask",
+            props=ecs.FargateTaskDefinitionProps(
+                memory_limit_mib=512,
+                family="task-def-family",
+            ),
+        )
 
         task.add_container(
             id = "dogstatsd-app",
