@@ -25,8 +25,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     packageName: "ddcdkconstruct",
   },
   peerDeps: [],
-  cdkVersion: "2.177.0",
-  cdkCliVersion: "^2.177.0",
+  cdkVersion: "2.217.0",
+  cdkCliVersion: "^2.217.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
@@ -34,6 +34,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "prettier",
     "eslint-config-prettier",
     "eslint-plugin-prettier",
+    "esbuild",
     "standard-version",
     "@aws-cdk/aws-lambda-python-alpha@^2.134.0-alpha.0",
   ],
@@ -43,6 +44,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "!src/sample",
     "!src/sample/lambda_nodejs/hello_node.js",
     "!scripts/fix-version.js",
+    "!scripts/upgrade-cdk.js",
     "*.d.ts",
     ".cdk.staging",
     "cdk.out/",
@@ -98,6 +100,17 @@ const project = new awscdk.AwsCdkConstructLibrary({
 project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   JsonPatch.add("/jobs/pr/environment", {
     name: "protected-main-env",
+  }),
+);
+
+// Patch the upgrade workflow since its managed by projen
+// to add a step to upgrade the CDK versions.  3 happens to
+// be the index after install dependencies and before the
+// other dependency upgrade step.
+project.github?.tryFindWorkflow("upgrade")?.file?.patch(
+  JsonPatch.add("/jobs/upgrade/steps/3", {
+    name: "Upgrade CDK versions",
+    run: "node scripts/upgrade-cdk.js",
   }),
 );
 
@@ -178,7 +191,7 @@ projenTasks.addOverride("tasks.test.steps", [
     exec: "rm -fr lib/",
   },
   {
-    exec: "jest --passWithNoTests --all",
+    exec: "jest --runInBand --verbose --passWithNoTests --all",
   },
   {
     spawn: "eslint",
@@ -191,5 +204,9 @@ npmScripts.addDeletionOverride("scripts.release");
 npmScripts.addDeletionOverride("scripts.bump");
 npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
+project.addTask("create-release", {
+  exec: "bash scripts/create_release.sh",
+  receiveArgs: true,
+});
 
 project.synth();

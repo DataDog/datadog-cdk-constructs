@@ -8,13 +8,15 @@
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
+import { runtimeLookup, RuntimeType } from "./constants";
 import { DatadogLambdaProps, DatadogLambdaStrictProps } from "./interfaces";
 
 export const AWS_LAMBDA_EXEC_WRAPPER_KEY = "AWS_LAMBDA_EXEC_WRAPPER";
 export const AWS_LAMBDA_EXEC_WRAPPER_VAL = "/opt/datadog_wrapper";
 
 export const ENABLE_DD_TRACING_ENV_VAR = "DD_TRACE_ENABLED";
-export const ENABLE_DD_ASM_ENV_VAR = "DD_SERVERLESS_APPSEC_ENABLED";
+export const ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR = "DD_SERVERLESS_APPSEC_ENABLED";
+export const ENABLE_DD_APPSEC_ENV_VAR = "DD_APPSEC_ENABLED";
 export const ENABLE_XRAY_TRACE_MERGING_ENV_VAR = "DD_MERGE_XRAY_TRACES";
 export const INJECT_LOG_CONTEXT_ENV_VAR = "DD_LOGS_INJECTION";
 export const LOG_LEVEL_ENV_VAR = "DD_LOG_LEVEL";
@@ -128,10 +130,26 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
 
   //for each env variable, only set to default if it is NOT already set by user
   setEnvIfUndefined(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing);
-  setEnvIfUndefined(ENABLE_DD_ASM_ENV_VAR, baseProps.enableDatadogASM);
 
-  if (baseProps.enableDatadogASM) {
+  const runtimeType = runtimeLookup[lam.runtime.name];
+
+  if (baseProps.datadogAppSecMode === "tracer" && runtimeType !== RuntimeType.PYTHON) {
+    throw new Error(
+      `\`datadogAppSecMode\` is set to \`tracer\`. This requires the function to be a Python runtime. Found: ${runtimeType}`,
+    );
+  }
+
+  if (
+    (baseProps.datadogAppSecMode === "on" &&
+      runtimeType === RuntimeType.PYTHON &&
+      baseProps.pythonLayerVersion &&
+      baseProps.pythonLayerVersion >= 114) ||
+    baseProps.datadogAppSecMode === "tracer"
+  ) {
+    setEnvIfUndefined(ENABLE_DD_APPSEC_ENV_VAR, "true");
+  } else if (baseProps.datadogAppSecMode === "on" || baseProps.datadogAppSecMode === "extension") {
     setEnvIfUndefined(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+    setEnvIfUndefined(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "true");
   }
 
   setEnvIfUndefined(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces);

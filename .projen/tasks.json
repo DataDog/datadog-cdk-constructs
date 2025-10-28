@@ -41,6 +41,15 @@
         }
       ]
     },
+    "create-release": {
+      "name": "create-release",
+      "steps": [
+        {
+          "exec": "bash scripts/create_release.sh",
+          "receiveArgs": true
+        }
+      ]
+    },
     "default": {
       "name": "default",
       "description": "Synthesize project files",
@@ -66,7 +75,8 @@
       "name": "eslint",
       "description": "Runs eslint against the codebase",
       "env": {
-        "ESLINT_USE_FLAT_CONFIG": "false"
+        "ESLINT_USE_FLAT_CONFIG": "false",
+        "NODE_NO_WARNINGS": "1"
       },
       "steps": [
         {
@@ -174,7 +184,7 @@
           "exec": "rm -fr lib/"
         },
         {
-          "exec": "jest --passWithNoTests --all"
+          "exec": "jest --runInBand --verbose --passWithNoTests --all"
         },
         {
           "spawn": "eslint"
@@ -198,13 +208,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev,peer,prod,optional --filter=@types/jest,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jest,jsii-diff,jsii-pacmak,prettier,projen,standard-version,ts-jest,ts-node,typescript,loglevel"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev,peer,prod,optional --filter=@types/jest,esbuild,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jest,jsii-diff,jsii-pacmak,prettier,projen,standard-version,ts-jest,ts-node,typescript,loglevel"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-cdk/aws-lambda-python-alpha @stylistic/eslint-plugin @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit jsii-diff jsii-pacmak jsii-rosetta jsii prettier projen standard-version ts-jest ts-node typescript loglevel aws-cdk-lib constructs"
+          "exec": "yarn upgrade @aws-cdk/aws-lambda-python-alpha @stylistic/eslint-plugin @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser esbuild eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit jsii-diff jsii-pacmak jsii-rosetta jsii prettier projen standard-version ts-jest ts-node typescript loglevel aws-cdk-lib constructs"
         },
         {
           "exec": "npx projen"

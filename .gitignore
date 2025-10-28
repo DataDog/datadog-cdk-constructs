@@ -35,6 +35,7 @@ jspm_packages/
 !src/sample
 !src/sample/lambda_nodejs/hello_node.js
 !scripts/fix-version.js
+!scripts/upgrade-cdk.js
 *.d.ts
 .cdk.staging
 cdk.out/

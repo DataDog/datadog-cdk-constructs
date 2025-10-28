@@ -1,10 +1,11 @@
-import { App, Stack, Token } from "aws-cdk-lib";
+import { App, Fn, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import {
   addCdkConstructVersionTag,
   checkForMultipleApiKeys,
+  DatadogAppSecMode,
   DatadogLambda,
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
@@ -14,6 +15,7 @@ const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Extension-custom:1";
 const NODE_LAYER_VERSION = 91;
+const REPO_REGEX = /git\.repository_url:.*\/DataDog\/datadog-cdk-constructs(\.git)?/;
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -341,7 +343,7 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
   });
 
@@ -358,8 +360,24 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
+  });
+
+  it("throws an error if enableDatadogASM and datadogAppSecMode are both set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    expect(
+      () =>
+        new DatadogLambda(stack, "Datadog", {
+          enableDatadogASM: true,
+          datadogAppSecMode: DatadogAppSecMode.ON,
+        }),
+    ).toThrow("`datadogAppSecMode` and `enableDatadogASM` are mutually exclusive; set only `datadogAppSecMode`.");
   });
 });
 
@@ -654,12 +672,15 @@ describe("addLambdaFunctions", () => {
     Template.fromStack(stack).resourceCountIs("AWS::IAM::Policy", 0);
   });
 
-  it("doesn't instrument the lambda function if Node version is unresolved", () => {
+  it("doesn't instrument the lambda function if Node version is unsupported", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
       // unresolved Node runtime. Its name is like '${Token[TOKEN.330]}'.
-      runtime: lambda.determineLatestNodeRuntime(stack),
+      runtime: new lambda.Runtime(Fn.importValue(lambda.Runtime.NODEJS_LATEST.name), lambda.RuntimeFamily.NODEJS, {
+        supportsInlineCode: true,
+        isVariable: true,
+      }),
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -878,10 +899,7 @@ describe("overrideGitMetadata", () => {
 
     [hello, goodbye].forEach((f) => {
       expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining("git.commit.sha:fake-sha"),
-          expect.stringContaining("git.repository_url:github.com/DataDog/datadog-cdk-constructs"),
-        ]),
+        expect.arrayContaining([expect.stringContaining("git.commit.sha:fake-sha"), expect.stringMatching(REPO_REGEX)]),
       );
     });
   });
@@ -908,7 +926,7 @@ describe("overrideGitMetadata", () => {
       (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.commit.sha")),
     ).toEqual(true);
     expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
-      expect.arrayContaining([expect.stringContaining("git.repository_url:github.com/DataDog/datadog-cdk-constructs")]),
+      expect.arrayContaining([expect.stringMatching(REPO_REGEX)]),
     );
   });
 

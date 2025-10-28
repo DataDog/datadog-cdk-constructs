@@ -1,5 +1,5 @@
 {
-  "name": "typescript-stack",
+  "name": "typescript-step-functions-stack",
   "version": "1.0.0",
   "bin": {
     "cdk-typescript": "bin/index.js"
