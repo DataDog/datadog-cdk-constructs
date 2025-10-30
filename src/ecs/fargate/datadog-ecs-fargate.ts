@@ -77,8 +77,29 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     validateECSBaseProps(this.datadogProps);
     validateECSFargateProps(this.datadogProps);
 
-    // Task-level datadog configuration
     this.datadogContainer = this.createAgentContainer(this.datadogProps);
+
+    // Task-level datadog configuration
+    if (this.datadogProps.isLinux) {
+      this.addVolume({
+        name: "agent-config",
+      });
+      this.addVolume({
+        name: "agent-tmp",
+      });
+      this.addVolume({
+        name: "agent-run",
+      });
+
+      // Create init containers before the main agent container
+      const initContainers = this.createInitContainers(this.datadogProps);
+      initContainers.forEach((cont) => {
+        this.datadogContainer.addContainerDependencies({
+          container: cont,
+          condition: ecs.ContainerDependencyCondition.SUCCESS,
+        });
+      });
+    }
 
     // Volume for DogStatsD/APM UDS
     if (this.datadogProps.isSocketRequired && this.datadogProps.isLinux) {
@@ -239,6 +260,52 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
   }
 
+  private createInitContainers(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition[] {
+    const initVolumeContainer = super.addContainer("init-volume", {
+      image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
+      containerName: "init-volume",
+      cpu: 0,
+      memoryLimitMiB: 128,
+      essential: false,
+      readonlyRootFilesystem: true,
+      command: ["/bin/sh", "-c", "cp -vnR /etc/datadog-agent/* /agent-config/ && exit 0"],
+    });
+
+    initVolumeContainer.addMountPoints({
+      sourceVolume: "agent-config",
+      containerPath: "/agent-config",
+      readOnly: false,
+    });
+
+    // Init container 2: Run initialization scripts
+    const initConfigContainer = super.addContainer("init-config", {
+      image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
+      containerName: "init-config",
+      cpu: 0,
+      memoryLimitMiB: 128,
+      essential: false,
+      readonlyRootFilesystem: true,
+      command: [
+        "/bin/sh",
+        "-c",
+        "for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done",
+      ],
+    });
+
+    initConfigContainer.addMountPoints({
+      sourceVolume: "agent-config",
+      containerPath: "/etc/datadog-agent",
+      readOnly: false,
+    });
+
+    initConfigContainer.addContainerDependencies({
+      container: initVolumeContainer,
+      condition: ecs.ContainerDependencyCondition.SUCCESS,
+    });
+
+    return [initVolumeContainer, initConfigContainer];
+  }
+
   private createAgentContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const agentContainer = super.addContainer(`datadog-agent-${this.family}`, {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
@@ -248,6 +315,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       environment: props.envVarManager.retrieveAll(),
       essential: props.isDatadogEssential,
       healthCheck: props.datadogHealthCheck,
+      readonlyRootFilesystem: true,
       secrets: this.datadogProps.datadogSecret ? { DD_API_KEY: this.datadogProps.datadogSecret! } : undefined,
       portMappings: [
         {
@@ -263,6 +331,27 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       ],
       logging: props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver() : undefined,
     });
+
+    // Mount agent-config volume in the main agent container
+    if (props.isLinux) {
+      agentContainer.addMountPoints(
+        {
+          sourceVolume: "agent-config",
+          containerPath: "/etc/datadog-agent",
+          readOnly: false,
+        },
+        {
+          sourceVolume: "agent-tmp",
+          containerPath: "/tmp",
+          readOnly: false,
+        },
+        {
+          sourceVolume: "agent-run",
+          containerPath: "/opt/datadog-agent/run",
+          readOnly: false,
+        },
+      );
+    }
 
     // DogStatsD/Trace UDS configuration
     if (props.isSocketRequired) {
