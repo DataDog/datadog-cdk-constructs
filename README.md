@@ -13,7 +13,7 @@ For more information on the **DatadogECSFargate** construct, see [here][23].
 
 This CDK library automatically configures ingestion of metrics, traces, and logs from your serverless applications by:
 
-- Installing and configuring the Datadog Lambda layers for your [.NET][19], [Java][15], [Node.js][2], and [Python][1] Lambda functions.
+- Installing and configuring the Datadog Lambda layers for your [Python][1], [Node.js][2], [Java][15], [Go][26], [Ruby][25], and [.NET][19] Lambda functions.
 - Enabling the collection of traces and custom metrics from your Lambda functions.
 - Managing subscriptions from the Datadog Forwarder to your Lambda and non-Lambda log groups.
 
@@ -72,7 +72,7 @@ Pay attention to the output from your package manager as the `Datadog CDK Constr
 For use with AWS CDK v2:
 
 ```
-go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
+go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3
 ```
 
 AWS CDK v1 is not supported.
@@ -94,9 +94,10 @@ const datadogLambda = new DatadogLambda(this, "datadogLambda", {
   nodeLayerVersion: <LAYER_VERSION>,
   pythonLayerVersion: <LAYER_VERSION>,
   javaLayerVersion: <LAYER_VERSION>,
-  dotnetLayerVersion: <LAYER_VERSION>
+  dotnetLayerVersion: <LAYER_VERSION>,
+  rubyLayerVersion: <LAYER_VERSION>,
   addLayers: <BOOLEAN>,
-  extensionLayerVersion: "<EXTENSION_VERSION>",
+  extensionLayerVersion: <EXTENSION_VERSION>,
   forwarderArn: "<FORWARDER_ARN>",
   createForwarderPermissions: <BOOLEAN>,
   flushMetricsToLogs: <BOOLEAN>,
@@ -119,17 +120,42 @@ datadogLambda.addLambdaFunctions([<LAMBDA_FUNCTIONS>])
 datadogLambda.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 ```
 
+#### Python
+
+```python
+from datadog_cdk_constructs_v2 import DatadogLambda
+datadog = DatadogLambda(
+    self,
+    "Datadog",
+    dotnet_layer_version=<LAYER_VERSION>,
+    node_layer_version=<LAYER_VERSION>,
+    python_layer_version=<LAYER_VERSION>,
+    ruby_layer_version=<LAYER_VERSION>,
+    java_layer_version=<LAYER_VERSION>,
+    extension_layer_version=<EXTENSION_VERSION>,
+    add_layers=<BOOLEAN>,
+    api_key=os.getenv("DD_API_KEY"),
+    site=<SITE>,
+)
+datadog.add_lambda_functions([<LAMBDA_FUNCTIONS>])
+datadog.add_forwarder_to_non_lambda_log_groups(self.logGroups)
+```
+
 #### Go
 
 ```go
 import (
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3"
 )
 datadogLambda := ddcdkconstruct.NewDatadogLambda(
     stack,
     jsii.String("Datadog"),
     &ddcdkconstruct.DatadogLambdaProps{
         NodeLayerVersion:      jsii.Number(<LAYER_VERSION>),
+        PythonLayerVersion:    jsii.Number(<LAYER_VERSION>),
+        JavaLayerVersion:      jsii.Number(<LAYER_VERSION>),
+        DotnetLayerVersion:    jsii.Number(<LAYER_VERSION>),
+        RubyLayerVersion:      jsii.Number(<LAYER_VERSION>),
         AddLayers:             jsii.Bool(<BOOLEAN>),
         Site:                  jsii.String(<SITE>),
         ApiKey:                jsii.String(os.Getenv("DD_API_KEY")),
@@ -765,3 +791,5 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [22]: https://www.datadoghq.com/blog/troubleshoot-lambda-function-request-response-payloads/
 [23]: https://github.com/DataDog/datadog-cdk-constructs/blob/main/src/ecs/fargate/README.md
 [24]: https://docs.datadoghq.com/tracing/guide/aws_payload_tagging/
+[25]: https://docs.datadoghq.com/serverless/aws_lambda/installation/ruby
+[26]: https://docs.datadoghq.com/serverless/aws_lambda/installation/go
