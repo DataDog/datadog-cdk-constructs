@@ -85,6 +85,9 @@ describe("DatadogECSFargateLogging", () => {
         {
           Name: "datadog-agent",
         },
+        {
+          Name: "init-volume",
+        },
       ],
     });
     template.hasResourceProperties("AWS::ECS::TaskDefinition", {

@@ -245,4 +245,45 @@ describe("DatadogECSFargateTaskDefinition", () => {
       ]),
     });
   });
+
+  it("should have read only volume mounts to the Datadog Agent and init container", () => {
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    // Validate that the volume mounts are read only
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.datadogContainer.containerName,
+          MountPoints: Match.arrayWith([
+            Match.objectLike({
+              SourceVolume: "agent-config",
+              ContainerPath: "/etc/datadog-agent",
+              ReadOnly: false,
+            }),
+            Match.objectLike({
+              SourceVolume: "agent-tmp",
+              ContainerPath: "/tmp",
+              ReadOnly: false,
+            }),
+            Match.objectLike({
+              SourceVolume: "agent-run",
+              ContainerPath: "/opt/datadog-agent/run",
+              ReadOnly: false,
+            }),
+          ]),
+        }),
+        Match.objectLike({
+          Name: "init-volume",
+          MountPoints: Match.arrayWith([
+            Match.objectLike({
+              SourceVolume: "agent-config",
+              ContainerPath: "/agent-config",
+              ReadOnly: false,
+            }),
+          ]),
+        }),
+      ]),
+    });
+  });
 });
