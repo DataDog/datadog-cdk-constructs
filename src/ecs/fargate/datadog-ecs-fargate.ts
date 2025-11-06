@@ -79,7 +79,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     this.datadogContainer = this.createAgentContainer(this.datadogProps);
 
-    if (this.datadogProps.isLinux) {
+    if (this.datadogProps.isLinux && this.datadogProps.readOnlyRootFilesystem) {
       this.addVolume({
         name: "agent-config",
       });
@@ -304,8 +304,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       logging: props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver() : undefined,
     });
 
-    // Mount agent-config volume in the main agent container
-    if (props.isLinux) {
+    if (props.isLinux && props.readOnlyRootFilesystem) {
       agentContainer.addMountPoints(
         {
           sourceVolume: "agent-config",

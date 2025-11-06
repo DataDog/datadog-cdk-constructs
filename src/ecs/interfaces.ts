@@ -55,6 +55,11 @@ export interface DatadogECSBaseProps {
    */
   readonly isDatadogDependencyEnabled?: boolean;
   /**
+   * Configure Datadog Agent container to run with read-only root filessytem enabled
+   */
+  readonly readOnlyRootFilesystem?: boolean;
+
+  /**
    * Configure health check for the Datadog Agent container.
    */
   readonly datadogHealthCheck?: HealthCheck;
