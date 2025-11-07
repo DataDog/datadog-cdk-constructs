@@ -266,7 +266,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       memoryLimitMiB: 128,
       essential: false,
       readonlyRootFilesystem: true,
-      command: ["/bin/sh", "-c", "cp -vnR /etc/datadog-agent/* /agent-config/ && exit 0"],
+      command: ["/bin/sh", "-c", "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"],
     });
 
     initVolumeContainer.addMountPoints({
@@ -287,7 +287,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       environment: props.envVarManager.retrieveAll(),
       essential: props.isDatadogEssential,
       healthCheck: props.datadogHealthCheck,
-      readonlyRootFilesystem: true,
+      readonlyRootFilesystem: props.readOnlyRootFilesystem,
       secrets: this.datadogProps.datadogSecret ? { DD_API_KEY: this.datadogProps.datadogSecret! } : undefined,
       portMappings: [
         {

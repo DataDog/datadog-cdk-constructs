@@ -154,7 +154,7 @@
       "Command": [
        "/bin/sh",
        "-c",
-       "cp -vnR /etc/datadog-agent/* /agent-config/ && exit 0"
+       "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"
       ],
       "Cpu": 0,
       "Essential": false,
@@ -396,7 +396,7 @@
       "Command": [
        "/bin/sh",
        "-c",
-       "cp -vnR /etc/datadog-agent/* /agent-config/ && exit 0"
+       "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"
       ],
       "Cpu": 0,
       "Essential": false,
@@ -671,7 +671,7 @@
       "Command": [
        "/bin/sh",
        "-c",
-       "cp -vnR /etc/datadog-agent/* /agent-config/ && exit 0"
+       "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"
       ],
       "Cpu": 0,
       "Essential": false,

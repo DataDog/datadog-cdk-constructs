@@ -247,7 +247,7 @@ describe("DatadogECSFargateTaskDefinition", () => {
     });
   });
 
-  it("should have read only volume mounts to the Datadog Agent and init container", () => {
+  it("should have writable volume mounts for ROFS directories in the Datadog Agent and init container", () => {
     const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
     const template = Template.fromStack(stack);
 
@@ -285,6 +285,50 @@ describe("DatadogECSFargateTaskDefinition", () => {
           ]),
         }),
       ]),
+    });
+  });
+
+  it("should not create init container or ROFS volumes when readOnlyRootFilesystem is disabled", () => {
+    const datadogPropsWithoutROFS = {
+      ...datadogProps,
+      readOnlyRootFilesystem: false,
+    };
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogPropsWithoutROFS);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.not(
+        Match.arrayWith([
+          Match.objectLike({
+            Name: "init-volume",
+          }),
+        ]),
+      ),
+    });
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.datadogContainer.containerName,
+          ReadonlyRootFilesystem: false,
+        }),
+      ]),
+    });
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      Volumes: Match.not(
+        Match.arrayWith([
+          Match.objectLike({
+            Name: "agent-config",
+          }),
+          Match.objectLike({
+            Name: "agent-tmp",
+          }),
+          Match.objectLike({
+            Name: "agent-run",
+          }),
+        ]),
+      ),
     });
   });
 });
