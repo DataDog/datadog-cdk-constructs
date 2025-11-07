@@ -28,6 +28,7 @@ describe("DatadogECSFargateLogging", () => {
       registry: "public.ecr.aws/datadog/agent",
       imageVersion: "latest",
       apiKey: "test-api-key",
+      readOnlyRootFilesystem: true,
       logCollection: {
         isEnabled: true,
         fluentbitConfig: {

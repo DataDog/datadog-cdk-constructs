@@ -31,7 +31,7 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
 
   isDatadogEssential: false,
   isDatadogDependencyEnabled: false,
-  readOnlyRootFilesystem: true,
+  readOnlyRootFilesystem: false,
   datadogHealthCheck: {
     command: ["/probe.sh"],
     interval: Duration.seconds(10),
