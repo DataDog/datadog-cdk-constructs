@@ -90,12 +90,10 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
         name: "agent-run",
       });
 
-      const initContainers = this.createInitContainers(this.datadogProps);
-      initContainers.forEach((cont) => {
-        this.datadogContainer.addContainerDependencies({
-          container: cont,
-          condition: ecs.ContainerDependencyCondition.SUCCESS,
-        });
+      const initContainers = this.thisCreateInitContainer(this.datadogProps);
+      this.datadogContainer.addContainerDependencies({
+        container: initContainers,
+        condition: ecs.ContainerDependencyCondition.SUCCESS,
       });
     }
 
@@ -258,7 +256,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
   }
 
-  private createInitContainers(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition[] {
+  private thisCreateInitContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const initVolumeContainer = super.addContainer("init-volume", {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
       containerName: "init-volume",
@@ -275,7 +273,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       readOnly: false,
     });
 
-    return [initVolumeContainer];
+    return initVolumeContainer;
   }
 
   private createAgentContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
