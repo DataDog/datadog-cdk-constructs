@@ -18,6 +18,7 @@ export class ExampleStack extends Stack {
     const ecsDatadog = new DatadogECSFargate({
       apiKey: "exampleApiKey",
       env: "prod",
+      readOnlyRootFilesystem: true,
       apm: {
         isEnabled: true,
         traceInferredProxyServices: true,

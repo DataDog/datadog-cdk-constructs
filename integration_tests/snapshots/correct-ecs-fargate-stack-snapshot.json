@@ -53,6 +53,12 @@
    "Properties": {
     "ContainerDefinitions": [
      {
+      "DependsOn": [
+       {
+        "Condition": "SUCCESS",
+        "ContainerName": "init-volume"
+       }
+      ],
       "Environment": [
        {
         "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
@@ -109,6 +115,21 @@
       "Image": "public.ecr.aws/datadog/agent:latest",
       "MountPoints": [
        {
+        "ContainerPath": "/etc/datadog-agent",
+        "ReadOnly": false,
+        "SourceVolume": "agent-config"
+       },
+       {
+        "ContainerPath": "/tmp",
+        "ReadOnly": false,
+        "SourceVolume": "agent-tmp"
+       },
+       {
+        "ContainerPath": "/opt/datadog-agent/run",
+        "ReadOnly": false,
+        "SourceVolume": "agent-run"
+       },
+       {
         "ContainerPath": "/var/run/datadog",
         "ReadOnly": false,
         "SourceVolume": "dd-sockets"
@@ -126,7 +147,28 @@
         "HostPort": 8126,
         "Protocol": "tcp"
        }
-      ]
+      ],
+      "ReadonlyRootFilesystem": true
+     },
+     {
+      "Command": [
+       "/bin/sh",
+       "-c",
+       "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"
+      ],
+      "Cpu": 0,
+      "Essential": false,
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 128,
+      "MountPoints": [
+       {
+        "ContainerPath": "/agent-config",
+        "ReadOnly": false,
+        "SourceVolume": "agent-config"
+       }
+      ],
+      "Name": "init-volume",
+      "ReadonlyRootFilesystem": true
      },
      {
       "DockerLabels": {
@@ -182,6 +224,15 @@
      ]
     },
     "Volumes": [
+     {
+      "Name": "agent-config"
+     },
+     {
+      "Name": "agent-tmp"
+     },
+     {
+      "Name": "agent-run"
+     },
      {
       "Name": "dd-sockets"
      }
@@ -244,6 +295,12 @@
    "Properties": {
     "ContainerDefinitions": [
      {
+      "DependsOn": [
+       {
+        "Condition": "SUCCESS",
+        "ContainerName": "init-volume"
+       }
+      ],
       "Environment": [
        {
         "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
@@ -300,6 +357,21 @@
       "Image": "public.ecr.aws/datadog/agent:latest",
       "MountPoints": [
        {
+        "ContainerPath": "/etc/datadog-agent",
+        "ReadOnly": false,
+        "SourceVolume": "agent-config"
+       },
+       {
+        "ContainerPath": "/tmp",
+        "ReadOnly": false,
+        "SourceVolume": "agent-tmp"
+       },
+       {
+        "ContainerPath": "/opt/datadog-agent/run",
+        "ReadOnly": false,
+        "SourceVolume": "agent-run"
+       },
+       {
         "ContainerPath": "/var/run/datadog",
         "ReadOnly": false,
         "SourceVolume": "dd-sockets"
@@ -317,7 +389,28 @@
         "HostPort": 8126,
         "Protocol": "tcp"
        }
-      ]
+      ],
+      "ReadonlyRootFilesystem": true
+     },
+     {
+      "Command": [
+       "/bin/sh",
+       "-c",
+       "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"
+      ],
+      "Cpu": 0,
+      "Essential": false,
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 128,
+      "MountPoints": [
+       {
+        "ContainerPath": "/agent-config",
+        "ReadOnly": false,
+        "SourceVolume": "agent-config"
+       }
+      ],
+      "Name": "init-volume",
+      "ReadonlyRootFilesystem": true
      },
      {
       "DockerLabels": {
@@ -407,6 +500,15 @@
     },
     "Volumes": [
      {
+      "Name": "agent-config"
+     },
+     {
+      "Name": "agent-tmp"
+     },
+     {
+      "Name": "agent-run"
+     },
+     {
       "Name": "dd-sockets"
      }
     ]
@@ -468,6 +570,12 @@
    "Properties": {
     "ContainerDefinitions": [
      {
+      "DependsOn": [
+       {
+        "Condition": "SUCCESS",
+        "ContainerName": "init-volume"
+       }
+      ],
       "Environment": [
        {
         "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
@@ -524,6 +632,21 @@
       "Image": "public.ecr.aws/datadog/agent:latest",
       "MountPoints": [
        {
+        "ContainerPath": "/etc/datadog-agent",
+        "ReadOnly": false,
+        "SourceVolume": "agent-config"
+       },
+       {
+        "ContainerPath": "/tmp",
+        "ReadOnly": false,
+        "SourceVolume": "agent-tmp"
+       },
+       {
+        "ContainerPath": "/opt/datadog-agent/run",
+        "ReadOnly": false,
+        "SourceVolume": "agent-run"
+       },
+       {
         "ContainerPath": "/var/run/datadog",
         "ReadOnly": false,
         "SourceVolume": "dd-sockets"
@@ -541,7 +664,28 @@
         "HostPort": 8126,
         "Protocol": "tcp"
        }
-      ]
+      ],
+      "ReadonlyRootFilesystem": true
+     },
+     {
+      "Command": [
+       "/bin/sh",
+       "-c",
+       "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"
+      ],
+      "Cpu": 0,
+      "Essential": false,
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 128,
+      "MountPoints": [
+       {
+        "ContainerPath": "/agent-config",
+        "ReadOnly": false,
+        "SourceVolume": "agent-config"
+       }
+      ],
+      "Name": "init-volume",
+      "ReadonlyRootFilesystem": true
      },
      {
       "DockerLabels": {
@@ -589,6 +733,15 @@
      ]
     },
     "Volumes": [
+     {
+      "Name": "agent-config"
+     },
+     {
+      "Name": "agent-tmp"
+     },
+     {
+      "Name": "agent-run"
+     },
      {
       "Name": "dd-sockets"
      }

@@ -77,8 +77,25 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     validateECSBaseProps(this.datadogProps);
     validateECSFargateProps(this.datadogProps);
 
-    // Task-level datadog configuration
     this.datadogContainer = this.createAgentContainer(this.datadogProps);
+
+    if (this.datadogProps.isLinux && this.datadogProps.readOnlyRootFilesystem) {
+      this.addVolume({
+        name: "agent-config",
+      });
+      this.addVolume({
+        name: "agent-tmp",
+      });
+      this.addVolume({
+        name: "agent-run",
+      });
+
+      const initContainers = this.thisCreateInitContainer(this.datadogProps);
+      this.datadogContainer.addContainerDependencies({
+        container: initContainers,
+        condition: ecs.ContainerDependencyCondition.SUCCESS,
+      });
+    }
 
     // Volume for DogStatsD/APM UDS
     if (this.datadogProps.isSocketRequired && this.datadogProps.isLinux) {
@@ -239,6 +256,26 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
   }
 
+  private thisCreateInitContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
+    const initVolumeContainer = super.addContainer("init-volume", {
+      image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
+      containerName: "init-volume",
+      cpu: 0,
+      memoryLimitMiB: 128,
+      essential: false,
+      readonlyRootFilesystem: true,
+      command: ["/bin/sh", "-c", "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"],
+    });
+
+    initVolumeContainer.addMountPoints({
+      sourceVolume: "agent-config",
+      containerPath: "/agent-config",
+      readOnly: false,
+    });
+
+    return initVolumeContainer;
+  }
+
   private createAgentContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const agentContainer = super.addContainer(`datadog-agent-${this.family}`, {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
@@ -248,6 +285,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       environment: props.envVarManager.retrieveAll(),
       essential: props.isDatadogEssential,
       healthCheck: props.datadogHealthCheck,
+      readonlyRootFilesystem: props.readOnlyRootFilesystem,
       secrets: this.datadogProps.datadogSecret ? { DD_API_KEY: this.datadogProps.datadogSecret! } : undefined,
       portMappings: [
         {
@@ -263,6 +301,26 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       ],
       logging: props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver() : undefined,
     });
+
+    if (props.isLinux && props.readOnlyRootFilesystem) {
+      agentContainer.addMountPoints(
+        {
+          sourceVolume: "agent-config",
+          containerPath: "/etc/datadog-agent",
+          readOnly: false,
+        },
+        {
+          sourceVolume: "agent-tmp",
+          containerPath: "/tmp",
+          readOnly: false,
+        },
+        {
+          sourceVolume: "agent-run",
+          containerPath: "/opt/datadog-agent/run",
+          readOnly: false,
+        },
+      );
+    }
 
     // DogStatsD/Trace UDS configuration
     if (props.isSocketRequired) {
