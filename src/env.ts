@@ -174,19 +174,17 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
 }
 
 export function setDDEnvVariables(lam: lambda.Function, props: DatadogLambdaProps): void {
-  if (props.extensionLayerVersion || props.extensionLayerArn) {
-    if (props.env) {
-      lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
-    }
-    if (props.service) {
-      lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
-    }
-    if (props.version) {
-      lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
-    }
-    if (props.tags) {
-      lam.addEnvironment(DD_TAGS, props.tags);
-    }
+  if (props.env) {
+    lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
+  }
+  if (props.service) {
+    lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
+  }
+  if (props.version) {
+    lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
+  }
+  if (props.tags) {
+    lam.addEnvironment(DD_TAGS, props.tags);
   }
   if (props.enableColdStartTracing !== undefined) {
     lam.addEnvironment(DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());
