@@ -47,6 +47,7 @@ integration_tests/testlib
 bin
 obj
 __pycache__
+cdk.context.json
 /test-reports/
 junit.xml
 /coverage/
