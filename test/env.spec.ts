@@ -586,6 +586,39 @@ describe("setDDEnvVariables", () => {
       },
     });
   });
+
+  it("sets DD_ENV, DD_SERVICE, DD_VERSION without extension layer for Docker images", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      addLayers: false,
+      env: "prod",
+      service: "my-service",
+      version: "1.0.0",
+      tags: "team:backend",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_ENV"]: "prod",
+          ["DD_SERVICE"]: "my-service",
+          ["DD_VERSION"]: "1.0.0",
+          ["DD_TAGS"]: "team:backend,git.commit.sha:1234,git.repository_url:1234",
+        },
+      },
+    });
+  });
 });
 
 describe("ENABLE_DD_TRACING_ENV_VAR", () => {
