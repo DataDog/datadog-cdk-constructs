@@ -16,6 +16,7 @@
     "package": "npx projen package",
     "package-all": "npx projen package-all",
     "package:go": "npx projen package:go",
+    "package:java": "npx projen package:java",
     "package:js": "npx projen package:js",
     "package:python": "npx projen package:python",
     "post-compile": "npx projen post-compile",
@@ -80,7 +81,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.0",
+  "version": "3.3.0",
   "jest": {
     "coverageProvider": "v8",
     "testMatch": [
@@ -127,6 +128,13 @@
   "jsii": {
     "outdir": "dist",
     "targets": {
+      "java": {
+        "package": "com.datadoghq.cdkconstructs",
+        "maven": {
+          "groupId": "com.datadoghq",
+          "artifactId": "datadog-cdk-constructs"
+        }
+      },
       "python": {
         "distName": "datadog-cdk-constructs-v2",
         "module": "datadog_cdk_constructs_v2"
