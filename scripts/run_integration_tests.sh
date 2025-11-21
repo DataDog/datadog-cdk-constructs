@@ -27,6 +27,7 @@ STACK_CONFIG_PATHS=(
     "python/step_functions_python_stack.py"
     "go/lambda_go_stack.go"
     "go/step_functions_go_stack.go"
+    "java/App.java"
 )
 
 SCRIPT_PATH=${BASH_SOURCE[0]}
@@ -49,7 +50,7 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 cd $INTEGRATION_TESTS_DIR
 
 # Remove snapshots generated from previous test runs
-rm -rf cdk.out stacks/go/cdk.out
+rm -rf cdk.out stacks/go/cdk.out stacks/java/cdk.out
 rm -f snapshots/test-*-snapshot.json
 
 OUTPUT_ARRAY=("====================================")
@@ -106,6 +107,12 @@ cd stacks/go
 go get
 cd ../..
 
+echo "Setting up for Java"
+cd stacks/java
+VERSION=$(jq -r '.version' "$ROOT_DIR/version.json")
+mvn install:install-file -Dfile="$ROOT_DIR/dist/java/com/datadoghq/datadog-cdk-constructs/$VERSION/datadog-cdk-constructs-$VERSION.jar" -DgroupId=com.datadoghq -DartifactId=datadog-cdk-constructs -Dversion="$VERSION" -Dpackaging=jar || echo "Java package not yet built, skipping setup"
+cd ../..
+
 for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
     if [[ ${STACK_CONFIG_PATHS[i]} =~ ^typescript/ && ${STACK_CONFIG_PATHS[i]} =~ \.ts$ ]]; then
         # Case 1. TypeScript
@@ -136,7 +143,7 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
         # Strip the "go/" prefix
         STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#go/}"
 
-        # convert snake_case to PascalCase (e.g. lambda_go_stack to LambdaGoStack) to match the 
+        # convert snake_case to PascalCase (e.g. lambda_go_stack to LambdaGoStack) to match the
         # name of the Go stack
         STACK_CONFIG_NAME_PASCAL_CASE=$(snake_case_to_pascal_case "$STACK_CONFIG_NAME")
 
@@ -144,6 +151,17 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
         cdk synth $STACK_CONFIG_NAME_PASCAL_CASE --app "go run *.go" --json --quiet
         cd ../..
         RAW_CFN_TEMPLATE="stacks/go/cdk.out/$STACK_CONFIG_NAME_PASCAL_CASE.template.json"
+    elif [[ ${STACK_CONFIG_PATHS[i]} =~ ^java/ && ${STACK_CONFIG_PATHS[i]} =~ \.java$ ]]; then
+        # Case 4. Java
+        # Strip the ".java" suffix
+        STACK_CONFIG_PATH_NO_EXT="${STACK_CONFIG_PATHS[i]%.java}"
+        # Strip the "java/" prefix
+        STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#java/}"
+
+        cd stacks/java
+        cdk synth LambdaJavaStack --app "mvn -e -q compile exec:java" --json --quiet
+        cd ../..
+        RAW_CFN_TEMPLATE="stacks/java/cdk.out/LambdaJavaStack.template.json"
     else
         echo "Invalid stack config path: ${STACK_CONFIG_PATHS[i]}"
         exit 1
