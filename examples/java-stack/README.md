@@ -1,63 +1,18 @@
-# Datadog CDK Constructs Java Example
+# Datadog CDK Java Example
 
-This is an example AWS CDK application in Java that demonstrates how to use the Datadog CDK Constructs library to automatically instrument Lambda functions with Datadog monitoring.
+Use this example Java stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library.
 
-## Prerequisites
+## Getting Started
 
-- Java 11 or later
-- Maven 3.6+
-- AWS CLI configured with appropriate credentials
-- AWS CDK CLI (`npm install -g aws-cdk`)
-
-## Installation
-
-Add the Datadog CDK Constructs dependency to your `pom.xml`:
-
-```xml
-<dependency>
-    <groupId>com.datadoghq</groupId>
-    <artifactId>datadog-cdk-constructs</artifactId>
-    <version>3.3.0</version>
-</dependency>
-```
-
-## Usage
-
-1. Set your Datadog API key as an environment variable:
-   ```bash
-   export DD_API_KEY=your-api-key-here
-   ```
-
-2. Compile the application:
-   ```bash
-   mvn compile
-   ```
-
-3. Deploy the stack:
-   ```bash
-   cdk deploy
-   ```
-
-## What This Example Does
-
-This example creates:
-- A simple Lambda function that returns "Hello World!"
-- A Lambda Function URL for easy HTTP access
-- Datadog monitoring automatically configured with:
-  - Lambda layer instrumentation
-  - Datadog tracing enabled
-  - Log forwarding to Datadog
-  - Metrics collection
-
-## Useful Commands
-
-- `mvn compile` - Compile the Java code
-- `cdk synth` - Synthesize the CloudFormation template
-- `cdk deploy` - Deploy the stack to AWS
-- `cdk diff` - Compare deployed stack with current state
-- `cdk destroy` - Remove the stack from AWS
-
-## Learn More
-
-- [Datadog CDK Constructs Documentation](https://github.com/DataDog/datadog-cdk-constructs)
-- [AWS CDK Java Documentation](https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-java.html)
+1. Get a Datadog API key to send monitoring data ([Datadog API keys documentation](https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token)).
+1. Run `export DD_API_KEY=<DATADOG_API_KEY>` to set the Datadog API key in your shell session.
+1. Run `mvn compile` to compile the Java code.
+1. Update the layer versions in [App.java](src/main/java/com/datadoghq/example/App.java) with the latest releases:
+   - Datadog Lambda Extension: https://github.com/DataDog/datadog-lambda-extension/releases
+   - Java Layer: https://github.com/DataDog/datadog-lambda-java/releases
+   - Node Layer: https://github.com/DataDog/datadog-lambda-js/releases
+   - Python Layer: https://github.com/DataDog/datadog-lambda-python/releases
+1. Run `cdk synth` to synthesize the CloudFormation template.
+1. Run `cdk diff` to see the resource and permission changes that are made.
+1. Run `cdk deploy` to deploy the stack to AWS.
+1. Invoke your Lambda functions and look for them in [Datadog Serverless Monitoring](https://app.datadoghq.com/serverless/aws/lambda).
