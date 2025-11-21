@@ -1,6 +1,5 @@
 package com.datadoghq.example;
 
-import software.amazon.awscdk.App;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.Stack;
@@ -15,9 +14,11 @@ import software.constructs.Construct;
 import com.datadoghq.cdkconstructs.DatadogLambda;
 import com.datadoghq.cdkconstructs.DatadogLambdaProps;
 
+import java.util.Arrays;
+
 public class App {
     public static void main(final String[] args) {
-        App app = new App();
+        software.amazon.awscdk.App app = new software.amazon.awscdk.App();
 
         new CdkJavaStack(app, "CdkJavaStack", StackProps.builder()
                 .env(Environment.builder()
@@ -81,7 +82,7 @@ public class App {
                             .build()
             );
 
-            datadog.addLambdaFunctions(new Object[]{myFunction});
+            datadog.addLambdaFunctions(Arrays.asList(myFunction));
         }
     }
 }
