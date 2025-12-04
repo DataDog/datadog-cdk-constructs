@@ -159,10 +159,12 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // Log configuration on props
     if (this.datadogProps.logCollection!.isEnabled) {
-      if (props.logging !== undefined) {
-        log.debug("Overriding logging configuration for container: ", id);
+      if (props.logging === undefined) {
+        // Allow users to define their own logging configurations per container
+        instrumentedProps.logging = this.createLogDriver();
+      } else {
+        log.debug("Using custom logging configuration for container: ", id);
       }
-      instrumentedProps.logging = this.createLogDriver();
     }
 
     return instrumentedProps;
