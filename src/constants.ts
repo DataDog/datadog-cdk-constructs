@@ -79,6 +79,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "java11": RuntimeType.JAVA,
   "java17": RuntimeType.JAVA,
   "java21": RuntimeType.JAVA,
+  "java25": RuntimeType.JAVA,
   "provided": RuntimeType.CUSTOM,
   "provided.al2": RuntimeType.CUSTOM,
   "provided.al2023": RuntimeType.CUSTOM,
@@ -107,6 +108,7 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "java11": "dd-trace-java",
   "java17": "dd-trace-java",
   "java21": "dd-trace-java",
+  "java25": "dd-trace-java",
   "ruby32": "Datadog-Ruby3-2",
   "ruby33": "Datadog-Ruby3-3",
 };
