@@ -47,7 +47,7 @@ export class ExampleStack extends Stack {
     const ecsDatadog = new DatadogECSFargate({
       apiKeySecret: secret,
       clusterName: cluster.clusterName,
-      isDatadogDependencyEnabled: true,
+      isDatadogDependencyEnabled: false,
       environmentVariables: {
         DD_TAGS: "team:cont-p, owner:container-monitoring",
       },
@@ -58,7 +58,7 @@ export class ExampleStack extends Stack {
         isEnabled: true,
       },
       cws: {
-        isEnabled: true,
+        isEnabled: false,
       },
       logCollection: {
         isEnabled: true,

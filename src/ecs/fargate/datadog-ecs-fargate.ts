@@ -9,7 +9,7 @@
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import log from "loglevel";
-import { DatadogEcsFargateDefaultProps, EntryPointPrefixCWS } from "./constants";
+import { DatadogEcsFargateDefaultProps, EntryPointPrefixCWS, DatadogAgentServiceName } from "./constants";
 import { FargateEnvVarManager } from "./environment";
 import { DatadogECSFargateProps, LoggingType } from "./interfaces";
 import { mergeFargateProps, validateECSFargateProps } from "./utils";
@@ -159,10 +159,12 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // Log configuration on props
     if (this.datadogProps.logCollection!.isEnabled) {
-      if (props.logging !== undefined) {
-        log.debug("Overriding logging configuration for container: ", id);
+      if (props.logging === undefined) {
+        // Allow users to define their own logging configurations per container
+        instrumentedProps.logging = this.createLogDriver();
+      } else {
+        log.debug("Using custom logging configuration for container: ", id);
       }
-      instrumentedProps.logging = this.createLogDriver();
     }
 
     return instrumentedProps;
@@ -279,7 +281,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   private createAgentContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const agentContainer = super.addContainer(`datadog-agent-${this.family}`, {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
-      containerName: "datadog-agent",
+      containerName: DatadogAgentServiceName,
       cpu: props.cpu,
       memoryLimitMiB: props.memoryLimitMiB,
       environment: props.envVarManager.retrieveAll(),
@@ -299,7 +301,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           protocol: ecs.Protocol.TCP,
         },
       ],
-      logging: props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver() : undefined,
+      logging:
+        props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver(DatadogAgentServiceName) : undefined,
     });
 
     if (props.isLinux && props.readOnlyRootFilesystem) {
@@ -353,7 +356,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     return fluentbitContainer;
   }
 
-  private createLogDriver(): ecs.FireLensLogDriver | undefined {
+  private createLogDriver(serviceName?: string): ecs.FireLensLogDriver | undefined {
     if (this.datadogProps.logCollection!.loggingType !== LoggingType.FLUENTBIT) {
       return undefined;
     }
@@ -365,6 +368,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // Otherwise, create a FireLenseLogDriver using the provided config
     const fluentbitLogDriverConfig = fluentbitConfig.logDriverConfig!;
+    const logServiceName = serviceName ?? fluentbitLogDriverConfig.serviceName;
+
     let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
     if (this.datadogProps.clusterName !== undefined) {
       if (logTags === undefined) {
@@ -386,8 +391,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
         ...(fluentbitLogDriverConfig.tls !== undefined && {
           TLS: fluentbitLogDriverConfig.tls,
         }),
-        ...(fluentbitLogDriverConfig.serviceName !== undefined && {
-          dd_service: fluentbitLogDriverConfig.serviceName,
+        ...(logServiceName !== undefined && {
+          dd_service: logServiceName,
         }),
         ...(fluentbitLogDriverConfig.sourceName !== undefined && {
           dd_source: fluentbitLogDriverConfig.sourceName,
