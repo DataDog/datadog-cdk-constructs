@@ -301,7 +301,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           protocol: ecs.Protocol.TCP,
         },
       ],
-      logging: props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver(DatadogAgentServiceName) : undefined,
+      logging:
+        props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver(DatadogAgentServiceName) : undefined,
     });
 
     if (props.isLinux && props.readOnlyRootFilesystem) {
@@ -368,7 +369,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     // Otherwise, create a FireLenseLogDriver using the provided config
     const fluentbitLogDriverConfig = fluentbitConfig.logDriverConfig!;
     const logServiceName = serviceName ?? fluentbitLogDriverConfig.serviceName;
-    
+
     let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
     if (this.datadogProps.clusterName !== undefined) {
       if (logTags === undefined) {
