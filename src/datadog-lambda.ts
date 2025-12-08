@@ -124,7 +124,8 @@ export class DatadogLambda extends Construct {
         }
       }
 
-      if (baseProps.extensionLayerVersion !== undefined || baseProps.extensionLayerArn !== undefined) {
+      const useExtension = baseProps.extensionLayerVersion !== undefined || baseProps.extensionLayerArn !== undefined;
+      if (useExtension) {
         const errors = applyExtensionLayer(
           this.scope,
           region,
@@ -135,14 +136,14 @@ export class DatadogLambda extends Construct {
         );
         if (errors.length > 0) {
           log.warn(
-            `Failed to apply extention layer to the Lambda function ${lambdaFunction.functionName}. Skipping instrumenting it.`,
+            `Failed to apply extension layer to the Lambda function ${lambdaFunction.functionName}. Skipping instrumenting it.`,
           );
           continue;
         }
       }
 
       if (baseProps.redirectHandler) {
-        redirectHandlers(lambdaFunction, baseProps.addLayers);
+        redirectHandlers(lambdaFunction, baseProps.addLayers, useExtension);
       }
 
       if (this.props.forwarderArn !== undefined) {

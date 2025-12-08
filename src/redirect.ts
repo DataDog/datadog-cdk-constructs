@@ -27,14 +27,16 @@ import {
  *
  * Unchanged aside from parameter type
  */
-export function redirectHandlers(lam: lambda.Function, addLayers: boolean): void {
+export function redirectHandlers(lam: lambda.Function, addLayers: boolean, useExtension: boolean): void {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
 
   const runtime: string = lam.runtime.name;
   const runtimeType: RuntimeType = runtimeLookup[runtime];
 
   if (runtimeType === RuntimeType.JAVA || runtimeType === RuntimeType.DOTNET) {
-    lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR, AWS_LAMBDA_EXEC_WRAPPER);
+    if (useExtension) {
+      lam.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR, AWS_LAMBDA_EXEC_WRAPPER);
+    }
     return;
   }
 
