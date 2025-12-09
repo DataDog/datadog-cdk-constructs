@@ -27,7 +27,6 @@ node_modules/
 jspm_packages/
 *.tsbuildinfo
 .eslintcache
-*.tgz
 .yarn-integrity
 .cache
 *.js
@@ -47,6 +46,8 @@ integration_tests/testlib
 bin
 obj
 __pycache__
+*.tar.gz
+*.tgz
 /test-reports/
 junit.xml
 /coverage/
