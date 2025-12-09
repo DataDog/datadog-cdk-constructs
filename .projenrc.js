@@ -56,6 +56,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "bin",
     "obj",
     "__pycache__",
+    "*.tar.gz",
   ],
   npmignore: [
     "!LICENSE",

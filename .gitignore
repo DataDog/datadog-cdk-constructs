@@ -47,6 +47,7 @@ integration_tests/testlib
 bin
 obj
 __pycache__
+*.tar.gz
 /test-reports/
 junit.xml
 /coverage/
