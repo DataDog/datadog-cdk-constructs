@@ -153,10 +153,8 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
         RAW_CFN_TEMPLATE="stacks/go/cdk.out/$STACK_CONFIG_NAME_PASCAL_CASE.template.json"
     elif [[ ${STACK_CONFIG_PATHS[i]} =~ ^java/ && ${STACK_CONFIG_PATHS[i]} =~ \.java$ ]]; then
         # Case 4. Java
-        # Strip the ".java" suffix
-        STACK_CONFIG_PATH_NO_EXT="${STACK_CONFIG_PATHS[i]%.java}"
-        # Strip the "java/" prefix
-        STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#java/}"
+        # Use descriptive name instead of the actual file name (App)
+        STACK_CONFIG_NAME="lambda-java-stack"
 
         cd stacks/java
         VERSION=$(jq -r '.version' "$ROOT_DIR/.jsii")
