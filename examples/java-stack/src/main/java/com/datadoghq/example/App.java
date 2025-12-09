@@ -45,22 +45,11 @@ public class App {
                     ))
                     .build();
 
-            // Add function URL
-            FunctionUrl myFunctionUrl = myFunction.addFunctionUrl(
-                    FunctionUrlOptions.builder()
-                            .authType(FunctionUrlAuthType.NONE)
-                            .build()
-            );
-
-            // CloudFormation output for the URL
-            CfnOutput.Builder.create(this, "myFunctionUrlOutput")
-                    .value(myFunctionUrl.getUrl())
-                    .build();
-
             // Set up Datadog integration
+            // Set DD_API_KEY environment variable before running: export DD_API_KEY=your-api-key
             String ddApiKey = System.getenv("DD_API_KEY");
-            if (ddApiKey == null) {
-                ddApiKey = "your-api-key-here";
+            if (ddApiKey == null || ddApiKey.isEmpty()) {
+                throw new IllegalStateException("DD_API_KEY environment variable must be set");
             }
 
             DatadogLambda datadog = new DatadogLambda(this, "Datadog",
