@@ -109,8 +109,8 @@ cd ../..
 
 echo "Setting up for Java"
 cd stacks/java
-VERSION=$(jq -r '.version' "$ROOT_DIR/version.json")
-mvn install:install-file -Dfile="$ROOT_DIR/dist/java/com/datadoghq/datadog-cdk-constructs/$VERSION/datadog-cdk-constructs-$VERSION.jar" -DgroupId=com.datadoghq -DartifactId=datadog-cdk-constructs -Dversion="$VERSION" -Dpackaging=jar || echo "Java package not yet built, skipping setup"
+VERSION=$(jq -r '.version' "$ROOT_DIR/.jsii")
+mvn install:install-file -Dfile="$ROOT_DIR/dist/java/com/datadoghq/datadog-cdk-constructs/$VERSION/datadog-cdk-constructs-$VERSION.jar" -DpomFile="$ROOT_DIR/dist/java/com/datadoghq/datadog-cdk-constructs/$VERSION/datadog-cdk-constructs-$VERSION.pom" -DgroupId=com.datadoghq -DartifactId=datadog-cdk-constructs -Dversion="$VERSION" -Dpackaging=jar || echo "Java package not yet built, skipping setup"
 cd ../..
 
 for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
