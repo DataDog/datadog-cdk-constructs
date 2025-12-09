@@ -9,6 +9,8 @@ import software.constructs.Construct;
 import com.datadoghq.cdkconstructs.DatadogLambda;
 import com.datadoghq.cdkconstructs.DatadogLambdaProps;
 
+import java.util.Arrays;
+
 public class LambdaJavaStack extends Stack {
     public LambdaJavaStack(final Construct scope, final String id) {
         this(scope, id, null);
@@ -44,6 +46,6 @@ public class LambdaJavaStack extends Stack {
                         .build()
         );
 
-        datadog.addLambdaFunctions(new Object[]{lambdaFunction});
+        datadog.addLambdaFunctions(Arrays.asList(lambdaFunction));
     }
 }

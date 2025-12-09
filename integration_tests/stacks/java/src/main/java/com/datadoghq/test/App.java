@@ -1,12 +1,11 @@
 package com.datadoghq.test;
 
-import software.amazon.awscdk.App;
 import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.StackProps;
 
 public class App {
     public static void main(final String[] args) {
-        App app = new App();
+        software.amazon.awscdk.App app = new software.amazon.awscdk.App();
 
         Environment env = Environment.builder()
                 .account("601427279990")
