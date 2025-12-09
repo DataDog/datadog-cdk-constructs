@@ -159,7 +159,8 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
         STACK_CONFIG_NAME="${STACK_CONFIG_PATH_NO_EXT#java/}"
 
         cd stacks/java
-        cdk synth LambdaJavaStack --app "mvn -e -q compile exec:java" --json --quiet
+        VERSION=$(jq -r '.version' "$ROOT_DIR/.jsii")
+        cdk synth LambdaJavaStack --app "mvn -e -q compile exec:java -Ddatadog.version=$VERSION" --json --quiet
         cd ../..
         RAW_CFN_TEMPLATE="stacks/java/cdk.out/LambdaJavaStack.template.json"
     else

@@ -13,6 +13,7 @@
         <constructs.version>[10.0.0,11.0.0)</constructs.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <datadog.version>3.3.0</datadog.version>
     </properties>
 
     <build>
@@ -55,7 +56,7 @@
         <dependency>
             <groupId>com.datadoghq</groupId>
             <artifactId>datadog-cdk-constructs</artifactId>
-            <version>3.3.0</version>
+            <version>${datadog.version}</version>
         </dependency>
     </dependencies>
 </project>
