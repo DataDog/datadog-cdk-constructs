@@ -141,7 +141,7 @@ describe("DatadogECSFargateLogging", () => {
               dd_tags: "team:cont-p, ecs_cluster_name:test-cluster",
               dd_message_key: "message-test",
               dd_service: "datadog-agent",
-              dd_source: "source-test",
+              dd_source: "datadog-agent",
             }),
           },
         }),

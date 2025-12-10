@@ -356,7 +356,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     return fluentbitContainer;
   }
 
-  private createLogDriver(serviceName?: string): ecs.FireLensLogDriver | undefined {
+  private createLogDriver(name?: string): ecs.FireLensLogDriver | undefined {
     if (this.datadogProps.logCollection!.loggingType !== LoggingType.FLUENTBIT) {
       return undefined;
     }
@@ -368,7 +368,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // Otherwise, create a FireLenseLogDriver using the provided config
     const fluentbitLogDriverConfig = fluentbitConfig.logDriverConfig!;
-    const logServiceName = serviceName ?? fluentbitLogDriverConfig.serviceName;
+    const logServiceName = name ?? fluentbitLogDriverConfig.serviceName;
+    const logSourceName = name ?? fluentbitLogDriverConfig.sourceName;
 
     let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
     if (this.datadogProps.clusterName !== undefined) {
@@ -394,8 +395,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
         ...(logServiceName !== undefined && {
           dd_service: logServiceName,
         }),
-        ...(fluentbitLogDriverConfig.sourceName !== undefined && {
-          dd_source: fluentbitLogDriverConfig.sourceName,
+        ...(logSourceName !== undefined && {
+          dd_source: logSourceName,
         }),
         ...(fluentbitLogDriverConfig.messageKey !== undefined && {
           dd_message_key: fluentbitLogDriverConfig.messageKey,
