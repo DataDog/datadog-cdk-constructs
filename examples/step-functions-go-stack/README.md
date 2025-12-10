@@ -11,7 +11,7 @@ Use this example Go stack to try out the [datadog-cdk-constructs](https://github
 1. Run `cdk synth` to synthesize the CloudFormation template.
 1. Run `cdk diff` to see the resource and permission changes that are made.
 1. Run `cdk deploy` to deploy the stack to AWS.
-1. Invoke your Lambda functions and look for them in [Datadog Serverless Monitoring](https://app.datadoghq.com/functions?cloud=aws).
+1. Invoke your Lambda functions and look for them in [Datadog Serverless Monitoring](https://app.datadoghq.com/serverless/aws/step-functions).
 
 ![Datadog CDK Go Stack](https://github.com/user-attachments/assets/ba9ceae7-df3a-4d4b-8c51-6a29d82d25b1)
 

@@ -48,6 +48,7 @@ bin
 obj
 __pycache__
 *.tar.gz
+cdk.context.json
 /test-reports/
 junit.xml
 /coverage/

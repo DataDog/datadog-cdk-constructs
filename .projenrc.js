@@ -24,6 +24,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     moduleName: "github.com/DataDog/datadog-cdk-constructs-go",
     packageName: "ddcdkconstruct",
   },
+  publishToMaven: {
+    javaPackage: "com.datadoghq.cdkconstructs",
+    mavenGroupId: "com.datadoghq",
+    mavenArtifactId: "datadog-cdk-constructs",
+  },
   peerDeps: [],
   cdkVersion: "2.220.0",
   cdkCliVersion: "^2.220.0",
@@ -57,6 +62,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "obj",
     "__pycache__",
     "*.tar.gz",
+    "cdk.context.json",
   ],
   npmignore: [
     "!LICENSE",

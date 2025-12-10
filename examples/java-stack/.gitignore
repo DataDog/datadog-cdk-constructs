@@ -1,0 +1,8 @@
+!.gitignore
+*.class
+.classpath
+.project
+.settings
+target
+.cdk.staging
+cdk.out
