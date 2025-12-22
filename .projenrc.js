@@ -30,8 +30,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     mavenArtifactId: "datadog-cdk-constructs",
   },
   peerDeps: [],
-  cdkVersion: "2.224.0",
-  cdkCliVersion: "^2.224.0",
+  cdkVersion: "2.227.0",
+  cdkCliVersion: "^2.227.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
