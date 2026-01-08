@@ -785,7 +785,7 @@ If you contribute to this package you can run the tests using `yarn test`. This 
 3. Navigate to `src/sample`, here you can edit `index.ts` to test your contributions manually.
 4. At the root directory, run `npx cdk --app lib/sample/index.js <CDK Command>`, replacing `<CDK Command>` with common CDK commands like `synth`, `diff`, or `deploy`.
 
-- Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials.
+- Note, if you receive "... is not authorized to perform: ..." you may also need to authorize the commands with your AWS credentials. In CI/CD, credentials are automatically configured via GitHub OIDC. For local development, use `aws-vault` or AWS CLI profiles.
 
 ### Debug Logs
 
