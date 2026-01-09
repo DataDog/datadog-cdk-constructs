@@ -7,8 +7,9 @@ on:
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,7 +24,7 @@ jobs:
         uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-${{ matrix.working-dir }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -38,8 +39,19 @@ jobs:
       - name: Install Packages
         run: npx projen
 
+      - name: Configure AWS credentials via OIDC (Build-Stable)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::486234852809:role/datadog-cdk-constructs-github-actions
+          aws-region: us-east-1
+
+      - name: Configure AWS credentials for Serverless Sandbox
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::425362996713:role/gha-datadog-cdk-integration-test
+          aws-region: us-east-1
+          role-chaining: true
+          role-skip-session-tagging: true
+
       - name: Run tests
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: ./scripts/run_integration_tests.sh
