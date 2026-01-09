@@ -51,7 +51,7 @@ jobs:
           role-to-assume: arn:aws:iam::425362996713:role/gha-datadog-cdk-integration-test
           aws-region: us-east-1
           role-chaining: true
-          role-session-tagging: false
+          role-skip-session-tagging: true
 
       - name: Run tests
         run: ./scripts/run_integration_tests.sh
