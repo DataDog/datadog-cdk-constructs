@@ -1,13 +1,6 @@
 name: integration-tests
 
-on:
-  workflow_run:
-    workflows: ["unit-tests"]
-    types:
-      - completed
-    branches:
-      - '**'
-  workflow_dispatch:
+on: push
 
 jobs:
   integration-tests:
@@ -35,6 +28,9 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install
+
+      - name: Ensure Unit Tests Pass
+        run: yarn test
 
       - name: Build
         run: yarn build
