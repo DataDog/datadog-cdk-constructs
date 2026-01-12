@@ -1,4 +1,4 @@
-name: build
+name: unit-tests
 
 on: push
 
@@ -64,16 +64,9 @@ jobs:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}-${{ matrix.working-dir }}
 
-      - name: Install common dependencies
-        working-directory: ./
-        run: yarn install
-
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install
-
-      - name: Build
-        run: yarn build
 
       - name: Run tests
         run: yarn test

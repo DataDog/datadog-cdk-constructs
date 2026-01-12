@@ -1,12 +1,18 @@
 name: integration-tests
 
 on:
-  push:
+  workflow_run:
+    workflows: ["unit-tests"]
+    types:
+      - completed
+    branches:
+      - '**'
   workflow_dispatch:
 
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     permissions:
       id-token: write
       contents: read
