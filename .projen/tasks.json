@@ -8,9 +8,6 @@
           "spawn": "default"
         },
         {
-          "spawn": "test"
-        },
-        {
           "spawn": "pre-compile"
         },
         {

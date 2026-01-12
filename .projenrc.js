@@ -167,9 +167,6 @@ projenTasks.addOverride("tasks.build.steps", [
     spawn: "default",
   },
   {
-    spawn: "test",
-  },
-  {
     spawn: "pre-compile",
   },
   {
