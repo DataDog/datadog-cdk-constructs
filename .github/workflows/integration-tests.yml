@@ -5,6 +5,8 @@ on:
     workflows: ["unit-tests"]
     types:
       - completed
+    branches:
+      - '**'
   workflow_dispatch:
 
 jobs:
