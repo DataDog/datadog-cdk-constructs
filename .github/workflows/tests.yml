@@ -1,4 +1,4 @@
-name: unit-tests
+name: tests
 
 on: push
 
@@ -70,3 +70,55 @@ jobs:
 
       - name: Run tests
         run: yarn test
+
+  integration-tests:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v2
+        with:
+          node-version: 24
+
+      - name: Cache Node modules
+        id: cache-node-modules
+        uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Install CDK CLI
+        run: sudo yarn global add aws-cdk --prefix /usr/local
+
+      - name: Install Packages
+        run: npx projen
+
+      - name: Configure AWS credentials via OIDC (Build-Stable)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::486234852809:role/datadog-cdk-constructs-github-actions
+          aws-region: us-east-1
+
+      - name: Configure AWS credentials for Serverless Sandbox
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::425362996713:role/gha-datadog-cdk-integration-test
+          aws-region: us-east-1
+          role-chaining: true
+          role-skip-session-tagging: true
+
+      - name: Run tests
+        run: ./scripts/run_integration_tests.sh
