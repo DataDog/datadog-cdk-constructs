@@ -2,8 +2,6 @@
 
 The `DatadogECSFargate` construct simplifies the process of monitoring ECS Fargate tasks with Datadog. It automatically configures the necessary resources and settings to enable metrics, traces, and logs collection for your ECS Fargate workloads.
 
-**Note**: This construct is only available for AWS CDK v2 and `datadog-cdk-constructs-v2`. There is no support for AWS CDK v1.
-
 ## Installation
 
 To use the `DatadogECSFargate` construct, install the `datadog-cdk-constructs-v2` package:
