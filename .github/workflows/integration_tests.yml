@@ -2,7 +2,7 @@ name: integration-tests
 
 on:
   workflow_run:
-    workflows: ["unit-tests"]
+    workflows: ["build", "unit-tests"]
     types:
       - completed
     branches:
