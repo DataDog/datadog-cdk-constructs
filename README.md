@@ -6,7 +6,7 @@
 [![Maven](https://img.shields.io/badge/maven-v3.3.0-39a356?label=maven)](https://search.maven.org/artifact/com.datadoghq/datadog-cdk-constructs)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/datadog-cdk-constructs/blob/main/LICENSE)
 
-Use this Datadog CDK Construct Library to deploy serverless applications using AWS CDK .
+Use this Datadog CDK Construct Library to deploy serverless applications using AWS CDK.
 
 For more information on the **DatadogECSFargate** construct, see [here][23].
 
