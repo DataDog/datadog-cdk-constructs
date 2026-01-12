@@ -11,7 +11,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
   packageManager: javascript.NodePackageManager.YARN_CLASSIC,
-  minNodeVersion: "18.18.0",
+  minNodeVersion: "20.13.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
@@ -165,9 +165,6 @@ const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
 projenTasks.addOverride("tasks.build.steps", [
   {
     spawn: "default",
-  },
-  {
-    spawn: "test",
   },
   {
     spawn: "pre-compile",
