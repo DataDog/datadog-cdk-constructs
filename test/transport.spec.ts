@@ -708,7 +708,7 @@ describe("API_KEY_SSM_ARN_ENV_VAR", () => {
     });
   });
 
-  it("doesn't set DD_API_KEY_SSM_ARN when using synchronous metrics in node", () => {
+  it("sets DD_API_KEY_SSM_ARN when using synchronous metrics in node", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -720,20 +720,24 @@ describe("API_KEY_SSM_ARN_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    expect(() => {
-      const datadogLambda = new DatadogLambda(stack, "Datadog", {
-        flushMetricsToLogs: false,
-        site: "datadoghq.com",
-        apiKeySsmArn: "/datadog/api_key",
-        nodeLayerVersion: NODE_LAYER_VERSION,
-      });
-      datadogLambda.addLambdaFunctions([hello]);
-    }).toThrowError(
-      `\`apiKeySsmArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
-    );
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      flushMetricsToLogs: false,
+      site: "datadoghq.com",
+      apiKeySsmArn: "/datadog/api_key",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          DD_API_KEY_SSM_ARN: "/datadog/api_key",
+        },
+      },
+    });
   });
 
-  it("doesn't set DD_API_KEY_SSM_ARN when using synchronous metrics in custom node", () => {
+  it("sets DD_API_KEY_SSM_ARN when using synchronous metrics in custom node", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -745,17 +749,21 @@ describe("API_KEY_SSM_ARN_ENV_VAR", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    expect(() => {
-      const datadogLambda = new DatadogLambda(stack, "Datadog", {
-        flushMetricsToLogs: false,
-        site: "datadoghq.com",
-        apiKeySsmArn: "/datadog/api_key",
-        nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
-      });
-      datadogLambda.addLambdaFunctions([hello]);
-    }).toThrowError(
-      `\`apiKeySsmArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
-    );
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      flushMetricsToLogs: false,
+      site: "datadoghq.com",
+      apiKeySsmArn: "/datadog/api_key",
+      nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          DD_API_KEY_SSM_ARN: "/datadog/api_key",
+        },
+      },
+    });
   });
 
   it("adds DD_API_KEY_SSM_ARN when using synchronous metrics in python", () => {
