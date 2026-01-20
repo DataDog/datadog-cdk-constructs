@@ -10,6 +10,7 @@ import { Tags } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { DatadogECSBaseProps } from "./interfaces";
@@ -90,6 +91,11 @@ export function getSecretApiKey(scope: Construct, props: DatadogECSBaseProps): e
   } else if (props.apiKeySecretArn) {
     const secret = secretsmanager.Secret.fromSecretCompleteArn(scope, "DatadogSecret", props.apiKeySecretArn);
     return ecs.Secret.fromSecretsManager(secret);
+  } else if (props.apiKeySsmArn) {
+    const parameter = ssm.StringParameter.fromStringParameterAttributes(scope, "DatadogParameter", {
+      parameterName: props.apiKeySsmArn,
+    });
+    return ecs.Secret.fromSsmParameter(parameter);
   } else {
     return undefined;
   }
