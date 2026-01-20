@@ -261,28 +261,28 @@ function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaF
   secret.grantRead(lambdaFunction);
 }
 
-function grantReadLambdaFromSsmParameterArn(arnOrName: string, lambdaFunction: lambda.Function): void {
+function grantReadLambdaFromSsmParameterArn(parameterArn: string, lambdaFunction: lambda.Function): void {
   // Grant IAM permissions to support both String and SecureString SSM parameters
   // For SecureString parameters, the Datadog Extension will decrypt at runtime using KMS
+  const stack = Stack.of(lambdaFunction);
   // Grant SSM read permissions
   lambdaFunction.addToRolePolicy(
     new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["ssm:GetParameter", "ssm:GetParameters"],
-      resources: [arnOrName],
+      resources: [parameterArn],
     }),
   );
   // Grant KMS decrypt permissions for SecureString parameters
-  // By default, SSM uses the AWS managed key "alias/aws/ssm"
-  // We also allow custom KMS keys in the same region/account
-  const stack = Stack.of(lambdaFunction);
+  // Note: This is granted regardless of parameter type since we can't determine it at synthesis time
+  // Granting this permission for String parameters is harmless - it simply won't be used
   lambdaFunction.addToRolePolicy(
     new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["kms:Decrypt"],
       resources: [
+        // AWS managed key for SSM (used by default for SecureString parameters)
         `arn:aws:kms:${stack.region}:${stack.account}:alias/aws/ssm`,
-        `arn:aws:kms:${stack.region}:${stack.account}:key/*`,
       ],
     }),
   );
