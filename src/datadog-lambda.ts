@@ -281,7 +281,7 @@ function grantReadLambdaFromSsmParameterArn(arnOrName: string, lambdaFunction: l
   const stack = Stack.of(lambdaFunction);
   const region = stack.region;
   const account = stack.account;
-  
+
   lambdaFunction.addToRolePolicy(
     new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
