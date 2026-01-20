@@ -32,11 +32,10 @@ go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
 
 ```typescript
 const ecsDatadog = new DatadogECSFargate({
-  // One of the following 4 apiKey params are required
+  // One of the following 3 apiKey params are required
   apiKey: <STRING>,
   apiKeySecret: <SECRET>,
   apiKeySecretArn: <STRING>,
-  apiKeySsmArn: <STRING>,
   registry: <STRING>,
   imageVersion: <STRING>,
   cpu: <NUMBER>,
@@ -147,7 +146,6 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `apiKey`                     | `string`                            | The Datadog API key string. Must define at least 1 source for the API key.                                                                                                                                                                                                        |
 | `apiKeySecret`               | `secrets.ISecret`                   | The Datadog API key secret. Must define at least 1 source for the API key.                                                                                                                                                                                                        |
 | `apiKeySecretArn`            | `string`                            | The ARN of the Datadog API key secret. Must define at least 1 source for the API key.                                                                                                                                                                                             |
-| `apiKeySsmArn`               | `string`                            | The ARN or name of the parameter storing the Datadog API key in SSM Parameter Store. Must define at least 1 source for the API key.                                                                                                                                               |
 | `registry`                   | `string`                            | The registry to pull the Datadog Agent container image from.                                                                                                                                                                                                                      |
 | `imageVersion`               | `string`                            | The version of the Datadog Agent container image to use.                                                                                                                                                                                                                          |
 | `cpu`                        | `number`                            | The minimum number of CPU units to reserve for the Datadog Agent container.                                                                                                                                                                                                       |

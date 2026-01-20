@@ -12,7 +12,6 @@ import { runtimeLookup, RuntimeType } from "./index";
 
 export const API_KEY_ENV_VAR = "DD_API_KEY";
 export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
-export const API_KEY_SSM_ARN_ENV_VAR = "DD_API_KEY_SSM_ARN";
 export const KMS_API_KEY_ENV_VAR = "DD_KMS_API_KEY";
 export const SITE_URL_ENV_VAR = "DD_SITE";
 export const FLUSH_METRICS_TO_LOGS_ENV_VAR = "DD_FLUSH_TO_LOG";
@@ -28,7 +27,6 @@ export class Transport {
   site: string;
   apiKey?: string;
   apiKeySecretArn?: string;
-  apiKeySsmArn?: string;
   apiKmsKey?: string;
   extensionLayerVersion?: number;
   extensionLayerArn?: string;
@@ -38,7 +36,6 @@ export class Transport {
     site?: string,
     apiKey?: string,
     apiKeySecretArn?: string,
-    apiKeySsmArn?: string,
     apiKmsKey?: string,
     extensionLayerVersion?: number,
     extensionLayerArn?: string,
@@ -71,7 +68,6 @@ export class Transport {
 
     this.apiKey = apiKey;
     this.apiKeySecretArn = apiKeySecretArn;
-    this.apiKeySsmArn = apiKeySsmArn;
     this.apiKmsKey = apiKmsKey;
   }
 
@@ -94,9 +90,6 @@ export class Transport {
         );
       }
       lam.addEnvironment(API_KEY_SECRET_ARN_ENV_VAR, this.apiKeySecretArn);
-    }
-    if (this.apiKeySsmArn !== undefined) {
-      lam.addEnvironment(API_KEY_SSM_ARN_ENV_VAR, this.apiKeySsmArn);
     }
     if (this.apiKmsKey !== undefined) {
       lam.addEnvironment(KMS_API_KEY_ENV_VAR, this.apiKmsKey);

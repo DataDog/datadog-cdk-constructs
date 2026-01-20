@@ -25,11 +25,6 @@ export interface DatadogECSBaseProps {
    * Must define at least 1 source for the API key.
    */
   readonly apiKeySecretArn?: string;
-  /**
-   * The ARN of the Datadog API key in SSM Parameter Store.
-   * Must define at least 1 source for the API key.
-   */
-  readonly apiKeySsmArn?: string;
 
   /**
    * The registry to pull the Datadog Agent container image from.
