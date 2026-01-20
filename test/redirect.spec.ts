@@ -75,7 +75,7 @@ describe("redirectHandlers", () => {
 
   it.each([
     ["JAVA", lambda.Runtime.JAVA_21],
-    ["DOTNET", lambda.Runtime.DOTNET_8],
+    ["DOTNET", lambda.Runtime.DOTNET_10],
   ])("skips redirecting handler for '%s' and sets wrapper env var when extension configured", (_text, runtime) => {
     const app = new App();
     const stack = new Stack(app, "stack", {
@@ -103,7 +103,7 @@ describe("redirectHandlers", () => {
 
   it.each([
     ["JAVA", lambda.Runtime.JAVA_21],
-    ["DOTNET", lambda.Runtime.DOTNET_8],
+    ["DOTNET", lambda.Runtime.DOTNET_10],
   ])("does not set wrapper env var when extension is not configured", (_text, runtime) => {
     const app = new App();
     const stack = new Stack(app, "stack", {

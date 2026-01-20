@@ -57,7 +57,7 @@ public class App {
                             .nodeLayerVersion(131)
                             .pythonLayerVersion(119)
                             .javaLayerVersion(24)
-                            .dotnetLayerVersion(22)
+                            .dotnetLayerVersion(23)
                             .rubyLayerVersion(26)
                             .addLayers(true)
                             .extensionLayerVersion(90)

@@ -16,7 +16,7 @@ class LambdaPythonStack(LambdaPythonStackBase):
         datadog = DatadogLambda(
             self,
             "Datadog",
-            dotnet_layer_version=15,
+            dotnet_layer_version=23,
             node_layer_version=107,
             python_layer_version=89,
             extension_layer_version=55,

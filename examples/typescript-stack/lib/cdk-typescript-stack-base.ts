@@ -55,12 +55,12 @@ export abstract class CdkTypeScriptStackBase extends Stack {
     });
 
     const helloDotnet = new Function(this, "hello-dotnet", {
-      runtime: lambda.Runtime.DOTNET_8,
+      runtime: lambda.Runtime.DOTNET_10,
       handler: "HelloWorld::HelloWorld.Handler::SayHi",
       memorySize: 256,
       code: lambda.Code.fromAsset("../lambda/dotnet/", {
         bundling: {
-          image: lambda.Runtime.DOTNET_8.bundlingImage,
+          image: lambda.Runtime.DOTNET_10.bundlingImage,
           command: [
             "/bin/sh",
             "-c",
