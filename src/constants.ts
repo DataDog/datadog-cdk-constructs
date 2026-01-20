@@ -61,6 +61,7 @@ export enum TagKeys {
 export const runtimeLookup: { [key: string]: RuntimeType } = {
   "dotnet6": RuntimeType.DOTNET,
   "dotnet8": RuntimeType.DOTNET,
+  "dotnet10": RuntimeType.DOTNET,
   "nodejs12.x": RuntimeType.NODE,
   "nodejs14.x": RuntimeType.NODE,
   "nodejs16.x": RuntimeType.NODE,
@@ -93,6 +94,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
 export const runtimeToLayerName: { [key: string]: string } = {
   "dotnet6": "dd-trace-dotnet",
   "dotnet8": "dd-trace-dotnet",
+  "dotnet10": "dd-trace-dotnet",
   "nodejs12.x": "Datadog-Node12-x",
   "nodejs14.x": "Datadog-Node14-x",
   "nodejs16.x": "Datadog-Node16-x",

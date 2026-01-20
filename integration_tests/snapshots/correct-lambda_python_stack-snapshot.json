@@ -399,7 +399,7 @@
         {
          "Ref": "AWS::Region"
         },
-        ":464622532012:layer:dd-trace-dotnet:15"
+        ":464622532012:layer:dd-trace-dotnet:23"
        ]
       ]
      },
@@ -423,7 +423,7 @@
       "Arn"
      ]
     },
-    "Runtime": "dotnet8",
+    "Runtime": "dotnet10",
     "Tags": [
      {
       "Key": "dd_cdk_construct",
