@@ -44,6 +44,7 @@ export interface DatadogLambdaProps {
   readonly site?: string;
   readonly apiKey?: string;
   readonly apiKeySecretArn?: string;
+  readonly apiKeySsmArn?: string;
   readonly apiKeySecret?: secrets.ISecret;
   readonly apiKmsKey?: string;
   readonly enableDatadogTracing?: boolean;
@@ -102,6 +103,7 @@ export interface DatadogLambdaStrictProps {
   readonly site?: string;
   readonly apiKey?: string;
   readonly apiKeySecretArn?: string;
+  readonly apiKeySsmArn?: string;
   readonly apiKeySecret?: secrets.ISecret;
   readonly apiKmsKey?: string;
   readonly logLevel?: string;
