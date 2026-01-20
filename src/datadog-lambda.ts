@@ -264,32 +264,25 @@ function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaF
 function grantReadLambdaFromSsmParameterArn(arnOrName: string, lambdaFunction: lambda.Function): void {
   // Grant IAM permissions to support both String and SecureString SSM parameters
   // For SecureString parameters, the Datadog Extension will decrypt at runtime using KMS
-  let parameterArn = arnOrName;
-  if (!arnOrName.startsWith("arn:")) {
-    parameterArn = arnOrName;
-  }
   // Grant SSM read permissions
   lambdaFunction.addToRolePolicy(
     new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["ssm:GetParameter", "ssm:GetParameters"],
-      resources: [parameterArn],
+      resources: [arnOrName],
     }),
   );
   // Grant KMS decrypt permissions for SecureString parameters
-  // Users can further restrict this by modifying their Lambda's IAM role
+  // By default, SSM uses the AWS managed key "alias/aws/ssm"
+  // We also allow custom KMS keys in the same region/account
   const stack = Stack.of(lambdaFunction);
-  const region = stack.region;
-  const account = stack.account;
-
   lambdaFunction.addToRolePolicy(
     new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["kms:Decrypt"],
       resources: [
-        `arn:aws:kms:${region}:${account}:alias/aws/ssm`,
-        // Allow custom KMS keys in the same region/account
-        `arn:aws:kms:${region}:${account}:key/*`,
+        `arn:aws:kms:${stack.region}:${stack.account}:alias/aws/ssm`,
+        `arn:aws:kms:${stack.region}:${stack.account}:key/*`,
       ],
     }),
   );
