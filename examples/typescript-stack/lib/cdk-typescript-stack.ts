@@ -10,7 +10,7 @@ export class CdkTypeScriptStack extends CdkTypeScriptStackBase {
     console.log("Instrumenting Lambda Functions in TypeScript stack with Datadog");
 
     const datadogLambdaProps: DatadogLambdaProps = {
-      dotnetLayerVersion: 15,
+      dotnetLayerVersion: 23,
       nodeLayerVersion: 108,
       pythonLayerVersion: 89,
       extensionLayerVersion: 55,

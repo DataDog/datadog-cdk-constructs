@@ -32,7 +32,7 @@ public class LambdaJavaStack extends Stack {
                         .nodeLayerVersion(113)
                         .pythonLayerVersion(97)
                         .javaLayerVersion(21)
-                        .dotnetLayerVersion(15)
+                        .dotnetLayerVersion(23)
                         .addLayers(true)
                         .extensionLayerVersion(62)
                         .flushMetricsToLogs(true)
