@@ -142,6 +142,12 @@ describe("utils", () => {
       expect(result).toBeDefined();
     });
 
+    it("should return a secret from SSM parameter if apiKeySsmArn is provided", () => {
+      const props = { apiKeySsmArn: "/datadog/api_key" };
+      const result = getSecretApiKey(scope, props);
+      expect(result).toBeDefined();
+    });
+
     it("should return undefined if no secret is provided", () => {
       const props = {};
       const result = getSecretApiKey(scope, props);
