@@ -105,4 +105,8 @@ export function validateECSFargateProps(props: DatadogECSFargateInternalProps): 
       );
     }
   }
+
+  if (props.orchestratorExplorer === undefined) {
+    throw new Error("The `orchestratorExplorer` property must be defined.");
+  }
 }

@@ -100,7 +100,11 @@ export interface DatadogECSBaseProps {
    * APM feature configuration
    */
   readonly apm?: APMFeatureConfig;
-
+  /**
+   * Orchestrator Explorer feature configuration
+   */
+  readonly orchestratorExplorer?: OrchestratorExplorerFeatureConfig;
+  
   /**
    * The task environment name. Used for tagging (UST).
    */
@@ -191,4 +195,18 @@ export enum Cardinality {
   LOW = "low",
   ORCHESTRATOR = "orchestrator",
   HIGH = "high",
+}
+
+/**
+ * Orchestrator Explorer configuration
+ */
+export interface OrchestratorExplorerFeatureConfig {
+  /**
+   * Enables Orchestrator Explorer
+   */
+  readonly isEnabled?: boolean;
+  /**
+   * The URL of the Orchestrator Explorer API.
+   */
+  readonly url?: string;
 }

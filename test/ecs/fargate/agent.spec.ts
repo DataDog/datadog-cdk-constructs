@@ -114,6 +114,10 @@ describe("DatadogECSFargateTaskDefinition", () => {
               Name: "DD_CLUSTER_NAME",
               Value: "test-cluster",
             }),
+            Match.objectEquals({
+              Name: "DD_ECS_TASK_COLLECTION_ENABLED",
+              Value: "true",
+            }),
           ]),
         }),
       ]),
@@ -140,6 +144,39 @@ describe("DatadogECSFargateTaskDefinition", () => {
         {
           Ref: stack.getLogicalId(taskDefinition.taskRole.node.defaultChild as cdk.CfnElement),
         },
+      ]),
+    });
+  });
+
+  it("should configure environment variables for Orchestrator Explorer", () => {
+    datadogProps = {
+      ...datadogProps,
+      orchestratorExplorer: {
+        isEnabled: false,
+        url: "https://test-orchestrator-explorer.datadoghq.com",
+      },
+    };
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    console.log(JSON.stringify(template.toJSON(), null, 2));
+
+    // Validate that the environment variables are added to the agent container
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: task.datadogContainer.containerName,
+          Environment: Match.arrayWith([
+            Match.objectEquals({
+              Name: "DD_ECS_TASK_COLLECTION_ENABLED",
+              Value: "false",
+            }),
+            Match.objectEquals({
+              Name: "DD_ORCHESTRATOR_EXPLORER_ORCHESTRATOR_DD_URL",
+              Value: "https://test-orchestrator-explorer.datadoghq.com",
+            }),
+          ]),
+        }),
       ]),
     });
   });
