@@ -28,6 +28,7 @@ describe("DatadogECSFargateLogging", () => {
       registry: "public.ecr.aws/datadog/agent",
       imageVersion: "latest",
       apiKey: "test-api-key",
+      readOnlyRootFilesystem: true,
       logCollection: {
         isEnabled: true,
         fluentbitConfig: {
@@ -85,6 +86,9 @@ describe("DatadogECSFargateLogging", () => {
         {
           Name: "datadog-agent",
         },
+        {
+          Name: "init-volume",
+        },
       ],
     });
     template.hasResourceProperties("AWS::ECS::TaskDefinition", {
@@ -98,7 +102,7 @@ describe("DatadogECSFargateLogging", () => {
     });
   });
 
-  it("sets the correct log driver configuration on other containers", () => {
+  it("sets the correct log driver configuration on the agent container", () => {
     datadogProps = {
       ...datadogProps,
       clusterName: "test-cluster",
@@ -136,8 +140,8 @@ describe("DatadogECSFargateLogging", () => {
               provider: "ecs",
               dd_tags: "team:cont-p, ecs_cluster_name:test-cluster",
               dd_message_key: "message-test",
-              dd_service: "service-test",
-              dd_source: "source-test",
+              dd_service: "datadog-agent",
+              dd_source: "datadog-agent",
             }),
           },
         }),
@@ -150,6 +154,74 @@ describe("DatadogECSFargateLogging", () => {
         Match.objectLike({
           Image: "public.ecr.aws/aws-observability/aws-for-fluent-bit:stable",
           LogConfiguration: Match.absent(),
+        }),
+      ]),
+    });
+  });
+
+  it("sets the correct log driver configuration on application containers", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+        fluentbitConfig: {
+          logDriverConfig: {
+            serviceName: "global-service-name",
+          },
+        },
+      },
+    };
+
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const container = task.addContainer("app-container", {
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+    });
+    const template = Template.fromStack(stack);
+
+    // Validate app container has global service name
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: container.containerName,
+          LogConfiguration: {
+            LogDriver: "awsfirelens",
+            Options: Match.objectLike({
+              dd_service: "global-service-name",
+            }),
+          },
+        }),
+      ]),
+    });
+  });
+
+  it("does not override existing log driver configuration", () => {
+    datadogProps = {
+      ...datadogProps,
+      logCollection: {
+        isEnabled: true,
+      },
+    };
+    const task = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+
+    // Add container with existing log driver
+    const container = task.addContainer("app-container", {
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+      logging: ecs.LogDrivers.awsLogs({ streamPrefix: "test" }),
+    });
+
+    const template = Template.fromStack(stack);
+
+    // Validate that the existing logging configuration is preserved
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: container.containerName,
+          LogConfiguration: {
+            LogDriver: "awslogs",
+            Options: Match.objectLike({
+              "awslogs-stream-prefix": "test",
+            }),
+          },
         }),
       ]),
     });

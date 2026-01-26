@@ -2,8 +2,6 @@
 
 The `DatadogECSFargate` construct simplifies the process of monitoring ECS Fargate tasks with Datadog. It automatically configures the necessary resources and settings to enable metrics, traces, and logs collection for your ECS Fargate workloads.
 
-**Note**: This construct is only available for AWS CDK v2 and `datadog-cdk-constructs-v2`. There is no support for AWS CDK v1.
-
 ## Installation
 
 To use the `DatadogECSFargate` construct, install the `datadog-cdk-constructs-v2` package:
@@ -34,10 +32,11 @@ go get github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2
 
 ```typescript
 const ecsDatadog = new DatadogECSFargate({
-  // One of the following 3 apiKey params are required
+  // One of the following 4 apiKey params are required
   apiKey: <STRING>,
   apiKeySecret: <SECRET>,
   apiKeySecretArn: <STRING>,
+  apiKeySsmArn: <STRING>,
   registry: <STRING>,
   imageVersion: <STRING>,
   cpu: <NUMBER>,
@@ -148,12 +147,14 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `apiKey`                     | `string`                            | The Datadog API key string. Must define at least 1 source for the API key.                                                                                                                                                                                                        |
 | `apiKeySecret`               | `secrets.ISecret`                   | The Datadog API key secret. Must define at least 1 source for the API key.                                                                                                                                                                                                        |
 | `apiKeySecretArn`            | `string`                            | The ARN of the Datadog API key secret. Must define at least 1 source for the API key.                                                                                                                                                                                             |
+| `apiKeySsmArn`               | `string`                            | The ARN or name of the parameter storing the Datadog API key in SSM Parameter Store. Must define at least 1 source for the API key.                                                                                                                                               |
 | `registry`                   | `string`                            | The registry to pull the Datadog Agent container image from.                                                                                                                                                                                                                      |
 | `imageVersion`               | `string`                            | The version of the Datadog Agent container image to use.                                                                                                                                                                                                                          |
 | `cpu`                        | `number`                            | The minimum number of CPU units to reserve for the Datadog Agent container.                                                                                                                                                                                                       |
 | `memoryLimitMiB`             | `number`                            | The amount (in MiB) of memory to present to the Datadog Agent container.                                                                                                                                                                                                          |
 | `isDatadogEssential`         | `boolean`                           | Configure Datadog Agent container to be essential for the task.                                                                                                                                                                                                                   |
 | `isDatadogDependencyEnabled` | `boolean`                           | Configure added containers to have container dependency on the Datadog Agent container. Requires a defined health check. (This is useful when capturing all metrics/traces/etc is critical to a task. This gaurantees that the agent is available and ready to process the data.) |
+| `readOnlyRootFilesystem`     | `boolean`                           | Configure Datadog Agent container to run with read-only root filesystem enabled                                                                                                                                                                                                   |
 | `datadogHealthCheck`         | `HealthCheck`                       | Configure health check for the Datadog Agent container.                                                                                                                                                                                                                           |
 | `site`                       | `string`                            | The Datadog site to send data to.                                                                                                                                                                                                                                                 |
 | `clusterName`                | `string`                            | The cluster name to use for tagging.                                                                                                                                                                                                                                              |

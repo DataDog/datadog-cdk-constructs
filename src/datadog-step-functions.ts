@@ -88,7 +88,7 @@ export class DatadogStepFunctions extends Construct {
 
     if (Token.isUnresolved(cfnStateMachine.loggingConfiguration)) {
       // loggingConfiguration is IResolvable, i.e. an unresolved token
-      throw new Error(`loggingConfiguration is an an unresolved token. ${unsupportedCaseErrorMessage}`);
+      throw new Error(`loggingConfiguration is an unresolved token. ${unsupportedCaseErrorMessage}`);
     }
 
     // Set log level and includeExecutionData

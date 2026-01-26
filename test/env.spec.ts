@@ -4,7 +4,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import {
   DatadogLambda,
   ENABLE_DD_TRACING_ENV_VAR,
-  ENABLE_DD_ASM_ENV_VAR,
+  ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR,
   AWS_LAMBDA_EXEC_WRAPPER_KEY,
   AWS_LAMBDA_EXEC_WRAPPER_VAL,
   ENABLE_XRAY_TRACE_MERGING_ENV_VAR,
@@ -20,9 +20,11 @@ import {
   SITE_URL_ENV_VAR,
   API_KEY_ENV_VAR,
   filterAndFormatGitRemote,
+  DatadogAppSecMode,
 } from "../src/index";
 
 const NODE_LAYER_VERSION = 91;
+const PYTHON_LAYER_VERSION = 114;
 const EXTENSION_LAYER_VERSION = 5;
 
 jest.mock("child_process", () => {
@@ -57,7 +59,6 @@ describe("applyEnvVariables", () => {
 
           //all default values set in fn
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
-          [ENABLE_DD_ASM_ENV_VAR]: "false",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
@@ -82,7 +83,7 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     hello.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "False");
-    hello.addEnvironment(ENABLE_DD_ASM_ENV_VAR, "True");
+    hello.addEnvironment(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "True");
     hello.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
     hello.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
     hello.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
@@ -103,7 +104,7 @@ describe("applyEnvVariables", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "False",
-          [ENABLE_DD_ASM_ENV_VAR]: "True",
+          [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "True",
           [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
@@ -136,7 +137,7 @@ describe("applyEnvVariables", () => {
     datadogLambda.addLambdaFunctions([hello]);
 
     hello.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "False");
-    hello.addEnvironment(ENABLE_DD_ASM_ENV_VAR, "True");
+    hello.addEnvironment(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "True");
     hello.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
     hello.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
     hello.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
@@ -152,7 +153,7 @@ describe("applyEnvVariables", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
           [ENABLE_DD_TRACING_ENV_VAR]: "False",
-          [ENABLE_DD_ASM_ENV_VAR]: "True",
+          [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "True",
           [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
@@ -201,7 +202,7 @@ describe("applyEnvVariables", () => {
     });
 
     hello2.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "True");
-    hello2.addEnvironment(ENABLE_DD_ASM_ENV_VAR, "False");
+    hello2.addEnvironment(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "False");
     hello2.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, "user-set value");
     hello2.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
     hello2.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
@@ -220,7 +221,7 @@ describe("applyEnvVariables", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false", //extension layer is set
           [ENABLE_DD_TRACING_ENV_VAR]: "True",
-          [ENABLE_DD_ASM_ENV_VAR]: "False",
+          [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "False",
           [AWS_LAMBDA_EXEC_WRAPPER_KEY]: "user-set value",
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
@@ -239,7 +240,7 @@ describe("applyEnvVariables", () => {
           [DD_HANDLER_ENV_VAR]: "hello.handler",
           [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false", //extension layer is set
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
-          [ENABLE_DD_ASM_ENV_VAR]: "true",
+          [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "true",
           [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
           [INJECT_LOG_CONTEXT_ENV_VAR]: "false", //extension layer is set (an applyenvVariables branch statement)
@@ -278,7 +279,6 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_FLUSH_TO_LOG"]: "true",
           ["DD_TRACE_ENABLED"]: "true",
-          ["DD_SERVERLESS_APPSEC_ENABLED"]: "false",
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
@@ -291,7 +291,7 @@ describe("applyEnvVariables", () => {
     });
   });
 
-  it("correctly enables AppSec", () => {
+  it("correctly enables AppSec with `enableDatadogASM`", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -317,6 +317,207 @@ describe("applyEnvVariables", () => {
           ["DD_LAMBDA_HANDLER"]: "hello.handler",
           ["DD_TRACE_ENABLED"]: "true",
           ["DD_SERVERLESS_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
+        },
+      },
+    });
+  });
+
+  it("correctly enables AppSec with `datadogAppSecMode: on`", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello_node = new lambda.Function(stack, "HelloHandlerNode", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const hello_python = new lambda.Function(stack, "HelloHandlerPy", {
+      runtime: lambda.Runtime.PYTHON_3_13,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      datadogAppSecMode: DatadogAppSecMode.ON,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      pythonLayerVersion: PYTHON_LAYER_VERSION,
+      apiKey: "test",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello_node, hello_python]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Runtime: "nodejs18.x",
+      Environment: {
+        Variables: {
+          ["AWS_LAMBDA_EXEC_WRAPPER"]: "/opt/datadog_wrapper",
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_SERVERLESS_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
+        },
+      },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Runtime: "python3.13",
+      Environment: {
+        Variables: {
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
+        },
+      },
+    });
+  });
+
+  it("correctly enables AppSec through the extension with `datadogAppSecMode: on` when pythonLayerVersion < 114", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_13,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      datadogAppSecMode: DatadogAppSecMode.ON,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      pythonLayerVersion: 110,
+      apiKey: "test",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["AWS_LAMBDA_EXEC_WRAPPER"]: "/opt/datadog_wrapper",
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_SERVERLESS_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
+        },
+      },
+    });
+  });
+
+  it("correctly enables AppSec through the extension with `datadogAppSecMode: on` when pythonLayerVersion is not set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_13,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      datadogAppSecMode: DatadogAppSecMode.ON,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      pythonLayerArn: "some-arn",
+      apiKey: "test",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["AWS_LAMBDA_EXEC_WRAPPER"]: "/opt/datadog_wrapper",
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_SERVERLESS_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
+        },
+      },
+    });
+  });
+
+  it("correctly enables AppSec through the extension with `datadogAppSecMode: extension`", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      datadogAppSecMode: DatadogAppSecMode.EXTENSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "test",
+      nodeLayerVersion: NODE_LAYER_VERSION,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["AWS_LAMBDA_EXEC_WRAPPER"]: "/opt/datadog_wrapper",
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_SERVERLESS_APPSEC_ENABLED"]: "true",
+          ["DD_MERGE_XRAY_TRACES"]: "false",
+          ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
+          ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
+          ["DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING"]: "$.*",
+          ["DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING"]: "$.*",
+        },
+      },
+    });
+  });
+
+  it("correctly enables AppSec through the extension with `datadogAppSecMode: tracer`", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      datadogAppSecMode: DatadogAppSecMode.TRACER,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "test",
+      pythonLayerArn: "arn123",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_LAMBDA_HANDLER"]: "hello.handler",
+          ["DD_TRACE_ENABLED"]: "true",
+          ["DD_APPSEC_ENABLED"]: "true",
           ["DD_MERGE_XRAY_TRACES"]: "false",
           ["DD_SERVERLESS_LOGS_ENABLED"]: "true",
           ["DD_CAPTURE_LAMBDA_PAYLOAD"]: "false",
@@ -381,6 +582,39 @@ describe("setDDEnvVariables", () => {
           ["DD_LLMOBS_ENABLED"]: "true",
           ["DD_LLMOBS_ML_APP"]: "myLLMApp",
           ["DD_LLMOBS_AGENTLESS_ENABLED"]: "false",
+        },
+      },
+    });
+  });
+
+  it("sets DD_ENV, DD_SERVICE, DD_VERSION without extension layer for Docker images", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      addLayers: false,
+      env: "prod",
+      service: "my-service",
+      version: "1.0.0",
+      tags: "team:backend",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          ["DD_ENV"]: "prod",
+          ["DD_SERVICE"]: "my-service",
+          ["DD_VERSION"]: "1.0.0",
+          ["DD_TAGS"]: "team:backend,git.commit.sha:1234,git.repository_url:1234",
         },
       },
     });

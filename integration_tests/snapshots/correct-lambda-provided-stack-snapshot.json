@@ -119,7 +119,6 @@
      "Variables": {
       "DD_LAMBDA_HANDLER": "handler.handler",
       "DD_TRACE_ENABLED": "true",
-      "DD_SERVERLESS_APPSEC_ENABLED": "false",
       "DD_MERGE_XRAY_TRACES": "false",
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",

@@ -20,6 +20,11 @@ export const FargateDefaultEnvVars = {
 };
 
 /**
+ * Default service name for the Datadog Agent
+ */
+export const DatadogAgentServiceName = "datadog-agent";
+
+/**
  * Default log driver configuration for ECS Fargate
  */
 const DatadogECSLogDriverDefaultProps: DatadogECSLogDriverProps = {

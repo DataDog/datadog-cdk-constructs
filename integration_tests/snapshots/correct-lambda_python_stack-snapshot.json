@@ -47,8 +47,8 @@
      "Variables": {
       "DD_LAMBDA_HANDLER": "hello.lambda_handler",
       "DD_TRACE_ENABLED": "true",
-      "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
+      "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "DD_MERGE_XRAY_TRACES": "false",
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",
@@ -161,8 +161,8 @@
      "Variables": {
       "DD_LAMBDA_HANDLER": "hello.lambda_handler",
       "DD_TRACE_ENABLED": "true",
-      "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
+      "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "DD_MERGE_XRAY_TRACES": "false",
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",
@@ -275,8 +275,8 @@
      "Variables": {
       "DD_LAMBDA_HANDLER": "bootstrap",
       "DD_TRACE_ENABLED": "true",
-      "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
+      "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "DD_MERGE_XRAY_TRACES": "false",
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",
@@ -399,7 +399,7 @@
         {
          "Ref": "AWS::Region"
         },
-        ":464622532012:layer:dd-trace-dotnet:15"
+        ":464622532012:layer:dd-trace-dotnet:23"
        ]
       ]
      },
@@ -423,7 +423,7 @@
       "Arn"
      ]
     },
-    "Runtime": "dotnet8",
+    "Runtime": "dotnet10",
     "Tags": [
      {
       "Key": "dd_cdk_construct",

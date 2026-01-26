@@ -1,10 +1,11 @@
-import { App, Stack, Token } from "aws-cdk-lib";
+import { App, Fn, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import {
   addCdkConstructVersionTag,
   checkForMultipleApiKeys,
+  DatadogAppSecMode,
   DatadogLambda,
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
@@ -252,7 +253,7 @@ describe("validateProps", () => {
       });
       datadogLambda.addLambdaFunctions([hello]);
     }).toThrowError(
-      "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, `apiKeySsmArn`, or `apiKmsKey` must also be set.",
     );
   });
 
@@ -288,7 +289,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, `apiKeySsmArn`, or `apiKmsKey` must also be set.",
     );
   });
 
@@ -324,7 +325,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "When `extensionLayer` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, `apiKeySsmArn`, or `apiKmsKey` must also be set.",
     );
   });
 
@@ -342,7 +343,7 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
   });
 
@@ -359,8 +360,24 @@ describe("validateProps", () => {
           enableDatadogASM: true,
         }),
     ).toThrow(
-      "When `enableDatadogASM` is enabled, `enableDatadogTracing` and (`extensionLayerVersion` or `extensionLayerArn`) must also be enabled.",
+      "App and API Protection requires `enableDatadogTracing` and either `extensionLayerVersion` or `extensionLayerArn` when `datadogAppSecMode` or `enableDatadogASM` enable it.",
     );
+  });
+
+  it("throws an error if enableDatadogASM and datadogAppSecMode are both set", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "sa-east-1",
+      },
+    });
+    expect(
+      () =>
+        new DatadogLambda(stack, "Datadog", {
+          enableDatadogASM: true,
+          datadogAppSecMode: DatadogAppSecMode.ON,
+        }),
+    ).toThrow("`datadogAppSecMode` and `enableDatadogASM` are mutually exclusive; set only `datadogAppSecMode`.");
   });
 });
 
@@ -518,7 +535,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKey: "1234",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKey` and `apiKmsKey` should not be set at the same time.");
+    }).toThrowError("`apiKey`, `apiKmsKey` should not be set at the same time.");
   });
 
   it("throws error if both API key and API key secret ARN are defined", () => {
@@ -527,7 +544,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKey: "1234",
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       });
-    }).toThrowError("`apiKey` and `apiKeySecretArn` should not be set at the same time.");
+    }).toThrowError("`apiKey`, `apiKeySecretArn` should not be set at the same time.");
   });
 
   it("throws error if both API key secret ARN and KMS API key are defined", () => {
@@ -536,7 +553,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKmsKey` and `apiKeySecretArn` should not be set at the same time.");
+    }).toThrowError("`apiKmsKey`, `apiKeySecretArn` should not be set at the same time.");
   });
 
   it("throws error if both API key secret ARN and KMS API key are defined", () => {
@@ -546,7 +563,45 @@ describe("checkForMultipleApiKeys", () => {
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKey`, `apiKmsKey`, and `apiKeySecretArn` should not be set at the same time.");
+    }).toThrowError("`apiKey`, `apiKmsKey`, `apiKeySecretArn` should not be set at the same time.");
+  });
+
+  it("throws error if both API key and SSM parameter ARN are defined", () => {
+    expect(() => {
+      checkForMultipleApiKeys({
+        apiKey: "1234",
+        apiKeySsmArn: "/datadog/api_key",
+      });
+    }).toThrowError("`apiKey`, `apiKeySsmArn` should not be set at the same time.");
+  });
+
+  it("throws error if both API key secret ARN and SSM parameter ARN are defined", () => {
+    expect(() => {
+      checkForMultipleApiKeys({
+        apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+        apiKeySsmArn: "/datadog/api_key",
+      });
+    }).toThrowError("`apiKeySecretArn`, `apiKeySsmArn` should not be set at the same time.");
+  });
+
+  it("throws error if both KMS API key and SSM parameter ARN are defined", () => {
+    expect(() => {
+      checkForMultipleApiKeys({
+        apiKmsKey: "5678",
+        apiKeySsmArn: "/datadog/api_key",
+      });
+    }).toThrowError("`apiKmsKey`, `apiKeySsmArn` should not be set at the same time.");
+  });
+
+  it("throws error if all API key sources are defined", () => {
+    expect(() => {
+      checkForMultipleApiKeys({
+        apiKey: "1234",
+        apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
+        apiKeySsmArn: "/datadog/api_key",
+        apiKmsKey: "5678",
+      });
+    }).toThrowError("`apiKey`, `apiKmsKey`, `apiKeySecretArn`, `apiKeySsmArn` should not be set at the same time.");
   });
 });
 
@@ -655,12 +710,15 @@ describe("addLambdaFunctions", () => {
     Template.fromStack(stack).resourceCountIs("AWS::IAM::Policy", 0);
   });
 
-  it("doesn't instrument the lambda function if Node version is unresolved", () => {
+  it("doesn't instrument the lambda function if Node version is unsupported", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
       // unresolved Node runtime. Its name is like '${Token[TOKEN.330]}'.
-      runtime: lambda.determineLatestNodeRuntime(stack),
+      runtime: new lambda.Runtime(Fn.importValue(lambda.Runtime.NODEJS_LATEST.name), lambda.RuntimeFamily.NODEJS, {
+        supportsInlineCode: true,
+        isVariable: true,
+      }),
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

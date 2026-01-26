@@ -11,7 +11,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
   packageManager: javascript.NodePackageManager.YARN_CLASSIC,
-  minNodeVersion: "18.18.0",
+  minNodeVersion: "20.13.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
@@ -24,9 +24,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
     moduleName: "github.com/DataDog/datadog-cdk-constructs-go",
     packageName: "ddcdkconstruct",
   },
+  publishToMaven: {
+    javaPackage: "com.datadoghq.cdkconstructs",
+    mavenGroupId: "com.datadoghq",
+    mavenArtifactId: "datadog-cdk-constructs",
+  },
   peerDeps: [],
-  cdkVersion: "2.210.0",
-  cdkCliVersion: "^2.210.0",
+  cdkVersion: "2.233.0",
+  cdkCliVersion: "^2.233.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
@@ -56,6 +61,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "bin",
     "obj",
     "__pycache__",
+    "*.tar.gz",
+    "cdk.context.json",
   ],
   npmignore: [
     "!LICENSE",
@@ -158,9 +165,6 @@ const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
 projenTasks.addOverride("tasks.build.steps", [
   {
     spawn: "default",
-  },
-  {
-    spawn: "test",
   },
   {
     spawn: "pre-compile",

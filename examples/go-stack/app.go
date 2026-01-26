@@ -60,7 +60,7 @@ func NewAppStackWithDatadogLambda(scope constructs.Construct, id string, props *
 			NodeLayerVersion:      jsii.Number(113),
 			PythonLayerVersion:    jsii.Number(97),
 			JavaLayerVersion:      jsii.Number(21),
-			DotnetLayerVersion:    jsii.Number(15),
+			DotnetLayerVersion:    jsii.Number(23),
 			AddLayers:             jsii.Bool(true),
 			ExtensionLayerVersion: jsii.Number(62),
 			FlushMetricsToLogs:    jsii.Bool(true),

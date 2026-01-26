@@ -25,6 +25,11 @@ export interface DatadogECSBaseProps {
    * Must define at least 1 source for the API key.
    */
   readonly apiKeySecretArn?: string;
+  /**
+   * The ARN of the Datadog API key in SSM Parameter Store.
+   * Must define at least 1 source for the API key.
+   */
+  readonly apiKeySsmArn?: string;
 
   /**
    * The registry to pull the Datadog Agent container image from.
@@ -54,6 +59,11 @@ export interface DatadogECSBaseProps {
    * Configure added containers to have container dependency on the Datadog Agent container.
    */
   readonly isDatadogDependencyEnabled?: boolean;
+  /**
+   * Configure Datadog Agent container to run with read-only root filesystem enabled
+   */
+  readonly readOnlyRootFilesystem?: boolean;
+
   /**
    * Configure health check for the Datadog Agent container.
    */

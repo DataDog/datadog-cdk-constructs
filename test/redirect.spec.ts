@@ -24,7 +24,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    redirectHandlers(hello, true);
+    redirectHandlers(hello, true, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER_WITH_LAYERS}`,
     });
@@ -42,7 +42,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    redirectHandlers(hello, false);
+    redirectHandlers(hello, false, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${JS_HANDLER}`,
     });
@@ -60,7 +60,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
-    redirectHandlers(hello, true);
+    redirectHandlers(hello, true, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: `${PYTHON_HANDLER}`,
     });
@@ -75,8 +75,8 @@ describe("redirectHandlers", () => {
 
   it.each([
     ["JAVA", lambda.Runtime.JAVA_21],
-    ["DOTNET", lambda.Runtime.DOTNET_8],
-  ])("skips redirecting handler for '%s' and sets wrapper env var", (_text, runtime) => {
+    ["DOTNET", lambda.Runtime.DOTNET_10],
+  ])("skips redirecting handler for '%s' and sets wrapper env var when extension configured", (_text, runtime) => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -88,7 +88,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
-    redirectHandlers(hello, true);
+    redirectHandlers(hello, true, true);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: "handleRequest",
     });
@@ -99,6 +99,36 @@ describe("redirectHandlers", () => {
         },
       },
     });
+  });
+
+  it.each([
+    ["JAVA", lambda.Runtime.JAVA_21],
+    ["DOTNET", lambda.Runtime.DOTNET_10],
+  ])("does not set wrapper env var when extension is not configured", (_text, runtime) => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: runtime,
+      code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
+      handler: "handleRequest",
+    });
+    redirectHandlers(hello, true, false);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Handler: "handleRequest",
+    });
+    Template.fromStack(stack).resourcePropertiesCountIs(
+      "AWS::Lambda::Function",
+      {
+        Environment: {
+          Variables: {},
+        },
+      },
+      0,
+    );
   });
 
   it("doesn't set env vars for function with unsupported JAVA version", () => {
@@ -113,7 +143,7 @@ describe("redirectHandlers", () => {
       code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
       handler: "handleRequest",
     });
-    redirectHandlers(hello, true);
+    redirectHandlers(hello, true, true);
     Template.fromStack(stack).resourcePropertiesCountIs(
       "AWS::Lambda::Function",
       {
@@ -137,7 +167,7 @@ describe("redirectHandlers", () => {
     const hello = new lambda.DockerImageFunction(stack, "HelloHandler", {
       code: lambda.DockerImageCode.fromImageAsset("./test/assets"),
     });
-    redirectHandlers(hello, true);
+    redirectHandlers(hello, true, true);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: Match.absent(),

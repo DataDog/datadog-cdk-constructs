@@ -1,4 +1,4 @@
-* @DataDog/serverless-onboarding-enablement
+* @DataDog/serverless-onboarding-and-enablement
 
 # Documentation
 *.md  @DataDog/documentation
@@ -8,3 +8,5 @@ examples/ecs  @DataDog/container-platform
 src/ecs  @DataDog/container-platform
 src/sample/ecs_fargate  @DataDog/container-platform
 test/ecs  @DataDog/container-platform
+integration_tests/snapshots/correct-ecs-* @DataDog/container-platform
+integration_tests/stacks/typescript/ecs* @DataDog/container-platform

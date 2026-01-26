@@ -70,14 +70,14 @@ class CdkPythonStackBase(Stack):
         hello_dotnet = _lambda.Function(
             self,
             "hello-dotnet",
-            runtime=_lambda.Runtime.DOTNET_8,
+            runtime=_lambda.Runtime.DOTNET_10,
             handler="HelloWorld::HelloWorld.Handler::SayHi",
             timeout=Duration.seconds(10),
             memory_size=256,
             code=_lambda.Code.from_asset(
                 "../lambda/dotnet",
                 bundling=BundlingOptions(
-                    image=_lambda.Runtime.DOTNET_8.bundling_image,
+                    image=_lambda.Runtime.DOTNET_10.bundling_image,
                     command=[
                         '/bin/sh',
                         '-c',

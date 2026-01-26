@@ -1,7 +1,12 @@
 from constructs import Construct
-from datadog_cdk_constructs_v2 import DatadogLambda, DatadogLambdaProps
+from datadog_cdk_constructs_v2 import (
+    DatadogLambda,
+    DatadogLambdaProps,
+    DatadogAppSecMode,
+)
 import os
 from cdk_python.cdk_python_stack_base import CdkPythonStackBase
+
 
 class CdkPythonStack(CdkPythonStackBase):
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
@@ -10,18 +15,18 @@ class CdkPythonStack(CdkPythonStackBase):
         datadog = DatadogLambda(
             self,
             "Datadog",
-            dotnet_layer_version=15,
+            dotnet_layer_version=23,
             node_layer_version=107,
             python_layer_version=89,
             extension_layer_version=55,
             add_layers=True,
             api_key=os.getenv("DD_API_KEY"),
             enable_datadog_tracing=True,
-            enable_datadog_asm=True,
+            datadog_app_sec_mode=DatadogAppSecMode.ON,
             flush_metrics_to_logs=True,
             site="datadoghq.com",
         )
-        
+
         # Ensure DatadogLambdaProps can be imported properly
         props = DatadogLambdaProps()
         datadog.add_lambda_functions(self.lambdaFunctions)

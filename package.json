@@ -16,6 +16,7 @@
     "package": "npx projen package",
     "package-all": "npx projen package-all",
     "package:go": "npx projen package:go",
+    "package:java": "npx projen package:java",
     "package:js": "npx projen package:js",
     "package:python": "npx projen package:python",
     "post-compile": "npx projen post-compile",
@@ -35,12 +36,12 @@
     "@aws-cdk/aws-lambda-python-alpha": "^2.134.0-alpha.0",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^27",
-    "@types/node": "^18",
+    "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
-    "aws-cdk-lib": "2.210.0",
+    "aws-cdk-lib": "2.233.0",
     "constructs": "10.0.5",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.27.2",
     "eslint": "^9",
     "eslint-config-prettier": "^8.10.2",
     "eslint-import-resolver-typescript": "^2.7.1",
@@ -48,19 +49,19 @@
     "eslint-plugin-prettier": "^4.2.5",
     "jest": "^27",
     "jest-junit": "^16",
-    "jsii": "~5.6.0",
-    "jsii-diff": "^1.114.1",
-    "jsii-pacmak": "^1.114.1",
-    "jsii-rosetta": "~5.6.0",
+    "jsii": "~5.8.0",
+    "jsii-diff": "^1.125.0",
+    "jsii-pacmak": "^1.125.0",
+    "jsii-rosetta": "~5.8.0",
     "prettier": "^2.8.8",
-    "projen": "^0.95.6",
+    "projen": "^0.99.3",
     "standard-version": "^9.5.0",
     "ts-jest": "^27",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.210.0",
+    "aws-cdk-lib": "^2.233.0",
     "constructs": "^10.0.5"
   },
   "dependencies": {
@@ -73,7 +74,7 @@
     "cdk"
   ],
   "engines": {
-    "node": ">= 18.18.0"
+    "node": ">= 20.13.0"
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",
@@ -127,6 +128,13 @@
   "jsii": {
     "outdir": "dist",
     "targets": {
+      "java": {
+        "package": "com.datadoghq.cdkconstructs",
+        "maven": {
+          "groupId": "com.datadoghq",
+          "artifactId": "datadog-cdk-constructs"
+        }
+      },
       "python": {
         "distName": "datadog-cdk-constructs-v2",
         "module": "datadog_cdk_constructs_v2"

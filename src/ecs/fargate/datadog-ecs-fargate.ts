@@ -9,7 +9,7 @@
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import log from "loglevel";
-import { DatadogEcsFargateDefaultProps, EntryPointPrefixCWS } from "./constants";
+import { DatadogEcsFargateDefaultProps, EntryPointPrefixCWS, DatadogAgentServiceName } from "./constants";
 import { FargateEnvVarManager } from "./environment";
 import { DatadogECSFargateProps, LoggingType } from "./interfaces";
 import { mergeFargateProps, validateECSFargateProps } from "./utils";
@@ -77,8 +77,25 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     validateECSBaseProps(this.datadogProps);
     validateECSFargateProps(this.datadogProps);
 
-    // Task-level datadog configuration
     this.datadogContainer = this.createAgentContainer(this.datadogProps);
+
+    if (this.datadogProps.isLinux && this.datadogProps.readOnlyRootFilesystem) {
+      this.addVolume({
+        name: "agent-config",
+      });
+      this.addVolume({
+        name: "agent-tmp",
+      });
+      this.addVolume({
+        name: "agent-run",
+      });
+
+      const initContainers = this.thisCreateInitContainer(this.datadogProps);
+      this.datadogContainer.addContainerDependencies({
+        container: initContainers,
+        condition: ecs.ContainerDependencyCondition.SUCCESS,
+      });
+    }
 
     // Volume for DogStatsD/APM UDS
     if (this.datadogProps.isSocketRequired && this.datadogProps.isLinux) {
@@ -142,10 +159,12 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // Log configuration on props
     if (this.datadogProps.logCollection!.isEnabled) {
-      if (props.logging !== undefined) {
-        log.debug("Overriding logging configuration for container: ", id);
+      if (props.logging === undefined) {
+        // Allow users to define their own logging configurations per container
+        instrumentedProps.logging = this.createLogDriver();
+      } else {
+        log.debug("Using custom logging configuration for container: ", id);
       }
-      instrumentedProps.logging = this.createLogDriver();
     }
 
     return instrumentedProps;
@@ -239,15 +258,36 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     }
   }
 
+  private thisCreateInitContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
+    const initVolumeContainer = super.addContainer("init-volume", {
+      image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
+      containerName: "init-volume",
+      cpu: 0,
+      memoryLimitMiB: 128,
+      essential: false,
+      readonlyRootFilesystem: true,
+      command: ["/bin/sh", "-c", "cp -nR /etc/datadog-agent/* /agent-config/ && exit 0"],
+    });
+
+    initVolumeContainer.addMountPoints({
+      sourceVolume: "agent-config",
+      containerPath: "/agent-config",
+      readOnly: false,
+    });
+
+    return initVolumeContainer;
+  }
+
   private createAgentContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const agentContainer = super.addContainer(`datadog-agent-${this.family}`, {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
-      containerName: "datadog-agent",
+      containerName: DatadogAgentServiceName,
       cpu: props.cpu,
       memoryLimitMiB: props.memoryLimitMiB,
       environment: props.envVarManager.retrieveAll(),
       essential: props.isDatadogEssential,
       healthCheck: props.datadogHealthCheck,
+      readonlyRootFilesystem: props.readOnlyRootFilesystem,
       secrets: this.datadogProps.datadogSecret ? { DD_API_KEY: this.datadogProps.datadogSecret! } : undefined,
       portMappings: [
         {
@@ -261,8 +301,29 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
           protocol: ecs.Protocol.TCP,
         },
       ],
-      logging: props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver() : undefined,
+      logging:
+        props.logCollection!.isEnabled && props.isLinux ? this.createLogDriver(DatadogAgentServiceName) : undefined,
     });
+
+    if (props.isLinux && props.readOnlyRootFilesystem) {
+      agentContainer.addMountPoints(
+        {
+          sourceVolume: "agent-config",
+          containerPath: "/etc/datadog-agent",
+          readOnly: false,
+        },
+        {
+          sourceVolume: "agent-tmp",
+          containerPath: "/tmp",
+          readOnly: false,
+        },
+        {
+          sourceVolume: "agent-run",
+          containerPath: "/opt/datadog-agent/run",
+          readOnly: false,
+        },
+      );
+    }
 
     // DogStatsD/Trace UDS configuration
     if (props.isSocketRequired) {
@@ -295,7 +356,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     return fluentbitContainer;
   }
 
-  private createLogDriver(): ecs.FireLensLogDriver | undefined {
+  private createLogDriver(name?: string): ecs.FireLensLogDriver | undefined {
     if (this.datadogProps.logCollection!.loggingType !== LoggingType.FLUENTBIT) {
       return undefined;
     }
@@ -307,6 +368,9 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
     // Otherwise, create a FireLenseLogDriver using the provided config
     const fluentbitLogDriverConfig = fluentbitConfig.logDriverConfig!;
+    const logServiceName = name ?? fluentbitLogDriverConfig.serviceName;
+    const logSourceName = name ?? fluentbitLogDriverConfig.sourceName;
+
     let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
     if (this.datadogProps.clusterName !== undefined) {
       if (logTags === undefined) {
@@ -328,11 +392,11 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
         ...(fluentbitLogDriverConfig.tls !== undefined && {
           TLS: fluentbitLogDriverConfig.tls,
         }),
-        ...(fluentbitLogDriverConfig.serviceName !== undefined && {
-          dd_service: fluentbitLogDriverConfig.serviceName,
+        ...(logServiceName !== undefined && {
+          dd_service: logServiceName,
         }),
-        ...(fluentbitLogDriverConfig.sourceName !== undefined && {
-          dd_source: fluentbitLogDriverConfig.sourceName,
+        ...(logSourceName !== undefined && {
+          dd_source: logSourceName,
         }),
         ...(fluentbitLogDriverConfig.messageKey !== undefined && {
           dd_message_key: fluentbitLogDriverConfig.messageKey,
