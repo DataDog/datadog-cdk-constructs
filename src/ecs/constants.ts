@@ -29,6 +29,10 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
     dogstatsdCardinality: Cardinality.ORCHESTRATOR,
   },
 
+  orchestratorExplorer: {
+    isEnabled: true,
+  },
+
   isDatadogEssential: false,
   isDatadogDependencyEnabled: false,
   readOnlyRootFilesystem: false,

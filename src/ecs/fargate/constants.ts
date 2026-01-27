@@ -15,7 +15,6 @@ import { DatadogEcsBaseDefaultProps } from "../constants";
  * Default environment variables for the Agent in Fargate Tasks
  */
 export const FargateDefaultEnvVars = {
-  DD_ECS_TASK_COLLECTION_ENABLED: "true",
   ECS_FARGATE: "true",
 };
 
