@@ -50,7 +50,7 @@ describe("validateProps", () => {
     }
     expect(threwError).toBe(true);
     expect(thrownError?.message).toEqual(
-      "Warning: Invalid site URL. Must be one of: datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, ap2.datadoghq.com, ddog-gov.com.",
+      "Warning: Invalid site URL. Must be one of: datadoghq.com, datadoghq.eu, us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com, ap2.datadoghq.com, ddog-gov.com, test123.prod.dog.",
     );
   });
 
