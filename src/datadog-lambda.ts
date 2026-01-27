@@ -254,6 +254,7 @@ function setTagsForFunction(lambdaFunction: lambda.Function, props: DatadogLambd
 
 function grantReadLambda(secret: ISecret, lambdaFunction: lambda.Function): void {
   secret.grantRead(lambdaFunction);
+  secret.encryptionKey?.grantDecrypt(lambdaFunction);
 }
 
 function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaFunction: lambda.Function): void {

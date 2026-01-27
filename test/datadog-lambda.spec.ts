@@ -10,12 +10,14 @@ import {
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
 } from "../src/index";
+import { Secret } from "aws-cdk-lib/aws-secretsmanager";
+import { Key } from "aws-cdk-lib/aws-kms";
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;
 const CUSTOM_EXTENSION_LAYER_ARN = "arn:aws:lambda:us-east-1:123456789:layer:Datadog-Extension-custom:1";
 const NODE_LAYER_VERSION = 91;
-const REPO_REGEX = /git\.repository_url:.*\/DataDog\/datadog-cdk-constructs(\.git)?/;
+const REPO_REGEX = /git\.repository_url:.*\/[^/]+\/datadog-cdk-constructs(\.git)?/;
 
 describe("validateProps", () => {
   it("throws an error when the site is set to an invalid site URL", () => {
@@ -656,6 +658,50 @@ describe("apiKeySecret", () => {
     expect(datadogLambda.transport.apiKeySecretArn).toEqual(
       "arn:aws:secretsmanager:sa-east-1:123:secret:test-key-from-isecret",
     );
+  });
+
+  it("grants decrypt access to the encryption key when apiKeySecret has an encryption key", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+
+    const secret = new Secret(stack, "DatadogApiKeySecret", {
+      encryptionKey: new Key(stack, "DatadogApiKeySecretKey"),
+    });
+
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKeySecret: secret,
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::IAM::Policy", {
+      PolicyDocument: {
+        Statement: [
+          {
+            Action: ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"],
+            Effect: "Allow",
+            Resource: {
+              Ref: "DatadogApiKeySecret1B324DAE",
+            },
+          },
+          {
+            Action: "kms:Decrypt",
+            Effect: "Allow",
+            Resource: {
+              "Fn::GetAtt": ["DatadogApiKeySecretKey14C5CA29", "Arn"],
+            },
+          },
+        ],
+      },
+    });
   });
 });
 
