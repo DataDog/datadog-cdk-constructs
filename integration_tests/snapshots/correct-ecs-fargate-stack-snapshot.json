@@ -61,10 +61,6 @@
       ],
       "Environment": [
        {
-        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
-        "Value": "true"
-       },
-       {
         "Name": "ECS_FARGATE",
         "Value": "true"
        },
@@ -99,6 +95,10 @@
        {
         "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
         "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
        }
       ],
       "Essential": false,
@@ -303,10 +303,6 @@
       ],
       "Environment": [
        {
-        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
-        "Value": "true"
-       },
-       {
         "Name": "ECS_FARGATE",
         "Value": "true"
        },
@@ -341,6 +337,10 @@
        {
         "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
         "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
        }
       ],
       "Essential": false,
@@ -578,10 +578,6 @@
       ],
       "Environment": [
        {
-        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
-        "Value": "true"
-       },
-       {
         "Name": "ECS_FARGATE",
         "Value": "true"
        },
@@ -616,6 +612,10 @@
        {
         "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
         "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
        }
       ],
       "Essential": false,
