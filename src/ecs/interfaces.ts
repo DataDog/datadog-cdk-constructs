@@ -104,7 +104,7 @@ export interface DatadogECSBaseProps {
    * Orchestrator Explorer feature configuration
    */
   readonly orchestratorExplorer?: OrchestratorExplorerFeatureConfig;
-  
+
   /**
    * The task environment name. Used for tagging (UST).
    */
