@@ -21,6 +21,10 @@ describe("validateECSFargateProps", () => {
       cws: {
         isEnabled: false,
       },
+      orchestratorExplorer: {
+        isEnabled: true,
+        url: "https://orchestrator-explorer.datadoghq.com",
+      },
       isLinux: true,
     };
   });

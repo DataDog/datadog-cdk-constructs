@@ -47,5 +47,10 @@ export class FargateEnvVarManager extends EnvVarManager {
       this.add("DD_RUNTIME_SECURITY_CONFIG_ENABLED", "true");
       this.add("DD_RUNTIME_SECURITY_CONFIG_EBPFLESS_ENABLED", "true");
     }
+
+    this.add("DD_ECS_TASK_COLLECTION_ENABLED", props.orchestratorExplorer!.isEnabled ? "true" : "false");
+    if (props.orchestratorExplorer!.url !== undefined) {
+      this.add("DD_ORCHESTRATOR_EXPLORER_ORCHESTRATOR_DD_URL", props.orchestratorExplorer!.url);
+    }
   }
 }

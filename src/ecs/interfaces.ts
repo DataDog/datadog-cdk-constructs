@@ -25,6 +25,11 @@ export interface DatadogECSBaseProps {
    * Must define at least 1 source for the API key.
    */
   readonly apiKeySecretArn?: string;
+  /**
+   * The ARN of the Datadog API key in SSM Parameter Store.
+   * Must define at least 1 source for the API key.
+   */
+  readonly apiKeySsmArn?: string;
 
   /**
    * The registry to pull the Datadog Agent container image from.
@@ -95,6 +100,10 @@ export interface DatadogECSBaseProps {
    * APM feature configuration
    */
   readonly apm?: APMFeatureConfig;
+  /**
+   * Orchestrator Explorer feature configuration
+   */
+  readonly orchestratorExplorer?: OrchestratorExplorerFeatureConfig;
 
   /**
    * The task environment name. Used for tagging (UST).
@@ -186,4 +195,18 @@ export enum Cardinality {
   LOW = "low",
   ORCHESTRATOR = "orchestrator",
   HIGH = "high",
+}
+
+/**
+ * Orchestrator Explorer configuration
+ */
+export interface OrchestratorExplorerFeatureConfig {
+  /**
+   * Enables Orchestrator Explorer
+   */
+  readonly isEnabled?: boolean;
+  /**
+   * The URL of the Orchestrator Explorer API.
+   */
+  readonly url?: string;
 }

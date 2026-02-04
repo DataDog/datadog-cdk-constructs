@@ -6,7 +6,8 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import { Tags } from "aws-cdk-lib";
+import { Tags, Stack } from "aws-cdk-lib";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
@@ -62,6 +63,7 @@ export class DatadogLambda extends Construct {
       this.props.site,
       this.props.apiKey,
       apiKeySecretArn,
+      this.props.apiKeySsmArn,
       this.props.apiKmsKey,
       this.props.extensionLayerVersion,
       this.props.extensionLayerArn,
@@ -97,6 +99,9 @@ export class DatadogLambda extends Construct {
       ) {
         log.debug("Granting read access to the provided Secret ARN for all your lambda functions.");
         grantReadLambdaFromSecretArn(construct, this.props.apiKeySecretArn, lambdaFunction);
+      } else if (this.props.apiKeySsmArn !== undefined && construct !== undefined && baseProps.grantSecretReadAccess) {
+        log.debug("Granting read access to the provided SSM Parameter ARN for all your lambda functions.");
+        grantReadLambdaFromSsmParameterArn(this.props.apiKeySsmArn, lambdaFunction);
       }
 
       if (baseProps.addLayers) {
@@ -257,6 +262,33 @@ function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaF
   secret.grantRead(lambdaFunction);
 }
 
+function grantReadLambdaFromSsmParameterArn(parameterArn: string, lambdaFunction: lambda.Function): void {
+  // Grant IAM permissions to support both String and SecureString SSM parameters
+  // For SecureString parameters, the Datadog Extension will decrypt at runtime using KMS
+  const stack = Stack.of(lambdaFunction);
+  // Grant SSM read permissions
+  lambdaFunction.addToRolePolicy(
+    new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["ssm:GetParameter", "ssm:GetParameters"],
+      resources: [parameterArn],
+    }),
+  );
+  // Grant KMS decrypt permissions for SecureString parameters
+  // Note: This is granted regardless of parameter type since we can't determine it at synthesis time
+  // Granting this permission for String parameters is harmless - it simply won't be used
+  lambdaFunction.addToRolePolicy(
+    new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["kms:Decrypt"],
+      resources: [
+        // AWS managed key for SSM (used by default for SecureString parameters)
+        `arn:aws:kms:${stack.region}:${stack.account}:alias/aws/ssm`,
+      ],
+    }),
+  );
+}
+
 function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]): lambda.Function[] {
   // extract lambdaFunction property from Singleton Function
   // using bracket notation here since lambdaFunction is a private property
@@ -289,22 +321,24 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
     props.apiKey === undefined &&
     props.apiKmsKey === undefined &&
     props.apiKeySecretArn === undefined &&
+    props.apiKeySsmArn === undefined &&
     props.flushMetricsToLogs === false &&
     !apiKeyArnOverride
   ) {
     throw new Error(
-      "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+      "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, `apiKeySsmArn`, or `apiKmsKey` must also be set.",
     );
   }
   if (props.extensionLayerVersion !== undefined || props.extensionLayerArn !== undefined) {
     if (
       props.apiKey === undefined &&
       props.apiKeySecretArn === undefined &&
+      props.apiKeySsmArn === undefined &&
       props.apiKmsKey === undefined &&
       !apiKeyArnOverride
     ) {
       throw new Error(
-        "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, or `apiKmsKey` must also be set.",
+        "When `extensionLayerVersion` or `extensionLayerArn` is set, `apiKey`, `apiKeySecretArn`, `apiKeySsmArn`, or `apiKmsKey` must also be set.",
       );
     }
   }
@@ -355,15 +389,23 @@ export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = fal
 
 export function checkForMultipleApiKeys(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
   let multipleApiKeysMessage;
-  const apiKeyArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
-  if (props.apiKey !== undefined && props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
-    multipleApiKeysMessage = "`apiKey`, `apiKmsKey`, and `apiKeySecretArn`";
-  } else if (props.apiKey !== undefined && props.apiKmsKey !== undefined) {
-    multipleApiKeysMessage = "`apiKey` and `apiKmsKey`";
-  } else if (props.apiKey !== undefined && apiKeyArnOrOverride) {
-    multipleApiKeysMessage = "`apiKey` and `apiKeySecretArn`";
-  } else if (props.apiKmsKey !== undefined && apiKeyArnOrOverride) {
-    multipleApiKeysMessage = "`apiKmsKey` and `apiKeySecretArn`";
+  const apiKeySecretArnOrOverride = props.apiKeySecretArn !== undefined || apiKeyArnOverride;
+  const apiKeySsmArnDefined = props.apiKeySsmArn !== undefined;
+  const sourcesCount = [
+    props.apiKey !== undefined,
+    props.apiKmsKey !== undefined,
+    apiKeySecretArnOrOverride,
+    apiKeySsmArnDefined,
+  ].filter(Boolean).length;
+
+  if (sourcesCount > 1) {
+    const sources = [];
+    if (props.apiKey !== undefined) sources.push("`apiKey`");
+    if (props.apiKmsKey !== undefined) sources.push("`apiKmsKey`");
+    if (apiKeySecretArnOrOverride) sources.push("`apiKeySecretArn`");
+    if (apiKeySsmArnDefined) sources.push("`apiKeySsmArn`");
+
+    multipleApiKeysMessage = sources.join(", ");
   }
 
   if (multipleApiKeysMessage) {
