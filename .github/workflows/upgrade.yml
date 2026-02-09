@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.13.0
+          node-version: 20.16.0
       - name: Install dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Upgrade CDK versions
