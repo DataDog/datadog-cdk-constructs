@@ -1,8 +1,6 @@
 module app
 
-go 1.22.0
-
-toolchain go1.22.5
+go 1.25.7
 
 require (
 	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2 v2.0.0
