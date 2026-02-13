@@ -1,7 +1,6 @@
 module example.com/cdk-example
 
-go 1.21
-toolchain go1.24.1
+go 1.25.7
 
 require github.com/aws/aws-lambda-go v1.41.0
 
