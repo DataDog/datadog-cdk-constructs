@@ -5,16 +5,16 @@
     "cdk-typescript": "bin/index.js"
   },
   "devDependencies": {
-    "@types/node": "^20.8.8",
-    "aws-cdk": "^2.134.0",
-    "ts-node": "^10.9.1",
-    "typescript": "~5.2.2"
+    "@types/node": "^20.8.10",
+    "aws-cdk": "^2.1105.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3"
   },
   "dependencies": {
     "@aws-cdk/aws-lambda-go-alpha": "^2.134.0-alpha.0",
     "@aws-cdk/aws-lambda-python-alpha": "^2.134.0-alpha.0",
-    "aws-cdk-lib": "^2.187.0",
-    "constructs": "^10.3.0",
+    "aws-cdk-lib": "^2.237.1",
+    "constructs": "^10.3.2",
     "datadog-cdk-constructs-v2": "file:./datadog-cdk-constructs-v2-2.2.0.jsii.tgz"
   }
 }
