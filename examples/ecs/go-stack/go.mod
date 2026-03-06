@@ -2,7 +2,7 @@ module app
 
 go 1.23.0
 
-toolchain go1.23.1
+toolchain go1.26.0
 
 require (
 	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2 v2.0.0
@@ -12,7 +12,6 @@ require (
 )
 
 require (
-	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v1.24.0 // indirect
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/cdklabs/awscdk-asset-awscli-go/awscliv1/v2 v2.2.228 // indirect
 	github.com/cdklabs/awscdk-asset-kubectl-go/kubectlv20/v2 v2.1.4 // indirect
