@@ -88,10 +88,10 @@
   resolved "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.4.tgz"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
 
-"@types/node@^20.8.10":
-  version "20.19.33"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.19.33.tgz#ac8364c623b72d43125f0e7dd722bbe968f0c65e"
-  integrity sha512-Rs1bVAIdBs5gbTIKza/tgpMuG1k3U/UMJLWecIMxNdJFDMzcM5LOiLVRYh3PilWEYDIeUDv7bpiHPLPsbydGcw==
+"@types/node@^20.19.35":
+  version "20.19.37"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.19.37.tgz#b4fb4033408dd97becce63ec932c9ec57a9e2919"
+  integrity sha512-8kzdPJ3FsNsVIurqBs7oodNnCEVbni9yUEkaHbgptDACOPW04jimGagZ51E6+lXUwJjgnBw+hyko/lkFWCldqw==
   dependencies:
     undici-types "~6.21.0"
 
@@ -158,10 +158,10 @@ aws-cdk-lib@^2.237.1:
     table "^6.9.0"
     yaml "1.10.2"
 
-aws-cdk@^2.1105.0:
-  version "2.1106.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.1106.0.tgz#3a724a54d8d32f01ce98e503debeda043353c1d8"
-  integrity sha512-1tyQNnuCnH3nc0QpOL84UNhr+y73fyS75nwSnuy5z7XtRwdsOuqyqcDxd6tvCXkUBA7fdgu8p1FR3hkqrW0GWA==
+aws-cdk@^2.1106.1:
+  version "2.1109.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.1109.0.tgz#ce96af9eb9d5b7b45d5946cafb0f2a1be2ebcc42"
+  integrity sha512-K0jvr5ne9kvDrFfdzbPee/s2rH/iXdGoMHTp/0jaj1qFMOh49RkLWTnURa0sBpJJ0uB2sMzIx7YRmAn55wAy1Q==
 
 balanced-match@^1.0.0:
   version "1.0.2"
