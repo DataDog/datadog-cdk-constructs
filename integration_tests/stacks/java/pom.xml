@@ -9,11 +9,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cdk.version>2.220.0</cdk.version>
+        <cdk.version>2.240.0</cdk.version>
         <constructs.version>[10.0.0,11.0.0)</constructs.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <datadog.version>3.3.0</datadog.version>
+        <datadog.version>3.9.0</datadog.version>
     </properties>
 
     <build>
