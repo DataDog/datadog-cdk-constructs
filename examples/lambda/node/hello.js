@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 const {
   sendDistributionMetric,
   sendDistributionMetricWithDate,
@@ -12,7 +10,7 @@ const sleep = tracer.wrap("sleep", (ms) => {
 });
 
 exports.lambda_handler = async (event) => {
-  await axios.get("https://www.datadoghq.com");
+  await fetch("https://www.datadoghq.com");
 
   // add custom tags to the lambda function span,
   // does NOT work when X-Ray tracing is enabled
