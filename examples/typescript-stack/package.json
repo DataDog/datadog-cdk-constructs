@@ -5,8 +5,8 @@
     "cdk-typescript": "bin/index.js"
   },
   "devDependencies": {
-    "@types/node": "^20.19.35",
-    "aws-cdk": "^2.1106.1",
+    "@types/node": "^20.19.39",
+    "aws-cdk": "^2.1117.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3"
   },
