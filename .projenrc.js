@@ -11,6 +11,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
   packageManager: javascript.NodePackageManager.YARN_BERRY,
+  yarnBerryOptions: {
+    version: "4.12.0",
+    yarnRcOptions: {
+      nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
+    },
+  },
   minNodeVersion: "20.16.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
@@ -239,14 +245,8 @@ project.addTask("create-release", {
   receiveArgs: true,
 });
 
-// Configure Yarn Berry .yarnrc.yml
+// npmMinimalAgeGate is not in projen's typed YarnrcOptions, so we add it via override
 const yarnrc = project.tryFindObjectFile(".yarnrc.yml");
-yarnrc.addOverride("nodeLinker", "node-modules");
 yarnrc.addOverride("npmMinimalAgeGate", "2d");
-yarnrc.addOverride("yarnPath", ".yarn/releases/yarn-4.12.0.cjs");
-
-// Pin yarn version to 4.12.0 (npmMinimalAgeGate requires >= 4.10.0)
-const pkgJson = project.tryFindObjectFile("package.json");
-pkgJson.addOverride("packageManager", "yarn@4.12.0");
 
 project.synth();
