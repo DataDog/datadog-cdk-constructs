@@ -82,6 +82,7 @@
     "access": "public"
   },
   "version": "0.0.0",
+  "packageManager": "yarn@4.12.0",
   "jest": {
     "coverageProvider": "v8",
     "testMatch": [

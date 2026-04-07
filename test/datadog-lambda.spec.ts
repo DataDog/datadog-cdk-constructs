@@ -1,7 +1,9 @@
 import { App, Fn, Stack, Token } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
+import { Key } from "aws-cdk-lib/aws-kms";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
+import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import {
   addCdkConstructVersionTag,
   checkForMultipleApiKeys,
@@ -10,8 +12,6 @@ import {
   DD_HANDLER_ENV_VAR,
   DD_TAGS,
 } from "../src/index";
-import { Secret } from "aws-cdk-lib/aws-secretsmanager";
-import { Key } from "aws-cdk-lib/aws-kms";
 const { ISecret } = require("aws-cdk-lib/aws-secretsmanager");
 const versionJson = require("../version.json");
 const EXTENSION_LAYER_VERSION = 5;

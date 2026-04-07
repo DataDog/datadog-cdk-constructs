@@ -10,7 +10,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
-  packageManager: javascript.NodePackageManager.YARN_CLASSIC,
+  packageManager: javascript.NodePackageManager.YARN_BERRY,
   minNodeVersion: "20.16.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
@@ -238,5 +238,15 @@ project.addTask("create-release", {
   exec: "bash scripts/create_release.sh",
   receiveArgs: true,
 });
+
+// Configure Yarn Berry .yarnrc.yml
+const yarnrc = project.tryFindObjectFile(".yarnrc.yml");
+yarnrc.addOverride("nodeLinker", "node-modules");
+yarnrc.addOverride("npmMinimalAgeGate", "2d");
+yarnrc.addOverride("yarnPath", ".yarn/releases/yarn-4.12.0.cjs");
+
+// Pin yarn version to 4.12.0 (npmMinimalAgeGate requires >= 4.10.0)
+const pkgJson = project.tryFindObjectFile("package.json");
+pkgJson.addOverride("packageManager", "yarn@4.12.0");
 
 project.synth();
