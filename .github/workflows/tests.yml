@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache Node modules
         id: cache-node-modules
         uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
@@ -57,6 +60,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache Node modules
         id: cache-node-modules
         uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
@@ -85,6 +91,9 @@ jobs:
         uses: actions/setup-node@7c12f8017d5436eb855f1ed4399f037a36fbd9e8 # v2.5.2
         with:
           node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Cache Node modules
         id: cache-node-modules
