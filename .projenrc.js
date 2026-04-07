@@ -10,7 +10,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
 
-  packageManager: javascript.NodePackageManager.YARN_CLASSIC,
+  packageManager: javascript.NodePackageManager.YARN_BERRY,
+  yarnBerryOptions: {
+    version: "4.12.0",
+    yarnRcOptions: {
+      nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
+    },
+  },
   minNodeVersion: "20.16.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
@@ -238,5 +244,9 @@ project.addTask("create-release", {
   exec: "bash scripts/create_release.sh",
   receiveArgs: true,
 });
+
+// npmMinimalAgeGate is not in projen's typed YarnrcOptions, so we add it via override
+const yarnrc = project.tryFindObjectFile(".yarnrc.yml");
+yarnrc.addOverride("npmMinimalAgeGate", "2d");
 
 project.synth();

@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache Node modules
         id: cache-node-modules
         uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
@@ -57,6 +60,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache Node modules
         id: cache-node-modules
         uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
@@ -86,6 +92,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache Node modules
         id: cache-node-modules
         uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
@@ -101,7 +110,7 @@ jobs:
         run: yarn build
 
       - name: Install CDK CLI
-        run: sudo yarn global add aws-cdk --prefix /usr/local
+        run: sudo npm install -g aws-cdk
 
       - name: Install Packages
         run: yarn projen

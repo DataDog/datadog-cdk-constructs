@@ -8,6 +8,7 @@
     ".projen/deps.json",
     ".projen/files.json",
     ".projen/tasks.json",
+    ".yarnrc.yml",
     "LICENSE",
     "tsconfig.dev.json"
   ],
