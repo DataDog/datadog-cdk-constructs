@@ -21,6 +21,11 @@ export interface DatadogECSBaseProps {
    */
   readonly apiKeySecret?: secrets.ISecret;
   /**
+   * The JSON field to read from the Datadog API key secret in Secrets Manager.
+   * Applies to `apiKeySecret` and `apiKeySecretArn`.
+   */
+  readonly apiKeySecretField?: string;
+  /**
    * The ARN of the Datadog API key secret.
    * Must define at least 1 source for the API key.
    */
