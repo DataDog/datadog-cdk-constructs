@@ -87,10 +87,10 @@ export function configureEcsPolicies(task: ecs.TaskDefinition) {
 
 export function getSecretApiKey(scope: Construct, props: DatadogECSBaseProps): ecs.Secret | undefined {
   if (props.apiKeySecret) {
-    return ecs.Secret.fromSecretsManager(props.apiKeySecret);
+    return ecs.Secret.fromSecretsManager(props.apiKeySecret, props.apiKeySecretField);
   } else if (props.apiKeySecretArn) {
     const secret = secretsmanager.Secret.fromSecretCompleteArn(scope, "DatadogSecret", props.apiKeySecretArn);
-    return ecs.Secret.fromSecretsManager(secret);
+    return ecs.Secret.fromSecretsManager(secret, props.apiKeySecretField);
   } else if (props.apiKeySsmArn) {
     const parameter = ssm.StringParameter.fromStringParameterAttributes(scope, "DatadogParameter", {
       parameterName: props.apiKeySsmArn,
