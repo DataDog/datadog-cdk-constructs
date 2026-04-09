@@ -77,6 +77,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "/scripts",
     "/integration_tests",
     ".prettierrc",
+    "/.ncurc.cjs",
     "cdk.out/*",
     "yarn-error.log",
     "CHANGELOG.md",
@@ -164,14 +165,13 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   }),
 );
 
-// Temporarily disable the npmMinimalAgeGate before running `projen upgrade`,
-// so that ncu can resolve and install newly-published package versions.
-// The gate is restored automatically when `npx projen` runs at the end of
-// the upgrade task and regenerates .yarnrc.yml from .projenrc.js.
+// The projen upgrade task sets CI=0 to allow the lockfile to be updated, but
+// Yarn 4.x treats any non-empty CI string as truthy and keeps immutable installs
+// active. Override via the YARN_ENABLE_IMMUTABLE_INSTALLS env var instead, scoped
+// only to the upgrade step so the setting never leaks into normal installs.
 project.github?.tryFindWorkflow("upgrade")?.file?.patch(
-  JsonPatch.add("/jobs/upgrade/steps/5", {
-    name: "Disable npm age gate for upgrade",
-    run: "sed -i 's/npmMinimalAgeGate:.*/npmMinimalAgeGate: 0/' .yarnrc.yml\necho \"enableImmutableInstalls: false\" >> .yarnrc.yml\n",
+  JsonPatch.add("/jobs/upgrade/steps/5/env", {
+    YARN_ENABLE_IMMUTABLE_INSTALLS: "false",
   }),
 );
 
