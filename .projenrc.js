@@ -164,6 +164,17 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   }),
 );
 
+// Temporarily disable the npmMinimalAgeGate before running `projen upgrade`,
+// so that ncu can resolve and install newly-published package versions.
+// The gate is restored automatically when `npx projen` runs at the end of
+// the upgrade task and regenerates .yarnrc.yml from .projenrc.js.
+project.github?.tryFindWorkflow("upgrade")?.file?.patch(
+  JsonPatch.add("/jobs/upgrade/steps/5", {
+    name: "Disable npm age gate for upgrade",
+    run: "sed -i 's/npmMinimalAgeGate:.*/npmMinimalAgeGate: 0/' .yarnrc.yml",
+  }),
+);
+
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
   "plugin:@typescript-eslint/recommended",
