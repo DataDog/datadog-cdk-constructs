@@ -5,6 +5,7 @@
 /scripts
 /integration_tests
 .prettierrc
+/.ncurc.cjs
 cdk.out/*
 yarn-error.log
 CHANGELOG.md
