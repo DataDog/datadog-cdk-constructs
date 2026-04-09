@@ -171,7 +171,7 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
 project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   JsonPatch.add("/jobs/upgrade/steps/5", {
     name: "Disable npm age gate for upgrade",
-    run: "sed -i 's/npmMinimalAgeGate:.*/npmMinimalAgeGate: 0/' .yarnrc.yml",
+    run: "sed -i 's/npmMinimalAgeGate:.*/npmMinimalAgeGate: 0/' .yarnrc.yml\n",
   }),
 );
 
