@@ -29,6 +29,7 @@ jobs:
       - name: Disable npm age gate for upgrade
         run: |
           sed -i 's/npmMinimalAgeGate:.*/npmMinimalAgeGate: 0/' .yarnrc.yml
+          echo "enableImmutableInstalls: false" >> .yarnrc.yml
       - name: Upgrade dependencies
         run: npx projen upgrade
       - name: Find mutations
