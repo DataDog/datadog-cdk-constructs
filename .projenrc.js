@@ -142,12 +142,23 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   }),
 );
 
-// Patch the upgrade workflow since its managed by projen
-// to add a step to upgrade the CDK versions.  3 happens to
-// be the index after install dependencies and before the
-// other dependency upgrade step.
+// Patch the upgrade workflow to enable Corepack before setup-node, so that
+// setup-node can detect the yarn berry package manager (from the packageManager
+// field in package.json) and set up caching correctly.
 project.github?.tryFindWorkflow("upgrade")?.file?.patch(
-  JsonPatch.add("/jobs/upgrade/steps/3", {
+  JsonPatch.add("/jobs/upgrade/steps/1", {
+    name: "Enable Corepack",
+    run: "corepack enable",
+  }),
+);
+
+// Patch the upgrade workflow since its managed by projen
+// to add a step to upgrade the CDK versions.  4 happens to
+// be the index after install dependencies and before the
+// other dependency upgrade step (shifted by 1 due to the
+// Enable Corepack step inserted above).
+project.github?.tryFindWorkflow("upgrade")?.file?.patch(
+  JsonPatch.add("/jobs/upgrade/steps/4", {
     name: "Upgrade CDK versions",
     run: "node scripts/upgrade-cdk.js",
   }),
