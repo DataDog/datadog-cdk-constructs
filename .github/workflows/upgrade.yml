@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - name: Enable Corepack
+        run: corepack enable
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
         with:
@@ -26,6 +28,8 @@ jobs:
         run: node scripts/upgrade-cdk.js
       - name: Upgrade dependencies
         run: npx projen upgrade
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
       - name: Find mutations
         id: create_patch
         run: |-
