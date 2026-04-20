@@ -134,12 +134,32 @@ describe("utils", () => {
       const props = { apiKeySecret: secret };
       const result = getSecretApiKey(scope, props);
       expect(result).toBeDefined();
+      expect(result?.arn).toBe(secret.secretArn);
+    });
+
+    it("should return a secret field from SecretsManager if apiKeySecretField is provided", () => {
+      const secret = secretsmanager.Secret.fromSecretNameV2(scope, "TestSecretWithField", "test-secret");
+      const props = { apiKeySecret: secret, apiKeySecretField: "key" };
+      const result = getSecretApiKey(scope, props);
+      expect(result).toBeDefined();
+      expect(result?.arn).toBe(`${secret.secretArn}:key::`);
     });
 
     it("should return a secret from ARN if apiKeySecretArn is provided", () => {
-      const props = { apiKeySecretArn: "arn:aws:secretsmanager:region:account-id:secret:test-secret" };
+      const props = { apiKeySecretArn: "arn:aws:secretsmanager:region:account-id:secret:test-secret-AbCdEf" };
       const result = getSecretApiKey(scope, props);
       expect(result).toBeDefined();
+      expect(result?.arn).toBe("arn:aws:secretsmanager:region:account-id:secret:test-secret-AbCdEf");
+    });
+
+    it("should return a secret field from ARN if apiKeySecretField is provided", () => {
+      const props = {
+        apiKeySecretArn: "arn:aws:secretsmanager:region:account-id:secret:test-secret-AbCdEf",
+        apiKeySecretField: "key",
+      };
+      const result = getSecretApiKey(scope, props);
+      expect(result).toBeDefined();
+      expect(result?.arn).toBe("arn:aws:secretsmanager:region:account-id:secret:test-secret-AbCdEf:key::");
     });
 
     it("should return a secret from SSM parameter if apiKeySsmArn is provided", () => {

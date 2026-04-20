@@ -106,6 +106,7 @@ describe("DatadogECSFargateLogging", () => {
     datadogProps = {
       ...datadogProps,
       clusterName: "test-cluster",
+      apiKeySecretField: "key",
       environmentVariables: {
         DD_TAGS: "team:cont-p",
       },
@@ -143,6 +144,12 @@ describe("DatadogECSFargateLogging", () => {
               dd_service: "datadog-agent",
               dd_source: "datadog-agent",
             }),
+            SecretOptions: Match.arrayWith([
+              Match.objectLike({
+                Name: "apikey",
+                ValueFrom: "arn:aws:secretsmanager:us-east-1:123456789012:secret:my-secret-name-AbCdEf:key::",
+              }),
+            ]),
           },
         }),
       ]),
