@@ -536,7 +536,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
         nodeLayerVersion: NODE_LAYER_VERSION,
       });
       datadogLambda.addLambdaFunctions([hello]);
-    }).toThrowError(
+    }).toThrow(
       `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
     );
   });
@@ -561,7 +561,7 @@ describe("API_KEY_SECRET_ARN_ENV_VAR", () => {
         nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
       });
       datadogLambda.addLambdaFunctions([hello]);
-    }).toThrowError(
+    }).toThrow(
       `\`apiKeySecretArn\` is not supported for Node runtimes when using Synchronous Metrics. Use either \`apiKey\` or \`apiKmsKey\`.`,
     );
   });

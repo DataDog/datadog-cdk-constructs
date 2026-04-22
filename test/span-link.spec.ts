@@ -26,7 +26,7 @@ describe("buildStepFunctionLambdaTaskPayloadToMergeTraces", () => {
 
   it("throws an error if payload already contains Execution field", () => {
     const payload = { Execution: "value" };
-    expect(() => buildStepFunctionLambdaTaskPayloadToMergeTraces(payload)).toThrowError(
+    expect(() => buildStepFunctionLambdaTaskPayloadToMergeTraces(payload)).toThrow(
       "The LambdaInvoke task may be using custom Execution, State or StateMachine field. Step Functions Context Object injection skipped. Your Step Functions trace will not be merged with downstream Lambda traces. Please open an issue in https://github.com/DataDog/datadog-cdk-constructs to discuss your workaround.",
     );
   });
@@ -51,7 +51,7 @@ describe("buildStepFunctionSfnExecutionTaskInputToMergeTraces", () => {
 
   it("throws an error if input already contains CONTEXT field", () => {
     const input = { CONTEXT: "value" };
-    expect(() => buildStepFunctionSfnExecutionTaskInputToMergeTraces(input)).toThrowError(
+    expect(() => buildStepFunctionSfnExecutionTaskInputToMergeTraces(input)).toThrow(
       "The StepFunction StartExecution task may be using custom CONTEXT field. Step Functions Context Object injection skipped. Your Step Functions trace will not be merged with downstream Lambda traces. Please open an issue in https://github.com/DataDog/datadog-cdk-constructs to discuss your workaround.",
     );
   });

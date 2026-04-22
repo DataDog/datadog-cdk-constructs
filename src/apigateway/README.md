@@ -133,7 +133,6 @@ httpApi.addRoutes({
    ```
 
    You will need to update your sampling rules:
-
    - **Option 1:** Change the `service` value to match your API Gateway's name as it appears in Datadog:
      ```bash
      DD_TRACE_SAMPLING_RULES='[{"service": "my-api-gateway", "sample_rate": 0.5}]'
@@ -146,7 +145,6 @@ httpApi.addRoutes({
    Any sampling rules based on `resource_name` for the original web application must be updated for the resource name of the API Gateway service.
 
 1. The instrumentation adds headers to track the following:
-
    - Request timing
    - Domain information
    - HTTP method

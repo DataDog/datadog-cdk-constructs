@@ -254,7 +254,7 @@ describe("validateProps", () => {
         site: "datadoghq.com",
       });
       datadogLambda.addLambdaFunctions([hello]);
-    }).toThrowError(
+    }).toThrow(
       "When `flushMetricsToLogs` is false, `apiKey`, `apiKeySecretArn`, `apiKeySsmArn`, or `apiKmsKey` must also be set.",
     );
   });
@@ -537,7 +537,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKey: "1234",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKey`, `apiKmsKey` should not be set at the same time.");
+    }).toThrow("`apiKey`, `apiKmsKey` should not be set at the same time.");
   });
 
   it("throws error if both API key and API key secret ARN are defined", () => {
@@ -546,7 +546,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKey: "1234",
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
       });
-    }).toThrowError("`apiKey`, `apiKeySecretArn` should not be set at the same time.");
+    }).toThrow("`apiKey`, `apiKeySecretArn` should not be set at the same time.");
   });
 
   it("throws error if both API key secret ARN and KMS API key are defined", () => {
@@ -555,7 +555,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKmsKey`, `apiKeySecretArn` should not be set at the same time.");
+    }).toThrow("`apiKmsKey`, `apiKeySecretArn` should not be set at the same time.");
   });
 
   it("throws error if both API key secret ARN and KMS API key are defined", () => {
@@ -565,7 +565,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKey`, `apiKmsKey`, `apiKeySecretArn` should not be set at the same time.");
+    }).toThrow("`apiKey`, `apiKmsKey`, `apiKeySecretArn` should not be set at the same time.");
   });
 
   it("throws error if both API key and SSM parameter ARN are defined", () => {
@@ -574,7 +574,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKey: "1234",
         apiKeySsmArn: "/datadog/api_key",
       });
-    }).toThrowError("`apiKey`, `apiKeySsmArn` should not be set at the same time.");
+    }).toThrow("`apiKey`, `apiKeySsmArn` should not be set at the same time.");
   });
 
   it("throws error if both API key secret ARN and SSM parameter ARN are defined", () => {
@@ -583,7 +583,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKeySecretArn: "some-resource:from:aws:secrets-manager:arn",
         apiKeySsmArn: "/datadog/api_key",
       });
-    }).toThrowError("`apiKeySecretArn`, `apiKeySsmArn` should not be set at the same time.");
+    }).toThrow("`apiKeySecretArn`, `apiKeySsmArn` should not be set at the same time.");
   });
 
   it("throws error if both KMS API key and SSM parameter ARN are defined", () => {
@@ -592,7 +592,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKmsKey: "5678",
         apiKeySsmArn: "/datadog/api_key",
       });
-    }).toThrowError("`apiKmsKey`, `apiKeySsmArn` should not be set at the same time.");
+    }).toThrow("`apiKmsKey`, `apiKeySsmArn` should not be set at the same time.");
   });
 
   it("throws error if all API key sources are defined", () => {
@@ -603,7 +603,7 @@ describe("checkForMultipleApiKeys", () => {
         apiKeySsmArn: "/datadog/api_key",
         apiKmsKey: "5678",
       });
-    }).toThrowError("`apiKey`, `apiKmsKey`, `apiKeySecretArn`, `apiKeySsmArn` should not be set at the same time.");
+    }).toThrow("`apiKey`, `apiKmsKey`, `apiKeySecretArn`, `apiKeySsmArn` should not be set at the same time.");
   });
 });
 

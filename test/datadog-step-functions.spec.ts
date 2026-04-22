@@ -52,7 +52,7 @@ describe("DatadogStepFunctions", () => {
       cfnStateMachine.loggingConfiguration = Token.asAny({});
 
       const datadogSfn = new DatadogStepFunctions(stack, "DatadogStepFunctions", {});
-      expect(() => datadogSfn.addStateMachines([stateMachine])).toThrowError(
+      expect(() => datadogSfn.addStateMachines([stateMachine])).toThrow(
         "loggingConfiguration is an unresolved token. Step Function Instrumentation is not supported. Please open a feature request in https://github.com/DataDog/datadog-cdk-constructs.",
       );
     });
