@@ -263,11 +263,13 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 The `DatadogECSFargate` construct is designed to simplify the integration of Datadog monitoring into ECS Fargate workloads. It achieves this by managing the Datadog-specific configuration and creating a specialized task definition that extends the AWS ECS `TaskDefinition` class. Here's a breakdown of how it works:
 
 1. **Task Definition Extension**:
+
    - The construct creates a `DatadogECSFargateTaskDefinition`, which extends the AWS ECS `TaskDefinition` class.
    - This specialized task definition automatically includes the Datadog Agent as a sidecar container, pre-configured with the settings provided in the `DatadogECSFargateProps`.
    - The `DatadogECSFargateTaskDefinition` also supports adding additional containers to the task definition, ensuring that they are properly configured to work alongside the Datadog Agent.
 
 2. **Feature Enablement**:
+
    - The construct provides granular control over Datadog features, such as:
      - **DogStatsD**: Enables custom metrics collection with configurable cardinality and socket support.
      - **APM**: Enables trace collection with optional Unix Domain Socket support.

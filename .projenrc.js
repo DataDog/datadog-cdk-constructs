@@ -85,7 +85,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "/examples",
   ],
   scripts: {
-    "check-formatting": "prettier --check src/** integration_tests/**/*.ts examples/**/*.ts",
+    "check-formatting": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts",
   },
   pullRequestTemplate: false,
   dependabot: false,
