@@ -36,8 +36,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     mavenArtifactId: "datadog-cdk-constructs",
   },
   peerDeps: [],
-  cdkVersion: "2.235.0",
-  cdkCliVersion: "^2.235.0",
+  cdkVersion: "2.244.0",
+  cdkCliVersion: "^2.244.0",
   deps: ["loglevel"],
   bundledDeps: ["loglevel"],
   devDeps: [
@@ -85,7 +85,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "/examples",
   ],
   scripts: {
-    "check-formatting": "prettier --check src/** integration_tests/**/*.ts examples/**/*.ts",
+    "check-formatting": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts",
   },
   pullRequestTemplate: false,
   dependabot: false,
