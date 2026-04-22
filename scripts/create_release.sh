@@ -14,10 +14,20 @@ elif [[ ! $RELEASE_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
     exit 1
 fi
 
+# Make sure local tags are up to date with the remote before anything else,
+# otherwise `git describe` below can fail and produce an empty commit list.
+git fetch origin 'refs/tags/*:refs/tags/*' --quiet
+
 # Check that the release version has not already been published
 MATCHING_GITHUB_VERSION=$(git tag -l | grep $RELEASE_VERSION)
 if [ $MATCHING_GITHUB_VERSION ]; then
     echo "ERROR: Version $MATCHING_GITHUB_VERSION already exists"
+    exit 1
+fi
+
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+if [ -z "$LAST_TAG" ]; then
+    echo "ERROR: Could not find a previous tag via git describe. Aborting."
     exit 1
 fi
 
@@ -28,7 +38,7 @@ jq --arg v "$RELEASE_VERSION" '.version = $v' "$VERSION_FILE" > "$VERSION_FILE.t
 git add $VERSION_FILE
 
 # Create a commit with all of the commit info for commits in this release
-INCLUDED_COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --oneline)
+INCLUDED_COMMITS=$(git log "$LAST_TAG"..HEAD --no-merges --oneline)
 git commit -m "chore: Release v2-$RELEASE_VERSION
 
 This release includes the following commits:
