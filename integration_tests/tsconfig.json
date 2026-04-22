@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "outDir": "testlib",
+    "rootDir": "..",
     "rootDirs": ["stacks", "lambda", "../src"],
+    "types": ["node"],
     "alwaysStrict": true,
     "declaration": true,
     "experimentalDecorators": true,
@@ -13,6 +15,7 @@
     ],
     "module": "CommonJS",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "newLine": "lf",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
