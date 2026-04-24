@@ -1,6 +1,6 @@
 # Datadog CDK Go Example
 
-Use this example Go stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v2 library for ECS Fargate.
+Use this example Go stack to try out the [datadog-cdk-constructs](https://github.com/DataDog/datadog-cdk-constructs) v3 library for ECS Fargate.
 
 ## Getting Started
 
@@ -21,15 +21,15 @@ Use this example Go stack to try out the [datadog-cdk-constructs](https://github
     ```go
     require(
       ...
-      github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2 v2.0.0-unpublished
+      github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3 v3.0.0-unpublished
     )
     ```
 
 5. Run the following commands to replace the import with the local path of the module
 
     ```go
-    go mod edit -replace=github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2@v2.0.0-unpublished=./ddcdkconstruct
-    go get -d github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2@v2.0.0-unpublished
+    go mod edit -replace=github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3@v3.0.0-unpublished=./ddcdkconstruct
+    go get -d github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3@v3.0.0-unpublished
     ```
 
 6. Install dependencies: `go get`.
