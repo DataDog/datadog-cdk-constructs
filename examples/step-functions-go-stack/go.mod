@@ -2,6 +2,8 @@ module app
 
 go 1.25.7
 
+toolchain go1.26.2
+
 require (
 	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3 v3.11.0
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.244.0
