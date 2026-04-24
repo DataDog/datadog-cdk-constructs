@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v2"
+	"github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	sfn "github.com/aws/aws-cdk-go/awscdk/v2/awsstepfunctions"
