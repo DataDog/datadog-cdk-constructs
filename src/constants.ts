@@ -134,6 +134,7 @@ export const siteList: string[] = [
   "ap1.datadoghq.com",
   "ap2.datadoghq.com",
   "ddog-gov.com",
+  "us2.ddog-gov.com",
 ];
 
 export const invalidSiteError = `Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`;
