@@ -17,7 +17,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
       nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
     },
   },
-  minNodeVersion: "20.16.0",
+  minNodeVersion: "22.0.0",
 
   jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
