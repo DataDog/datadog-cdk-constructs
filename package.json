@@ -36,7 +36,7 @@
     "@aws-cdk/aws-lambda-python-alpha": "^2.134.0-alpha.0",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^30.0.0",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk-lib": "2.245.0",
@@ -74,7 +74,7 @@
     "cdk"
   ],
   "engines": {
-    "node": ">= 20.16.0"
+    "node": ">= 22.0.0"
   },
   "devEngines": {
     "packageManager": {
