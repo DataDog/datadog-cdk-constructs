@@ -4,9 +4,9 @@
 *.md  @DataDog/documentation
 
 # ECS
-examples/ecs  @DataDog/container-platform
-src/ecs  @DataDog/container-platform
-src/sample/ecs_fargate  @DataDog/container-platform
-test/ecs  @DataDog/container-platform
-integration_tests/snapshots/correct-ecs-* @DataDog/container-platform
-integration_tests/stacks/typescript/ecs* @DataDog/container-platform
+examples/ecs  @DataDog/ecs-experiences @DataDog/container-platform
+src/ecs  @DataDog/ecs-experiences @DataDog/container-platform
+src/sample/ecs_fargate  @DataDog/ecs-experiences @DataDog/container-platform
+test/ecs @DataDog/ecs-experiences @DataDog/container-platform
+integration_tests/snapshots/correct-ecs-* @DataDog/ecs-experiences @DataDog/container-platform
+integration_tests/stacks/typescript/ecs* @DataDog/ecs-experiences @DataDog/container-platform
