@@ -61,14 +61,16 @@ export function setGitEnvironmentVariables(
 
   if (hash == "" || gitRepoUrl == "") return;
 
-  // We're using an any type here because AWS does not expose the `environment` field in their type
+  // Build the git metadata tag value
+  const gitTags = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
+
   lambdas.forEach((lam) => {
-    if (lam.environment[DD_TAGS] !== undefined) {
-      lam.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
+    const existingDdTags = lam.environment[DD_TAGS]?.value;
+    if (existingDdTags) {
+      lam.addEnvironment(DD_TAGS, `${existingDdTags},${gitTags}`);
     } else {
-      lam.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
+      lam.addEnvironment(DD_TAGS, gitTags);
     }
-    lam.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
   });
 }
 
