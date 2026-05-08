@@ -55,20 +55,20 @@ export function setGitEnvironmentVariables(
     hash = gitCommitShaOverride;
   }
   if (gitRepoUrlOverride) {
-    log.debug(`Using git repo URL override.  Will be ${gitRepoUrlOverride} instead of ${hash}`);
+    log.debug(`Using git repo URL override.  Will be ${gitRepoUrlOverride} instead of ${gitRepoUrl}`);
     gitRepoUrl = gitRepoUrlOverride;
   }
 
   if (hash == "" || gitRepoUrl == "") return;
 
   // We're using an any type here because AWS does not expose the `environment` field in their type
+  const gitTags = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
   lambdas.forEach((lam) => {
-    if (lam.environment[DD_TAGS] !== undefined) {
-      lam.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
+    if (lam.environment[DD_TAGS] === undefined) {
+      lam.addEnvironment(DD_TAGS, gitTags);
     } else {
-      lam.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
+      lam.environment[DD_TAGS].value += `,${gitTags}`;
     }
-    lam.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
   });
 }
 
