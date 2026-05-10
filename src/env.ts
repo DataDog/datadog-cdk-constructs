@@ -63,12 +63,10 @@ export function setGitEnvironmentVariables(
 
   // We're using an any type here because AWS does not expose the `environment` field in their type
   lambdas.forEach((lam) => {
-    if (lam.environment[DD_TAGS] !== undefined) {
-      lam.environment[DD_TAGS].value += `,git.commit.sha:${hash}`;
-    } else {
-      lam.addEnvironment(DD_TAGS, `git.commit.sha:${hash}`);
-    }
-    lam.environment[DD_TAGS].value += `,git.repository_url:${gitRepoUrl}`;
+    const tagsValue = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
+    const existingTagValue = lam.environment.map.get(DD_TAGS)?.value;
+    const finalTagValue = existingTagValue ? `${existingTagValue},${tagsValue}` : tagsValue;
+    lam.addEnvironment(DD_TAGS, finalTagValue);
   });
 }
 
@@ -123,7 +121,7 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
   log.debug(`Setting environment variables...`);
   const lam_with_env_vars: any = lam; //cast to any to access the private environment fields like in setGitEnvironmentVariables
   const setEnvIfUndefined = (envVar: string, value: string | boolean) => {
-    if (lam_with_env_vars.environment[envVar] === undefined) {
+    if (lam_with_env_vars.environment.map.get(envVar) === undefined) {
       lam.addEnvironment(envVar, value.toString().toLowerCase());
     }
   };
