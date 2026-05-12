@@ -3044,7 +3044,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
-    aws-cdk-lib: ^2.245.0
+    aws-cdk-lib: ^2.253.0
     constructs: ^10.5.1
   languageName: unknown
   linkType: soft
