@@ -192,10 +192,11 @@ export class DatadogLambda extends Construct {
     // If any lambdas have already been added, override the commit sha and url
     if (this.lambdas) {
       this.lambdas.forEach((lambdaFunction: any) => {
-        if (lambdaFunction.environment[DD_TAGS] === undefined) {
+        const existingTags = lambdaFunction.environment.map.get(DD_TAGS);
+        if (existingTags === undefined) {
           return;
         }
-        const tags = lambdaFunction.environment[DD_TAGS].value.split(",");
+        const tags = existingTags.value.split(",");
         if (gitCommitSha) {
           const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
           tags[index] = `git.commit.sha:${gitCommitSha}`;
@@ -206,7 +207,7 @@ export class DatadogLambda extends Construct {
           tags[index] = `git.repository_url:${gitRepoUrl}`;
         }
 
-        lambdaFunction.environment[DD_TAGS].value = tags.join(",");
+        lambdaFunction.addEnvironment(DD_TAGS, tags.join(","));
       });
     }
   }

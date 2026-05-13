@@ -854,10 +854,10 @@ describe("overrideGitMetadata", () => {
     });
     datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
     datadogLambda.addLambdaFunctions([hello], stack);
-    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
       expect.arrayContaining(["git.commit.sha:fake-sha"]),
     );
-    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
       expect.arrayContaining(["git.repository_url:fake-url"]),
     );
   });
@@ -880,10 +880,10 @@ describe("overrideGitMetadata", () => {
     });
     datadogLambda.addLambdaFunctions([hello], stack);
     datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
-    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
       expect.arrayContaining(["git.commit.sha:fake-sha"]),
     );
-    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
       expect.arrayContaining(["git.repository_url:fake-url"]),
     );
   });
@@ -913,10 +913,10 @@ describe("overrideGitMetadata", () => {
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
     [hello, goodbye].forEach((f) => {
-      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
         expect.arrayContaining(["git.commit.sha:fake-sha"]),
       );
-      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
         expect.arrayContaining(["git.repository_url:fake-url"]),
       );
     });
@@ -949,10 +949,10 @@ describe("overrideGitMetadata", () => {
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
     [hello, goodbye].forEach((f) => {
-      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
         expect.arrayContaining(["git.commit.sha:fake-sha"]),
       );
-      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(expect.arrayContaining(["testVar:xyz"]));
+      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(expect.arrayContaining(["testVar:xyz"]));
     });
   });
 
@@ -982,7 +982,7 @@ describe("overrideGitMetadata", () => {
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
     [hello, goodbye].forEach((f) => {
-      expect((<any>f).environment[DD_TAGS].value.split(",")).toEqual(
+      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
         expect.arrayContaining([expect.stringContaining("git.commit.sha:fake-sha"), expect.stringMatching(REPO_REGEX)]),
       );
     });
@@ -1007,9 +1007,12 @@ describe("overrideGitMetadata", () => {
     datadogLambda.addLambdaFunctions([hello], stack);
 
     expect(
-      (<any>hello).environment[DD_TAGS].value.split(",").some((item: string) => item.includes("git.commit.sha")),
+      (<any>hello).environment.map
+        .get(DD_TAGS)
+        .value.split(",")
+        .some((item: string) => item.includes("git.commit.sha")),
     ).toEqual(true);
-    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
       expect.arrayContaining([expect.stringMatching(REPO_REGEX)]),
     );
   });
@@ -1036,7 +1039,7 @@ describe("overrideGitMetadata", () => {
     });
 
     datadogLambda.addLambdaFunctions([hello], stack);
-    expect((<any>hello).environment[DD_TAGS].value.split(",")).toEqual(
+    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
       expect.arrayContaining(["git.commit.sha:fake-sha"]),
     );
   });
