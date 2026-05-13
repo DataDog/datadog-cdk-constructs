@@ -30,6 +30,16 @@
       "type": "build"
     },
     {
+      "name": "aws-cdk-lib",
+      "version": "2.253.0",
+      "type": "build"
+    },
+    {
+      "name": "constructs",
+      "version": "10.5.1",
+      "type": "build"
+    },
+    {
       "name": "esbuild",
       "type": "build"
     },

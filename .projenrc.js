@@ -36,6 +36,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     mavenArtifactId: "datadog-cdk-constructs",
   },
   peerDeps: [],
+  peerDependencyOptions: {
+    pinnedDevDependency: false,
+  },
   cdkVersion: "2.245.0",
   cdkCliVersion: "^2.245.0",
   deps: ["loglevel"],
@@ -109,6 +112,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
+
+project.addDevDeps("aws-cdk-lib@2.253.0", "constructs@10.5.1");
 
 // Pin GitHub Actions to commit SHAs instead of tags
 project.github.actions.set(
