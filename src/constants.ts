@@ -89,6 +89,7 @@ export const runtimeLookup: { [key: string]: RuntimeType } = {
   "ruby3.2": RuntimeType.RUBY,
   "ruby3.3": RuntimeType.RUBY,
   "ruby3.4": RuntimeType.RUBY,
+  "ruby4.0": RuntimeType.RUBY,
 };
 
 export const runtimeToLayerName: { [key: string]: string } = {
@@ -119,6 +120,7 @@ export const runtimeToLayerName: { [key: string]: string } = {
   "ruby32": "Datadog-Ruby3-2",
   "ruby33": "Datadog-Ruby3-3",
   "ruby34": "Datadog-Ruby3-4",
+  "ruby40": "Datadog-Ruby4-0",
 };
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];
