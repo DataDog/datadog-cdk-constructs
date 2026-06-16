@@ -78,7 +78,10 @@ export const verifyInstrumented = (region: string, expected: IdentityExpectation
   assert.equal(vars.DD_SITE, site);
   assert.ok(vars.DD_API_KEY, "expected DD_API_KEY to be set");
   assert.equal(vars.DD_TRACE_ENABLED, "true");
-  assert.equal(vars.DD_LOGS_INJECTION, "true");
+  // With the extension, log collection is enabled via DD_SERVERLESS_LOGS_ENABLED;
+  // the construct intentionally forces DD_LOGS_INJECTION=false in this path.
+  assert.equal(vars.DD_SERVERLESS_LOGS_ENABLED, "true");
+  assert.equal(vars.DD_LOGS_INJECTION, "false");
   assert.ok(
     vars.DD_TAGS?.includes(`${RUN_ID_TAG_KEY}:${runId}`),
     `expected DD_TAGS to carry run id, got ${vars.DD_TAGS}`,

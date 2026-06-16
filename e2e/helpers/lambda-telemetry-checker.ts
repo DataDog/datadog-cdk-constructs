@@ -91,11 +91,13 @@ export const checkTelemetryFlowing = async (expected: IdentityExpectation): Prom
         return res.data ?? [];
       },
       (span) => {
-        const attrs = (span.attributes?.attributes ?? {}) as Record<string, unknown>;
-        assert.equal(attrs.service, serviceName, "span service mismatch");
-        assert.equal(attrs.env, env, "span env mismatch");
-        assert.equal(attrs.version, version, "span version mismatch");
-        assert.equal(attrs[RUN_ID_TAG_KEY], runId, "span run id mismatch");
+        // v2 Spans API: service is top-level; env/version/custom tags live in `custom`.
+        const attrs = span.attributes ?? {};
+        const custom = (attrs.custom ?? {}) as Record<string, unknown>;
+        assert.equal(attrs.service ?? custom.service, serviceName, "span service mismatch");
+        assert.equal(custom.env, env, "span env mismatch");
+        assert.equal(custom.version, version, "span version mismatch");
+        assert.equal(custom[RUN_ID_TAG_KEY], runId, "span run id mismatch");
       },
     ),
     pollUntil(
