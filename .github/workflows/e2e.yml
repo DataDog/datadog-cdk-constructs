@@ -42,13 +42,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
 
+      # Enable Corepack before setup-node so its package-manager cache step detects
+      # the yarn berry version from package.json instead of falling back to yarn 1.
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Set up Node 24
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: 24
-
-      - name: Enable Corepack
-        run: corepack enable
 
       - name: Cache Node modules
         id: cache-node-modules

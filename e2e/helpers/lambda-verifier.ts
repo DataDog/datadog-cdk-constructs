@@ -114,7 +114,11 @@ export const verifyUninstrumented = (region: string, serviceName: string): void 
 
   // The Datadog instrumentation resource tag is gone. The hygiene freshness tag
   // intentionally survives so the sweeper can still reap the bare function.
-  assert.equal(tags.dd_cdk_construct, undefined, `expected dd_cdk_construct tag to be absent, got ${tags.dd_cdk_construct}`);
+  assert.equal(
+    tags.dd_cdk_construct,
+    undefined,
+    `expected dd_cdk_construct tag to be absent, got ${tags.dd_cdk_construct}`,
+  );
   assert.ok(tags[FRESHNESS_TAG_KEY], "expected freshness tag to survive remove");
 
   console.log("All uninstrumented checks passed.");
