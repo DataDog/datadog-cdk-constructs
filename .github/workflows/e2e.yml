@@ -79,13 +79,12 @@ jobs:
           role-chaining: true
           role-skip-session-tagging: true
 
+      # The account is already CDK-bootstrapped; deploy reads the bootstrap version
+      # from SSM, so no bootstrap step is needed (the integration-test role is not
+      # permitted to manage the CDKToolkit stack).
       - name: Resolve account id
         if: env.SKIP_LAMBDA_TESTS != 'true'
         run: echo "CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
-
-      - name: Bootstrap CDK environment
-        if: env.SKIP_LAMBDA_TESTS != 'true'
-        run: npx cdk bootstrap "aws://${CDK_DEFAULT_ACCOUNT}/${AWS_REGION}"
 
       - name: Run Lambda e2e suite
         run: yarn test:e2e
