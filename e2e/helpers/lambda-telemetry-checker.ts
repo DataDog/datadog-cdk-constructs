@@ -63,6 +63,11 @@ export const checkTelemetryFlowing = async (expected: IdentityExpectation): Prom
       apiKeyAuth: process.env.DATADOG_API_KEY ?? process.env.DD_API_KEY,
       appKeyAuth: process.env.DATADOG_APP_KEY ?? process.env.DD_APP_KEY,
     },
+    // The spans search API is rate-limited at 60/min org-wide; in a shared org that
+    // ceiling is contended, so we lean on the client's built-in 429 backoff (it honors
+    // the x-ratelimit-reset header) instead of hammering and failing.
+    enableRetry: true,
+    maxRetries: 10,
   });
   if (process.env.DD_SITE) {
     configuration.setServerVariables({ site: process.env.DD_SITE });
