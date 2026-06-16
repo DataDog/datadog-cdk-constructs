@@ -23,7 +23,6 @@ const instrument = process.env.E2E_INSTRUMENT === "true";
 const serviceName = requireEnv("E2E_SERVICE_NAME");
 const runId = requireEnv("E2E_RUN_ID");
 const createdTs = requireEnv("E2E_CREATED_TS");
-const apiKey = requireEnv("DD_API_KEY");
 const site = process.env.DD_SITE ?? "datadoghq.com";
 const env = process.env.E2E_ENV ?? "e2e";
 const version = process.env.E2E_VERSION ?? "1.0.0";
@@ -58,7 +57,8 @@ class WorkloadStack extends Stack {
       enableDatadogLogs: true,
       injectLogContext: true,
       sourceCodeIntegration: false,
-      apiKey,
+      // Only needed when instrumenting; the uninstrumented baseline carries no key.
+      apiKey: requireEnv("DD_API_KEY"),
       site,
       service: serviceName,
       env,

@@ -82,6 +82,17 @@ jobs:
       # The account is already CDK-bootstrapped; deploy reads the bootstrap version
       # from SSM, so no bootstrap step is needed (the integration-test role is not
       # permitted to manage the CDKToolkit stack).
+      # No Datadog org keys -> nothing to instrument or query, so skip cleanly (green)
+      # rather than fail. The suite runs for real once DD_API_KEY/DD_APP_KEY are added.
+      - name: Skip when Datadog secrets are absent
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+        run: |
+          if [ -z "$DD_API_KEY" ]; then
+            echo "SKIP_LAMBDA_TESTS=true" >> "$GITHUB_ENV"
+            echo "::warning::DD_API_KEY secret not configured; skipping the Lambda e2e suite."
+          fi
+
       - name: Resolve account id
         if: env.SKIP_LAMBDA_TESTS != 'true'
         run: echo "CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
