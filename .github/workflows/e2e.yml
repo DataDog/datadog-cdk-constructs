@@ -1,0 +1,95 @@
+name: e2e
+
+# End-to-end AWS Lambda instrumentation suite. Path-filtered so it only runs when
+# the construct or the suite changes, and gated by SKIP_LAMBDA_TESTS so forks (which
+# lack the OIDC/Datadog secrets) no-op cleanly. See e2e/README.md for the contract.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "e2e/**"
+      - "package.json"
+      - "yarn.lock"
+      - ".github/workflows/e2e.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "e2e/**"
+      - "package.json"
+      - "yarn.lock"
+      - ".github/workflows/e2e.yml"
+
+# One run per ref; cancel superseded runs so we never have two suites racing for
+# the same shared account budget.
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lambda-e2e:
+    # Skip on forks: OIDC + Datadog secrets only exist on the canonical repo.
+    if: github.repository == 'DataDog/datadog-cdk-constructs'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_REGION: us-east-1
+      DD_SITE: datadoghq.com
+      SKIP_LAMBDA_TESTS: ${{ vars.SKIP_LAMBDA_TESTS || 'false' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - name: Set up Node 24
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Cache Node modules
+        id: cache-node-modules
+        uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      # OIDC into the build-stable account, then chain into the serverless sandbox
+      # role used by the integration tests -- same identities, so no new IAM setup.
+      - name: Configure AWS credentials via OIDC (Build-Stable)
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: arn:aws:iam::486234852809:role/datadog-cdk-constructs-github-actions
+          aws-region: us-east-1
+
+      - name: Configure AWS credentials for Serverless Sandbox
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: arn:aws:iam::425362996713:role/gha-datadog-cdk-integration-test
+          aws-region: us-east-1
+          role-chaining: true
+          role-skip-session-tagging: true
+
+      - name: Resolve account id
+        if: env.SKIP_LAMBDA_TESTS != 'true'
+        run: echo "CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
+
+      - name: Bootstrap CDK environment
+        if: env.SKIP_LAMBDA_TESTS != 'true'
+        run: npx cdk bootstrap "aws://${CDK_DEFAULT_ACCOUNT}/${AWS_REGION}"
+
+      - name: Run Lambda e2e suite
+        run: yarn test:e2e
+        env:
+          # Baked into the function at synth + used by the construct.
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          # Used by the telemetry checker to query spans/logs.
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}

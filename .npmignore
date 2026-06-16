@@ -4,6 +4,7 @@
 !NOTICE
 /scripts
 /integration_tests
+/e2e
 .prettierrc
 /.ncurc.cjs
 cdk.out/*
