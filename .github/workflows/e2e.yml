@@ -35,8 +35,8 @@ jobs:
       id-token: write
       contents: read
     env:
-      AWS_REGION: us-east-1
-      DD_SITE: datadoghq.com
+      AWS_REGION: ${{ vars.AWS_REGION_E2E || 'us-east-1' }}
+      DD_SITE: ${{ vars.DD_SITE_E2E || 'datadoghq.com' }}
       SKIP_LAMBDA_TESTS: ${{ vars.SKIP_LAMBDA_TESTS || 'false' }}
     steps:
       - name: Checkout
@@ -63,34 +63,25 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
-      # OIDC into the build-stable account, then chain into the serverless sandbox
-      # role used by the integration tests -- same identities, so no new IAM setup.
-      - name: Configure AWS credentials via OIDC (Build-Stable)
+      # Dedicated GitHub-OIDC role in the serverless sandbox account, scoped to deploy
+      # one-e2e-cdk-lambda-* via the CDK bootstrap roles. See serverless-ci/e2e/iam-infra.md.
+      - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
-          role-to-assume: arn:aws:iam::486234852809:role/datadog-cdk-constructs-github-actions
-          aws-region: us-east-1
-
-      - name: Configure AWS credentials for Serverless Sandbox
-        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
-        with:
-          role-to-assume: arn:aws:iam::425362996713:role/gha-datadog-cdk-integration-test
-          aws-region: us-east-1
-          role-chaining: true
-          role-skip-session-tagging: true
+          role-to-assume: ${{ vars.AWS_ROLE_ARN_E2E || 'arn:aws:iam::425362996713:role/gha-datadog-cdk-e2e' }}
+          aws-region: ${{ env.AWS_REGION }}
 
       # The account is already CDK-bootstrapped; deploy reads the bootstrap version
-      # from SSM, so no bootstrap step is needed (the integration-test role is not
-      # permitted to manage the CDKToolkit stack).
+      # from SSM, so no bootstrap step is needed.
       # No Datadog org keys -> nothing to instrument or query, so skip cleanly (green)
-      # rather than fail. The suite runs for real once DD_API_KEY/DD_APP_KEY are added.
+      # rather than fail. The suite runs for real once a maintainer adds the secrets.
       - name: Skip when Datadog secrets are absent
         env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DATADOG_API_KEY_E2E: ${{ secrets.DATADOG_API_KEY_E2E }}
         run: |
-          if [ -z "$DD_API_KEY" ]; then
+          if [ -z "$DATADOG_API_KEY_E2E" ]; then
             echo "SKIP_LAMBDA_TESTS=true" >> "$GITHUB_ENV"
-            echo "::warning::DD_API_KEY secret not configured; skipping the Lambda e2e suite."
+            echo "::warning::DATADOG_API_KEY_E2E secret not configured; skipping the Lambda e2e suite."
           fi
 
       - name: Resolve account id
@@ -100,8 +91,8 @@ jobs:
       - name: Run Lambda e2e suite
         run: yarn test:e2e
         env:
-          # Baked into the function at synth + used by the construct.
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          # Baked into the function at synth + used by the construct/extension.
+          DD_API_KEY: ${{ secrets.DATADOG_API_KEY_E2E }}
           # Used by the telemetry checker to query spans/logs.
-          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-          DATADOG_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY_E2E }}
+          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY_E2E }}
