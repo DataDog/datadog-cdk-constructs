@@ -59,10 +59,12 @@ changes) with `SKIP_LAMBDA_TESTS` as a kill switch. AWS access is via GitHub OID
 into the dedicated `gha-datadog-cdk-e2e` role in the serverless sandbox account
 (`arn:aws:iam::425362996713:role/gha-datadog-cdk-e2e`), scoped to deploy
 `one-e2e-cdk-lambda-*` through the CDK bootstrap roles. Config comes from repo
-variables (`AWS_ROLE_ARN_E2E`, `AWS_REGION_E2E`, `DD_SITE_E2E`); telemetry keys come
-from repo secrets `DATADOG_API_KEY_E2E` / `DATADOG_APP_KEY_E2E`. If those secrets are
-absent the suite self-skips green. The IAM resources are cataloged in
-`serverless-ci/e2e/iam-infra.md`.
+variables (`AWS_ROLE_ARN_E2E`, `AWS_REGION_E2E`, `DD_SITE_E2E`); telemetry keys are minted
+at runtime via [`DataDog/dd-sts-action`](https://github.com/DataDog/dd-sts-action) under the
+`datadog-cdk-constructs-e2e` policy (GitHub OIDC → short-lived Datadog API + App keys), so no
+static Datadog keys live in this repo. When the construct or suite changes the suite runs for
+real and the AWS OIDC / dd-sts steps must succeed -- an auth failure fails the job loudly. The
+IAM resources are cataloged in `serverless-ci/e2e/iam-infra.md`.
 
 ## Hygiene
 
