@@ -1,8 +1,9 @@
 name: e2e
 
 # End-to-end AWS Lambda instrumentation suite. Path-filtered so it only runs when
-# the construct or the suite changes, and gated by SKIP_LAMBDA_TESTS so forks (which
-# lack the OIDC/Datadog secrets) no-op cleanly. See e2e/README.md for the contract.
+# the construct or the suite changes, and restricted to the canonical repo so forks
+# (which lack OIDC) no-op. When it runs, the AWS OIDC / dd-sts steps must succeed --
+# an auth/federation failure fails the job loudly. See e2e/README.md for the contract.
 on:
   push:
     branches: [main]
@@ -62,18 +63,6 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --immutable
-
-      # No AWS OIDC federation -> nothing to deploy or instrument, so skip cleanly
-      # (green) rather than fail. The suite runs for real once a maintainer wires up
-      # federation by setting the AWS_ROLE_ARN_E2E repo variable.
-      - name: Skip when AWS federation is not configured
-        env:
-          AWS_ROLE_ARN_E2E: ${{ vars.AWS_ROLE_ARN_E2E }}
-        run: |
-          if [ -z "$AWS_ROLE_ARN_E2E" ]; then
-            echo "SKIP_LAMBDA_TESTS=true" >> "$GITHUB_ENV"
-            echo "::warning::AWS_ROLE_ARN_E2E variable not configured; skipping the Lambda e2e suite."
-          fi
 
       # Dedicated GitHub-OIDC role in the serverless sandbox account, scoped to deploy
       # one-e2e-cdk-lambda-* via the CDK bootstrap roles. See serverless-ci/e2e/iam-infra.md.
