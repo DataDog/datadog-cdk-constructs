@@ -99,7 +99,7 @@ describeOrSkip("cdk lambda e2e", () => {
       );
       expect(invoke.exitCode, invoke.stderr).toBe(0);
 
-      await checkTelemetryFlowing({ serviceName, env, version });
+      await checkTelemetryFlowing({ serviceName, env, version, runId });
     },
     TELEMETRY_TIMEOUT_MS,
   );
