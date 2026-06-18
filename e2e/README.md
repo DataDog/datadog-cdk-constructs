@@ -45,8 +45,14 @@ failure blames this construct's wiring, not an upstream layer/tracer change.
 
 ```bash
 # full lifecycle (real deploys + telemetry; ~10-15 min)
+# Datadog auth: dd-auth mints short-lived keys for the org -- no pasted keys.
+# It injects $DD_API_KEY and $DD_APP_KEY into the wrapped command only; DD_API_KEY
+# is baked into the function, and DATADOG_API_KEY/DATADOG_APP_KEY feed the checker.
 aws-vault exec sso-serverless-sandbox-account-admin -- \
-  DD_API_KEY=... DATADOG_API_KEY=... DATADOG_APP_KEY=... yarn test:e2e
+  dd-auth --domain app.datadoghq.com -- bash -c '
+    export DATADOG_API_KEY="$DD_API_KEY" DATADOG_APP_KEY="$DD_APP_KEY"
+    yarn test:e2e
+  '
 
 # skip (no-op) -- what forks/CI without secrets do
 SKIP_LAMBDA_TESTS=true yarn test:e2e
