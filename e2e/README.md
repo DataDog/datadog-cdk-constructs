@@ -8,8 +8,9 @@ end-state -- tearing the function down regardless of outcome.
 
 ## What it does
 
-The construct is the instrumentation mechanism, so APPLY and REMOVE are both
-`cdk deploy` of the same stack (`app/app.ts`); only `E2E_INSTRUMENT` differs:
+The construct is the instrumentation mechanism, so APPLY is `cdk deploy` of the
+stack (`app/app.ts`) with `E2E_INSTRUMENT=true`; REMOVE is `cdk destroy` of that
+same stack, leaving a clean (no-function) end-state:
 
 1. **Provision** -- deploy the workload uninstrumented (`E2E_INSTRUMENT=false`),
    uniquely named `one-e2e-cdk-lambda-<runid>` and freshness-tagged at creation.
@@ -21,9 +22,9 @@ The construct is the instrumentation mechanism, so APPLY and REMOVE are both
 3. **Trigger** -- `aws lambda invoke`, then poll Datadog spans + logs filtered by the
    run id and assert each carries the expected `service`/`env`/`version`/run id.
 4. **Re-APPLY** -- `cdk diff --fail`; assert no diff (idempotent).
-5. **REMOVE** -- deploy uninstrumented again; assert layers, all `DD_*` env vars, and
-   the `dd_cdk_construct` tag are gone (the hygiene freshness tag intentionally
-   survives so the sweeper can still reap the function).
+5. **REMOVE** -- `cdk destroy` the stack; assert the function is gone
+   (`get-function-configuration` returns `ResourceNotFoundException`), proving a clean
+   end-state.
 
 Pinned artifact versions live in `helpers/versions.ts`; bump them deliberately so a
 failure blames this construct's wiring, not an upstream layer/tracer change.

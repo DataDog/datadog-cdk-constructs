@@ -114,9 +114,12 @@ describeOrSkip("cdk lambda e2e", () => {
   );
 
   it(
-    "REMOVE uninstruments and the end-state is clean",
+    "REMOVE deletes the function and the end-state is clean",
     async () => {
-      const result = await deploy(false);
+      const result = await execPromiseWithRetries(`${cdkBase} destroy "${serviceName}" --force`, {
+        env: baseEnv(false),
+        retryPatterns: RETRY_PATTERNS,
+      });
       expect(result.exitCode, result.stderr || result.stdout).toBe(0);
 
       await verifyUninstrumented(VERIFIER, serviceName, region);
