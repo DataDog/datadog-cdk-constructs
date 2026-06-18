@@ -6,12 +6,12 @@
  * Copyright 2021 Datadog, Inc.
  */
 
-import crypto from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { execPromise, execPromiseWithRetries, execSync } from "./helpers/exec";
+import { ENV_NAME, ENV_VERSION, NAMING, RETRY_PATTERNS, VERIFIER } from "./helpers/e2e.config";
+import { execPromise, execPromiseWithRetries } from "./helpers/exec";
 import { verifyInstrumented, verifyUninstrumented } from "./helpers/lambda-verifier";
 import { checkTelemetryFlowing } from "./helpers/lambda-telemetry-checker";
-import { resourceName, freshnessTimestamp } from "./helpers/naming";
+import { freshnessTimestamp, namePrefix, newRunId } from "./helpers/naming";
 
 const DEPLOY_TIMEOUT_MS = 900_000;
 const TELEMETRY_TIMEOUT_MS = 600_000;
@@ -20,11 +20,11 @@ const describeOrSkip = process.env.SKIP_LAMBDA_TESTS === "true" ? describe.skip 
 
 describeOrSkip("cdk lambda e2e", () => {
   const region = process.env.AWS_REGION ?? "us-east-1";
-  const runId = crypto.randomBytes(4).toString("hex");
-  const serviceName = resourceName(runId);
+  const runId = newRunId();
+  const serviceName = namePrefix(NAMING, runId);
   const createdTs = freshnessTimestamp();
-  const env = process.env.E2E_ENV ?? "e2e";
-  const version = process.env.E2E_VERSION ?? "1.0.0";
+  const env = ENV_NAME;
+  const version = ENV_VERSION;
   const site = process.env.DD_SITE ?? "datadoghq.com";
 
   // The repo's TS 6 toolchain is incompatible with ts-node, so the CDK app is
@@ -49,13 +49,19 @@ describeOrSkip("cdk lambda e2e", () => {
   });
 
   const deploy = (instrument: boolean) =>
-    execPromiseWithRetries(`${cdkBase} deploy "${serviceName}" --require-approval never`, baseEnv(instrument));
+    execPromiseWithRetries(`${cdkBase} deploy "${serviceName}" --require-approval never`, {
+      env: baseEnv(instrument),
+      retryPatterns: RETRY_PATTERNS,
+    });
 
   beforeAll(async () => {
     // Bundle the CDK app (construct included from src) to a single CJS entrypoint.
-    execSync(
+    const bundle = await execPromise(
       `npx esbuild e2e/app/app.ts --bundle --platform=node --target=node22 --packages=external --outfile=${appBundle}`,
     );
+    if (bundle.exitCode !== 0) {
+      throw new Error(`Failed to bundle CDK app: ${bundle.stderr || bundle.stdout}`);
+    }
 
     // Provision the uninstrumented workload (unique name, freshness-tagged at creation).
     const result = await deploy(false);
@@ -67,7 +73,7 @@ describeOrSkip("cdk lambda e2e", () => {
   afterAll(async () => {
     // Always tear down, even on failure.
     try {
-      await execPromise(`${cdkBase} destroy "${serviceName}" --force`, baseEnv(false));
+      await execPromise(`${cdkBase} destroy "${serviceName}" --force`, { env: baseEnv(false) });
     } catch (error) {
       console.error("Failed to destroy workload stack:", error);
     }
@@ -79,7 +85,7 @@ describeOrSkip("cdk lambda e2e", () => {
       const result = await deploy(true);
       expect(result.exitCode, result.stderr || result.stdout).toBe(0);
 
-      verifyInstrumented(region, { serviceName, runId, env, version, site });
+      await verifyInstrumented(VERIFIER, serviceName, region);
     },
     DEPLOY_TIMEOUT_MS,
   );
@@ -89,10 +95,11 @@ describeOrSkip("cdk lambda e2e", () => {
     async () => {
       const invoke = await execPromiseWithRetries(
         `aws lambda invoke --function-name "${serviceName}" --region "${region}" --payload '{}' --cli-binary-format raw-in-base64-out /dev/null`,
+        { retryPatterns: RETRY_PATTERNS },
       );
       expect(invoke.exitCode, invoke.stderr).toBe(0);
 
-      await checkTelemetryFlowing({ serviceName, runId, env, version });
+      await checkTelemetryFlowing({ serviceName, env, version });
     },
     TELEMETRY_TIMEOUT_MS,
   );
@@ -100,7 +107,7 @@ describeOrSkip("cdk lambda e2e", () => {
   it(
     "re-APPLY is idempotent (no diff)",
     async () => {
-      const diff = await execPromise(`${cdkBase} diff "${serviceName}" --fail`, baseEnv(true));
+      const diff = await execPromise(`${cdkBase} diff "${serviceName}" --fail`, { env: baseEnv(true) });
       expect(diff.exitCode, `expected no diff on re-apply:\n${diff.stdout}\n${diff.stderr}`).toBe(0);
     },
     DEPLOY_TIMEOUT_MS,
@@ -112,7 +119,7 @@ describeOrSkip("cdk lambda e2e", () => {
       const result = await deploy(false);
       expect(result.exitCode, result.stderr || result.stdout).toBe(0);
 
-      verifyUninstrumented(region, serviceName);
+      await verifyUninstrumented(VERIFIER, serviceName, region);
     },
     DEPLOY_TIMEOUT_MS,
   );
