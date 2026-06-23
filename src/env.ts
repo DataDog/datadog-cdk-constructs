@@ -46,6 +46,9 @@ const URL = require("url").URL;
 // touching aws-cdk-lib's private Function.environment field. aws-cdk-lib has no public
 // read accessor for env vars — the WeakMap is the library's own bookkeeping only.
 //
+// WeakMap (vs Map) so Function objects can be garbage-collected when a stack goes out of
+// scope (e.g. between test cases) without this module holding a lingering reference.
+//
 // Note: env vars set on a Function via func.addEnvironment() outside of this library
 // are not tracked here and will be overridden if the library sets the same key.
 // Configure DD_* vars via DatadogLambdaProps, or call func.addEnvironment() after
