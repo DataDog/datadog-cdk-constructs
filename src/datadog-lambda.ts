@@ -30,6 +30,8 @@ import {
   DD_TAGS,
   siteList,
   invalidSiteError,
+  getTrackedEnv,
+  setTrackedEnv,
 } from "./index";
 import { DatadogAppSecMode, LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
@@ -191,12 +193,12 @@ export class DatadogLambda extends Construct {
 
     // If any lambdas have already been added, override the commit sha and url
     if (this.lambdas) {
-      this.lambdas.forEach((lambdaFunction: any) => {
-        const existingTags = lambdaFunction.environment.map.get(DD_TAGS);
-        if (existingTags === undefined) {
+      this.lambdas.forEach((lambdaFunction: LambdaFunction) => {
+        const existingTagValue = getTrackedEnv(lambdaFunction, DD_TAGS);
+        if (existingTagValue === undefined) {
           return;
         }
-        const tags = existingTags.value.split(",");
+        const tags = existingTagValue.split(",");
         if (gitCommitSha) {
           const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
           tags[index] = `git.commit.sha:${gitCommitSha}`;
@@ -207,7 +209,7 @@ export class DatadogLambda extends Construct {
           tags[index] = `git.repository_url:${gitRepoUrl}`;
         }
 
-        lambdaFunction.addEnvironment(DD_TAGS, tags.join(","));
+        setTrackedEnv(lambdaFunction, DD_TAGS, tags.join(","));
       });
     }
   }
