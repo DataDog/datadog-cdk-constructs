@@ -169,7 +169,7 @@ describe("applyEnvVariables", () => {
         region: "us-west-2",
       },
     });
-    // hello1 sets nothing; hello2 sets env vars before the construct — both should get constructor values
+    // hello1 sets nothing; hello2 sets env vars before the construct -- both should get constructor values
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
       runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),

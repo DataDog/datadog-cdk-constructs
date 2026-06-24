@@ -13,6 +13,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
+import { getTrackedEnv, setTrackedEnv } from "./env-tracker";
 import {
   applyLayers,
   redirectHandlers,
@@ -30,8 +31,6 @@ import {
   DD_TAGS,
   siteList,
   invalidSiteError,
-  getTrackedEnv,
-  setTrackedEnv,
 } from "./index";
 import { DatadogAppSecMode, LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
@@ -200,13 +199,11 @@ export class DatadogLambda extends Construct {
         }
         const tags = existingTagValue.split(",");
         if (gitCommitSha) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
-          tags[index] = `git.commit.sha:${gitCommitSha}`;
+          upsertTag(tags, "git.commit.sha", gitCommitSha);
         }
 
         if (gitRepoUrl) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.repository_url");
-          tags[index] = `git.repository_url:${gitRepoUrl}`;
+          upsertTag(tags, "git.repository_url", gitRepoUrl);
         }
 
         setTrackedEnv(lambdaFunction, DD_TAGS, tags.join(","));
@@ -305,6 +302,17 @@ function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]): lambda.Fu
 
 function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction {
   return fn.hasOwnProperty("lambdaFunction");
+}
+
+// Replaces the value of an existing `key:...` tag in place, or appends it if not present.
+function upsertTag(tags: string[], key: string, value: string): void {
+  const index = tags.findIndex((tag) => tag.split(":")[0] === key);
+  const entry = `${key}:${value}`;
+  if (index === -1) {
+    tags.push(entry);
+  } else {
+    tags[index] = entry;
+  }
 }
 
 export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
