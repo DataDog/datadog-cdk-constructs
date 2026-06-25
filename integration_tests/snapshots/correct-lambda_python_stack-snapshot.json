@@ -374,10 +374,10 @@
     },
     "Environment": {
      "Variables": {
+      "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
       "DD_FLUSH_TO_LOG": "false",
       "DD_SITE": "datadoghq.com",
       "DD_API_KEY": "1234",
-      "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
       "DD_TRACE_ENABLED": "true",
       "DD_SERVERLESS_APPSEC_ENABLED": "true",
       "DD_MERGE_XRAY_TRACES": "false",
