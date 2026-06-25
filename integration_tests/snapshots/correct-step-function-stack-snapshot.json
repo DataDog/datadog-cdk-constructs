@@ -250,6 +250,12 @@
     "Environment": {
      "Variables": {
       "DD_LAMBDA_HANDLER": "index.handler",
+      "DD_ENV": "dev",
+      "DD_SERVICE": "cdk-test-service",
+      "DD_VERSION": "1.0.0",
+      "DD_FLUSH_TO_LOG": "false",
+      "DD_SITE": "datadoghq.com",
+      "DD_API_KEY": "1234",
       "DD_TRACE_ENABLED": "true",
       "AWS_LAMBDA_EXEC_WRAPPER": "/opt/datadog_wrapper",
       "DD_SERVERLESS_APPSEC_ENABLED": "true",
@@ -259,12 +265,6 @@
       "DD_CAPTURE_LAMBDA_PAYLOAD": "false",
       "DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING": "",
       "DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING": "",
-      "DD_ENV": "dev",
-      "DD_SERVICE": "cdk-test-service",
-      "DD_VERSION": "1.0.0",
-      "DD_FLUSH_TO_LOG": "false",
-      "DD_SITE": "datadoghq.com",
-      "DD_API_KEY": "1234",
       "DD_TAGS": "git.commit.sha:XXXXXXXX,git.repository_url:github.com/DataDog/datadog-cdk-constructs"
      }
     },
