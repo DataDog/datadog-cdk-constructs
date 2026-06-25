@@ -182,6 +182,20 @@ export class DatadogLambda extends Construct {
     }
   }
 
+  /**
+   * Sets an environment variable on the given Lambda function and records it in the
+   * construct's internal tracker, so the construct treats it as a value it manages.
+   *
+   * Call this before `addLambdaFunctions()` to seed values the construct will respect.
+   * The main use case is setting `DD_TAGS` per function: when source code integration is
+   * enabled, the construct appends git metadata (`git.commit.sha`, `git.repository_url`)
+   * to the tracked `DD_TAGS` rather than overriding it.
+   */
+  public setEnvironment(lambdaFunction: LambdaFunction, key: string, value: string): void {
+    const [extractedLambdaFunction] = extractSingletonFunctions([lambdaFunction]);
+    setTrackedEnv(extractedLambdaFunction, key, value);
+  }
+
   public overrideGitMetadata(gitCommitSha: string, gitRepoUrl?: string): void {
     if (gitCommitSha) {
       this.gitCommitShaOverride = gitCommitSha;
