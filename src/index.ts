@@ -12,6 +12,7 @@ export * from "./layer";
 export * from "./redirect";
 export * from "./forwarder";
 export * from "./env";
+export * from "./env-aspect";
 export * from "./transport";
 export * from "./constants";
 export * from "./interfaces";
