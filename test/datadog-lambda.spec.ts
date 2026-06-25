@@ -1096,3 +1096,74 @@ describe("overrideGitMetadata", () => {
     });
   });
 });
+
+describe("setEnvironment", () => {
+  it("appends git metadata to a DD_TAGS value seeded before addLambdaFunctions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+    });
+    datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
+    datadogLambda.setEnvironment(hello, DD_TAGS, "team:serverless");
+    datadogLambda.addLambdaFunctions([hello], stack);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_TAGS]: Match.stringLikeRegexp("team:serverless"),
+        },
+      },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha"),
+        },
+      },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          [DD_TAGS]: Match.stringLikeRegexp("git\\.repository_url:fake-url"),
+        },
+      },
+    });
+  });
+
+  it("does not override a value seeded before addLambdaFunctions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: true,
+      flushMetricsToLogs: false,
+    });
+    datadogLambda.setEnvironment(hello, "DD_TRACE_ENABLED", "false");
+    datadogLambda.addLambdaFunctions([hello], stack);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          DD_TRACE_ENABLED: "false",
+        },
+      },
+    });
+  });
+});
