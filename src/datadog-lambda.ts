@@ -27,8 +27,8 @@ import {
   applyExtensionLayer,
   siteList,
   invalidSiteError,
-  DatadogLambdaEnvAspect,
 } from "./index";
+import { DatadogLambdaEnvAspect } from "./env-aspect";
 import { DatadogAppSecMode, LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
 

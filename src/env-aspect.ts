@@ -13,6 +13,7 @@ import log from "loglevel";
 import { applyEnvVariables, applySourceCodeIntegration, readResolvedFunctionEnv } from "./env";
 import { DatadogLambdaStrictProps } from "./interfaces";
 
+/** @internal */
 export interface DatadogLambdaEnvAspectOptions {
   /** The functions this aspect should instrument. Other functions in the tree are ignored. */
   readonly targets: Set<lambda.Function>;
@@ -35,6 +36,7 @@ export interface DatadogLambdaEnvAspectOptions {
  * in Datadog defaults the user has not already set. This preserves user-set values regardless
  * of ordering, with no dependency on aws-cdk-lib internals.
  */
+/** @internal */
 export class DatadogLambdaEnvAspect implements IAspect {
   constructor(private readonly options: DatadogLambdaEnvAspectOptions) {}
 
