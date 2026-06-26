@@ -250,7 +250,7 @@ function tryToFigureOutTracingLayerArn(
     // neither a version nor an ARN is provided.
     const version = layerVersion ?? defaultLayerVersion;
     if (version !== undefined) {
-      lambdaLayerArn = getLambdaLayerArn(region, version, runtime, isARM, accountId); // Node has no ARM layer
+      lambdaLayerArn = getLambdaLayerArn(region, version, runtime, isARM, accountId);
     }
   }
 
