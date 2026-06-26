@@ -21,8 +21,19 @@ import {
   LAYER_PREFIX,
   EXTENSION_LAYER_PREFIX,
 } from "./index";
+import { DatadogDefaultLayerVersions } from "./layer-versions";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
+
+// Default layer version to use for each tracing runtime, keyed by the
+// `paramRuntime` passed to `tryToFigureOutTracingLayerArn`.
+const DEFAULT_LAYER_VERSION_BY_RUNTIME: { [paramRuntime: string]: number } = {
+  python: DatadogDefaultLayerVersions.PYTHON,
+  node: DatadogDefaultLayerVersions.NODE,
+  java: DatadogDefaultLayerVersions.JAVA,
+  dotnet: DatadogDefaultLayerVersions.DOTNET,
+  ruby: DatadogDefaultLayerVersions.RUBY,
+};
 
 export function applyLayers(
   scope: Construct,
@@ -63,7 +74,6 @@ export function applyLayers(
         accountId,
         runtime,
         isARM,
-        lam,
         errors,
         "Python",
         "python",
@@ -83,7 +93,6 @@ export function applyLayers(
         accountId,
         runtime,
         false, // Node has no ARM layer
-        lam,
         errors,
         "Node.js",
         "node",
@@ -104,7 +113,6 @@ export function applyLayers(
         accountId,
         runtime,
         false, // Java has no ARM layer
-        lam,
         errors,
         "Java",
         "java",
@@ -125,7 +133,6 @@ export function applyLayers(
         accountId,
         runtime,
         isARM,
-        lam,
         errors,
         ".NET",
         "dotnet",
@@ -146,7 +153,6 @@ export function applyLayers(
         accountId,
         runtime,
         isARM,
-        lam,
         errors,
         "Ruby",
         "ruby",
@@ -224,7 +230,6 @@ function tryToFigureOutTracingLayerArn(
   accountId: string | undefined,
   runtime: string,
   isARM: boolean,
-  lam: lambda.Function,
   errors: string[],
   formalRuntime: string,
   paramRuntime: string,
@@ -233,18 +238,20 @@ function tryToFigureOutTracingLayerArn(
 ): string | undefined {
   let lambdaLayerArn: string | undefined;
 
-  if (layerVersion === undefined && layerArn === undefined) {
-    handleLayerError(errors, lam.node.id, formalRuntime, paramRuntime);
-    return undefined;
-  } else if (layerVersion !== undefined && layerArn !== undefined) {
+  if (layerVersion !== undefined && layerArn !== undefined) {
     const error = `Cannot have both ${paramRuntime}LayerVersion and ${paramRuntime}LayerArn defined. Please choose one or the other.`;
     log.error(error);
     errors.push(error);
     return undefined;
   } else if (layerArn !== undefined) {
     lambdaLayerArn = layerArn;
-  } else if (layerVersion !== undefined) {
-    lambdaLayerArn = getLambdaLayerArn(region, layerVersion, runtime, isARM, accountId); // Node has no ARM layer
+  } else {
+    // Fall back to the default layer version bundled with this construct when
+    // neither a version nor an ARN is provided.
+    const version = layerVersion ?? DEFAULT_LAYER_VERSION_BY_RUNTIME[paramRuntime];
+    if (version !== undefined) {
+      lambdaLayerArn = getLambdaLayerArn(region, version, runtime, isARM, accountId);
+    }
   }
 
   if (lambdaLayerArn === undefined) {
@@ -255,12 +262,6 @@ function tryToFigureOutTracingLayerArn(
   }
 
   return lambdaLayerArn;
-}
-
-function handleLayerError(errors: string[], nodeID: string, formalRuntime: string, paramRuntime: string): void {
-  const errorMessage = getMissingLayerVersionErrorMsg(nodeID, formalRuntime, paramRuntime);
-  log.error(errorMessage);
-  errors.push(errorMessage);
 }
 
 function addLayer(
@@ -314,17 +315,6 @@ export function getExtensionLayerArn(region: string, version: number, isArm: boo
     return `arn:${partition}:lambda:${region}:${accountId ?? DD_GOV_ACCOUNT_ID}:layer:${layerName}:${version}`;
   }
   return `arn:${partition}:lambda:${region}:${accountId ?? DD_ACCOUNT_ID}:layer:${layerName}:${version}`;
-}
-
-export function getMissingLayerVersionErrorMsg(
-  functionKey: string,
-  formalRuntime: string,
-  paramRuntime: string,
-): string {
-  return (
-    `Resource ${functionKey} has a ${formalRuntime} runtime, but no ${formalRuntime} Lambda Library version was provided. ` +
-    `Please add the '${paramRuntime}LayerVersion' parameter for the Datadog serverless macro.`
-  );
 }
 
 export function generateLambdaLayerId(lambdaFunctionArn: string, runtime: string): string {
