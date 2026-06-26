@@ -30,7 +30,7 @@
       "name": "check-formatting",
       "steps": [
         {
-          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts"
+          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/**/*.ts"
         }
       ]
     },
@@ -227,6 +227,14 @@
         },
         {
           "spawn": "eslint"
+        }
+      ]
+    },
+    "test:e2e": {
+      "name": "test:e2e",
+      "steps": [
+        {
+          "exec": "vitest run --config e2e/vitest.config.ts e2e"
         }
       ]
     },

@@ -47,6 +47,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "esbuild",
     "standard-version",
     "@aws-cdk/aws-lambda-python-alpha@^2.134.0-alpha.0",
+    // e2e suite (runs out of e2e/, separate from the jsii-packaged library)
+    "vitest@^3.2.4",
+    "@datadog/datadog-api-client@^1.34.1",
   ],
   gitignore: [
     "*.js",
@@ -63,6 +66,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     ".DS_Store",
     "integration_tests/cdk.out",
     "integration_tests/testlib",
+    "e2e/cdk.out",
+    "e2e/.build",
+    "e2e/.env.local",
     "bin",
     "obj",
     "__pycache__",
@@ -76,6 +82,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
       "!NOTICE",
       "/scripts",
       "/integration_tests",
+      "/e2e",
       ".prettierrc",
       "/.ncurc.cjs",
       "cdk.out/*",
@@ -272,7 +279,9 @@ npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
 // Replaces the removed `scripts` project option (dropped in projen 0.100/0.101).
 project.addTask("check-formatting", {
-  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts",
+  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/**/*.ts",
+  // Runs the AWS Lambda e2e lifecycle suite. Requires cloud auth + DD keys; see e2e/README.md.
+  "test:e2e": "vitest run --config e2e/vitest.config.ts e2e",
 });
 project.addTask("create-release", {
   exec: "bash scripts/create_release.sh",
