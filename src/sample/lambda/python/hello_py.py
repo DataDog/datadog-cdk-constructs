@@ -3,11 +3,8 @@
 # This product includes software developed at Datadog (https://www.datadoghq.com/).
 # Copyright 2026 Datadog, Inc.
 
-import json
-
 
 def handler(event, context):
-    # print('request: {}'.format(json.dumps(event)))
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "text/plain"},
