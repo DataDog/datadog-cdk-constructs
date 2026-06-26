@@ -20,10 +20,20 @@ import {
   DD_ACCOUNT_ID,
   LAYER_PREFIX,
   EXTENSION_LAYER_PREFIX,
-  DatadogDefaultLayerVersions,
 } from "./index";
+import { DatadogDefaultLayerVersions } from "./layer-versions";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
+
+// Default layer version to use for each tracing runtime, keyed by the
+// `paramRuntime` passed to `tryToFigureOutTracingLayerArn`.
+const DEFAULT_LAYER_VERSION_BY_RUNTIME: { [paramRuntime: string]: number } = {
+  python: DatadogDefaultLayerVersions.PYTHON,
+  node: DatadogDefaultLayerVersions.NODE,
+  java: DatadogDefaultLayerVersions.JAVA,
+  dotnet: DatadogDefaultLayerVersions.DOTNET,
+  ruby: DatadogDefaultLayerVersions.RUBY,
+};
 
 export function applyLayers(
   scope: Construct,
@@ -69,7 +79,6 @@ export function applyLayers(
         "python",
         pythonLayerVersion,
         pythonLayerArn,
-        DatadogDefaultLayerVersions.PYTHON,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -89,7 +98,6 @@ export function applyLayers(
         "node",
         nodeLayerVersion,
         nodeLayerArn,
-        DatadogDefaultLayerVersions.NODE,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -110,7 +118,6 @@ export function applyLayers(
         "java",
         javaLayerVersion,
         javaLayerArn,
-        DatadogDefaultLayerVersions.JAVA,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -131,7 +138,6 @@ export function applyLayers(
         "dotnet",
         dotnetLayerVersion,
         dotnetLayerArn,
-        DatadogDefaultLayerVersions.DOTNET,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -152,7 +158,6 @@ export function applyLayers(
         "ruby",
         rubyLayerVersion,
         rubyLayerArn,
-        DatadogDefaultLayerVersions.RUBY,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -230,7 +235,6 @@ function tryToFigureOutTracingLayerArn(
   paramRuntime: string,
   layerVersion?: number,
   layerArn?: string,
-  defaultLayerVersion?: number,
 ): string | undefined {
   let lambdaLayerArn: string | undefined;
 
@@ -244,7 +248,7 @@ function tryToFigureOutTracingLayerArn(
   } else {
     // Fall back to the default layer version bundled with this construct when
     // neither a version nor an ARN is provided.
-    const version = layerVersion ?? defaultLayerVersion;
+    const version = layerVersion ?? DEFAULT_LAYER_VERSION_BY_RUNTIME[paramRuntime];
     if (version !== undefined) {
       lambdaLayerArn = getLambdaLayerArn(region, version, runtime, isARM, accountId);
     }
