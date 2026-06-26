@@ -1,0 +1,129 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed
+ * under the Apache License Version 2.0.
+ *
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2021 Datadog, Inc.
+ */
+
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { ENV_NAME, ENV_VERSION, NAMING, RETRY_PATTERNS, VERIFIER } from "./helpers/e2e.config";
+import { execPromise, execPromiseWithRetries } from "./helpers/exec";
+import { verifyInstrumented, verifyUninstrumented } from "./helpers/lambda-verifier";
+import { checkTelemetryFlowing } from "./helpers/lambda-telemetry-checker";
+import { freshnessTimestamp, namePrefix, newRunId } from "./helpers/naming";
+
+const DEPLOY_TIMEOUT_MS = 900_000;
+const TELEMETRY_TIMEOUT_MS = 600_000;
+
+const describeOrSkip = process.env.SKIP_LAMBDA_TESTS === "true" ? describe.skip : describe;
+
+describeOrSkip("cdk lambda e2e", () => {
+  const region = process.env.AWS_REGION ?? "ap-northeast-3";
+  const runId = newRunId();
+  const serviceName = namePrefix(NAMING, runId);
+  const createdTs = freshnessTimestamp();
+  const env = ENV_NAME;
+  const version = ENV_VERSION;
+  const site = process.env.DD_SITE ?? "datadoghq.com";
+
+  // The repo's TS 6 toolchain is incompatible with ts-node, so the CDK app is
+  // bundled to a single CJS file with esbuild (node_modules left external) and run
+  // with plain node. The DatadogLambda construct is bundled from src -- the e2e
+  // exercises the construct code in this repo, not a published package.
+  const appBundle = "e2e/.build/app.cjs";
+  const cdkBase = `npx cdk --app "node ${appBundle}" --output e2e/cdk.out`;
+
+  // Both APPLY and REMOVE deploy this same stack; only E2E_INSTRUMENT differs.
+  const baseEnv = (instrument: boolean): Record<string, string | undefined> => ({
+    E2E_SERVICE_NAME: serviceName,
+    E2E_RUN_ID: runId,
+    E2E_CREATED_TS: createdTs,
+    E2E_INSTRUMENT: instrument ? "true" : "false",
+    E2E_ENV: env,
+    E2E_VERSION: version,
+    DD_SITE: site,
+    CDK_DEFAULT_REGION: region,
+    AWS_REGION: region,
+    TS_NODE_PROJECT: "e2e/tsconfig.json",
+  });
+
+  const deploy = (instrument: boolean) =>
+    execPromiseWithRetries(`${cdkBase} deploy "${serviceName}" --require-approval never`, {
+      env: baseEnv(instrument),
+      retryPatterns: RETRY_PATTERNS,
+    });
+
+  beforeAll(async () => {
+    // Bundle the CDK app (construct included from src) to a single CJS entrypoint.
+    const bundle = await execPromise(
+      `npx esbuild e2e/app/app.ts --bundle --platform=node --target=node22 --packages=external --outfile=${appBundle}`,
+    );
+    if (bundle.exitCode !== 0) {
+      throw new Error(`Failed to bundle CDK app: ${bundle.stderr || bundle.stdout}`);
+    }
+
+    // Provision the uninstrumented workload (unique name, freshness-tagged at creation).
+    const result = await deploy(false);
+    if (result.exitCode !== 0) {
+      throw new Error(`Failed to provision workload: ${result.stderr || result.stdout}`);
+    }
+  }, DEPLOY_TIMEOUT_MS);
+
+  afterAll(async () => {
+    // Always tear down, even on failure.
+    try {
+      await execPromise(`${cdkBase} destroy "${serviceName}" --force`, { env: baseEnv(false) });
+    } catch (error) {
+      console.error("Failed to destroy workload stack:", error);
+    }
+  }, DEPLOY_TIMEOUT_MS);
+
+  it(
+    "APPLY instruments the function and config is correct",
+    async () => {
+      const result = await deploy(true);
+      expect(result.exitCode, result.stderr || result.stdout).toBe(0);
+
+      await verifyInstrumented(VERIFIER, serviceName, region);
+    },
+    DEPLOY_TIMEOUT_MS,
+  );
+
+  it(
+    "telemetry flows to Datadog with the expected identity",
+    async () => {
+      const invoke = await execPromiseWithRetries(
+        `aws lambda invoke --function-name "${serviceName}" --region "${region}" --payload '{}' --cli-binary-format raw-in-base64-out /dev/null`,
+        { retryPatterns: RETRY_PATTERNS },
+      );
+      expect(invoke.exitCode, invoke.stderr).toBe(0);
+
+      await checkTelemetryFlowing({ serviceName, env, version, runId });
+    },
+    TELEMETRY_TIMEOUT_MS,
+  );
+
+  it(
+    "re-APPLY is idempotent (no diff)",
+    async () => {
+      const diff = await execPromise(`${cdkBase} diff "${serviceName}" --fail`, { env: baseEnv(true) });
+      expect(diff.exitCode, `expected no diff on re-apply:\n${diff.stdout}\n${diff.stderr}`).toBe(0);
+    },
+    DEPLOY_TIMEOUT_MS,
+  );
+
+  it(
+    "REMOVE deletes the function and the end-state is clean",
+    async () => {
+      const result = await execPromiseWithRetries(`${cdkBase} destroy "${serviceName}" --force`, {
+        env: baseEnv(false),
+        retryPatterns: RETRY_PATTERNS,
+      });
+      expect(result.exitCode, result.stderr || result.stdout).toBe(0);
+
+      await verifyUninstrumented(VERIFIER, serviceName, region);
+    },
+    DEPLOY_TIMEOUT_MS,
+  );
+});

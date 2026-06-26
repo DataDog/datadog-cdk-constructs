@@ -1,0 +1,7 @@
+# Synced from serverless-ci/e2e/shared by the e2e-shared sync. Generated code is not
+# hand-formatted here -- the source-of-truth style can't satisfy every consumer's
+# prettier config, so the formatter skips these files.
+e2e/helpers/exec.ts
+e2e/helpers/naming.ts
+e2e/helpers/lambda-telemetry-checker.ts
+e2e/helpers/lambda-verifier.ts

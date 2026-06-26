@@ -25,7 +25,7 @@
       "name": "check-formatting",
       "steps": [
         {
-          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts"
+          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/**/*.ts"
         }
       ]
     },
@@ -200,6 +200,14 @@
         }
       ]
     },
+    "test:e2e": {
+      "name": "test:e2e",
+      "steps": [
+        {
+          "exec": "vitest run --config e2e/vitest.config.ts e2e"
+        }
+      ]
+    },
     "test:watch": {
       "name": "test:watch",
       "description": "Run jest in watch mode",
@@ -224,7 +232,7 @@
           "exec": "yarn install --no-immutable"
         },
         {
-          "exec": "yarn up -R @aws-cdk/aws-lambda-python-alpha @stylistic/eslint-plugin @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser esbuild eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit jsii-diff jsii-pacmak jsii-rosetta jsii prettier projen standard-version ts-jest ts-node typescript loglevel aws-cdk-lib constructs"
+          "exec": "yarn up -R @aws-cdk/aws-lambda-python-alpha @datadog/datadog-api-client @stylistic/eslint-plugin @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser esbuild eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit jsii-diff jsii-pacmak jsii-rosetta jsii prettier projen standard-version ts-jest ts-node typescript vitest loglevel aws-cdk-lib constructs"
         },
         {
           "exec": "yarn projen"
