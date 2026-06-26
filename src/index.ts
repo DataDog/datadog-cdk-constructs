@@ -14,6 +14,7 @@ export * from "./forwarder";
 export * from "./env";
 export * from "./transport";
 export * from "./constants";
+export * from "./layer-versions";
 export * from "./interfaces";
 export * from "./redirect";
 export * from "./transport";

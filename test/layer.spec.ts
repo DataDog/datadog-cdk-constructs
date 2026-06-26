@@ -3,13 +3,13 @@ import { App, Stack } from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
-import log from "loglevel";
 import {
   DatadogLambda,
   applyLayers,
   DD_ACCOUNT_ID,
   DD_GOV_ACCOUNT_ID,
-  getMissingLayerVersionErrorMsg,
+  DD_DEFAULT_NODE_LAYER_VERSION,
+  DD_DEFAULT_PYTHON_LAYER_VERSION,
   generateLambdaLayerId,
   generateExtensionLayerId,
 } from "../src/index";
@@ -694,8 +694,7 @@ describe("applyLayers", () => {
     });
   });
 
-  it("returns errors if layer versions are not provided for corresponding Lambda runtimes", () => {
-    const logSpy = jest.spyOn(log, "error").mockImplementation(() => ({}));
+  it("applies the default bundled layer versions when none are provided", () => {
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -708,19 +707,24 @@ describe("applyLayers", () => {
       handler: "hello.handler",
     });
     const hello2 = new lambda.Function(stack, "PythonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
     const errors1 = applyLayers(stack, stack.region, hello1);
     const errors2 = applyLayers(stack, stack.region, hello2);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Layers: Match.absent(),
+      Layers: Match.arrayWith([
+        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${DD_DEFAULT_NODE_LAYER_VERSION}`,
+      ]),
     });
-    expect(errors1).toEqual([getMissingLayerVersionErrorMsg("NodeHandler", "Node.js", "node")]);
-    expect(errors2).toEqual([getMissingLayerVersionErrorMsg("PythonHandler", "Python", "python")]);
-    expect(logSpy).toHaveBeenCalledTimes(2);
-    logSpy.mockRestore();
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Layers: Match.arrayWith([
+        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Python38:${DD_DEFAULT_PYTHON_LAYER_VERSION}`,
+      ]),
+    });
+    expect(errors1).toEqual([]);
+    expect(errors2).toEqual([]);
   });
 });
 
