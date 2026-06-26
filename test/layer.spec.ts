@@ -8,8 +8,7 @@ import {
   applyLayers,
   DD_ACCOUNT_ID,
   DD_GOV_ACCOUNT_ID,
-  DD_DEFAULT_NODE_LAYER_VERSION,
-  DD_DEFAULT_PYTHON_LAYER_VERSION,
+  DatadogDefaultLayerVersions,
   generateLambdaLayerId,
   generateExtensionLayerId,
 } from "../src/index";
@@ -715,12 +714,12 @@ describe("applyLayers", () => {
     const errors2 = applyLayers(stack, stack.region, hello2);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.arrayWith([
-        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${DD_DEFAULT_NODE_LAYER_VERSION}`,
+        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Node18-x:${DatadogDefaultLayerVersions.NODE}`,
       ]),
     });
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.arrayWith([
-        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Python38:${DD_DEFAULT_PYTHON_LAYER_VERSION}`,
+        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Python38:${DatadogDefaultLayerVersions.PYTHON}`,
       ]),
     });
     expect(errors1).toEqual([]);

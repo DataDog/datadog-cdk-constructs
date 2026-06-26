@@ -20,11 +20,7 @@ import {
   DD_ACCOUNT_ID,
   LAYER_PREFIX,
   EXTENSION_LAYER_PREFIX,
-  DD_DEFAULT_PYTHON_LAYER_VERSION,
-  DD_DEFAULT_NODE_LAYER_VERSION,
-  DD_DEFAULT_JAVA_LAYER_VERSION,
-  DD_DEFAULT_DOTNET_LAYER_VERSION,
-  DD_DEFAULT_RUBY_LAYER_VERSION,
+  DatadogDefaultLayerVersions,
 } from "./index";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
@@ -73,7 +69,7 @@ export function applyLayers(
         "python",
         pythonLayerVersion,
         pythonLayerArn,
-        DD_DEFAULT_PYTHON_LAYER_VERSION,
+        DatadogDefaultLayerVersions.PYTHON,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -93,7 +89,7 @@ export function applyLayers(
         "node",
         nodeLayerVersion,
         nodeLayerArn,
-        DD_DEFAULT_NODE_LAYER_VERSION,
+        DatadogDefaultLayerVersions.NODE,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -114,7 +110,7 @@ export function applyLayers(
         "java",
         javaLayerVersion,
         javaLayerArn,
-        DD_DEFAULT_JAVA_LAYER_VERSION,
+        DatadogDefaultLayerVersions.JAVA,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -135,7 +131,7 @@ export function applyLayers(
         "dotnet",
         dotnetLayerVersion,
         dotnetLayerArn,
-        DD_DEFAULT_DOTNET_LAYER_VERSION,
+        DatadogDefaultLayerVersions.DOTNET,
       );
       if (lambdaLayerArn === undefined) {
         return errors;
@@ -156,7 +152,7 @@ export function applyLayers(
         "ruby",
         rubyLayerVersion,
         rubyLayerArn,
-        DD_DEFAULT_RUBY_LAYER_VERSION,
+        DatadogDefaultLayerVersions.RUBY,
       );
       if (lambdaLayerArn === undefined) {
         return errors;

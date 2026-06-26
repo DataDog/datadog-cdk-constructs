@@ -65,16 +65,13 @@ Add this to your CDK stack:
 #### TypeScript
 
 ```typescript
-import { DatadogLambda } from "datadog-cdk-constructs-v2";
+import { DatadogLambda, DatadogDefaultLayerVersions } from "datadog-cdk-constructs-v2";
 
 const datadogLambda = new DatadogLambda(this, "datadogLambda", {
-  nodeLayerVersion: <LAYER_VERSION>,
-  pythonLayerVersion: <LAYER_VERSION>,
-  javaLayerVersion: <LAYER_VERSION>,
-  dotnetLayerVersion: <LAYER_VERSION>,
-  rubyLayerVersion: <LAYER_VERSION>,
+  // Lambda library layer versions are optional; they default to the latest
+  // version bundled with this construct. Set them to pin a specific version.
   addLayers: <BOOLEAN>,
-  extensionLayerVersion: <EXTENSION_VERSION>,
+  extensionLayerVersion: DatadogDefaultLayerVersions.EXTENSION,
   forwarderArn: "<FORWARDER_ARN>",
   createForwarderPermissions: <BOOLEAN>,
   flushMetricsToLogs: <BOOLEAN>,
@@ -100,16 +97,13 @@ datadogLambda.addForwarderToNonLambdaLogGroups([<LOG_GROUPS>])
 #### Python
 
 ```python
-from datadog_cdk_constructs_v2 import DatadogLambda
+from datadog_cdk_constructs_v2 import DatadogLambda, DatadogDefaultLayerVersions
 datadog = DatadogLambda(
     self,
     "Datadog",
-    dotnet_layer_version=<LAYER_VERSION>,
-    node_layer_version=<LAYER_VERSION>,
-    python_layer_version=<LAYER_VERSION>,
-    ruby_layer_version=<LAYER_VERSION>,
-    java_layer_version=<LAYER_VERSION>,
-    extension_layer_version=<EXTENSION_VERSION>,
+    # Lambda library layer versions are optional; they default to the latest
+    # version bundled with this construct. Set them to pin a specific version.
+    extension_layer_version=DatadogDefaultLayerVersions.EXTENSION,
     add_layers=<BOOLEAN>,
     api_key=os.getenv("DD_API_KEY"),
     site=<SITE>,
@@ -128,11 +122,9 @@ datadogLambda := ddcdkconstruct.NewDatadogLambda(
     stack,
     jsii.String("Datadog"),
     &ddcdkconstruct.DatadogLambdaProps{
-        NodeLayerVersion:      jsii.Number(<LAYER_VERSION>),
-        PythonLayerVersion:    jsii.Number(<LAYER_VERSION>),
-        JavaLayerVersion:      jsii.Number(<LAYER_VERSION>),
-        DotnetLayerVersion:    jsii.Number(<LAYER_VERSION>),
-        RubyLayerVersion:      jsii.Number(<LAYER_VERSION>),
+        // Lambda library layer versions are optional; they default to the latest
+        // version bundled with this construct. Set them to pin a specific version.
+        ExtensionLayerVersion: ddcdkconstruct.DatadogDefaultLayerVersions_EXTENSION(),
         AddLayers:             jsii.Bool(<BOOLEAN>),
         Site:                  jsii.String(<SITE>),
         ApiKey:                jsii.String(os.Getenv("DD_API_KEY")),
@@ -147,16 +139,14 @@ datadogLambda.AddForwarderToNonLambdaLogGroups()
 ```java
 import com.datadoghq.cdkconstructs.DatadogLambda;
 import com.datadoghq.cdkconstructs.DatadogLambdaProps;
+import com.datadoghq.cdkconstructs.DatadogDefaultLayerVersions;
 
 DatadogLambda datadogLambda = new DatadogLambda(this, "Datadog",
     DatadogLambdaProps.builder()
-        .nodeLayerVersion(<LAYER_VERSION>)
-        .pythonLayerVersion(<LAYER_VERSION>)
-        .javaLayerVersion(<LAYER_VERSION>)
-        .dotnetLayerVersion(<LAYER_VERSION>)
-        .rubyLayerVersion(<LAYER_VERSION>)
+        // Lambda library layer versions are optional; they default to the latest
+        // version bundled with this construct. Set them to pin a specific version.
         .addLayers(<BOOLEAN>)
-        .extensionLayerVersion(<EXTENSION_VERSION>)
+        .extensionLayerVersion(DatadogDefaultLayerVersions.EXTENSION)
         .flushMetricsToLogs(<BOOLEAN>)
         .site("<SITE>")
         .apiKey(System.getenv("DD_API_KEY"))
@@ -244,13 +234,13 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 | npm package parameter        | PyPI package parameter          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `addLayers`                  | `add_layers`                    | Whether to add the runtime Lambda Layers or expect the user to bring their own. Defaults to `true`. When `false`, you must include the Datadog Lambda library in your functions' deployment packages.                                                                                                                                                                                                                                                                                                                                                                          |
-| `pythonLayerVersion`         | `python_layer_version`          | Version of the Python Lambda layer to install, such as `122`. Optional: defaults to the latest version bundled with this construct (`DD_DEFAULT_PYTHON_LAYER_VERSION`). Set this to pin a specific version. Find the latest version number [here][5]. **Warning**: This parameter and `pythonLayerArn` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                              |
+| `pythonLayerVersion`         | `python_layer_version`          | Version of the Python Lambda layer to install, such as `122`. Optional: defaults to the latest version bundled with this construct (`DatadogDefaultLayerVersions.PYTHON`). Set this to pin a specific version. Find the latest version number [here][5]. **Warning**: This parameter and `pythonLayerArn` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                              |
 | `pythonLayerArn`             | `python_layer_arn`              | The custom ARN of the Python Lambda layer to install. Required if you are deploying at least one Lambda function written in Python and `addLayers` is `true`. **Warning**: This parameter and `pythonLayerVersion` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                                                                                                                 |
-| `nodeLayerVersion`           | `node_layer_version`            | Version of the Node.js Lambda layer to install, such as `133`. Optional: defaults to the latest version bundled with this construct (`DD_DEFAULT_NODE_LAYER_VERSION`). Set this to pin a specific version. Find the latest version number from [here][6]. **Warning**: This parameter and `nodeLayerArn` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                            |
+| `nodeLayerVersion`           | `node_layer_version`            | Version of the Node.js Lambda layer to install, such as `133`. Optional: defaults to the latest version bundled with this construct (`DatadogDefaultLayerVersions.NODE`). Set this to pin a specific version. Find the latest version number from [here][6]. **Warning**: This parameter and `nodeLayerArn` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                            |
 | `nodeLayerArn`               | `node_layer_arn`                | The custom ARN of the Node.js Lambda layer to install. Required if you are deploying at least one Lambda function written in Node.js and `addLayers` is `true`. **Warning**: This parameter and `nodeLayerVersion` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                                                                                                                 |
-| `javaLayerVersion`           | `java_layer_version`            | Version of the Java layer to install, such as `25`. Optional: defaults to the latest version bundled with this construct (`DD_DEFAULT_JAVA_LAYER_VERSION`). Set this to pin a specific version. Find the latest version number [here][28]. **Note**: `extensionLayerVersion >= 25` and `javaLayerVersion >= 5` are required for the DatadogLambda construct to instrument your Java functions properly. **Warning**: This parameter and `javaLayerArn` are mutually exclusive. If used, only set one or the other.                |
+| `javaLayerVersion`           | `java_layer_version`            | Version of the Java layer to install, such as `25`. Optional: defaults to the latest version bundled with this construct (`DatadogDefaultLayerVersions.JAVA`). Set this to pin a specific version. Find the latest version number [here][28]. **Note**: `extensionLayerVersion >= 25` and `javaLayerVersion >= 5` are required for the DatadogLambda construct to instrument your Java functions properly. **Warning**: This parameter and `javaLayerArn` are mutually exclusive. If used, only set one or the other.                |
 | `javaLayerArn`               | `java_layer_arn`                | The custom ARN of the Java layer to install. Required if you are deploying at least one Lambda function written in Java and `addLayers` is `true`. **Warning**: This parameter and `javaLayerVersion` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                                                                                                                              |
-| `dotnetLayerVersion`         | `dotnet_layer_version`          | Version of the .NET layer to install, such as `23`. Optional: defaults to the latest version bundled with this construct (`DD_DEFAULT_DOTNET_LAYER_VERSION`). Set this to pin a specific version. Find the latest version number from [here][18]. **Warning**: This parameter and `dotnetLayerArn` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                                  |
+| `dotnetLayerVersion`         | `dotnet_layer_version`          | Version of the .NET layer to install, such as `23`. Optional: defaults to the latest version bundled with this construct (`DatadogDefaultLayerVersions.DOTNET`). Set this to pin a specific version. Find the latest version number from [here][18]. **Warning**: This parameter and `dotnetLayerArn` are mutually exclusive. If used, only set one or the other.                                                                                                                                                                                                                  |
 | `dotnetLayerArn`             | `dotnet_layer_arn`              | The custom ARN of the .NET layer to install. Required if you are deploying at least one Lambda function written in .NET and `addLayers` is `true`. **Warning**: This parameter and `dotnetLayerVersion` are mutually exclusive. If used, only set one or the other. .                                                                                                                                                                                                                                                                                                          |
 | `extensionLayerVersion`      | `extension_layer_version`       | Version of the Datadog Lambda Extension layer to install, such as `92`. When `extensionLayerVersion` is set, `apiKey` (or if encrypted, `apiKMSKey`, `apiKeySecret`, or `apiKeySecretArn`) needs to be set as well. When enabled, lambda function log groups will not be subscribed by the forwarder. Learn more about the Lambda extension [here][12] and get the [latest version][27]. **Warning**: This parameter and `extensionVersionArn` are mutually exclusive. Set only one or the other. **Note**: If this parameter is set, it adds a layer even if `addLayers` is set to `false`.                       |
 | `extensionLayerArn`          | `extension_layer_arn`           | The custom ARN of the Datadog Lambda Extension layer to install. When `extensionLayerArn` is set, `apiKey` (or if encrypted, `apiKMSKey`, `apiKeySecret`, or `apiKeySecretArn`) needs to be set as well. When enabled, lambda function log groups are not subscribed by the forwarder. Learn more about the Lambda extension [here][12] and get the [latest version][27]. **Warning**: This parameter and`extensionLayerVersion` are mutually exclusive. If used, only set one or the other. **Note**: If this parameter is set, it adds a layer even if `addLayers` is set to `false`.                         |
@@ -292,13 +282,16 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 
 #### Default layer versions
 
-When you don't pass a `*LayerVersion` or `*LayerArn`, the construct uses a default layer version bundled with the package. These defaults track the latest released Datadog Lambda layers at the time the construct version was published, and are exported so you can reference them directly:
+When you don't pass a `*LayerVersion` or `*LayerArn`, the construct uses a default layer version bundled with the package. These defaults track the latest released Datadog Lambda layers at the time the construct version was published, and are exposed via the `DatadogDefaultLayerVersions` class so you can reference them directly in any language:
 
 ```typescript
-import { DD_DEFAULT_NODE_LAYER_VERSION, DD_DEFAULT_EXTENSION_LAYER_VERSION } from "datadog-cdk-constructs-v2";
+import { DatadogDefaultLayerVersions } from "datadog-cdk-constructs-v2";
+
+DatadogDefaultLayerVersions.NODE;
+DatadogDefaultLayerVersions.EXTENSION;
 ```
 
-Available constants: `DD_DEFAULT_NODE_LAYER_VERSION`, `DD_DEFAULT_PYTHON_LAYER_VERSION`, `DD_DEFAULT_JAVA_LAYER_VERSION`, `DD_DEFAULT_DOTNET_LAYER_VERSION`, `DD_DEFAULT_RUBY_LAYER_VERSION`, and `DD_DEFAULT_EXTENSION_LAYER_VERSION`. To pin a specific version, set the corresponding `*LayerVersion` prop. The extension layer is still only applied when `extensionLayerVersion` or `extensionLayerArn` is set.
+Available members: `NODE`, `PYTHON`, `JAVA`, `DOTNET`, `RUBY`, and `EXTENSION`. To pin a specific version, set the corresponding `*LayerVersion` prop. The extension layer is still only applied when `extensionLayerVersion` or `extensionLayerArn` is set.
 
 #### Tracing
 
@@ -330,10 +323,6 @@ class RootStack extends cdk.Stack {
     new NestedStack(this, "NestedStack");
 
     const datadogLambda = new DatadogLambda(this, "DatadogLambda", {
-      nodeLayerVersion: <LAYER_VERSION>,
-      pythonLayerVersion: <LAYER_VERSION>,
-      javaLayerVersion: <LAYER_VERSION>,
-      dotnetLayerVersion: <LAYER-VERSION>,
       addLayers: <BOOLEAN>,
       forwarderArn: "<FORWARDER_ARN>",
       flushMetricsToLogs: <BOOLEAN>,
@@ -356,10 +345,6 @@ class NestedStack extends cdk.NestedStack {
     super(scope, id, props);
 
     const datadogLambda = new DatadogLambda(this, "DatadogLambda", {
-      nodeLayerVersion: <LAYER_VERSION>,
-      pythonLayerVersion: <LAYER_VERSION>,
-      javaLayerVersion: <LAYER_VERSION>,
-      dotnetLayerVersion: <LAYER-VERSION>,
       addLayers: <BOOLEAN>,
       forwarderArn: "<FORWARDER_ARN>",
       flushMetricsToLogs: <BOOLEAN>,
