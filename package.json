@@ -39,9 +39,9 @@
     "@types/node": "^22",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
-    "aws-cdk-lib": "2.253.1",
+    "aws-cdk-lib": "2.257.0",
     "constructs": "10.5.1",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "eslint": "^9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
@@ -50,10 +50,10 @@
     "jest": "^30.4.2",
     "jest-junit": "^17",
     "jsii": "~5.9.0",
-    "jsii-diff": "^1.134.0",
-    "jsii-pacmak": "^1.134.0",
+    "jsii-diff": "^1.136.0",
+    "jsii-pacmak": "^1.136.0",
     "jsii-rosetta": "~5.9.0",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.4",
     "projen": "^0.99.52",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.4.11",
@@ -61,7 +61,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.253.1",
+    "aws-cdk-lib": "^2.257.0",
     "constructs": "^10.5.1"
   },
   "dependencies": {
@@ -85,6 +85,7 @@
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",
+  "stability": "stable",
   "publishConfig": {
     "access": "public"
   },
@@ -134,7 +135,6 @@
     }
   },
   "types": "lib/index.d.ts",
-  "stability": "stable",
   "jsii": {
     "outdir": "dist",
     "targets": {
