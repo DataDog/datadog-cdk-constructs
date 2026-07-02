@@ -6,7 +6,7 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import { Tags, Stack } from "aws-cdk-lib";
+import { Tags, Stack, Aspects } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -18,19 +18,17 @@ import {
   redirectHandlers,
   addForwarder,
   addForwarderToLogGroups,
-  applyEnvVariables,
   TagKeys,
   DatadogLambdaStrictProps,
-  setGitEnvironmentVariables,
   setDDEnvVariables,
   DatadogLambdaDefaultProps,
   DatadogLambdaProps,
   Transport,
   applyExtensionLayer,
-  DD_TAGS,
   siteList,
   invalidSiteError,
 } from "./index";
+import { DatadogLambdaEnvAspect } from "./env-aspect";
 import { DatadogAppSecMode, LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
 
@@ -44,6 +42,10 @@ export class DatadogLambda extends Construct {
   gitRepoUrlOverride: string | undefined;
   lambdas: LambdaFunction[];
   contextGitShaOverrideKey: string = "datadog-lambda.git-commit-sha-override";
+  // Functions whose Datadog env vars are applied by the synth-time aspect, and the set of
+  // stacks the aspect has already been registered on (registered once per stack).
+  private readonly envAspectTargets: Set<lambda.Function> = new Set();
+  private readonly envAspectRegisteredStacks: Set<Stack> = new Set();
 
   constructor(scope: Construct, id: string, props: DatadogLambdaProps) {
     if (process.env.DD_CONSTRUCT_DEBUG_LOGS?.toLowerCase() === "true") {
@@ -168,47 +170,50 @@ export class DatadogLambda extends Construct {
       }
 
       addCdkConstructVersionTag(lambdaFunction);
-      applyEnvVariables(lambdaFunction, baseProps);
+      // Unconditional, prop-driven writes happen eagerly. The "set default only if unset" and
+      // source code integration logic both need to read existing env vars, so they run in a
+      // synth-time aspect (see registerEnvAspect) after all user addEnvironment calls.
       setDDEnvVariables(lambdaFunction, this.props);
       setTagsForFunction(lambdaFunction, this.props);
 
       this.transport.applyEnvVars(lambdaFunction);
 
-      if (baseProps.sourceCodeIntegration) {
-        this.addGitCommitMetadata([lambdaFunction]);
-      }
+      this.registerEnvAspect(lambdaFunction, baseProps);
       this.lambdas.push(lambdaFunction);
     }
   }
 
+  // Adds a function to the synth-time env aspect, registering the aspect on the function's stack
+  // the first time that stack is seen.
+  private registerEnvAspect(lambdaFunction: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
+    this.envAspectTargets.add(lambdaFunction);
+
+    const stack = Stack.of(lambdaFunction);
+    if (this.envAspectRegisteredStacks.has(stack)) {
+      return;
+    }
+    this.envAspectRegisteredStacks.add(stack);
+
+    Aspects.of(stack).add(
+      new DatadogLambdaEnvAspect({
+        targets: this.envAspectTargets,
+        baseProps,
+        sourceCodeIntegration: baseProps.sourceCodeIntegration ?? true,
+        getGitCommitShaOverride: () => this.gitCommitShaOverride,
+        getGitRepoUrlOverride: () => this.gitRepoUrlOverride,
+      }),
+    );
+  }
+
   public overrideGitMetadata(gitCommitSha: string, gitRepoUrl?: string): void {
+    // Only record the overrides. The synth-time aspect reads these (via getter closures) when it
+    // builds the DD_TAGS source code integration value, so overrides set before or after
+    // addLambdaFunctions both take effect -- no need to rewrite already-added functions here.
     if (gitCommitSha) {
       this.gitCommitShaOverride = gitCommitSha;
     }
     if (gitRepoUrl) {
       this.gitRepoUrlOverride = gitRepoUrl;
-    }
-
-    // If any lambdas have already been added, override the commit sha and url
-    if (this.lambdas) {
-      this.lambdas.forEach((lambdaFunction: any) => {
-        const existingTags = lambdaFunction.environment.map.get(DD_TAGS);
-        if (existingTags === undefined) {
-          return;
-        }
-        const tags = existingTags.value.split(",");
-        if (gitCommitSha) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
-          tags[index] = `git.commit.sha:${gitCommitSha}`;
-        }
-
-        if (gitRepoUrl) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.repository_url");
-          tags[index] = `git.repository_url:${gitRepoUrl}`;
-        }
-
-        lambdaFunction.addEnvironment(DD_TAGS, tags.join(","));
-      });
     }
   }
 
@@ -222,8 +227,11 @@ export class DatadogLambda extends Construct {
     // @ts-ignore
     gitRepoUrl?: string,
   ): void {
+    // Ensure the given functions are instrumented by the synth-time aspect, which applies source
+    // code integration tags using the recorded git overrides.
+    const baseProps = handleSettingPropDefaults(this.props);
     const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
-    setGitEnvironmentVariables(extractedLambdaFunctions, this.gitCommitShaOverride, this.gitRepoUrlOverride);
+    extractedLambdaFunctions.forEach((lambdaFunction) => this.registerEnvAspect(lambdaFunction, baseProps));
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {

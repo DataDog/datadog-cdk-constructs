@@ -1,5 +1,5 @@
 import { App, Fn, Stack, Token } from "aws-cdk-lib";
-import { Template } from "aws-cdk-lib/assertions";
+import { Match, Template } from "aws-cdk-lib/assertions";
 import { Key } from "aws-cdk-lib/aws-kms";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
@@ -854,12 +854,12 @@ describe("overrideGitMetadata", () => {
     });
     datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
     datadogLambda.addLambdaFunctions([hello], stack);
-    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-      expect.arrayContaining(["git.commit.sha:fake-sha"]),
-    );
-    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-      expect.arrayContaining(["git.repository_url:fake-url"]),
-    );
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha") } },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.repository_url:fake-url") } },
+    });
   });
 
   it("overrides existing lambda functions", () => {
@@ -880,12 +880,12 @@ describe("overrideGitMetadata", () => {
     });
     datadogLambda.addLambdaFunctions([hello], stack);
     datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
-    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-      expect.arrayContaining(["git.commit.sha:fake-sha"]),
-    );
-    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-      expect.arrayContaining(["git.repository_url:fake-url"]),
-    );
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha") } },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.repository_url:fake-url") } },
+    });
   });
   it("overrides both existing and new lambda functions", () => {
     const app = new App();
@@ -912,13 +912,12 @@ describe("overrideGitMetadata", () => {
     datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
-    [hello, goodbye].forEach((f) => {
-      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-        expect.arrayContaining(["git.commit.sha:fake-sha"]),
-      );
-      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-        expect.arrayContaining(["git.repository_url:fake-url"]),
-      );
+    Template.fromStack(stack).resourceCountIs("AWS::Lambda::Function", 2);
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha") } },
+    });
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.repository_url:fake-url") } },
     });
   });
 
@@ -948,11 +947,12 @@ describe("overrideGitMetadata", () => {
     datadogLambda.overrideGitMetadata("fake-sha");
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
-    [hello, goodbye].forEach((f) => {
-      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-        expect.arrayContaining(["git.commit.sha:fake-sha"]),
-      );
-      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(expect.arrayContaining(["testVar:xyz"]));
+    Template.fromStack(stack).resourceCountIs("AWS::Lambda::Function", 2);
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha") } },
+    });
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("testVar:xyz") } },
     });
   });
 
@@ -981,10 +981,12 @@ describe("overrideGitMetadata", () => {
     datadogLambda.overrideGitMetadata("fake-sha");
     datadogLambda.addLambdaFunctions([goodbye], stack);
 
-    [hello, goodbye].forEach((f) => {
-      expect((<any>f).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-        expect.arrayContaining([expect.stringContaining("git.commit.sha:fake-sha"), expect.stringMatching(REPO_REGEX)]),
-      );
+    Template.fromStack(stack).resourceCountIs("AWS::Lambda::Function", 2);
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha") } },
+    });
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp(REPO_REGEX.source) } },
     });
   });
 
@@ -1006,15 +1008,12 @@ describe("overrideGitMetadata", () => {
     });
     datadogLambda.addLambdaFunctions([hello], stack);
 
-    expect(
-      (<any>hello).environment.map
-        .get(DD_TAGS)
-        .value.split(",")
-        .some((item: string) => item.includes("git.commit.sha")),
-    ).toEqual(true);
-    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-      expect.arrayContaining([expect.stringMatching(REPO_REGEX)]),
-    );
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:") } },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp(REPO_REGEX.source) } },
+    });
   });
 
   it("overrides using context", () => {
@@ -1039,8 +1038,8 @@ describe("overrideGitMetadata", () => {
     });
 
     datadogLambda.addLambdaFunctions([hello], stack);
-    expect((<any>hello).environment.map.get(DD_TAGS).value.split(",")).toEqual(
-      expect.arrayContaining(["git.commit.sha:fake-sha"]),
-    );
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: { Variables: { [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha") } },
+    });
   });
 });
