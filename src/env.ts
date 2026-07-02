@@ -6,10 +6,10 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./constants";
-import { DatadogLambdaProps, DatadogLambdaStrictProps } from "./interfaces";
+import { setTrackedEnv, getTrackedEnv, hasTrackedEnv } from "./env-tracker";
+import { DatadogLambdaProps, DatadogLambdaStrictProps, LambdaFunction } from "./interfaces";
 
 export const AWS_LAMBDA_EXEC_WRAPPER_KEY = "AWS_LAMBDA_EXEC_WRAPPER";
 export const AWS_LAMBDA_EXEC_WRAPPER_VAL = "/opt/datadog_wrapper";
@@ -44,7 +44,7 @@ const execSync = require("child_process").execSync;
 const URL = require("url").URL;
 
 export function setGitEnvironmentVariables(
-  lambdas: any[],
+  lambdas: LambdaFunction[],
   gitCommitShaOverride?: string | undefined,
   gitRepoUrlOverride?: string | undefined,
 ): void {
@@ -61,12 +61,11 @@ export function setGitEnvironmentVariables(
 
   if (hash == "" || gitRepoUrl == "") return;
 
-  // We're using an any type here because AWS does not expose the `environment` field in their type
+  const tagsValue = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
   lambdas.forEach((lam) => {
-    const tagsValue = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
-    const existingTagValue = lam.environment.map.get(DD_TAGS)?.value;
+    const existingTagValue = getTrackedEnv(lam, DD_TAGS);
     const finalTagValue = existingTagValue ? `${existingTagValue},${tagsValue}` : tagsValue;
-    lam.addEnvironment(DD_TAGS, finalTagValue);
+    setTrackedEnv(lam, DD_TAGS, finalTagValue);
   });
 }
 
@@ -117,17 +116,16 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
   }
 }
 
-export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
+export function applyEnvVariables(lam: LambdaFunction, baseProps: DatadogLambdaStrictProps): void {
   log.debug(`Setting environment variables...`);
-  const lam_with_env_vars: any = lam; //cast to any to access the private environment fields like in setGitEnvironmentVariables
-  const setEnvIfUndefined = (envVar: string, value: string | boolean) => {
-    if (lam_with_env_vars.environment.map.get(envVar) === undefined) {
-      lam.addEnvironment(envVar, value.toString().toLowerCase());
+
+  const setEnvIfUnset = (envVar: string, value: string | boolean) => {
+    if (!hasTrackedEnv(lam, envVar)) {
+      setTrackedEnv(lam, envVar, value.toString().toLowerCase());
     }
   };
 
-  //for each env variable, only set to default if it is NOT already set by user
-  setEnvIfUndefined(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing);
+  setEnvIfUnset(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing);
 
   const runtimeType = runtimeLookup[lam.runtime.name];
 
@@ -144,75 +142,74 @@ export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambda
       baseProps.pythonLayerVersion >= 114) ||
     baseProps.datadogAppSecMode === "tracer"
   ) {
-    setEnvIfUndefined(ENABLE_DD_APPSEC_ENV_VAR, "true");
+    setEnvIfUnset(ENABLE_DD_APPSEC_ENV_VAR, "true");
   } else if (baseProps.datadogAppSecMode === "on" || baseProps.datadogAppSecMode === "extension") {
-    setEnvIfUndefined(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
-    setEnvIfUndefined(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "true");
+    setEnvIfUnset(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
+    setEnvIfUnset(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "true");
   }
 
-  setEnvIfUndefined(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces);
+  setEnvIfUnset(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, baseProps.enableMergeXrayTraces);
 
   if (baseProps.extensionLayerVersion || baseProps.extensionLayerArn) {
-    setEnvIfUndefined(INJECT_LOG_CONTEXT_ENV_VAR, "false");
+    setEnvIfUnset(INJECT_LOG_CONTEXT_ENV_VAR, "false");
   } else {
-    setEnvIfUndefined(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext);
+    setEnvIfUnset(INJECT_LOG_CONTEXT_ENV_VAR, baseProps.injectLogContext);
   }
 
-  setEnvIfUndefined(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs);
-  setEnvIfUndefined(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload);
+  setEnvIfUnset(ENABLE_DD_LOGS_ENV_VAR, baseProps.enableDatadogLogs);
+  setEnvIfUnset(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, baseProps.captureLambdaPayload);
 
-  //Cloud Payload Tagging - set to "all" when enabled, empty string when disabled
   const CLOUD_PAYLOAD_TAGGING_VALUE = baseProps.captureCloudServicePayload ? "all" : "";
-  setEnvIfUndefined(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
-  setEnvIfUndefined(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
+  setEnvIfUnset(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
+  setEnvIfUnset(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, CLOUD_PAYLOAD_TAGGING_VALUE);
 
   if (baseProps.logLevel) {
-    setEnvIfUndefined(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
+    setEnvIfUnset(LOG_LEVEL_ENV_VAR, baseProps.logLevel);
   }
 }
 
-export function setDDEnvVariables(lam: lambda.Function, props: DatadogLambdaProps): void {
+export function setDDEnvVariables(lam: LambdaFunction, props: DatadogLambdaProps): void {
   if (props.env) {
-    lam.addEnvironment(DD_ENV_ENV_VAR, props.env);
+    setTrackedEnv(lam, DD_ENV_ENV_VAR, props.env);
   }
   if (props.service) {
-    lam.addEnvironment(DD_SERVICE_ENV_VAR, props.service);
+    setTrackedEnv(lam, DD_SERVICE_ENV_VAR, props.service);
   }
   if (props.version) {
-    lam.addEnvironment(DD_VERSION_ENV_VAR, props.version);
+    setTrackedEnv(lam, DD_VERSION_ENV_VAR, props.version);
   }
   if (props.tags) {
-    lam.addEnvironment(DD_TAGS, props.tags);
+    setTrackedEnv(lam, DD_TAGS, props.tags);
   }
   if (props.enableColdStartTracing !== undefined) {
-    lam.addEnvironment(DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());
+    setTrackedEnv(lam, DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());
   }
   if (props.minColdStartTraceDuration !== undefined) {
-    lam.addEnvironment(DD_MIN_COLD_START_DURATION, props.minColdStartTraceDuration.toString().toLowerCase());
+    setTrackedEnv(lam, DD_MIN_COLD_START_DURATION, props.minColdStartTraceDuration.toString().toLowerCase());
   }
   if (props.coldStartTraceSkipLibs !== undefined) {
-    lam.addEnvironment(DD_COLD_START_TRACE_SKIP_LIB, props.coldStartTraceSkipLibs);
+    setTrackedEnv(lam, DD_COLD_START_TRACE_SKIP_LIB, props.coldStartTraceSkipLibs);
   }
   if (props.enableProfiling !== undefined) {
-    lam.addEnvironment(DD_PROFILING_ENABLED, props.enableProfiling.toString().toLowerCase());
+    setTrackedEnv(lam, DD_PROFILING_ENABLED, props.enableProfiling.toString().toLowerCase());
   }
   if (props.encodeAuthorizerContext !== undefined) {
-    lam.addEnvironment(DD_ENCODE_AUTHORIZER_CONTEXT, props.encodeAuthorizerContext.toString().toLowerCase());
+    setTrackedEnv(lam, DD_ENCODE_AUTHORIZER_CONTEXT, props.encodeAuthorizerContext.toString().toLowerCase());
   }
   if (props.decodeAuthorizerContext !== undefined) {
-    lam.addEnvironment(DD_DECODE_AUTHORIZER_CONTEXT, props.decodeAuthorizerContext.toString().toLowerCase());
+    setTrackedEnv(lam, DD_DECODE_AUTHORIZER_CONTEXT, props.decodeAuthorizerContext.toString().toLowerCase());
   }
   if (props.apmFlushDeadline !== undefined) {
-    lam.addEnvironment(DD_APM_FLUSH_DEADLINE_MILLISECONDS, props.apmFlushDeadline.toString().toLowerCase());
+    setTrackedEnv(lam, DD_APM_FLUSH_DEADLINE_MILLISECONDS, props.apmFlushDeadline.toString().toLowerCase());
   }
 
   if (props.llmObsEnabled !== undefined) {
-    lam.addEnvironment(DD_LLMOBS_ENABLED, props.llmObsEnabled.toString().toLowerCase());
+    setTrackedEnv(lam, DD_LLMOBS_ENABLED, props.llmObsEnabled.toString().toLowerCase());
   }
   if (props.llmObsMlApp !== undefined) {
-    lam.addEnvironment(DD_LLMOBS_ML_APP, props.llmObsMlApp);
+    setTrackedEnv(lam, DD_LLMOBS_ML_APP, props.llmObsMlApp);
   }
   if (props.llmObsAgentlessEnabled !== undefined) {
-    lam.addEnvironment(DD_LLMOBS_AGENTLESS_ENABLED, props.llmObsAgentlessEnabled.toString().toLowerCase());
+    setTrackedEnv(lam, DD_LLMOBS_AGENTLESS_ENABLED, props.llmObsAgentlessEnabled.toString().toLowerCase());
   }
 }
