@@ -30,6 +30,11 @@
       "type": "build"
     },
     {
+      "name": "commit-and-tag-version",
+      "version": "^12",
+      "type": "build"
+    },
+    {
       "name": "esbuild",
       "type": "build"
     },
@@ -111,7 +116,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.257.0",
+      "version": "^2.258.0",
       "type": "peer"
     },
     {
