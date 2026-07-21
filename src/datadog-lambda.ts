@@ -13,6 +13,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
+import { getTrackedEnv, setTrackedEnv } from "./env-tracker";
 import {
   applyLayers,
   redirectHandlers,
@@ -181,6 +182,20 @@ export class DatadogLambda extends Construct {
     }
   }
 
+  /**
+   * Sets an environment variable on the given Lambda function and records it in the
+   * construct's internal tracker, so the construct treats it as a value it manages.
+   *
+   * Call this before `addLambdaFunctions()` to seed values the construct will respect.
+   * The main use case is setting `DD_TAGS` per function: when source code integration is
+   * enabled, the construct appends git metadata (`git.commit.sha`, `git.repository_url`)
+   * to the tracked `DD_TAGS` rather than overriding it.
+   */
+  public setEnvironment(lambdaFunction: LambdaFunction, key: string, value: string): void {
+    const [extractedLambdaFunction] = extractSingletonFunctions([lambdaFunction]);
+    setTrackedEnv(extractedLambdaFunction, key, value);
+  }
+
   public overrideGitMetadata(gitCommitSha: string, gitRepoUrl?: string): void {
     if (gitCommitSha) {
       this.gitCommitShaOverride = gitCommitSha;
@@ -191,23 +206,21 @@ export class DatadogLambda extends Construct {
 
     // If any lambdas have already been added, override the commit sha and url
     if (this.lambdas) {
-      this.lambdas.forEach((lambdaFunction: any) => {
-        const existingTags = lambdaFunction.environment.map.get(DD_TAGS);
-        if (existingTags === undefined) {
+      this.lambdas.forEach((lambdaFunction: LambdaFunction) => {
+        const existingTagValue = getTrackedEnv(lambdaFunction, DD_TAGS);
+        if (existingTagValue === undefined) {
           return;
         }
-        const tags = existingTags.value.split(",");
+        const tags = existingTagValue.split(",");
         if (gitCommitSha) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
-          tags[index] = `git.commit.sha:${gitCommitSha}`;
+          upsertTag(tags, "git.commit.sha", gitCommitSha);
         }
 
         if (gitRepoUrl) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.repository_url");
-          tags[index] = `git.repository_url:${gitRepoUrl}`;
+          upsertTag(tags, "git.repository_url", gitRepoUrl);
         }
 
-        lambdaFunction.addEnvironment(DD_TAGS, tags.join(","));
+        setTrackedEnv(lambdaFunction, DD_TAGS, tags.join(","));
       });
     }
   }
@@ -303,6 +316,17 @@ function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]): lambda.Fu
 
 function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction {
   return fn.hasOwnProperty("lambdaFunction");
+}
+
+// Replaces the value of an existing `key:...` tag in place, or appends it if not present.
+function upsertTag(tags: string[], key: string, value: string): void {
+  const index = tags.findIndex((tag) => tag.split(":")[0] === key);
+  const entry = `${key}:${value}`;
+  if (index === -1) {
+    tags.push(entry);
+  } else {
+    tags[index] = entry;
+  }
 }
 
 export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = false): void {

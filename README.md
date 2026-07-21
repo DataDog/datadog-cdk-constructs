@@ -402,6 +402,10 @@ When `addLambdaFunctions` is called, the Datadog CDK construct grants your Lambd
 
 The DatadogLambda construct takes in a list of lambda functions and installs the Datadog Lambda Library by attaching the Lambda Layers for [.NET][19], [Java][15], [Node.js][2], and [Python][1] to your functions. It redirects to a replacement handler that initializes the Lambda Library without any required code changes. Additional configurations added to the Datadog CDK construct will also translate into their respective environment variables under each lambda function (if applicable / required).
 
+**Configuring `DD_*` environment variables:** Set Datadog environment variables through `DatadogLambdaProps` (e.g. `enableDatadogTracing`, `logLevel`, `tags`). If you need to set a `DD_*` variable directly on a function, call `func.addEnvironment()` **after** `addLambdaFunctions()` -- values set before will be overridden by the construct.
+
+To set a value the construct should respect (rather than override), use `datadogLambda.setEnvironment(func, key, value)` **before** `addLambdaFunctions()`. This is useful for setting `DD_TAGS` per function: when source code integration is enabled, the construct appends git metadata (`git.commit.sha`, `git.repository_url`) to the value you set instead of overriding it.
+
 While Lambda function based log groups are handled by the `addLambdaFunctions` method automatically, the construct has an additional function `addForwarderToNonLambdaLogGroups` which subscribes the forwarder to any additional log groups of your choosing.
 
 ## Step Functions
