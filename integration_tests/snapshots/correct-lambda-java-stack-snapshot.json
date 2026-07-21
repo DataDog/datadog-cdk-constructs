@@ -44,6 +44,9 @@
     "Environment": {
      "Variables": {
       "DD_LAMBDA_HANDLER": "hello.handler",
+      "DD_FLUSH_TO_LOG": "false",
+      "DD_SITE": "datadoghq.com",
+      "DD_API_KEY": "1234",
       "DD_TRACE_ENABLED": "true",
       "DD_MERGE_XRAY_TRACES": "true",
       "DD_LOGS_INJECTION": "false",
@@ -52,9 +55,6 @@
       "DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING": "",
       "DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING": "",
       "DD_LOG_LEVEL": "debug",
-      "DD_FLUSH_TO_LOG": "false",
-      "DD_SITE": "datadoghq.com",
-      "DD_API_KEY": "1234",
       "DD_TAGS": "git.commit.sha:XXXXXXXX,git.repository_url:github.com/DataDog/datadog-cdk-constructs"
      }
     },

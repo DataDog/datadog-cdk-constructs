@@ -6,6 +6,7 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
+import { Stack } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./constants";
@@ -43,12 +44,28 @@ const execSync = require("child_process").execSync;
 
 const URL = require("url").URL;
 
-export function setGitEnvironmentVariables(
-  lambdas: any[],
+/**
+ * Reads a Lambda function's currently-configured environment variables through the public
+ * token-resolution API instead of reaching into aws-cdk-lib's private `Function.environment`
+ * field. Returns a plain `{ KEY: value }` map (empty if no env vars are set).
+ *
+ * Resolving the L1 `CfnFunction.environment` is only meaningful once all `addEnvironment`
+ * calls have run -- i.e. at synth time, from inside a CDK Aspect (see DatadogLambdaEnvAspect).
+ */
+export function readResolvedFunctionEnv(lam: lambda.Function): Record<string, string> {
+  const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
+  const resolved = Stack.of(lam).resolve(cfnFunction.environment) as { variables?: Record<string, string> } | undefined;
+  return resolved?.variables ?? {};
+}
+
+/**
+ * Computes the source code integration `DD_TAGS` value (`git.commit.sha:...,git.repository_url:...`)
+ * from local git data, applying any overrides. Returns undefined when git data is unavailable.
+ */
+export function getSourceCodeIntegrationTags(
   gitCommitShaOverride?: string | undefined,
   gitRepoUrlOverride?: string | undefined,
-): void {
-  log.debug("Adding source code integration...");
+): string | undefined {
   let { hash, gitRepoUrl } = getGitData();
   if (gitCommitShaOverride) {
     log.debug(`Using git SHA override.  Will be ${gitCommitShaOverride} instead of ${hash}`);
@@ -59,15 +76,28 @@ export function setGitEnvironmentVariables(
     gitRepoUrl = gitRepoUrlOverride;
   }
 
-  if (hash == "" || gitRepoUrl == "") return;
+  if (hash == "" || gitRepoUrl == "") return undefined;
 
-  // We're using an any type here because AWS does not expose the `environment` field in their type
-  lambdas.forEach((lam) => {
-    const tagsValue = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
-    const existingTagValue = lam.environment.map.get(DD_TAGS)?.value;
-    const finalTagValue = existingTagValue ? `${existingTagValue},${tagsValue}` : tagsValue;
-    lam.addEnvironment(DD_TAGS, finalTagValue);
-  });
+  return `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
+}
+
+/**
+ * Appends source code integration git tags to a function's existing `DD_TAGS`, using the
+ * supplied resolved env map to read the current value (no private field access).
+ */
+export function applySourceCodeIntegration(
+  lam: lambda.Function,
+  existingEnv: Record<string, string>,
+  gitCommitShaOverride?: string | undefined,
+  gitRepoUrlOverride?: string | undefined,
+): void {
+  log.debug("Adding source code integration...");
+  const tagsValue = getSourceCodeIntegrationTags(gitCommitShaOverride, gitRepoUrlOverride);
+  if (tagsValue === undefined) return;
+
+  const existingTagValue = existingEnv[DD_TAGS];
+  const finalTagValue = existingTagValue ? `${existingTagValue},${tagsValue}` : tagsValue;
+  lam.addEnvironment(DD_TAGS, finalTagValue);
 }
 
 function getGitData(): { hash: string; gitRepoUrl: string } {
@@ -117,11 +147,16 @@ function filterSensitiveInfoFromRepository(repositoryUrl: string): string {
   }
 }
 
-export function applyEnvVariables(lam: lambda.Function, baseProps: DatadogLambdaStrictProps): void {
+export function applyEnvVariables(
+  lam: lambda.Function,
+  baseProps: DatadogLambdaStrictProps,
+  existingEnv: Record<string, string>,
+): void {
   log.debug(`Setting environment variables...`);
-  const lam_with_env_vars: any = lam; //cast to any to access the private environment fields like in setGitEnvironmentVariables
+  // `existingEnv` is the function's resolved env map (read via the public API, not the private
+  // `Function.environment` field). Only set a default when the user hasn't already set the key.
   const setEnvIfUndefined = (envVar: string, value: string | boolean) => {
-    if (lam_with_env_vars.environment.map.get(envVar) === undefined) {
+    if (existingEnv[envVar] === undefined) {
       lam.addEnvironment(envVar, value.toString().toLowerCase());
     }
   };
