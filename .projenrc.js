@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
-const { awscdk, javascript, github, JsonPatch } = require("projen");
+const { awscdk, javascript, github, JsonPatch, TaskShell } = require("projen");
 
 const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs-v2",
@@ -19,9 +19,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   minNodeVersion: "22.0.0",
 
-  jsiiFqn: "projen.AwsCdkConstructLibrary",
   defaultReleaseBranch: "main",
-  releaseEveryCommit: false,
   publishToPypi: {
     distName: "datadog-cdk-constructs-v2",
     module: "datadog_cdk_constructs_v2",
@@ -70,29 +68,29 @@ const project = new awscdk.AwsCdkConstructLibrary({
     "*.tar.gz",
     "cdk.context.json",
   ],
-  npmignore: [
-    "!LICENSE",
-    "!LICENSE-3rdparty.csv",
-    "!NOTICE",
-    "/scripts",
-    "/integration_tests",
-    ".prettierrc",
-    "/.ncurc.cjs",
-    "cdk.out/*",
-    "yarn-error.log",
-    "CHANGELOG.md",
-    "CONTRIBUTING.md",
-    "/examples",
-  ],
-  scripts: {
-    "check-formatting": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts",
+  npmIgnoreOptions: {
+    ignorePatterns: [
+      "!LICENSE",
+      "!LICENSE-3rdparty.csv",
+      "!NOTICE",
+      "/scripts",
+      "/integration_tests",
+      ".prettierrc",
+      "/.ncurc.cjs",
+      "cdk.out/*",
+      "yarn-error.log",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md",
+      "/examples",
+    ],
   },
   pullRequestTemplate: false,
   dependabot: false,
   buildWorkflow: false,
-  releaseWorkflow: false,
-  rebuildBot: false,
-  mergify: false,
+  release: false,
+  githubOptions: {
+    mergify: false,
+  },
   licensed: true,
   docgen: false,
   depsUpgradeOptions: {
@@ -109,6 +107,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
+
+// projen 0.101.0 made its built-in cross-platform shell the default for all task
+// commands, conditions and `$(...)` env-var evaluation. Our tasks rely on POSIX
+// behavior the built-in shell does not provide -- notably the projen-generated
+// `PATH: $(yarn exec node --print process.env.PATH)` env var, which fails to
+// resolve `yarn`/`node` under it. Opt back in to the system shell as documented
+// in the 0.101.0 release notes.
+project.tasks.shell = TaskShell.system();
 
 // Pin GitHub Actions to commit SHAs instead of tags
 project.github.actions.set(
@@ -174,6 +180,12 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
     YARN_ENABLE_IMMUTABLE_INSTALLS: "false",
   }),
 );
+
+// projen 0.101 switched the eslint config to typescript-eslint's `projectService`.
+// It only auto-registers a TypeScript projenrc as a loose file, so our
+// `.projenrc.js` has to be allowed explicitly or linting it fails with
+// "was not found by the project service".
+project.eslint.allowDefaultProjectFiles(".projenrc.js");
 
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
 eslintConfig.addOverride("extends", [
@@ -262,6 +274,10 @@ npmScripts.addDeletionOverride("scripts.release");
 npmScripts.addDeletionOverride("scripts.bump");
 npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
+// Replaces the removed `scripts` project option (dropped in projen 0.100/0.101).
+project.addTask("check-formatting", {
+  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts",
+});
 project.addTask("create-release", {
   exec: "bash scripts/create_release.sh",
   receiveArgs: true,
