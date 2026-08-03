@@ -3,12 +3,11 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": "..",
-    "stripInternal": true,
-    "isolatedModules": true
+    "rootDir": ".."
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "../.projenrc.ts"
   ],
   "exclude": [
     "node_modules"
