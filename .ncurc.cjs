@@ -16,13 +16,18 @@ const MIN_AGE_MS = 2 * 24 * 60 * 60 * 1000; // 2 days
 
 /**
  * Returns the packages in ncu's --filter list by reading .projen/tasks.json.
+ *
+ * A step renders either as `exec` (a command string) or, since projen 0.101, as
+ * `execArgs` (a pre-tokenized argument list), so both shapes are handled. Getting
+ * this wrong fails open silently — an empty list means nothing is age-gated.
  */
 function getNcuFilterPackages() {
   try {
     const tasks = JSON.parse(
       fs.readFileSync(path.join(process.cwd(), '.projen', 'tasks.json'), 'utf8'),
     );
-    const exec = tasks?.tasks?.upgrade?.steps?.[0]?.exec ?? '';
+    const step = tasks?.tasks?.upgrade?.steps?.[0] ?? {};
+    const exec = Array.isArray(step.execArgs) ? step.execArgs.join(' ') : (step.exec ?? '');
     const m = exec.match(/--filter=(\S+)/);
     return m ? m[1].split(',') : [];
   } catch {
