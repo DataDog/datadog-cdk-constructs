@@ -692,7 +692,7 @@ const stateMachine = new sfn.StateMachine(stack, 'MyStateMachine', {
 
 ## Using Projen
 
-The Datadog CDK Construct Libraries use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.js` file, then run `npx projen` to synthesize the new changes. Check out [Projen][13] for more details.
+The Datadog CDK Construct Libraries use Projen to maintain project configuration files such as the `package.json`, `.gitignore`, `.npmignore`, etc. Most of the configuration files will be protected by Projen via read-only permissions. In order to change these files, edit the `.projenrc.ts` file, then run `yarn projen` to synthesize the new changes. Check out [Projen][13] for more details.
 
 ## Migrating from v2-1.x.x to v2-2.x.x
 
