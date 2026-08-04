@@ -4,8 +4,8 @@ const { execSync } = require("child_process");
 const cdkVersionRegex =  /cdkVersion:\s*"([~^]?\d+\.\d+\.\d+)"/
 const cdkCliVersionRegex = /cdkCliVersion:\s*"([~^]?\d+\.\d+\.\d+)"/
 
-const cdkVersion = cdkVersionRegex.exec(fs.readFileSync(".projenrc.js", "utf8"))[1];
-const cdkCliVersion = cdkCliVersionRegex.exec(fs.readFileSync(".projenrc.js", "utf8"))[1];
+const cdkVersion = cdkVersionRegex.exec(fs.readFileSync(".projenrc.ts", "utf8"))[1];
+const cdkCliVersion = cdkCliVersionRegex.exec(fs.readFileSync(".projenrc.ts", "utf8"))[1];
 
 console.log(`cdkVersion: "${cdkVersion}"`);
 console.log(`cdkCliVersion: "${cdkCliVersion}"`);
@@ -37,8 +37,8 @@ console.log(`aws-cdk-lib version from ~1 month ago: "${targetVersion}"`);
 if (cdkVersion !== targetVersion || cdkCliVersion !== targetVersion) {
   console.log("Upgrading CDK versions...");
   
-  // Read the entire .projenrc.js file
-  let projenContent = fs.readFileSync(".projenrc.js", "utf8");
+  // Read the entire .projenrc.ts file
+  let projenContent = fs.readFileSync(".projenrc.ts", "utf8");
   
   // Update cdkVersion if it's different from latest
   if (cdkVersion !== targetVersion) {
@@ -59,7 +59,7 @@ if (cdkVersion !== targetVersion || cdkCliVersion !== targetVersion) {
   }
   
   // Write the updated content back to the file
-  fs.writeFileSync(".projenrc.js", projenContent);
+  fs.writeFileSync(".projenrc.ts", projenContent);
   console.log("CDK versions upgraded successfully!");
 } else {
   console.log("CDK versions are already up to date.");

@@ -1,11 +1,11 @@
-/* eslint @typescript-eslint/no-var-requires: "off" */
-const { awscdk, javascript, github, JsonPatch, TaskShell } = require("projen");
+import { awscdk, github, javascript, JsonPatch, TaskShell } from "projen";
 
 const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs-v2",
   description:
     "CDK Construct Library to automatically instrument Python and Node Lambda functions with Datadog using AWS CDK v2",
   author: "Datadog",
+  authorAddress: "https://www.datadoghq.com",
   authorOrganization: true,
   entrypoint: "lib/index.js",
   repositoryUrl: "https://github.com/DataDog/datadog-cdk-constructs",
@@ -18,6 +18,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
   minNodeVersion: "22.0.0",
+  projenrcTs: true,
 
   defaultReleaseBranch: "main",
   publishToPypi: {
@@ -117,27 +118,28 @@ const project = new awscdk.AwsCdkConstructLibrary({
 project.tasks.shell = TaskShell.system();
 
 // Pin GitHub Actions to commit SHAs instead of tags
-project.github.actions.set(
+const githubActions = project.github!.actions;
+githubActions.set(
   "actions/checkout",
   "actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd", // v5
 );
-project.github.actions.set(
+githubActions.set(
   "actions/setup-node",
   "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444", // v5
 );
-project.github.actions.set(
+githubActions.set(
   "actions/upload-artifact",
   "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", // v4.6.2
 );
-project.github.actions.set(
+githubActions.set(
   "actions/download-artifact",
   "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0", // v5
 );
-project.github.actions.set(
+githubActions.set(
   "peter-evans/create-pull-request",
   "peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676", // v7
 );
-project.github.actions.set(
+githubActions.set(
   "amannn/action-semantic-pull-request",
   "amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50", // v6
 );
@@ -181,13 +183,7 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   }),
 );
 
-// projen 0.101 switched the eslint config to typescript-eslint's `projectService`.
-// It only auto-registers a TypeScript projenrc as a loose file, so our
-// `.projenrc.js` has to be allowed explicitly or linting it fails with
-// "was not found by the project service".
-project.eslint.allowDefaultProjectFiles(".projenrc.js");
-
-const eslintConfig = project.tryFindObjectFile(".eslintrc.json");
+const eslintConfig = project.tryFindObjectFile(".eslintrc.json")!;
 eslintConfig.addOverride("extends", [
   "plugin:@typescript-eslint/recommended",
   "prettier",
@@ -227,7 +223,7 @@ project.gitattributes.addAttributes("/dist/go/** linguist-generated");
 TODO: tasks.json & package.json DeletionOverrides can be simplified to 5
       project.removeScript("<scriptName>") calls once https://github.com/projen/projen/issues/631 is fixed.
 */
-const projenTasks = project.tryFindObjectFile(".projen/tasks.json");
+const projenTasks = project.tryFindObjectFile(".projen/tasks.json")!;
 projenTasks.addOverride("tasks.build.steps", [
   {
     spawn: "default",
@@ -267,7 +263,7 @@ projenTasks.addOverride("tasks.test.steps", [
     spawn: "eslint",
   },
 ]);
-const npmScripts = project.tryFindObjectFile("package.json");
+const npmScripts = project.tryFindObjectFile("package.json")!;
 npmScripts.addDeletionOverride("scripts.clobber");
 npmScripts.addDeletionOverride("scripts.test:update");
 npmScripts.addDeletionOverride("scripts.release");
@@ -284,7 +280,7 @@ project.addTask("create-release", {
 });
 
 // npmMinimalAgeGate is not in projen's typed YarnrcOptions, so we add it via override
-const yarnrc = project.tryFindObjectFile(".yarnrc.yml");
+const yarnrc = project.tryFindObjectFile(".yarnrc.yml")!;
 yarnrc.addOverride("npmMinimalAgeGate", "2d");
 
 project.synth();
