@@ -1,4 +1,4 @@
-import { awscdk, github, javascript, JsonPatch, TaskShell } from "projen";
+import { awscdk, github, javascript, JsonPatch } from "projen";
 
 const project = new awscdk.AwsCdkConstructLibrary({
   name: "datadog-cdk-constructs-v2",
@@ -108,14 +108,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
-
-// projen 0.101.0 made its built-in cross-platform shell the default for all task
-// commands, conditions and `$(...)` env-var evaluation. Our tasks rely on POSIX
-// behavior the built-in shell does not provide -- notably the projen-generated
-// `PATH: $(yarn exec node --print process.env.PATH)` env var, which fails to
-// resolve `yarn`/`node` under it. Opt back in to the system shell as documented
-// in the 0.101.0 release notes.
-project.tasks.shell = TaskShell.system();
 
 // Pin GitHub Actions to commit SHAs instead of tags
 const githubActions = project.github!.actions;

@@ -3,7 +3,6 @@
   "env": {
     "PATH": "$(yarn exec node --print process.env.PATH)"
   },
-  "shell": "system",
   "tasks": {
     "build": {
       "name": "build",
