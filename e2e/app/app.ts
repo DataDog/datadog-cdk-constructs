@@ -7,12 +7,13 @@
  */
 
 import * as path from "path";
-import { App, Stack, StackProps, Tags } from "aws-cdk-lib";
+import { App, RemovalPolicy, Stack, StackProps, Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 import { DatadogLambda } from "../../src/index";
 import { FRESHNESS_TAG_KEY, RUN_ID_TAG_KEY } from "../helpers/naming";
-import { E2E_NODE_LAYER_VERSION, E2E_EXTENSION_LAYER_VERSION, E2E_RUNTIME } from "../helpers/versions";
+import { E2E_NODE_LAYER_VERSION, E2E_EXTENSION_LAYER_VERSION, E2E_RUNTIME } from "./versions";
 
 // The CDK construct is the instrumentation mechanism under test. This same stack
 // is provisioned uninstrumented first (E2E_INSTRUMENT=false, no DatadogLambda),
@@ -31,19 +32,27 @@ class WorkloadStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    const logGroup = new logs.LogGroup(this, "HandlerLogGroup", {
+      logGroupName: `/aws/lambda/${serviceName}`,
+      removalPolicy: RemovalPolicy.DESTROY,
+      retention: logs.RetentionDays.ONE_DAY,
+    });
     const fn = new lambda.Function(this, "Handler", {
       functionName: serviceName,
       runtime: E2E_RUNTIME,
       handler: "index.handler",
+      logGroup,
       // Resolved from cwd (the repo root, where cdk runs) so it survives bundling
       // the app to a single .cjs whose __dirname is the build output dir.
       code: lambda.Code.fromAsset(path.resolve(process.cwd(), "e2e/app/handler")),
     });
 
-    // Stamp cleanup and run identity at creation so leaked baseline resources remain
-    // attributable even if the run stops before instrumentation or teardown.
-    Tags.of(fn).add(FRESHNESS_TAG_KEY, createdTs);
-    Tags.of(fn).add(RUN_ID_TAG_KEY, runId);
+    // Stamp cleanup and run identity at creation so leaked resources remain attributable
+    // even if the run stops before instrumentation or teardown.
+    for (const resource of [fn, logGroup]) {
+      Tags.of(resource).add(FRESHNESS_TAG_KEY, createdTs);
+      Tags.of(resource).add(RUN_ID_TAG_KEY, runId);
+    }
 
     if (!instrument) {
       return;
