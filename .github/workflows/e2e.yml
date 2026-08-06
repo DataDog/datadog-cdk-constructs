@@ -20,8 +20,8 @@ on:
 
 jobs:
   lambda-e2e:
-    # Skip on forks: OIDC federation only exists on the canonical repo.
-    if: github.repository == 'DataDog/datadog-cdk-constructs'
+    # Fork pull requests cannot use the canonical repository's OIDC identities.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       id-token: write

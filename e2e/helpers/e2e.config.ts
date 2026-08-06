@@ -8,7 +8,7 @@
 
 import { type ExpectedLayers, type LambdaVerifierConfig } from "./lambda-verifier";
 import { type E2ENaming, RUN_ID_TAG_KEY } from "./naming";
-import { E2E_EXTENSION_LAYER_VERSION, E2E_NODE_LAYER_VERSION } from "./versions";
+import { E2E_EXTENSION_LAYER_VERSION, E2E_NODE_LAYER_VERSION } from "../app/versions";
 
 // Repo-local config feeding the shared e2e helpers. This file is NOT synced -- it holds
 // everything specific to datadog-cdk-constructs that the shared, parameterized helpers

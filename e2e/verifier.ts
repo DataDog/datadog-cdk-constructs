@@ -8,11 +8,11 @@
 
 import assert from "node:assert/strict";
 
+import { E2E_RUNTIME } from "./app/versions";
 import { functionName, verifierConfig } from "./helpers/e2e.config";
 import { execPromise } from "./helpers/exec";
-import { verifyInstrumented } from "./helpers/lambda-verifier";
+import { verifyInstrumented, verifyUninstrumented } from "./helpers/lambda-verifier";
 import { FRESHNESS_TAG_KEY, RUN_ID_TAG_KEY } from "./helpers/naming";
-import { E2E_RUNTIME } from "./helpers/versions";
 
 interface LambdaConfiguration {
   FunctionArn: string;
@@ -21,6 +21,10 @@ interface LambdaConfiguration {
 
 interface TagsResponse {
   Tags?: Record<string, string>;
+}
+
+interface LogGroupsResponse {
+  logGroups?: Array<{ logGroupName?: string }>;
 }
 
 const awsJson = async <T>(command: string): Promise<T> => {
@@ -50,4 +54,22 @@ export const verifyCdkInstrumented = async (
   );
   assert.equal(tags[FRESHNESS_TAG_KEY], createdTs, `${FRESHNESS_TAG_KEY} tag has the wrong timestamp`);
   assert.equal(tags[RUN_ID_TAG_KEY], runId, `${RUN_ID_TAG_KEY} tag has the wrong run id`);
+};
+
+export const verifyCdkClean = async (
+  serviceName: string,
+  region: string,
+  site: string,
+  runId: string,
+): Promise<void> => {
+  await verifyUninstrumented(verifierConfig(site, runId), serviceName, region);
+
+  const logGroupName = `/aws/lambda/${functionName(serviceName)}`;
+  const { logGroups = [] } = await awsJson<LogGroupsResponse>(
+    `aws logs describe-log-groups --log-group-name-prefix "${logGroupName}" --region "${region}" --output json`,
+  );
+  assert.ok(
+    !logGroups.some((group) => group.logGroupName === logGroupName),
+    `log group ${logGroupName} still exists after remove`,
+  );
 };

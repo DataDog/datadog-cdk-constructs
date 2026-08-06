@@ -9,12 +9,11 @@
 import { readdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { ENV_NAME, ENV_VERSION, NAMING, RETRY_PATTERNS, expectedLayerArns, verifierConfig } from "./helpers/e2e.config";
+import { ENV_NAME, ENV_VERSION, NAMING, RETRY_PATTERNS, expectedLayerArns } from "./helpers/e2e.config";
 import { execPromise, execPromiseWithRetries, type ExecResult } from "./helpers/exec";
 import { checkTelemetryFlowing } from "./helpers/lambda-telemetry-checker";
-import { verifyUninstrumented } from "./helpers/lambda-verifier";
 import { freshnessTimestamp, namePrefix, newRunId } from "./helpers/naming";
-import { verifyCdkInstrumented } from "./verifier";
+import { verifyCdkClean, verifyCdkInstrumented } from "./verifier";
 
 const DEPLOY_TIMEOUT_MS = 900_000;
 const LIFECYCLE_TIMEOUT_MS = 1_800_000;
@@ -221,7 +220,7 @@ describe("cdk lambda e2e", () => {
         removed = true;
       });
 
-      await runPhase("verifying cleanup", () => verifyUninstrumented(verifierConfig(site, runId), serviceName, region));
+      await runPhase("verifying cleanup", () => verifyCdkClean(serviceName, region, site, runId));
     },
     LIFECYCLE_TIMEOUT_MS,
   );
