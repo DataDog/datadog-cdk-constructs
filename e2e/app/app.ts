@@ -40,10 +40,10 @@ class WorkloadStack extends Stack {
       code: lambda.Code.fromAsset(path.resolve(process.cwd(), "e2e/app/handler")),
     });
 
-    // Freshness tag is set at creation on the uninstrumented baseline too, so the
-    // cross-repo sweeper can find and reap this function even if the run crashes
-    // before REMOVE's `cdk destroy` deletes it.
+    // Stamp cleanup and run identity at creation so leaked baseline resources remain
+    // attributable even if the run stops before instrumentation or teardown.
     Tags.of(fn).add(FRESHNESS_TAG_KEY, createdTs);
+    Tags.of(fn).add(RUN_ID_TAG_KEY, runId);
 
     if (!instrument) {
       return;
@@ -62,9 +62,8 @@ class WorkloadStack extends Stack {
       service: serviceName,
       env,
       version,
-      // Surfaces as a `one_e2e_run_id` resource tag *and* in DD_TAGS, so the run id
-      // rides along on every emitted span and log -- the dimension the telemetry
-      // checker filters on to prove identity.
+      // Stamp the run id on emitted spans and logs so the telemetry checker can
+      // distinguish this run from concurrent suites.
       tags: `${RUN_ID_TAG_KEY}:${runId}`,
     });
     datadogLambda.addLambdaFunctions([fn]);
