@@ -30,7 +30,7 @@
       "name": "check-formatting",
       "steps": [
         {
-          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/**/*.ts"
+          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/app/**/*.ts e2e/helpers/e2e.config.ts e2e/helpers/versions.ts"
         }
       ]
     },
@@ -87,7 +87,7 @@
       },
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools e2e projenrc .projenrc.ts",
           "receiveArgs": true
         }
       ]
@@ -277,6 +277,7 @@
             "up",
             "-R",
             "@aws-cdk/aws-lambda-python-alpha",
+            "@datadog/datadog-api-client",
             "@stylistic/eslint-plugin",
             "@types/jest",
             "@types/node",
@@ -300,6 +301,7 @@
             "ts-jest",
             "ts-node",
             "typescript",
+            "vitest",
             "loglevel",
             "aws-cdk-lib",
             "constructs"

@@ -190,6 +190,12 @@ project.github?.tryFindWorkflow("upgrade")?.file?.patch(
   }),
 );
 
+project.eslint?.addLintPattern("e2e");
+project.eslint?.allowDevDeps("e2e/**");
+for (const helper of ["exec.ts", "lambda-telemetry-checker.ts", "lambda-verifier.ts", "naming.ts"]) {
+  project.eslint?.addIgnorePattern(`e2e/helpers/${helper}`);
+}
+
 const eslintConfig = project.tryFindObjectFile(".eslintrc.json")!;
 eslintConfig.addOverride("extends", [
   "plugin:@typescript-eslint/recommended",
@@ -279,9 +285,10 @@ npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
 // Replaces the removed `scripts` project option (dropped in projen 0.100/0.101).
 project.addTask("check-formatting", {
-  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/**/*.ts",
-  // Runs the AWS Lambda e2e lifecycle suite. Requires cloud auth + DD keys; see e2e/README.md.
-  "test:e2e": "vitest run --config e2e/vitest.config.ts e2e",
+  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/app/**/*.ts e2e/helpers/e2e.config.ts e2e/helpers/versions.ts",
+});
+project.addTask("test:e2e", {
+  exec: "vitest run --config e2e/vitest.config.ts e2e",
 });
 project.addTask("create-release", {
   exec: "bash scripts/create_release.sh",

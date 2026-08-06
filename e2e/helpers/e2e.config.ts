@@ -6,8 +6,8 @@
  * Copyright 2026 Datadog, Inc.
  */
 
-import { type E2ENaming } from "./naming";
 import { type ExpectedLayers, type LambdaVerifierConfig } from "./lambda-verifier";
+import { type E2ENaming, RUN_ID_TAG_KEY } from "./naming";
 import { E2E_EXTENSION_LAYER_VERSION, E2E_NODE_LAYER_VERSION } from "./versions";
 
 // Repo-local config feeding the shared e2e helpers. This file is NOT synced -- it holds
@@ -46,12 +46,12 @@ export const functionName = (serviceName: string): string => serviceName;
 
 // Pinned artifact versions come from this repo's e2e/helpers/versions.ts, so a version
 // mismatch blames the construct's wiring, not upstream layer drift.
-const expectedLayerArns = (region: string): ExpectedLayers => ({
+export const expectedLayerArns = (region: string): ExpectedLayers => ({
   node: `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:Datadog-Node22-x:${E2E_NODE_LAYER_VERSION}`,
   extension: `arn:aws:lambda:${region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${E2E_EXTENSION_LAYER_VERSION}`,
 });
 
-export const VERIFIER: LambdaVerifierConfig = {
+export const verifierConfig = (site: string, runId: string): LambdaVerifierConfig => ({
   functionName,
   expectedLayerArns,
   redirectHandler: "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
@@ -60,11 +60,13 @@ export const VERIFIER: LambdaVerifierConfig = {
   toolTag: { key: "dd_cdk_construct", pattern: /.+/ },
   env: {
     apiKeyVars: ["DD_API_KEY", "DD_API_KEY_SECRET_ARN", "DD_KMS_API_KEY", "DD_API_KEY_SSM_ARN"],
-    present: ["DD_SITE"],
+    present: [],
     values: (serviceName) => ({
       DD_SERVICE: serviceName,
       DD_ENV: ENV_NAME,
       DD_VERSION: ENV_VERSION,
+      DD_SITE: site,
+      DD_TAGS: `${RUN_ID_TAG_KEY}:${runId}`,
       DD_TRACE_ENABLED: "true",
       // With the extension, log collection is enabled via DD_SERVERLESS_LOGS_ENABLED;
       // the construct intentionally forces DD_LOGS_INJECTION=false in this path.
@@ -73,4 +75,4 @@ export const VERIFIER: LambdaVerifierConfig = {
       DD_LAMBDA_HANDLER: "index.handler",
     }),
   },
-};
+});
