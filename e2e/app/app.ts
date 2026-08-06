@@ -11,9 +11,9 @@ import { App, RemovalPolicy, Stack, StackProps, Tags } from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
+import { E2E_NODE_LAYER_VERSION, E2E_EXTENSION_LAYER_VERSION, E2E_RUNTIME } from "./versions";
 import { DatadogLambda } from "../../src/index";
 import { FRESHNESS_TAG_KEY, RUN_ID_TAG_KEY } from "../helpers/naming";
-import { E2E_NODE_LAYER_VERSION, E2E_EXTENSION_LAYER_VERSION, E2E_RUNTIME } from "./versions";
 
 // The CDK construct is the instrumentation mechanism under test. This same stack
 // is provisioned uninstrumented first (E2E_INSTRUMENT=false, no DatadogLambda),
