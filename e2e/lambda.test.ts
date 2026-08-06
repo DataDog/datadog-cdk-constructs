@@ -37,13 +37,10 @@ const runPhase = async <T>(name: string, action: () => Promise<T>): Promise<T> =
   }
 };
 
-const requireEnv = (name: string): string => {
-  const value = process.env[name];
-  if (!value) {
+const requireEnv = (name: string): void => {
+  if (!process.env[name]) {
     throw new Error(`Missing required environment variable ${name}`);
   }
-
-  return value;
 };
 
 const requireAnyEnv = (names: string[]): void => {
@@ -91,7 +88,6 @@ describe("cdk lambda e2e", () => {
     CDK_DEFAULT_ACCOUNT: account,
     CDK_DEFAULT_REGION: region,
     AWS_REGION: region,
-    TS_NODE_PROJECT: "e2e/tsconfig.json",
   });
 
   const assemblyDir = (instrument: boolean): string => `${buildDir}/cdk-${instrument ? "instrumented" : "baseline"}`;
@@ -172,13 +168,17 @@ describe("cdk lambda e2e", () => {
   }, DEPLOY_TIMEOUT_MS);
 
   afterAll(async () => {
-    if (!canDestroy || removed) {
-      return;
-    }
+    try {
+      if (!canDestroy || removed) {
+        return;
+      }
 
-    const result = await runPhase("cleaning up the function", destroy);
-    if (result.exitCode !== 0) {
-      console.error(`Failed to destroy workload stack: ${result.stderr || result.stdout}`);
+      const result = await runPhase("cleaning up the function", destroy);
+      if (result.exitCode !== 0) {
+        console.error(`Failed to destroy workload stack: ${result.stderr || result.stdout}`);
+      }
+    } finally {
+      await rm(buildDir, { recursive: true, force: true });
     }
   }, DEPLOY_TIMEOUT_MS);
 

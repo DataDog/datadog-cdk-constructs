@@ -66,7 +66,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     ".DS_Store",
     "integration_tests/cdk.out",
     "integration_tests/testlib",
-    "e2e/cdk.out",
     "e2e/.build",
     "e2e/.env.local",
     "bin",
