@@ -17,6 +17,7 @@ on:
       - "package.json"
       - "yarn.lock"
       - ".github/workflows/e2e.yml"
+  workflow_dispatch:
 
 jobs:
   lambda-e2e:
