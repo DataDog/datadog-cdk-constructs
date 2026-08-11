@@ -147,7 +147,7 @@ export class DatadogStepFunctions extends Construct {
         throw new Error(`logGroupArn is undefined. ${unsupportedCaseErrorMessage}`);
       }
 
-      logGroup = logs.LogGroup.fromLogGroupArn(this, "LogGroup", logGroupArn);
+      logGroup = logs.LogGroup.fromLogGroupArn(stateMachine, "LogGroup", logGroupArn);
     }
 
     // Configure state machine role to have permission to log to CloudWatch Logs, following
