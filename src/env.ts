@@ -8,7 +8,7 @@
 
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./constants";
-import { setTrackedEnv, getTrackedEnv, hasTrackedEnv } from "./env-tracker";
+import { setTrackedEnv, hasTrackedEnv, mergeTrackedGitTags, setTrackedPropTags } from "./env-tracker";
 import { DatadogLambdaProps, DatadogLambdaStrictProps, LambdaFunction } from "./interfaces";
 
 export const AWS_LAMBDA_EXEC_WRAPPER_KEY = "AWS_LAMBDA_EXEC_WRAPPER";
@@ -63,9 +63,7 @@ export function setGitEnvironmentVariables(
 
   const tagsValue = `git.commit.sha:${hash},git.repository_url:${gitRepoUrl}`;
   lambdas.forEach((lam) => {
-    const existingTagValue = getTrackedEnv(lam, DD_TAGS);
-    const finalTagValue = existingTagValue ? `${existingTagValue},${tagsValue}` : tagsValue;
-    setTrackedEnv(lam, DD_TAGS, finalTagValue);
+    mergeTrackedGitTags(lam, tagsValue);
   });
 }
 
@@ -179,7 +177,7 @@ export function setDDEnvVariables(lam: LambdaFunction, props: DatadogLambdaProps
     setTrackedEnv(lam, DD_VERSION_ENV_VAR, props.version);
   }
   if (props.tags) {
-    setTrackedEnv(lam, DD_TAGS, props.tags);
+    setTrackedPropTags(lam, props.tags);
   }
   if (props.enableColdStartTracing !== undefined) {
     setTrackedEnv(lam, DD_COLD_START_TRACING, props.enableColdStartTracing.toString().toLowerCase());

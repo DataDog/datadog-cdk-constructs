@@ -1098,7 +1098,52 @@ describe("overrideGitMetadata", () => {
 });
 
 describe("setEnvironment", () => {
-  it("appends git metadata to a DD_TAGS value seeded before addLambdaFunctions", () => {
+  it("merges global, per-function, and source code integration tags by key", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const goodbye = new lambda.Function(stack, "GoodbyeHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "goodbye.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "ABC",
+      enableDatadogTracing: false,
+      flushMetricsToLogs: false,
+      logLevel: "debug",
+      tags: "env:prod,team:serverless,git.commit.sha:global",
+    });
+    datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
+    datadogLambda.setEnvironment(hello, DD_TAGS, "service:hello,team:payments,git.commit.sha:function");
+    datadogLambda.setEnvironment(goodbye, DD_TAGS, "service:goodbye");
+    datadogLambda.addLambdaFunctions([hello, goodbye], stack);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Handler: "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler",
+      Environment: {
+        Variables: {
+          [DD_TAGS]: "env:prod,service:hello,team:payments,git.commit.sha:fake-sha,git.repository_url:fake-url",
+        },
+      },
+    });
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          DD_LAMBDA_HANDLER: "goodbye.handler",
+          [DD_TAGS]: "env:prod,team:serverless,service:goodbye,git.commit.sha:fake-sha,git.repository_url:fake-url",
+        },
+      },
+    });
+  });
+
+  it("preserves tag values containing colons and malformed tags", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
@@ -1108,40 +1153,22 @@ describe("setEnvironment", () => {
     });
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       nodeLayerVersion: NODE_LAYER_VERSION,
-      extensionLayerVersion: EXTENSION_LAYER_VERSION,
-      apiKey: "ABC",
-      enableDatadogTracing: false,
-      flushMetricsToLogs: false,
-      logLevel: "debug",
+      sourceCodeIntegration: false,
+      tags: "endpoint:https://example.com,unstructured",
     });
-    datadogLambda.overrideGitMetadata("fake-sha", "fake-url");
     datadogLambda.setEnvironment(hello, DD_TAGS, "team:serverless");
     datadogLambda.addLambdaFunctions([hello], stack);
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [DD_TAGS]: Match.stringLikeRegexp("team:serverless"),
-        },
-      },
-    });
-    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Environment: {
-        Variables: {
-          [DD_TAGS]: Match.stringLikeRegexp("git\\.commit\\.sha:fake-sha"),
-        },
-      },
-    });
-    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Environment: {
-        Variables: {
-          [DD_TAGS]: Match.stringLikeRegexp("git\\.repository_url:fake-url"),
+          [DD_TAGS]: "endpoint:https://example.com,unstructured,team:serverless",
         },
       },
     });
   });
 
-  it("does not override a value seeded before addLambdaFunctions", () => {
+  it("does not override a tracked value with a construct default", () => {
     const app = new App();
     const stack = new Stack(app, "stack");
     const hello = new lambda.Function(stack, "HelloHandler", {
@@ -1162,6 +1189,30 @@ describe("setEnvironment", () => {
       Environment: {
         Variables: {
           DD_TRACE_ENABLED: "false",
+        },
+      },
+    });
+  });
+
+  it("lets an unconditional construct setting override a tracked value", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      env: "global",
+    });
+    datadogLambda.setEnvironment(hello, "DD_ENV", "function");
+    datadogLambda.addLambdaFunctions([hello], stack);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          DD_ENV: "global",
         },
       },
     });
