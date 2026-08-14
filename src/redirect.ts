@@ -18,6 +18,7 @@ import {
   JS_HANDLER,
   PYTHON_HANDLER,
 } from "./constants";
+import { LambdaFunction } from "./interfaces";
 
 /**
  * To avoid modifying code in the user's lambda handler, redirect the handler to a Datadog
@@ -27,7 +28,7 @@ import {
  *
  * Unchanged aside from parameter type
  */
-export function redirectHandlers(lam: lambda.Function, addLayers: boolean, useExtension: boolean): void {
+export function redirectHandlers(lam: LambdaFunction, addLayers: boolean, useExtension: boolean): void {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
 
   const runtime: string = lam.runtime.name;
@@ -40,7 +41,8 @@ export function redirectHandlers(lam: lambda.Function, addLayers: boolean, useEx
     return;
   }
 
-  const cfnFuntion = lam.node.defaultChild as lambda.CfnFunction;
+  const cfnFuntion = (lam instanceof lambda.SingletonFunction ? lam.permissionsNode : lam.node)
+    .defaultChild as lambda.CfnFunction;
   if (cfnFuntion === undefined) {
     log.debug("Unable to get Lambda Function handler");
     return;

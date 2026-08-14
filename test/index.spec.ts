@@ -61,6 +61,14 @@ describe("addLambdaFunctions", () => {
     expect(pythonLambdaSubscriptionFilters).toHaveLength(1);
     expect(singletonLambdaSubscriptionFilters).toHaveLength(1);
     expect(nodeLambdaSubscriptionFilters[0].destinationArn).toEqual(pythonLambdaSubscriptionFilters[0].destinationArn);
+
+    const singletonResource = singletonLambda.permissionsNode.defaultChild as lambda.CfnFunction;
+    const singletonLogicalId = stack.getLogicalId(singletonResource);
+    const singletonProperties =
+      Template.fromStack(stack).findResources("AWS::Lambda::Function")[singletonLogicalId].Properties;
+    expect(singletonProperties.Tags).toEqual(
+      expect.arrayContaining([expect.objectContaining({ Key: "dd_cdk_construct" })]),
+    );
   });
 
   it("Throws an error when a customer redundantly calls the addLambdaFunctions function on the same lambda function(s) and forwarder", () => {

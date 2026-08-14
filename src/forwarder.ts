@@ -15,6 +15,7 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { SUBSCRIPTION_FILTER_PREFIX } from "./index";
+import { LambdaFunction } from "./interfaces";
 
 function getForwarder(scope: Construct, forwarderArn: string) {
   const forwarderConstructId = generateForwarderConstructId(forwarderArn);
@@ -27,7 +28,7 @@ function getForwarder(scope: Construct, forwarderArn: string) {
 
 export function addForwarder(
   scope: Construct,
-  lam: lambda.Function,
+  lam: LambdaFunction,
   forwarderArn: string,
   createForwarderPermissions: boolean,
 ): void {
