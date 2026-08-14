@@ -1194,6 +1194,38 @@ describe("setEnvironment", () => {
     });
   });
 
+  it("shares tracked values between singleton declarations with the same UUID", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack");
+    const first = new lambda.SingletonFunction(stack, "First", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+      uuid: "f21a2d33-8ef9-4e38-8af6-9dc39dd63f12",
+    });
+    const second = new lambda.SingletonFunction(stack, "Second", {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+      uuid: "f21a2d33-8ef9-4e38-8af6-9dc39dd63f12",
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      nodeLayerVersion: NODE_LAYER_VERSION,
+      enableDatadogTracing: true,
+      sourceCodeIntegration: false,
+    });
+    datadogLambda.setEnvironment(first, "DD_TRACE_ENABLED", "false");
+    datadogLambda.addLambdaFunctions([second], stack);
+
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: {
+          DD_TRACE_ENABLED: "false",
+        },
+      },
+    });
+  });
+
   it("lets an unconditional construct setting override a tracked value", () => {
     const app = new App();
     const stack = new Stack(app, "stack");

@@ -34,7 +34,7 @@ export function addForwarder(
 ): void {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
-  const subscriptionFilterName = generateSubscriptionFilterName(Names.uniqueId(lam), forwarderArn);
+  const subscriptionFilterName = generateSubscriptionFilterName(Names.nodeUniqueId(lam.permissionsNode), forwarderArn);
   log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
   lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
     destination: forwarderDestination,
