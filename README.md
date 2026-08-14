@@ -287,13 +287,13 @@ To configure Datadog variables for every instrumented function, set the matching
 To override a value on a single function, use one of:
 
 - `datadogLambda.setEnvironment(func, key, value)` before `datadogLambda.addLambdaFunctions()`, to override a construct default while letting the construct finish instrumenting the function.
-- `func.addEnvironment(key, value)` after `datadogLambda.addLambdaFunctions()`, to set the final value and bypass the construct entirely.
+- `func.addEnvironment(key, value)` after `datadogLambda.addLambdaFunctions()`, to override the value set during instrumentation.
 
 When more than one source sets the same key, the following order applies (highest precedence first):
 
-1. `func.addEnvironment(key, value)` called after `datadogLambda.addLambdaFunctions()`
-2. `DatadogLambdaProps` fields dedicated to that key. These props always overwrite the same key set through. `datadogLambda.setEnvironment`:
-   - Unified service tagging: `env`, `service`, `version`, `tags`
+1. `func.addEnvironment(key, value)` called after `datadogLambda.addLambdaFunctions()`.
+2. `DatadogLambdaProps` fields dedicated to that key. These fields overwrite a value for the same key set through `datadogLambda.setEnvironment()`:
+   - Unified service tagging: `env`, `service`, `version`
    - Cold-start tracing: `enableColdStartTracing`, `minColdStartTraceDuration`, `coldStartTraceSkipLibs`
    - Other tracer settings: `enableProfiling`, `encodeAuthorizerContext`, `decodeAuthorizerContext`, `apmFlushDeadline`
    - LLM Observability: `llmObsEnabled`, `llmObsMlApp`, `llmObsAgentlessEnabled`
