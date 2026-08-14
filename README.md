@@ -282,7 +282,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 
 #### Setting `DD_*` environment variables
 
-To configure Datadog variables for every instrumented function, set the matching field on `DatadogLambdaProps` (for example, `enableDatadogTracing`, `logLevel`, `env`, `tags`).
+To configure Datadog variables for every instrumented function, set the matching field on `DatadogLambdaProps` (for example, `enableDatadogTracing`, `logLevel`, `env`, or `tags`).
 
 To override a value on a single function, use one of:
 
