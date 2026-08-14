@@ -13,6 +13,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import { ISecret, Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import log from "loglevel";
+import { hasTrackedEnv, mergeTrackedGitTags, setTrackedEnv } from "./env-tracker";
 import {
   applyLayers,
   redirectHandlers,
@@ -181,6 +182,25 @@ export class DatadogLambda extends Construct {
     }
   }
 
+  /**
+   * Pre-set a Datadog environment variable on `lambdaFunction`. Call before
+   * `addLambdaFunctions([lambdaFunction])`.
+   *
+   * Precedence, highest first:
+   *   1. `func.addEnvironment()` called after `addLambdaFunctions()`.
+   *   2. `DatadogLambdaProps` fields dedicated to `key` (for example, `env` for `DD_ENV`).
+   *   3. This method.
+   *   4. Construct defaults (for example, `enableDatadogTracing` for `DD_TRACE_ENABLED`).
+   *
+   * `addLambdaFunctions` merges `DD_TAGS` from `DatadogLambdaProps.tags`, per-function
+   * tags from this method, and git tags from source code integration, in that order.
+   * On duplicate tag keys, the later source wins.
+   */
+  public setEnvironment(lambdaFunction: LambdaFunction, key: string, value: string): void {
+    const [extractedLambdaFunction] = extractSingletonFunctions([lambdaFunction]);
+    setTrackedEnv(extractedLambdaFunction, key, value);
+  }
+
   public overrideGitMetadata(gitCommitSha: string, gitRepoUrl?: string): void {
     if (gitCommitSha) {
       this.gitCommitShaOverride = gitCommitSha;
@@ -191,23 +211,18 @@ export class DatadogLambda extends Construct {
 
     // If any lambdas have already been added, override the commit sha and url
     if (this.lambdas) {
-      this.lambdas.forEach((lambdaFunction: any) => {
-        const existingTags = lambdaFunction.environment.map.get(DD_TAGS);
-        if (existingTags === undefined) {
+      this.lambdas.forEach((lambdaFunction: LambdaFunction) => {
+        if (!hasTrackedEnv(lambdaFunction, DD_TAGS)) {
           return;
         }
-        const tags = existingTags.value.split(",");
-        if (gitCommitSha) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.commit.sha");
-          tags[index] = `git.commit.sha:${gitCommitSha}`;
-        }
+        const gitTags = [
+          gitCommitSha ? `git.commit.sha:${gitCommitSha}` : undefined,
+          gitRepoUrl ? `git.repository_url:${gitRepoUrl}` : undefined,
+        ].filter((tag): tag is string => tag !== undefined);
 
-        if (gitRepoUrl) {
-          const index = tags.findIndex((val: string) => val.split(":")[0] === "git.repository_url");
-          tags[index] = `git.repository_url:${gitRepoUrl}`;
+        if (gitTags.length > 0) {
+          mergeTrackedGitTags(lambdaFunction, gitTags.join(","));
         }
-
-        lambdaFunction.addEnvironment(DD_TAGS, tags.join(","));
       });
     }
   }

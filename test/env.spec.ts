@@ -70,7 +70,11 @@ describe("applyEnvVariables", () => {
     });
   });
 
-  it("does not override user-defined env variables before datadogLambda.addLambdaFunctions", () => {
+  it("overrides env variables set via func.addEnvironment() before datadogLambda.addLambdaFunctions", () => {
+    // The library cannot read aws-cdk-lib's private Function.environment field, so it has no way
+    // to detect env vars set on the function before addLambdaFunctions is called.
+    // To customize DD_* env vars, use DatadogLambdaProps or call func.addEnvironment() AFTER
+    // addLambdaFunctions().
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
@@ -83,36 +87,25 @@ describe("applyEnvVariables", () => {
       handler: "hello.handler",
     });
     hello.addEnvironment(ENABLE_DD_TRACING_ENV_VAR, "False");
-    hello.addEnvironment(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "True");
-    hello.addEnvironment(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
     hello.addEnvironment(ENABLE_XRAY_TRACE_MERGING_ENV_VAR, "True");
     hello.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
     hello.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, "False");
     hello.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, "True");
-    hello.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "all");
-    hello.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "all");
-    hello.addEnvironment(LOG_LEVEL_ENV_VAR, "debug");
 
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
       forwarderArn: "arn:test:forwarder:sa-east-1:12345678:1",
       nodeLayerVersion: NODE_LAYER_VERSION,
     });
     datadogLambda.addLambdaFunctions([hello]);
+    // Library defaults win because pre-set values are not visible to the library.
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "true",
-          [ENABLE_DD_TRACING_ENV_VAR]: "False",
-          [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "True",
-          [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
-          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
-          [ENABLE_DD_LOGS_ENV_VAR]: "False",
-          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "True",
-          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "all",
-          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "all",
-          [LOG_LEVEL_ENV_VAR]: "debug",
+          [ENABLE_DD_TRACING_ENV_VAR]: "true",
+          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "true",
+          [ENABLE_DD_LOGS_ENV_VAR]: "true",
+          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "false",
         },
       },
     });
@@ -167,16 +160,16 @@ describe("applyEnvVariables", () => {
     });
   });
 
-  it("does not override custom user-defined env variables per lambda when different values are set in the DatadogLambda constructor", () => {
+  it("applies constructor-configured values to all lambdas, regardless of pre-set env vars", () => {
+    // env vars set via func.addEnvironment() BEFORE addLambdaFunctions() are overridden by the library.
+    // To customize DD_* vars per-function, call func.addEnvironment() AFTER addLambdaFunctions().
     const app = new App();
     const stack = new Stack(app, "stack", {
       env: {
         region: "us-west-2",
       },
     });
-    //constructor sets to opposite of default
-    // hello1 sets nothing, should default to constructor values
-    // hello2 sets some values, should override constructor values
+    // hello1 sets nothing; hello2 sets env vars before the construct -- both should get constructor values
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
       runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromInline("test"),
@@ -196,7 +189,6 @@ describe("applyEnvVariables", () => {
       enableDatadogASM: true,
       enableDatadogLogs: true,
       captureLambdaPayload: true,
-      // testing injectLogContext, enableMergeXrayTraces are handled accordingly by applyEnvVariables
       logLevel: "constructor-set",
       captureCloudServicePayload: true,
     });
@@ -208,42 +200,20 @@ describe("applyEnvVariables", () => {
     hello2.addEnvironment(INJECT_LOG_CONTEXT_ENV_VAR, "False");
     hello2.addEnvironment(ENABLE_DD_LOGS_ENV_VAR, "False");
     hello2.addEnvironment(CAPTURE_LAMBDA_PAYLOAD_ENV_VAR, "False");
-    hello2.addEnvironment(DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING, "$.*");
-    hello2.addEnvironment(DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING, "$.*");
     hello2.addEnvironment(LOG_LEVEL_ENV_VAR, "debug");
 
     datadogLambda.addLambdaFunctions([hello1, hello2]);
 
-    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      //match hello2
+    // Both functions get the same constructor-configured values; hello2's pre-sets are overridden
+    Template.fromStack(stack).allResourcesProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false", //extension layer is set
-          [ENABLE_DD_TRACING_ENV_VAR]: "True",
-          [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "False",
-          [AWS_LAMBDA_EXEC_WRAPPER_KEY]: "user-set value",
-          [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "True",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "False",
-          [ENABLE_DD_LOGS_ENV_VAR]: "False",
-          [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "False",
-          [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "$.*",
-          [DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING]: "$.*",
-          [LOG_LEVEL_ENV_VAR]: "debug",
-        },
-      },
-    });
-    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      //first hello1, constructor + applyEnvVariables default values
-      Environment: {
-        Variables: {
-          [DD_HANDLER_ENV_VAR]: "hello.handler",
-          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false", //extension layer is set
+          [FLUSH_METRICS_TO_LOGS_ENV_VAR]: "false",
           [ENABLE_DD_TRACING_ENV_VAR]: "true",
           [ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR]: "true",
           [AWS_LAMBDA_EXEC_WRAPPER_KEY]: AWS_LAMBDA_EXEC_WRAPPER_VAL,
           [ENABLE_XRAY_TRACE_MERGING_ENV_VAR]: "false",
-          [INJECT_LOG_CONTEXT_ENV_VAR]: "false", //extension layer is set (an applyenvVariables branch statement)
+          [INJECT_LOG_CONTEXT_ENV_VAR]: "false",
           [ENABLE_DD_LOGS_ENV_VAR]: "true",
           [CAPTURE_LAMBDA_PAYLOAD_ENV_VAR]: "true",
           [DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING]: "all",
