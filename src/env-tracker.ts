@@ -20,20 +20,19 @@ interface TrackedEnvironment {
   tagsSet: boolean;
 }
 
-// Tracks env vars written by this library per Function, so we can read them back without
-// touching aws-cdk-lib's private Function.environment field. aws-cdk-lib has no public
-// read accessor for env vars, so the WeakMap is the library's own bookkeeping only.
+// Bookkeeping for env vars this library writes to Lambda functions. aws-cdk-lib does not
+// expose Function.environment publicly, so we mirror our own writes here and read from
+// this map instead of the private field.
 //
-// This module is intentionally not re-exported from index.ts: the helpers are internal
-// and not part of the package's public API.
+// Not exported from index.ts -- internal to the package.
 //
-// WeakMap (vs Map) so Function objects can be garbage-collected when a stack goes out of
-// scope (e.g. between test cases) without this module holding a lingering reference.
+// WeakMap so functions can be garbage-collected when their stack goes out of scope (for
+// example, between test cases).
 //
-// Note: env vars set on a Function via func.addEnvironment() outside of this library
-// are not tracked here and will be overridden if the library sets the same key.
-// Configure DD_* vars via DatadogLambdaProps, or call func.addEnvironment() after
-// calling addLambdaFunctions().
+// Env vars set via func.addEnvironment() outside this library are invisible here and will
+// be overwritten if the library writes the same key. Configure DD_* vars via
+// DatadogLambdaProps or datadogLambda.setEnvironment(), or call func.addEnvironment()
+// after datadogLambda.addLambdaFunctions().
 const ddEnvTracker: WeakMap<LambdaFunction, TrackedEnvironment> = new WeakMap();
 
 export function setTrackedEnv(lam: LambdaFunction, key: string, value: string): void {

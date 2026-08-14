@@ -183,15 +183,18 @@ export class DatadogLambda extends Construct {
   }
 
   /**
-   * Sets a tracked environment variable before `addLambdaFunctions()` runs.
+   * Pre-set a Datadog environment variable on `lambdaFunction`. Call this before
+   * `addLambdaFunctions([lambdaFunction])`.
    *
-   * For `DD_TAGS`, tags from `DatadogLambdaProps` are applied first, tags set here
-   * override duplicate keys, and source code integration tags take final precedence.
-   * For other keys, the value takes precedence when the construct would otherwise set a
-   * default. Construct settings and instrumentation steps that always write the key still
-   * take precedence.
-   * To guarantee final precedence for any key, call `addEnvironment()` after
-   * `addLambdaFunctions()` instead.
+   * Precedence, highest wins:
+   *   1. `func.addEnvironment()` called after `addLambdaFunctions()`.
+   *   2. `DatadogLambdaProps` fields dedicated to `key` (for example, `env` for `DD_ENV`).
+   *   3. This method.
+   *   4. Construct defaults (for example, `enableDatadogTracing` for `DD_TRACE_ENABLED`).
+   *
+   * `DD_TAGS` is merged, not replaced: props tags first, then per-function tags from this
+   * method, then git tags from source code integration. On duplicate tag keys, the later
+   * source wins.
    */
   public setEnvironment(lambdaFunction: LambdaFunction, key: string, value: string): void {
     const [extractedLambdaFunction] = extractSingletonFunctions([lambdaFunction]);
