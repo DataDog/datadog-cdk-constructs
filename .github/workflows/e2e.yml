@@ -1,0 +1,78 @@
+name: e2e
+
+# Full instrumentation lifecycle against a live, ephemeral Lambda function.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "e2e/**"
+      - "package.json"
+      - "yarn.lock"
+      - ".github/workflows/e2e.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "e2e/**"
+      - "package.json"
+      - "yarn.lock"
+      - ".github/workflows/e2e.yml"
+  workflow_dispatch:
+
+jobs:
+  lambda-e2e:
+    # Fork pull requests cannot use the canonical repository's OIDC identities.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION_E2E || 'ap-northeast-3' }}
+      DD_SITE: ${{ vars.DD_SITE_E2E || 'datadoghq.com' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      # Enable Corepack before setup-node so its package-manager cache step detects
+      # the yarn berry version from package.json instead of falling back to yarn 1.
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node 24
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      # Dedicated GitHub-OIDC role in the serverless sandbox account, scoped to deploy
+      # one-e2e-cdk-lambda-* via the CDK bootstrap roles. See serverless-ci/e2e/iam-infra.md.
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN_E2E }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Short-lived Datadog API + App keys via OIDC federation (dd-sts), governed by the
+      # policy in dd-source. No static Datadog keys are stored in this repo.
+      - name: Get Datadog credentials (dd-sts)
+        id: dd-sts
+        uses: DataDog/dd-sts-action@2e8187910199bd93129520183c093e19aa585c75 # v1.0.0
+        with:
+          policy: datadog-cdk-constructs-e2e
+
+      # The account is already CDK-bootstrapped; deploy reads the bootstrap version
+      # from SSM, so no bootstrap step is needed.
+      - name: Resolve account id
+        run: echo "CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
+
+      - name: Run Lambda e2e suite
+        run: yarn test:e2e
+        env:
+          # Baked into the function at synth + used by the construct/extension.
+          DD_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
+          # Used by the telemetry checker to query spans/logs.
+          DATADOG_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
+          DATADOG_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}
