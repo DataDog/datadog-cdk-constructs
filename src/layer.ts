@@ -21,6 +21,7 @@ import {
   LAYER_PREFIX,
   EXTENSION_LAYER_PREFIX,
 } from "./index";
+import { LambdaFunction } from "./interfaces";
 import { DatadogDefaultLayerVersions } from "./layer-versions";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
@@ -38,7 +39,7 @@ const DEFAULT_LAYER_VERSION_BY_RUNTIME: { [paramRuntime: string]: number } = {
 export function applyLayers(
   scope: Construct,
   region: string,
-  lam: lambda.Function,
+  lam: LambdaFunction,
   pythonLayerVersion?: number,
   pythonLayerArn?: string,
   nodeLayerVersion?: number,
@@ -176,7 +177,7 @@ export function applyLayers(
 export function applyExtensionLayer(
   scope: Construct,
   region: string,
-  lam: lambda.Function,
+  lam: LambdaFunction,
   extensionLayerVersion?: number,
   extensionLayerArn?: string,
   useLayersFromAccount?: string,
@@ -268,7 +269,7 @@ function addLayer(
   layerArn: string,
   isExtensionLayer: boolean,
   scope: Construct,
-  lam: lambda.Function,
+  lam: LambdaFunction,
   runtime: string,
 ): void {
   const layerId = generateLayerId(isExtensionLayer, lam.functionArn, runtime);

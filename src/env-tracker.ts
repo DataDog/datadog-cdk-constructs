@@ -6,6 +6,7 @@
  * Copyright 2021 Datadog, Inc.
  */
 
+import { Node } from "constructs";
 import { LambdaFunction } from "./interfaces";
 
 const DD_TAGS = "DD_TAGS";
@@ -26,14 +27,14 @@ interface TrackedEnvironment {
 //
 // Not exported from index.ts -- internal to the package.
 //
-// WeakMap so functions can be garbage-collected when their stack goes out of scope (for
-// example, between test cases).
+// WeakMap so construct nodes can be garbage-collected when their stack goes out of scope
+// (for example, between test cases).
 //
 // Env vars set via func.addEnvironment() outside this library are invisible here and will
 // be overwritten if the library writes the same key. Configure DD_* vars via
 // DatadogLambdaProps or datadogLambda.setEnvironment(), or call func.addEnvironment()
 // after datadogLambda.addLambdaFunctions().
-const ddEnvTracker: WeakMap<LambdaFunction, TrackedEnvironment> = new WeakMap();
+const ddEnvTracker: WeakMap<Node, TrackedEnvironment> = new WeakMap();
 
 export function setTrackedEnv(lam: LambdaFunction, key: string, value: string): void {
   if (key === DD_TAGS) {
@@ -60,12 +61,12 @@ export function mergeTrackedGitTags(lam: LambdaFunction, value: string): void {
 }
 
 export function hasTrackedEnv(lam: LambdaFunction, key: string): boolean {
-  const tracked = ddEnvTracker.get(lam);
+  const tracked = ddEnvTracker.get(lam.permissionsNode);
   return key === DD_TAGS ? (tracked?.tagsSet ?? false) : (tracked?.values.has(key) ?? false);
 }
 
 function getOrCreateTrackedEnvironment(lam: LambdaFunction): TrackedEnvironment {
-  let tracked = ddEnvTracker.get(lam);
+  let tracked = ddEnvTracker.get(lam.permissionsNode);
   if (!tracked) {
     tracked = {
       values: new Map(),
@@ -74,7 +75,7 @@ function getOrCreateTrackedEnvironment(lam: LambdaFunction): TrackedEnvironment 
       gitTags: new Map(),
       tagsSet: false,
     };
-    ddEnvTracker.set(lam, tracked);
+    ddEnvTracker.set(lam.permissionsNode, tracked);
   }
   return tracked;
 }

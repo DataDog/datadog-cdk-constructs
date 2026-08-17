@@ -15,6 +15,7 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { Construct } from "constructs";
 import log from "loglevel";
 import { SUBSCRIPTION_FILTER_PREFIX } from "./index";
+import { LambdaFunction } from "./interfaces";
 
 function getForwarder(scope: Construct, forwarderArn: string) {
   const forwarderConstructId = generateForwarderConstructId(forwarderArn);
@@ -27,13 +28,13 @@ function getForwarder(scope: Construct, forwarderArn: string) {
 
 export function addForwarder(
   scope: Construct,
-  lam: lambda.Function,
+  lam: LambdaFunction,
   forwarderArn: string,
   createForwarderPermissions: boolean,
 ): void {
   const forwarder = getForwarder(scope, forwarderArn);
   const forwarderDestination = new LambdaDestination(forwarder, { addPermissions: createForwarderPermissions });
-  const subscriptionFilterName = generateSubscriptionFilterName(Names.uniqueId(lam), forwarderArn);
+  const subscriptionFilterName = generateSubscriptionFilterName(Names.nodeUniqueId(lam.permissionsNode), forwarderArn);
   log.debug(`Adding log subscription ${subscriptionFilterName} for ${lam.functionName}`);
   lam.logGroup.addSubscriptionFilter(subscriptionFilterName, {
     destination: forwarderDestination,

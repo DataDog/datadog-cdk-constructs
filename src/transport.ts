@@ -6,9 +6,9 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./index";
+import { LambdaFunction } from "./interfaces";
 
 export const API_KEY_ENV_VAR = "DD_API_KEY";
 export const API_KEY_SECRET_ARN_ENV_VAR = "DD_API_KEY_SECRET_ARN";
@@ -75,7 +75,7 @@ export class Transport {
     this.apiKmsKey = apiKmsKey;
   }
 
-  applyEnvVars(lam: lambda.Function) {
+  applyEnvVars(lam: LambdaFunction) {
     log.debug(`Setting Datadog transport environment variables...`);
     lam.addEnvironment(FLUSH_METRICS_TO_LOGS_ENV_VAR, this.flushMetricsToLogs.toString());
     if (this.site !== undefined && this.flushMetricsToLogs === false) {

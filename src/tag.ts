@@ -11,29 +11,31 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import log from "loglevel";
 import { TagKeys, DatadogLambdaProps, DatadogStepFunctionsProps } from "./index";
+import { LambdaFunction } from "./interfaces";
 
 const versionJson = require("../version.json");
 
 export function setTags(
-  resource: lambda.Function | sfn.StateMachine,
+  resource: LambdaFunction | sfn.StateMachine,
   props: DatadogLambdaProps | DatadogStepFunctionsProps,
 ): void {
   log.debug(`Adding datadog tags`);
+  const taggable = resource instanceof lambda.SingletonFunction ? resource.permissionsNode.defaultChild! : resource;
   if (props.env) {
-    Tags.of(resource).add(TagKeys.ENV, props.env);
+    Tags.of(taggable).add(TagKeys.ENV, props.env);
   }
   if (props.service) {
-    Tags.of(resource).add(TagKeys.SERVICE, props.service);
+    Tags.of(taggable).add(TagKeys.SERVICE, props.service);
   }
   if (props.version) {
-    Tags.of(resource).add(TagKeys.VERSION, props.version);
+    Tags.of(taggable).add(TagKeys.VERSION, props.version);
   }
   if (props.tags) {
     const tagsArray = props.tags.split(",");
     tagsArray.forEach((tag: string) => {
       const [key, value] = tag.split(":");
       if (key && value) {
-        Tags.of(resource).add(key, value);
+        Tags.of(taggable).add(key, value);
       }
     });
   }

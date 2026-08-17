@@ -115,10 +115,6 @@ export interface Runtime {
   readonly name: string;
 }
 
-export interface Node {
-  readonly defaultChild: any;
-}
-
 export type LambdaFunction = lambda.Function | lambda.SingletonFunction;
 
 export interface DatadogStepFunctionsProps {

@@ -81,16 +81,14 @@ export class DatadogLambda extends Construct {
     // defined in DefaultDatadogProps (if not set by user)
     const baseProps: DatadogLambdaStrictProps = handleSettingPropDefaults(this.props);
 
-    const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
-
-    if (extractedLambdaFunctions.length === 0) {
+    if (lambdaFunctions.length === 0) {
       return;
     }
 
-    const region = extractedLambdaFunctions[0].env.region;
+    const region = lambdaFunctions[0].env.region;
     log.debug(`Using region: ${region}`);
 
-    for (const lambdaFunction of extractedLambdaFunctions) {
+    for (const lambdaFunction of lambdaFunctions) {
       if (this.props.apiKeySecret !== undefined) {
         grantReadLambda(this.props.apiKeySecret, lambdaFunction);
       } else if (
@@ -197,8 +195,7 @@ export class DatadogLambda extends Construct {
    * On duplicate tag keys, the later source wins.
    */
   public setEnvironment(lambdaFunction: LambdaFunction, key: string, value: string): void {
-    const [extractedLambdaFunction] = extractSingletonFunctions([lambdaFunction]);
-    setTrackedEnv(extractedLambdaFunction, key, value);
+    setTrackedEnv(lambdaFunction, key, value);
   }
 
   public overrideGitMetadata(gitCommitSha: string, gitRepoUrl?: string): void {
@@ -237,8 +234,7 @@ export class DatadogLambda extends Construct {
     // @ts-ignore
     gitRepoUrl?: string,
   ): void {
-    const extractedLambdaFunctions = extractSingletonFunctions(lambdaFunctions);
-    setGitEnvironmentVariables(extractedLambdaFunctions, this.gitCommitShaOverride, this.gitRepoUrlOverride);
+    setGitEnvironmentVariables(lambdaFunctions, this.gitCommitShaOverride, this.gitRepoUrlOverride);
   }
 
   public addForwarderToNonLambdaLogGroups(logGroups: logs.ILogGroup[]) {
@@ -255,30 +251,32 @@ export class DatadogLambda extends Construct {
   }
 }
 
-export function addCdkConstructVersionTag(lambdaFunction: lambda.Function): void {
+export function addCdkConstructVersionTag(lambdaFunction: LambdaFunction): void {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
-  Tags.of(lambdaFunction).add(TagKeys.CDK, `v${versionJson.version}`, {
+  Tags.of(
+    lambdaFunction instanceof lambda.SingletonFunction ? lambdaFunction.permissionsNode.defaultChild! : lambdaFunction,
+  ).add(TagKeys.CDK, `v${versionJson.version}`, {
     includeResourceTypes: ["AWS::Lambda::Function"],
   });
 }
 
-function setTagsForFunction(lambdaFunction: lambda.Function, props: DatadogLambdaProps): void {
+function setTagsForFunction(lambdaFunction: LambdaFunction, props: DatadogLambdaProps): void {
   if (props.forwarderArn) {
     setTags(lambdaFunction, props);
   }
 }
 
-function grantReadLambda(secret: ISecret, lambdaFunction: lambda.Function): void {
+function grantReadLambda(secret: ISecret, lambdaFunction: LambdaFunction): void {
   secret.grantRead(lambdaFunction);
   secret.encryptionKey?.grantDecrypt(lambdaFunction);
 }
 
-function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaFunction: lambda.Function): void {
+function grantReadLambdaFromSecretArn(construct: Construct, arn: string, lambdaFunction: LambdaFunction): void {
   const secret = Secret.fromSecretPartialArn(construct, "DatadogApiKeySecret", arn);
   secret.grantRead(lambdaFunction);
 }
 
-function grantReadLambdaFromSsmParameterArn(parameterArn: string, lambdaFunction: lambda.Function): void {
+function grantReadLambdaFromSsmParameterArn(parameterArn: string, lambdaFunction: LambdaFunction): void {
   // Grant IAM permissions to support both String and SecureString SSM parameters
   // For SecureString parameters, the Datadog Extension will decrypt at runtime using KMS
   const stack = Stack.of(lambdaFunction);
@@ -303,21 +301,6 @@ function grantReadLambdaFromSsmParameterArn(parameterArn: string, lambdaFunction
       ],
     }),
   );
-}
-
-function extractSingletonFunctions(lambdaFunctions: LambdaFunction[]): lambda.Function[] {
-  // extract lambdaFunction property from Singleton Function
-  // using bracket notation here since lambdaFunction is a private property
-  const extractedLambdaFunctions: lambda.Function[] = lambdaFunctions.map((fn) => {
-    // eslint-disable-next-line dot-notation
-    return isSingletonFunction(fn) ? fn["lambdaFunction"] : fn;
-  });
-
-  return extractedLambdaFunctions;
-}
-
-function isSingletonFunction(fn: LambdaFunction): fn is lambda.SingletonFunction {
-  return fn.hasOwnProperty("lambdaFunction");
 }
 
 export function validateProps(props: DatadogLambdaProps, apiKeyArnOverride = false): void {
