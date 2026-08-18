@@ -14,8 +14,7 @@ elif [[ ! $RELEASE_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
     exit 1
 fi
 
-# Make sure local tags are up to date with the remote before anything else,
-# otherwise `git describe` below can fail and produce an empty commit list.
+# Make sure local tags are up to date before checking for an existing release.
 git fetch origin 'refs/tags/*:refs/tags/*' --quiet
 
 # Check that the release version has not already been published
@@ -25,20 +24,20 @@ if [ $MATCHING_GITHUB_VERSION ]; then
     exit 1
 fi
 
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
-if [ -z "$LAST_TAG" ]; then
-    echo "ERROR: Could not find a previous tag via git describe. Aborting."
-    exit 1
-fi
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VERSION_FILE="$SCRIPT_DIR/../version.json"
+CURRENT_VERSION=$(jq -r '.version' "$VERSION_FILE")
+LAST_RELEASE_COMMIT=$(git log -1 --format=%H --fixed-strings --grep="Release v2-$CURRENT_VERSION" HEAD)
+if [ -z "$LAST_RELEASE_COMMIT" ]; then
+    echo "ERROR: Could not find the release commit for v2-$CURRENT_VERSION. Aborting."
+    exit 1
+fi
 jq --arg v "$RELEASE_VERSION" '.version = $v' "$VERSION_FILE" > "$VERSION_FILE.tmp" && mv "$VERSION_FILE.tmp" "$VERSION_FILE"
 
 git add $VERSION_FILE
 
 # Create a commit with all of the commit info for commits in this release
-INCLUDED_COMMITS=$(git log "$LAST_TAG"..HEAD --no-merges --oneline)
+INCLUDED_COMMITS=$(git log "$LAST_RELEASE_COMMIT"..HEAD --no-merges --oneline)
 git commit -m "chore: Release v2-$RELEASE_VERSION
 
 This release includes the following commits:
@@ -46,7 +45,7 @@ $(echo "$INCLUDED_COMMITS")
 "
 
 # Tag it and push to a release branch
-git tag "v2-$RELEASE_VERSION"
+git tag -m "Release v2-$RELEASE_VERSION" "v2-$RELEASE_VERSION"
 git push --atomic origin "$(git rev-parse --abbrev-ref HEAD):release-v2-$RELEASE_VERSION" v2-$RELEASE_VERSION
 
 # Log information to create a PR
