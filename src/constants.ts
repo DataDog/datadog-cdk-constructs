@@ -7,7 +7,7 @@
  */
 
 import { DatadogAppSecMode } from "./interfaces";
-import { lambdaLayerCatalog } from "./lambda-layer-catalog";
+import { lambdaLayerCatalog } from "./layer-catalog";
 
 export const LAYER_PREFIX = "DatadogLayer";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
