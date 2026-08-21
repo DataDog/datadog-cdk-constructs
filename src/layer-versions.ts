@@ -6,7 +6,7 @@
  * Copyright 2026 Datadog, Inc.
  */
 
-import { lambdaLayerCatalog } from "./lambda-layer-catalog";
+import { lambdaLayerCatalog } from "./layer-catalog";
 
 /**
  * Default Datadog Lambda layer versions bundled with this construct. These are
