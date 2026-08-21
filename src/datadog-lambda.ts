@@ -119,6 +119,7 @@ export class DatadogLambda extends Construct {
           this.props.rubyLayerVersion,
           this.props.rubyLayerArn,
           this.props.useLayersFromAccount,
+          this.props.allowUnsupportedRuntimes,
         );
         if (errors.length > 0) {
           log.warn(
@@ -137,6 +138,7 @@ export class DatadogLambda extends Construct {
           baseProps.extensionLayerVersion,
           baseProps.extensionLayerArn,
           this.props.useLayersFromAccount,
+          this.props.allowUnsupportedRuntimes,
         );
         if (errors.length > 0) {
           log.warn(
@@ -147,7 +149,7 @@ export class DatadogLambda extends Construct {
       }
 
       if (baseProps.redirectHandler) {
-        redirectHandlers(lambdaFunction, baseProps.addLayers, useExtension);
+        redirectHandlers(lambdaFunction, baseProps.addLayers, useExtension, this.props.allowUnsupportedRuntimes);
       }
 
       if (this.props.forwarderArn !== undefined) {
