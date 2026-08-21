@@ -72,6 +72,8 @@ export interface DatadogLambdaProps {
   readonly redirectHandler?: boolean;
   readonly grantSecretReadAccess?: boolean;
   readonly useLayersFromAccount?: string;
+  /** Allow custom layer ARNs for Lambda runtimes not yet in the Datadog runtime catalog. */
+  readonly allowUnsupportedRuntimes?: boolean;
   readonly llmObsEnabled?: boolean;
   readonly llmObsMlApp?: string;
   readonly llmObsAgentlessEnabled?: boolean;
