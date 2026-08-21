@@ -42,6 +42,32 @@ describe("DatadogStepFunctions", () => {
       expect(logConfig.destinations).toHaveLength(1);
     });
 
+    it("supports multiple state machines with pre-existing, distinct log groups", () => {
+      const stack = new Stack();
+      const stateMachineOne = new sfn.StateMachine(stack, "StateMachineOne", {
+        definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(stack, "PassStateOne")),
+        logs: {
+          destination: new logs.LogGroup(stack, "LogGroupOne"),
+          level: sfn.LogLevel.ERROR,
+          includeExecutionData: false,
+        },
+      });
+      const stateMachineTwo = new sfn.StateMachine(stack, "StateMachineTwo", {
+        definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(stack, "PassStateTwo")),
+        logs: {
+          destination: new logs.LogGroup(stack, "LogGroupTwo"),
+          level: sfn.LogLevel.ERROR,
+          includeExecutionData: false,
+        },
+      });
+
+      const datadogSfn = new DatadogStepFunctions(stack, "DatadogStepFunctions", {});
+      expect(() => {
+        datadogSfn.addStateMachines([stateMachineOne]);
+        datadogSfn.addStateMachines([stateMachineTwo]);
+      }).not.toThrow();
+    });
+
     it("throws if loggingConfiguration is an unresolved token", () => {
       const stack = new Stack();
       const stateMachine = new sfn.StateMachine(stack, "StateMachine", {
