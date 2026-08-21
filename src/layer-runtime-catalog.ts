@@ -27,21 +27,6 @@ export const layerRuntimeCatalog = [
     layerNames: { x86_64: "dd-trace-dotnet", arm64: "dd-trace-dotnet-ARM" },
   },
   {
-    runtime: "nodejs12.x",
-    runtimeType: "NODE",
-    layerNames: { x86_64: "Datadog-Node12-x", arm64: "Datadog-Node12-x-ARM" },
-  },
-  {
-    runtime: "nodejs14.x",
-    runtimeType: "NODE",
-    layerNames: { x86_64: "Datadog-Node14-x", arm64: "Datadog-Node14-x-ARM" },
-  },
-  {
-    runtime: "nodejs16.x",
-    runtimeType: "NODE",
-    layerNames: { x86_64: "Datadog-Node16-x", arm64: "Datadog-Node16-x-ARM" },
-  },
-  {
     runtime: "nodejs18.x",
     runtimeType: "NODE",
     layerNames: { x86_64: "Datadog-Node18-x", arm64: "Datadog-Node18-x-ARM" },
@@ -60,16 +45,6 @@ export const layerRuntimeCatalog = [
     runtime: "nodejs24.x",
     runtimeType: "NODE",
     layerNames: { x86_64: "Datadog-Node24-x", arm64: "Datadog-Node24-x-ARM" },
-  },
-  {
-    runtime: "python3.6",
-    runtimeType: "PYTHON",
-    layerNames: { x86_64: "Datadog-Python36", arm64: "Datadog-Python36-ARM" },
-  },
-  {
-    runtime: "python3.7",
-    runtimeType: "PYTHON",
-    layerNames: { x86_64: "Datadog-Python37", arm64: "Datadog-Python37-ARM" },
   },
   {
     runtime: "python3.8",
