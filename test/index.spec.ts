@@ -31,12 +31,12 @@ describe("addLambdaFunctions", () => {
       handler: "hello.handler",
     });
     const pythonLambda = new lambda.Function(stack, "PythonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
     const singletonLambda = new lambda.SingletonFunction(stack, "SingletonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
       uuid: "be308085-96c4-4208-9092-560d9d79e2c5",
@@ -309,7 +309,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -344,17 +344,17 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello2 = new lambda.Function(stack, "HelloHandler2", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

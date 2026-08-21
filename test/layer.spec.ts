@@ -258,7 +258,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
@@ -274,7 +274,7 @@ describe("applyLayers", () => {
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python38:${PYTHON_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
       ],
     });
@@ -288,7 +288,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
@@ -318,7 +318,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
@@ -335,7 +335,7 @@ describe("applyLayers", () => {
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
+        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Python38-ARM:${PYTHON_LAYER_VERSION}`,
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
       ],
     });
@@ -349,7 +349,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
@@ -473,7 +473,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -490,7 +490,7 @@ describe("applyLayers", () => {
       Layers: Match.absent(),
     });
     expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual("Unsupported runtime: go1.x");
+    expect(errors[0]).toEqual("Unsupported runtime: nodejs16.x");
   });
 
   it("doesn't add layer to container image Lambda without extension or layer versions", () => {
@@ -817,7 +817,7 @@ describe("isGovCloud", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
@@ -833,7 +833,7 @@ describe("isGovCloud", () => {
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37:${PYTHON_LAYER_VERSION}`,
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python38:${PYTHON_LAYER_VERSION}`,
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
       ],
     });
@@ -847,7 +847,7 @@ describe("isGovCloud", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
       architecture: Architecture.ARM_64,
@@ -864,7 +864,7 @@ describe("isGovCloud", () => {
     datadogLambda.addLambdaFunctions([hello]);
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: [
-        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python37-ARM:${PYTHON_LAYER_VERSION}`,
+        `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Python38-ARM:${PYTHON_LAYER_VERSION}`,
         `arn:aws-us-gov:lambda:us-gov-east-1:${DD_GOV_ACCOUNT_ID}:layer:Datadog-Extension-ARM:${EXTENSION_LAYER_VERSION}`,
       ],
     });
