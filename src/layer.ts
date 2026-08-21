@@ -51,13 +51,12 @@ export function applyLayers(
   rubyLayerVersion?: number,
   rubyLayerArn?: string,
   useLayersFromAccount?: string,
-  allowUnsupportedRuntimes = false,
 ): string[] {
   // TODO: check region availability
   const errors: string[] = [];
   log.debug("Applying layers to Lambda functions...");
   const runtime: string = lam.runtime.name;
-  const lambdaRuntimeType = getRuntimeType(lam.runtime, allowUnsupportedRuntimes);
+  const lambdaRuntimeType = getRuntimeType(lam.runtime);
   const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
 
   if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
@@ -182,13 +181,12 @@ export function applyExtensionLayer(
   extensionLayerVersion?: number,
   extensionLayerArn?: string,
   useLayersFromAccount?: string,
-  allowUnsupportedRuntimes = false,
 ): string[] {
   // TODO: check region availability
   const errors: string[] = [];
   log.debug("Applying extension layer to Lambda function...");
   const runtime: string = lam.runtime.name;
-  const lambdaRuntimeType = getRuntimeType(lam.runtime, allowUnsupportedRuntimes);
+  const lambdaRuntimeType = getRuntimeType(lam.runtime);
   const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
   const accountId = useLayersFromAccount;
 

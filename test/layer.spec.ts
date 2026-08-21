@@ -122,8 +122,8 @@ describe("applyLayers", () => {
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
     });
+    process.env.DD_CDK_BYPASS_RUNTIME_VALIDATION = "true";
     const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      allowUnsupportedRuntimes: true,
       nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
       extensionLayerVersion: EXTENSION_LAYER_VERSION,
       apiKey: "1234",
@@ -140,6 +140,7 @@ describe("applyLayers", () => {
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
       ],
     });
+    process.env.DD_CDK_BYPASS_RUNTIME_VALIDATION = undefined;
   });
 
   it("adds an extension layer with a custom layer arn along with a node layer while using an apiKey", () => {

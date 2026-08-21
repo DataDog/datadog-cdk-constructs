@@ -9,9 +9,9 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { RuntimeType, runtimeLookup } from "./constants";
 
-export function getRuntimeType(runtime: lambda.Runtime, allowUnsupportedRuntimes: boolean): RuntimeType | undefined {
+export function getRuntimeType(runtime: lambda.Runtime): RuntimeType | undefined {
   const runtimeType = runtimeLookup[runtime.name];
-  if (runtimeType !== undefined || !allowUnsupportedRuntimes) {
+  if (runtimeType !== undefined || process.env.DD_CDK_BYPASS_RUNTIME_VALIDATION !== "true") {
     return runtimeType;
   }
 

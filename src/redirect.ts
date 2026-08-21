@@ -28,15 +28,10 @@ import { getRuntimeType } from "./runtime";
  *
  * Unchanged aside from parameter type
  */
-export function redirectHandlers(
-  lam: LambdaFunction,
-  addLayers: boolean,
-  useExtension: boolean,
-  allowUnsupportedRuntimes = false,
-): void {
+export function redirectHandlers(lam: LambdaFunction, addLayers: boolean, useExtension: boolean): void {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
 
-  const runtimeType = getRuntimeType(lam.runtime, allowUnsupportedRuntimes);
+  const runtimeType = getRuntimeType(lam.runtime);
 
   if (runtimeType === RuntimeType.JAVA || runtimeType === RuntimeType.DOTNET) {
     if (useExtension) {
