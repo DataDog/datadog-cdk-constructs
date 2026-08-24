@@ -58,7 +58,7 @@
     },
     "Handler": "datadog_lambda.handler.handler",
     "Layers": [
-     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Python37:XXX",
+     "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Python38:XXX",
      "arn:aws:lambda:sa-east-1:464622532012:layer:Datadog-Extension:XXX"
     ],
     "Role": {
@@ -67,7 +67,7 @@
       "Arn"
      ]
     },
-    "Runtime": "python3.7",
+    "Runtime": "python3.8",
     "Tags": [
      {
       "Key": "dd_cdk_construct",
