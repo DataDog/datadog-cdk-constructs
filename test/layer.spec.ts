@@ -704,13 +704,11 @@ describe("applyLayers", () => {
       runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
-      architecture: Architecture.X86_64,
     });
     const hello2 = new lambda.Function(stack, "PythonHandler", {
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset("test/lambda"),
       handler: "example-lambda.handler",
-      architecture: Architecture.ARM_64,
     });
     const errors1 = applyLayers(stack, stack.region, hello1);
     const errors2 = applyLayers(stack, stack.region, hello2);
@@ -721,7 +719,7 @@ describe("applyLayers", () => {
     });
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Layers: Match.arrayWith([
-        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Python38-ARM:${DatadogDefaultLayerVersions.PYTHON}`,
+        `arn:aws:lambda:us-west-2:${DD_ACCOUNT_ID}:layer:Datadog-Python38:${DatadogDefaultLayerVersions.PYTHON}`,
       ]),
     });
     expect(errors1).toEqual([]);

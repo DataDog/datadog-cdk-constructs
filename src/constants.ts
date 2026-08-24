@@ -7,7 +7,7 @@
  */
 
 import { DatadogAppSecMode } from "./interfaces";
-import { lambdaLayerCatalog } from "./layer-catalog";
+import { layerRuntimeCatalog } from "./layer-runtime-catalog";
 
 export const LAYER_PREFIX = "DatadogLayer";
 export const EXTENSION_LAYER_PREFIX = "DatadogExtension";
@@ -38,7 +38,6 @@ const runtimeTypeLookup: { [key: string]: RuntimeType } = {
   JAVA: RuntimeType.JAVA,
   RUBY: RuntimeType.RUBY,
   CUSTOM: RuntimeType.CUSTOM,
-  UNSUPPORTED: RuntimeType.UNSUPPORTED,
 };
 
 export const DatadogLambdaDefaultProps = {
@@ -70,15 +69,13 @@ export enum TagKeys {
 }
 
 export const runtimeLookup: { [key: string]: RuntimeType } = Object.fromEntries(
-  lambdaLayerCatalog.runtimes.flatMap((runtime) =>
+  layerRuntimeCatalog.flatMap((runtime) =>
     "runtimeType" in runtime ? [[runtime.runtime, runtimeTypeLookup[runtime.runtimeType]]] : [],
   ),
 );
 
-export const runtimeToLayerName: { [key: string]: string } = Object.fromEntries(
-  lambdaLayerCatalog.runtimes.flatMap((runtime) =>
-    "layerName" in runtime ? [[runtime.runtime, runtime.layerName]] : [],
-  ),
+export const runtimeToLayerName: { [key: string]: { x86_64: string; arm64: string } } = Object.fromEntries(
+  layerRuntimeCatalog.flatMap((runtime) => ("layerNames" in runtime ? [[runtime.runtime, runtime.layerNames]] : [])),
 );
 
 export const govCloudRegions: ReadonlyArray<string> = ["us-gov-east-1", "us-gov-west-1"];

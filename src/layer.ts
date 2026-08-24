@@ -292,8 +292,7 @@ export function getLambdaLayerArn(
   isArm: boolean,
   accountId?: string,
 ): string {
-  const baseLayerName = runtimeToLayerName[runtime];
-  const layerName = isArm ? `${baseLayerName}-ARM` : baseLayerName;
+  const layerName = runtimeToLayerName[runtime]?.[isArm ? "arm64" : "x86_64"];
   const partition = getAWSPartitionFromRegion(region);
   // TODO: edge case where gov cloud is the region, but they are using a token so we can't resolve it.
   const isGovCloud = govCloudRegions.includes(region);
