@@ -74,8 +74,7 @@ describe("redirectHandlers", () => {
   });
 
   it.each([
-    ["JAVA 8", lambda.Runtime.JAVA_8],
-    ["JAVA 21", lambda.Runtime.JAVA_21],
+    ["JAVA", lambda.Runtime.JAVA_21],
     ["DOTNET", lambda.Runtime.DOTNET_10],
   ])("skips redirecting handler for '%s' and sets wrapper env var when extension configured", (_text, runtime) => {
     const app = new App();
@@ -126,6 +125,32 @@ describe("redirectHandlers", () => {
       {
         Environment: {
           Variables: {},
+        },
+      },
+      0,
+    );
+  });
+
+  it("doesn't set env vars for function with unsupported JAVA version", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", {
+      env: {
+        region: "us-west-2",
+      },
+    });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.JAVA_8,
+      code: lambda.Code.fromAsset(__dirname + "/../integration_tests/lambda"),
+      handler: "handleRequest",
+    });
+    redirectHandlers(hello, true, true);
+    Template.fromStack(stack).resourcePropertiesCountIs(
+      "AWS::Lambda::Function",
+      {
+        Environment: {
+          Variables: {
+            [AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR]: AWS_LAMBDA_EXEC_WRAPPER,
+          },
         },
       },
       0,
