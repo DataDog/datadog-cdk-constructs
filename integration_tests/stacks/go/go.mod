@@ -5,13 +5,11 @@ go 1.25.7
 toolchain go1.26.2
 
 require (
-	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct v0.0.0
+	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v5 v5.1.0
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.266.0
 	github.com/aws/constructs-go/constructs/v10 v10.6.0
 	github.com/aws/jsii-runtime-go v1.139.0
 )
-
-replace github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct => ./ddcdkconstruct
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
