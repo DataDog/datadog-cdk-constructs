@@ -18,7 +18,7 @@ export class ExampleStack extends Stack {
     super(scope, id, props);
 
     const lambdaPythonFunction = new PythonFunction(this, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_8,
+      runtime: lambda.Runtime.PYTHON_3_7,
       entry: __dirname + "/../../../../lambda",
       index: "example-python.py",
       handler: "handler",
