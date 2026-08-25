@@ -31,12 +31,12 @@ describe("addLambdaFunctions", () => {
       handler: "hello.handler",
     });
     const pythonLambda = new lambda.Function(stack, "PythonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_8,
+      runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
     const singletonLambda = new lambda.SingletonFunction(stack, "SingletonHandler", {
-      runtime: lambda.Runtime.PYTHON_3_8,
+      runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
       uuid: "be308085-96c4-4208-9092-560d9d79e2c5",
