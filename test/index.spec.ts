@@ -309,7 +309,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
@@ -344,17 +344,17 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello1 = new lambda.Function(stack, "HelloHandler1", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });
     const hello2 = new lambda.Function(stack, "HelloHandler2", {
-      runtime: lambda.Runtime.PYTHON_3_6,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromInline("test"),
       handler: "hello.handler",
     });

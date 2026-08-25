@@ -473,7 +473,7 @@ describe("applyLayers", () => {
       },
     });
     const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset("test"),
       handler: "hello.handler",
     });
@@ -490,7 +490,7 @@ describe("applyLayers", () => {
       Layers: Match.absent(),
     });
     expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual("Unsupported runtime: go1.x");
+    expect(errors[0]).toEqual("Unsupported runtime: nodejs12.x");
   });
 
   it("doesn't add layer to container image Lambda without extension or layer versions", () => {
