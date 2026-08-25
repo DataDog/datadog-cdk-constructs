@@ -81,6 +81,7 @@ export const layerRuntimeCatalog = [
     runtimeType: "PYTHON",
     layerNames: { x86_64: "Datadog-Python314", arm64: "Datadog-Python314-ARM" },
   },
+  { runtime: "java8", runtimeType: "JAVA", layerNames: { x86_64: "dd-trace-java", arm64: "dd-trace-java" } },
   { runtime: "java8.al2", runtimeType: "JAVA", layerNames: { x86_64: "dd-trace-java", arm64: "dd-trace-java" } },
   { runtime: "java11", runtimeType: "JAVA", layerNames: { x86_64: "dd-trace-java", arm64: "dd-trace-java" } },
   { runtime: "java17", runtimeType: "JAVA", layerNames: { x86_64: "dd-trace-java", arm64: "dd-trace-java" } },
