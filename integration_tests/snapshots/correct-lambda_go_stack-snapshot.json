@@ -44,11 +44,12 @@
      "Variables": {
       "DD_LAMBDA_HANDLER": "index.handler",
       "DD_TRACE_ENABLED": "true",
-      "DD_SERVERLESS_APPSEC_ENABLED": "false",
       "DD_MERGE_XRAY_TRACES": "true",
       "DD_LOGS_INJECTION": "false",
       "DD_SERVERLESS_LOGS_ENABLED": "true",
       "DD_CAPTURE_LAMBDA_PAYLOAD": "false",
+      "DD_TRACE_CLOUD_REQUEST_PAYLOAD_TAGGING": "",
+      "DD_TRACE_CLOUD_RESPONSE_PAYLOAD_TAGGING": "",
       "DD_LOG_LEVEL": "debug",
       "DD_FLUSH_TO_LOG": "false",
       "DD_SITE": "datadoghq.com",
@@ -112,6 +113,23 @@
    },
    "Metadata": {
     "aws:cdk:path": "LambdaGoStack/HelloWorldFunction/invoke-function-url"
+   }
+  },
+  "HelloWorldFunctioninvokefunction9563AC38": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "HelloWorldFunctionB2AB6E79",
+      "Arn"
+     ]
+    },
+    "InvokedViaFunctionUrl": true,
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "LambdaGoStack/HelloWorldFunction/invoke-function"
    }
   },
   "CDKMetadata": {

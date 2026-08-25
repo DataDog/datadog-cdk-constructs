@@ -30,9 +30,7 @@ STACK_CONFIG_PATHS=(
     "java/App.java"
 )
 
-SCRIPT_PATH=${BASH_SOURCE[0]}
-SCRIPTS_DIR=$(dirname $SCRIPT_PATH)
-REPO_DIR=$(dirname $SCRIPTS_DIR)
+REPO_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 ROOT_DIR=$(pwd)
 if [[ "$ROOT_DIR" =~ .*"datadog-cdk-constructs/scripts".* ]]; then
     echo "Make sure to run this script from the root $(datadog-cdk-constructs) directory, aborting"
@@ -102,10 +100,19 @@ pip install datadog_cdk_constructs_v2-$VERSION.tar.gz
 cd ../..
 
 echo "Setting up for Go"
-cp -r ../dist/go/ddcdkconstruct stacks/go
-cd stacks/go
-go get
-cd ../..
+GO_STACK="$INTEGRATION_TESTS_DIR/stacks/go"
+GO_ARTIFACT="$REPO_DIR/dist/go/ddcdkconstruct"
+GO_MODULE=$(awk '$1 == "module" { print $2; exit }' "$GO_ARTIFACT/go.mod")
+if ! go mod edit -json "$GO_STACK/go.mod" | jq -e --arg module "$GO_MODULE" 'any(.Require[]; .Path == $module)' > /dev/null; then
+    echo "Expected Go integration fixture to require $GO_MODULE"
+    exit 1
+fi
+
+GO_WORK_DIR=$(mktemp -d)
+trap 'rm -rf "$GO_WORK_DIR"' EXIT
+(cd "$GO_WORK_DIR" && go work init "$GO_STACK" "$GO_ARTIFACT")
+GO_WORK_FILE="$GO_WORK_DIR/go.work"
+cd "$INTEGRATION_TESTS_DIR"
 
 echo "Setting up for Java"
 cd stacks/java
@@ -148,7 +155,7 @@ for ((i = 0; i < ${#STACK_CONFIG_PATHS[@]}; i++)); do
         STACK_CONFIG_NAME_PASCAL_CASE=$(snake_case_to_pascal_case "$STACK_CONFIG_NAME")
 
         cd stacks/go
-        cdk synth $STACK_CONFIG_NAME_PASCAL_CASE --app "go run *.go" --json --quiet
+        GOWORK="$GO_WORK_FILE" cdk synth $STACK_CONFIG_NAME_PASCAL_CASE --app "go run *.go" --json --quiet
         cd ../..
         RAW_CFN_TEMPLATE="stacks/go/cdk.out/$STACK_CONFIG_NAME_PASCAL_CASE.template.json"
     elif [[ ${STACK_CONFIG_PATHS[i]} =~ ^java/ && ${STACK_CONFIG_PATHS[i]} =~ \.java$ ]]; then
