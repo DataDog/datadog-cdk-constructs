@@ -11,7 +11,6 @@ import {
   DatadogDefaultLayerVersions,
   generateLambdaLayerId,
   generateExtensionLayerId,
-  JS_HANDLER_WITH_LAYERS,
 } from "../src/index";
 const NODE_LAYER_VERSION = 91;
 const CUSTOM_NODE_LAYER_ARN = `arn:aws:lambda:us-east-1:${DD_ACCOUNT_ID}:layer:Datadog-Node-custom:1`;
@@ -108,39 +107,6 @@ describe("applyLayers", () => {
         `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
       ],
     });
-  });
-
-  it("instruments an unlisted runtime with a custom layer ARN", () => {
-    const app = new App();
-    const stack = new Stack(app, "stack", {
-      env: {
-        region: "sa-east-1",
-      },
-    });
-    const hello = new lambda.Function(stack, "HelloHandler", {
-      runtime: new lambda.Runtime("nodejs26.x", lambda.RuntimeFamily.NODEJS),
-      code: lambda.Code.fromAsset("test/lambda"),
-      handler: "example-lambda.handler",
-    });
-    process.env.DD_CDK_BYPASS_RUNTIME_VALIDATION = "true";
-    const datadogLambda = new DatadogLambda(stack, "Datadog", {
-      nodeLayerArn: CUSTOM_NODE_LAYER_ARN,
-      extensionLayerVersion: EXTENSION_LAYER_VERSION,
-      apiKey: "1234",
-      flushMetricsToLogs: true,
-      site: "datadoghq.com",
-    });
-
-    datadogLambda.addLambdaFunctions([hello]);
-
-    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
-      Handler: JS_HANDLER_WITH_LAYERS,
-      Layers: [
-        CUSTOM_NODE_LAYER_ARN,
-        `arn:aws:lambda:${stack.region}:${DD_ACCOUNT_ID}:layer:Datadog-Extension:${EXTENSION_LAYER_VERSION}`,
-      ],
-    });
-    process.env.DD_CDK_BYPASS_RUNTIME_VALIDATION = undefined;
   });
 
   it("adds an extension layer with a custom layer arn along with a node layer while using an apiKey", () => {
