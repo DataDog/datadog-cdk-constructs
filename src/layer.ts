@@ -12,6 +12,7 @@ import { Architecture } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 import log from "loglevel";
 import {
+  getRuntimeType,
   RuntimeType,
   runtimeToLayerName,
   govCloudRegions,
@@ -22,7 +23,6 @@ import {
 } from "./index";
 import { LambdaFunction } from "./interfaces";
 import { DatadogDefaultLayerVersions } from "./layer-versions";
-import { getRuntimeType } from "./runtime";
 
 const layers: Map<string, lambda.ILayerVersion> = new Map();
 

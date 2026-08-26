@@ -6,6 +6,7 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import { DatadogAppSecMode } from "./interfaces";
 import { layerRuntimeCatalog } from "./layer-runtime-catalog";
 
@@ -73,6 +74,24 @@ export const runtimeLookup: { [key: string]: RuntimeType } = Object.fromEntries(
     "runtimeType" in runtime ? [[runtime.runtime, runtimeTypeLookup[runtime.runtimeType]]] : [],
   ),
 );
+
+const runtimeFamilyLookup: Partial<Record<lambda.RuntimeFamily, RuntimeType>> = {
+  [lambda.RuntimeFamily.NODEJS]: RuntimeType.NODE,
+  [lambda.RuntimeFamily.PYTHON]: RuntimeType.PYTHON,
+  [lambda.RuntimeFamily.JAVA]: RuntimeType.JAVA,
+  [lambda.RuntimeFamily.DOTNET_CORE]: RuntimeType.DOTNET,
+  [lambda.RuntimeFamily.RUBY]: RuntimeType.RUBY,
+  [lambda.RuntimeFamily.OTHER]: RuntimeType.CUSTOM,
+};
+
+export function getRuntimeType(runtime: lambda.Runtime): RuntimeType | undefined {
+  return (
+    runtimeLookup[runtime.name] ??
+    (process.env.DD_CDK_BYPASS_RUNTIME_VALIDATION === "true" && runtime.family !== undefined
+      ? runtimeFamilyLookup[runtime.family]
+      : undefined)
+  );
+}
 
 export const runtimeToLayerName: { [key: string]: { x86_64: string; arm64: string } } = Object.fromEntries(
   layerRuntimeCatalog.flatMap((runtime) => ("layerNames" in runtime ? [[runtime.runtime, runtime.layerNames]] : [])),

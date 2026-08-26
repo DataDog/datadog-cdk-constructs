@@ -9,6 +9,7 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import {
+  getRuntimeType,
   RuntimeType,
   DD_HANDLER_ENV_VAR,
   AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR,
@@ -18,7 +19,6 @@ import {
   PYTHON_HANDLER,
 } from "./constants";
 import { LambdaFunction } from "./interfaces";
-import { getRuntimeType } from "./runtime";
 
 /**
  * To avoid modifying code in the user's lambda handler, redirect the handler to a Datadog
