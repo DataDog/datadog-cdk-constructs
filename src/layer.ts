@@ -12,7 +12,7 @@ import { Architecture } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 import log from "loglevel";
 import {
-  runtimeLookup,
+  getRuntimeType,
   RuntimeType,
   runtimeToLayerName,
   govCloudRegions,
@@ -56,7 +56,7 @@ export function applyLayers(
   const errors: string[] = [];
   log.debug("Applying layers to Lambda functions...");
   const runtime: string = lam.runtime.name;
-  const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
+  const lambdaRuntimeType = getRuntimeType(lam.runtime);
   const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
 
   if (lambdaRuntimeType === undefined || lambdaRuntimeType === RuntimeType.UNSUPPORTED) {
@@ -186,7 +186,7 @@ export function applyExtensionLayer(
   const errors: string[] = [];
   log.debug("Applying extension layer to Lambda function...");
   const runtime: string = lam.runtime.name;
-  const lambdaRuntimeType: RuntimeType = runtimeLookup[runtime];
+  const lambdaRuntimeType = getRuntimeType(lam.runtime);
   const isARM = lam.architecture?.dockerPlatform === Architecture.ARM_64.dockerPlatform;
   const accountId = useLayersFromAccount;
 

@@ -9,8 +9,8 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import log from "loglevel";
 import {
+  getRuntimeType,
   RuntimeType,
-  runtimeLookup,
   DD_HANDLER_ENV_VAR,
   AWS_LAMBDA_EXEC_WRAPPER_ENV_VAR,
   AWS_LAMBDA_EXEC_WRAPPER,
@@ -31,8 +31,7 @@ import { LambdaFunction } from "./interfaces";
 export function redirectHandlers(lam: LambdaFunction, addLayers: boolean, useExtension: boolean): void {
   log.debug(`Wrapping Lambda function handlers with Datadog handler...`);
 
-  const runtime: string = lam.runtime.name;
-  const runtimeType: RuntimeType = runtimeLookup[runtime];
+  const runtimeType = getRuntimeType(lam.runtime);
 
   if (runtimeType === RuntimeType.JAVA || runtimeType === RuntimeType.DOTNET) {
     if (useExtension) {
@@ -60,7 +59,7 @@ export function redirectHandlers(lam: LambdaFunction, addLayers: boolean, useExt
   cfnFuntion.handler = handler;
 }
 
-function getDDHandler(runtimeType: RuntimeType, addLayers: boolean): string | null {
+function getDDHandler(runtimeType: RuntimeType | undefined, addLayers: boolean): string | null {
   if (runtimeType === undefined || runtimeType === RuntimeType.UNSUPPORTED) {
     log.debug("Unsupported/undefined Lambda runtime");
     return null;
