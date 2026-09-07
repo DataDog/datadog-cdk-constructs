@@ -13,13 +13,13 @@
   "dependencies": {
     "@aws-cdk/aws-lambda-go-alpha": "^2.134.0-alpha.0",
     "@aws-cdk/aws-lambda-python-alpha": "^2.134.0-alpha.0",
-    "aws-cdk-lib": "^2.267.0",
+    "aws-cdk-lib": "^2.268.0",
     "constructs": "^10.3.0",
     "datadog-cdk-constructs-v2": "^2.0.0"
   },
   "resolutions": {
     "ajv": "^8.20.0",
-    "fast-uri": "^3.1.5",
+    "fast-uri": "^3.1.7",
     "diff": "^4.0.4",
     "minimatch": "^3.1.5",
     "yaml": "^1.10.3",
