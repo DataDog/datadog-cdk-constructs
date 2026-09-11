@@ -57,6 +57,11 @@ export const layerRuntimeCatalog = [
     layerNames: { x86_64: "Datadog-Node24-x", arm64: "Datadog-Node24-x" },
   },
   {
+    runtime: "nodejs26.x",
+    runtimeType: "NODE",
+    layerNames: { x86_64: "Datadog-Node26-x", arm64: "Datadog-Node26-x" },
+  },
+  {
     runtime: "python3.7",
     runtimeType: "PYTHON",
     layerNames: { x86_64: "Datadog-Python37", arm64: "Datadog-Python37-ARM" },
