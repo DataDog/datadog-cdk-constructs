@@ -40,7 +40,7 @@
     "@types/node": "^22",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
-    "aws-cdk-lib": "2.264.0",
+    "aws-cdk-lib": "2.265.0",
     "constructs": "10.5.1",
     "esbuild": "^0.28.2",
     "eslint": "^9",
@@ -55,14 +55,14 @@
     "jsii-pacmak": "^1.140.0",
     "jsii-rosetta": "~5.9.0",
     "prettier": "^3.9.6",
-    "projen": "^0.103.1",
+    "projen": "^0.103.23",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.264.0",
+    "aws-cdk-lib": "^2.265.0",
     "constructs": "^10.5.1"
   },
   "dependencies": {
