@@ -4,19 +4,19 @@ go 1.25.0
 
 require (
 	github.com/DataDog/datadog-cdk-constructs-go/ddcdkconstruct/v3 v3.11.0
-	github.com/aws/aws-cdk-go/awscdk/v2 v2.244.0
-	github.com/aws/constructs-go/constructs/v10 v10.5.1
-	github.com/aws/jsii-runtime-go v1.128.0
+	github.com/aws/aws-cdk-go/awscdk/v2 v2.269.0
+	github.com/aws/constructs-go/constructs/v10 v10.6.0
+	github.com/aws/jsii-runtime-go v1.139.0
 )
 
 require (
-	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-	github.com/cdklabs/awscdk-asset-awscli-go/awscliv1/v2 v2.2.263 // indirect
-	github.com/cdklabs/awscdk-asset-node-proxy-agent-go/nodeproxyagentv6/v2 v2.1.1 // indirect
-	github.com/cdklabs/cloud-assembly-schema-go/awscdkcloudassemblyschema/v52 v52.2.0 // indirect
+	github.com/Masterminds/semver/v3 v3.5.0 // indirect
+	github.com/cdklabs/awscdk-asset-awscli-go/awscliv1/v2 v2.2.292 // indirect
+	github.com/cdklabs/awscdk-asset-node-proxy-agent-go/nodeproxyagentv6/v2 v2.1.2 // indirect
+	github.com/cdklabs/cloud-assembly-schema-go/awscdkcloudassemblyschema/v54 v54.11.0 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-isatty v0.0.23 // indirect
 	github.com/yuin/goldmark v1.8.4 // indirect
 	golang.org/x/lint v0.0.0-20241112194109-818c5a804067 // indirect
 	golang.org/x/mod v0.40.0 // indirect
