@@ -20,5 +20,5 @@ export class DatadogDefaultLayerVersions {
   public static readonly JAVA = 28;
   public static readonly DOTNET = 25;
   public static readonly RUBY = 30;
-  public static readonly EXTENSION = 99;
+  public static readonly EXTENSION = 100;
 }
