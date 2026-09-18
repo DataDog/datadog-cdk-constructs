@@ -10,6 +10,8 @@ Use this Datadog CDK Construct Library to deploy serverless applications using A
 
 For more information on the **DatadogECSFargate** construct, see [here][23].
 
+For more information on the **DatadogECSManagedInstances** construct, see [here][29].
+
 This CDK library automatically configures ingestion of metrics, traces, and logs from your serverless applications by:
 
 - Installing and configuring the Datadog Lambda layers for your [Python][1], [Node.js][2], [Java][15], [Go][26], [Ruby][25], and [.NET][19] Lambda functions.
@@ -844,3 +846,4 @@ This product includes software developed at Datadog (https://www.datadoghq.com/)
 [26]: https://docs.datadoghq.com/serverless/aws_lambda/installation/go
 [27]: https://github.com/DataDog/datadog-lambda-extension/releases
 [28]: https://github.com/DataDog/datadog-lambda-java/releases
+[29]: https://github.com/DataDog/datadog-cdk-constructs/blob/main/src/ecs/managed-instances/README.md
