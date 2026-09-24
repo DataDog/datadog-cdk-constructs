@@ -181,6 +181,13 @@ export interface APMFeatureConfig {
    * Requires Datadog APM SSI instrumentation on your application containers.
    */
   readonly isProfilingEnabled?: boolean;
+  /**
+   * Enables Data Streams Monitoring. This is an application/tracer-side
+   * feature: `DD_DATA_STREAMS_ENABLED` must be set on the application
+   * container that produces or consumes messages (Kafka, SQS, Kinesis, SNS,
+   * RabbitMQ, etc.), not on the Datadog Agent container.
+   */
+  readonly dataStreams?: boolean;
 }
 
 /**
