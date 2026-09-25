@@ -133,6 +133,12 @@ export const SingleLanguageInjectionMode = "single_language";
 export const SingleLanguageInjectionModeTag = "_dd.injection.mode:serverless-single-lang";
 
 /**
+ * IDs of the automatic APM instrumentation warnings
+ */
+export const InjectionModeTagWarningId = "datadog-cdk-constructs-v2:apmInstrumentationTagRemoved";
+export const TracerLogsWarningId = "datadog-cdk-constructs-v2:apmInstrumentationTracerLogsNotCollected";
+
+/**
  * Containers the construct manages, which never load the tracer
  */
 export const DatadogManagedContainerNames: ReadonlySet<string> = new Set([

@@ -145,6 +145,13 @@ export function getInjectionFragments(config: APMInstrumentationConfig): EnvFrag
 }
 
 /**
+ * Whether the tags record the injection mode.
+ */
+export function hasInjectionModeTag(tags: string | undefined): boolean {
+  return hasEnvFragment(tags, InjectionModeTagFragment);
+}
+
+/**
  * The container's environment with every fragment merged into the values it already sets.
  */
 export function mergeInjectionEnvironment(

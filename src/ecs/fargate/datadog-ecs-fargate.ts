@@ -6,7 +6,7 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import { Tags } from "aws-cdk-lib";
+import { Annotations, Tags } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import log from "loglevel";
@@ -15,6 +15,7 @@ import {
   getLanguageFragments,
   getTracerImage,
   hasEnvFragment,
+  hasInjectionModeTag,
   mergeInjectionEnvironment,
 } from "./apm-instrumentation";
 import {
@@ -24,10 +25,13 @@ import {
   EntryPointPrefixCWS,
   InitVolumeContainerName,
   InjectionModeTagKey,
+  InjectionModeTagWarningId,
   LogRouterContainerName,
   SingleLanguageInjectionMode,
+  SingleLanguageInjectionModeTag,
   TracerContainerName,
   TracerCopyEntryPoint,
+  TracerLogsWarningId,
   TracerMountPath,
   TracerUser,
   TracerVolumeName,
@@ -534,6 +538,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   }
 
   private createTracerContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
+    const logging = props.logCollection!.isEnabled ? this.createLogDriver(TracerContainerName) : undefined;
     const tracerContainer = super.addContainer(TracerContainerName, {
       containerName: TracerContainerName,
       image: ecs.ContainerImage.fromRegistry(getTracerImage(props.apmInstrumentation!)),
@@ -541,18 +546,25 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       user: TracerUser,
       entryPoint: [TracerCopyEntryPoint],
       command: [TracerMountPath],
-      logging: props.logCollection!.isEnabled ? this.createLogDriver(TracerContainerName) : undefined,
+      logging: logging,
     });
     tracerContainer.addMountPoints({
       sourceVolume: TracerVolumeName,
       containerPath: TracerMountPath,
       readOnly: false,
     });
+    if (logging === undefined) {
+      Annotations.of(tracerContainer).addWarningV2(
+        TracerLogsWarningId,
+        `The ${TracerContainerName} container has no log configuration, so if copying the tracer fails, nothing records the failure. Enable \`logCollection\` to collect its logs.`,
+      );
+    }
     return tracerContainer;
   }
 
   /**
    * Reports a missing tracer target, or tracer settings on it that changed after it was added.
+   * Warns when its DD_TAGS no longer records the injection mode.
    */
   private validateAPMInstrumentation(): string[] {
     const config = this.datadogProps.apmInstrumentation!;
@@ -595,6 +607,13 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     if (tracerMounts.length > 1) {
       errors.push(
         `Container ${targetName} mounts more than one volume at ${TracerMountPath}, where the tracer is copied. Mount your volume at a different path.`,
+      );
+    }
+
+    if (!hasInjectionModeTag(environment.get("DD_TAGS"))) {
+      Annotations.of(this.tracerTarget).addWarningV2(
+        InjectionModeTagWarningId,
+        `DD_TAGS on container ${targetName} changed after \`addContainer\` and no longer includes ${SingleLanguageInjectionModeTag}, so Datadog can't tell that the tracer was added automatically. Tracing still works. Set DD_TAGS in \`environment\` when calling \`addContainer\` instead.`,
       );
     }
     return errors;

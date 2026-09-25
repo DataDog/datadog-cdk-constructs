@@ -187,7 +187,7 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `isEnabled`                  | `boolean` | Enables APM.                                                                                                                                                                                     |
 | `isSocketEnabled`            | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false.                                                                                                                |
 | `traceInferredProxyServices` | `boolean` | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
-| `isProfilingEnabled`         | `boolean` | Enables Profiling. (Requires APM SSI on application containers)                                                                                                                                  |
+| `isProfilingEnabled`         | `boolean` | Enables Profiling. Requires the Datadog tracer in the application container, installed in the image or added with `apmInstrumentation`.                                                          |
 
 ### APMInstrumentationConfig
 
@@ -203,11 +203,17 @@ Use `apmInstrumentation` to trace an application whose image doesn't include the
 ```typescript
 const ecsDatadog = new DatadogECSFargate({
   apiKeySecret: <SECRET>,
-  apmInstrumentation: {
-    language: TracerLanguage.NODEJS,
-  },
 });
-const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(this, "DatadogTypescriptTask");
+const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(
+  this,
+  "DatadogTypescriptTask",
+  {<TASK_DEFINITION_PROPS>},
+  {
+    apmInstrumentation: {
+      language: TracerLanguage.NODEJS,
+    },
+  },
+);
 fargateTaskDefinition.addContainer("app", {
   image: ContainerImage.fromRegistry(<STRING>),
   environment: {
@@ -218,8 +224,9 @@ fargateTaskDefinition.addContainer("app", {
 
 When the task starts, a `datadog-tracer` container copies the tracer into a `datadog-tracer` volume and exits. The application container mounts the volume at `/datadog-lib`, starts after the copy succeeds, and loads the tracer through its language's startup variable, such as `NODE_OPTIONS` or `JAVA_TOOL_OPTIONS`. The construct adds to the values you set for these variables instead of replacing them. The Datadog Agent container receives the traces.
 
+- Set `apmInstrumentation` in `fargateTaskDefinition` for each task definition that needs it. When you set it on `DatadogECSFargate`, it applies to every task definition the construct creates, and Python, Go, and Java code can't turn it off for a single task definition.
 - When you add more than one container with `addContainer`, set `containerName` to the container that loads the tracer.
-- Set the tracer startup variables in `environment` when you call `addContainer`. Don't set them in `secrets` or environment files, or change them later with `addEnvironment`.
+- Set the tracer startup variables and `DD_TAGS` in `environment` when you call `addContainer`. Don't set them in `secrets` or environment files, or change them later with `addEnvironment`.
 - Don't use the `datadog-tracer` name or the `/datadog-lib` path for your own containers, volumes, or mount points.
 - To collect the logs of the `datadog-tracer` container, enable `logCollection`.
 - Automatic APM instrumentation is only supported on Linux, and requires `apm.isEnabled`. .NET isn't supported on ARM64 tasks, and .NET tracer versions earlier than 3.0 aren't supported. Ruby doesn't support musl.

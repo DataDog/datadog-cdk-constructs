@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { Template } from "aws-cdk-lib/assertions";
+import { Annotations, Match, Template } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as ecsDatadog from "../../../src/ecs";
@@ -23,6 +23,8 @@ const TracerMount = { ContainerPath: "/datadog-lib", SourceVolume: "datadog-trac
 const TracerDependency = { ContainerName: "datadog-tracer", Condition: "SUCCESS" };
 const InjectionModeTag = "_dd.injection.mode:serverless-single-lang";
 const NodeRequire = "--require /datadog-lib/node_modules/dd-trace/init.js";
+const TracerLogsWarning = Match.stringLikeRegexp("datadog-tracer container has no log configuration");
+const InjectionModeTagWarning = Match.stringLikeRegexp("DD_TAGS on container app changed after `addContainer`");
 
 function environmentOf(container: SynthesizedContainer | undefined): Record<string, unknown> {
   return Object.fromEntries((container?.Environment ?? []).map(({ Name, Value }) => [Name, Value]));
@@ -115,12 +117,14 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
         LogDriver: "awsfirelens",
         Options: expect.objectContaining({ dd_service: "datadog-tracer" }),
       });
+      Annotations.fromStack(stack).hasNoWarning("*", TracerLogsWarning);
     });
 
-    it("leaves the tracer container's logs unconfigured when log collection is disabled", () => {
+    it("warns that the tracer container's logs aren't collected when log collection is disabled", () => {
       addApp(createTask());
 
       expect(synthesizeTask().containers.get("datadog-tracer")?.LogConfiguration).toBeUndefined();
+      Annotations.fromStack(stack).hasWarning("*", TracerLogsWarning);
     });
   });
 
@@ -304,12 +308,18 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       expect(() => synthesizeTask()).toThrow(/NODE_OPTIONS on container app comes from a secret/);
     });
 
-    it("accepts other variables, including DD_TAGS, added with addEnvironment", () => {
-      const app = addApp(createTask());
-      app.addEnvironment("LOG_LEVEL", "debug");
-      app.addEnvironment("DD_TAGS", "team:apm");
+    it("accepts other variables added with addEnvironment", () => {
+      addApp(createTask()).addEnvironment("LOG_LEVEL", "debug");
 
       expect(() => synthesizeTask()).not.toThrow();
+      Annotations.fromStack(stack).hasNoWarning("*", InjectionModeTagWarning);
+    });
+
+    it("warns when DD_TAGS replaced with addEnvironment drops the injection mode tag", () => {
+      addApp(createTask()).addEnvironment("DD_TAGS", "team:apm");
+
+      expect(() => synthesizeTask()).not.toThrow();
+      Annotations.fromStack(stack).hasWarning("*", InjectionModeTagWarning);
     });
 
     it("reports a second volume mounted at the tracer path", () => {

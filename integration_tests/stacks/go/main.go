@@ -24,6 +24,13 @@ func main() {
 		},
 	})
 
+	// Creates an ECS Fargate stack with automatic APM instrumentation
+	NewEcsFargateGoStack(app, "EcsFargateGoStack", &AppStackProps{
+		StackProps: awscdk.StackProps{
+			Env: env(),
+		},
+	})
+
 	app.Synth(nil)
 }
 
