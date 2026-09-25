@@ -81,3 +81,64 @@ export const ParseJsonFirelensConfigFileType = FirelensConfigFileType.FILE;
  * Config file path for the Firelens configuration parsing JSON
  */
 export const ParseJsonFirelensConfigFileValue = "/fluent-bit/configs/parse-json.conf";
+
+/**
+ * Container names of the Datadog log router, CWS, and Agent config init containers
+ */
+export const LogRouterContainerName = "datadog-log-router";
+export const CWSContainerName = "cws-instrumentation-init";
+export const InitVolumeContainerName = "init-volume";
+
+/**
+ * Container and volume that copy the tracer for automatic APM instrumentation
+ */
+export const TracerContainerName = "datadog-tracer";
+export const TracerVolumeName = "datadog-tracer";
+
+/**
+ * Path where the tracer volume is mounted in the tracer and application containers
+ */
+export const TracerMountPath = "/datadog-lib";
+
+/**
+ * Registry and default tag of the Datadog tracer images
+ */
+export const TracerImageRegistry = "public.ecr.aws/datadog";
+export const DefaultTracerVersion = "latest";
+
+/**
+ * Valid tracer image tag
+ */
+export const TracerImageTagRegExp = /^[\w][\w.-]{0,127}$/;
+
+/**
+ * Entrypoint every tracer image exposes, which copies the tracer into the path it is given
+ */
+export const TracerCopyEntryPoint = "/datadog-init/copy-lib.sh";
+
+/**
+ * Root, so the tracer copy can write into the root-owned task volume
+ */
+export const TracerUser = "0";
+
+/**
+ * Task definition tag recording the automatic APM instrumentation mode
+ */
+export const InjectionModeTagKey = "dd_sls_injection_mode";
+export const SingleLanguageInjectionMode = "single_language";
+
+/**
+ * DD_TAGS entry recording the automatic APM instrumentation mode on the instrumented container
+ */
+export const SingleLanguageInjectionModeTag = "_dd.injection.mode:serverless-single-lang";
+
+/**
+ * Containers the construct manages, which never load the tracer
+ */
+export const DatadogManagedContainerNames: ReadonlySet<string> = new Set([
+  DatadogAgentServiceName,
+  LogRouterContainerName,
+  CWSContainerName,
+  InitVolumeContainerName,
+  TracerContainerName,
+]);
