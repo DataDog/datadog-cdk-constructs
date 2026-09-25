@@ -8,6 +8,7 @@ import { DatadogECSFargateProps } from "./interfaces";
 export interface DatadogECSFargateInternalProps extends DatadogECSFargateProps {
   readonly envVarManager: EnvVarManager;
   readonly isLinux: boolean;
+  readonly isArm64: boolean;
   readonly isSocketRequired: boolean;
   readonly isProtocolRequired: boolean;
   readonly datadogSecret?: Secret;

@@ -178,7 +178,7 @@ export interface APMFeatureConfig {
   readonly traceInferredProxyServices?: boolean;
   /**
    * Enables Profile collection.
-   * Requires Datadog APM SSI instrumentation on your application containers.
+   * Requires the Datadog tracer in your application containers, installed in the image or added with `apmInstrumentation`.
    */
   readonly isProfilingEnabled?: boolean;
 }

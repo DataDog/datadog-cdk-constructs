@@ -76,6 +76,10 @@ export function isOperatingSystemLinux(props: ecs.FargateTaskDefinitionProps | u
   return props.runtimePlatform.operatingSystemFamily.isLinux();
 }
 
+export function isCpuArchitectureArm64(props: ecs.FargateTaskDefinitionProps | undefined): boolean {
+  return props?.runtimePlatform?.cpuArchitecture?._cpuArchitecture === "ARM64";
+}
+
 export function configureEcsPolicies(task: ecs.TaskDefinition) {
   task.addToTaskRolePolicy(
     new iam.PolicyStatement({
