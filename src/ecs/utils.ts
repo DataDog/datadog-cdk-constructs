@@ -77,7 +77,15 @@ export function isOperatingSystemLinux(props: ecs.FargateTaskDefinitionProps | u
 }
 
 export function isCpuArchitectureArm64(props: ecs.FargateTaskDefinitionProps | undefined): boolean {
-  return props?.runtimePlatform?.cpuArchitecture?._cpuArchitecture === "ARM64";
+  const cpuArchitecture = props?.runtimePlatform?.cpuArchitecture;
+  if (cpuArchitecture === undefined) {
+    return false;
+  }
+   return cpuArchitectureName(cpuArchitecture) === cpuArchitectureName(ecs.CpuArchitecture.ARM64);
+}
+
+function cpuArchitectureName(cpuArchitecture: ecs.CpuArchitecture): string | undefined {
+  return (cpuArchitecture as unknown as { _cpuArchitecture?: string })._cpuArchitecture;
 }
 
 export function configureEcsPolicies(task: ecs.TaskDefinition) {

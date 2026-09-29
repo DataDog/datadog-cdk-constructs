@@ -5,6 +5,7 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as ecsDatadog from "../../../src/ecs";
 import { EnvFragment, hasEnvFragment, mergeEnvFragment } from "../../../src/ecs/fargate/apm-instrumentation";
 import { TracerLanguage, TracerLibc } from "../../../src/ecs/fargate/interfaces";
+import { isCpuArchitectureArm64 } from "../../../src/ecs/utils";
 
 interface SynthesizedContainer {
   readonly Name: string;
@@ -211,6 +212,16 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       );
     });
 
+    it("rejects a container that uses environmentFiles", () => {
+      const bucket = new cdk.aws_s3.Bucket(stack, "EnvBucket");
+
+      expect(() =>
+        addApp(createTask(), "app", {
+          environmentFiles: [ecs.EnvironmentFile.fromBucket(bucket, "env")],
+        }),
+      ).toThrow(/Cannot add the tracer to container app because it uses `environmentFiles`/);
+    });
+
     it("rejects a .NET profiler variable set to another value", () => {
       const task = createTask({ apmInstrumentation: { language: TracerLanguage.DOTNET } });
 
@@ -381,6 +392,16 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
 
     it("accepts Node.js on ARM64", () => {
       expect(() => createTask({}, { runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.ARM64 } })).not.toThrow();
+    });
+
+    it("detects ARM64 through the SDK constant rather than a hardcoded string", () => {
+      expect(isCpuArchitectureArm64({ runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.ARM64 } })).toBe(true);
+      expect(isCpuArchitectureArm64({ runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.of("ARM64") } })).toBe(
+        true,
+      );
+      expect(isCpuArchitectureArm64({ runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.X86_64 } })).toBe(false);
+      expect(isCpuArchitectureArm64({})).toBe(false);
+      expect(isCpuArchitectureArm64(undefined)).toBe(false);
     });
 
     it.each(["not a tag", ".hidden", "a".repeat(129)])("rejects tracer version %p", (tracerVersion) => {

@@ -30,7 +30,7 @@
       "name": "check-formatting",
       "steps": [
         {
-          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts"
+          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/ecs-fargate/**/*.ts"
         }
       ]
     },
@@ -97,6 +97,7 @@
             "src",
             "test",
             "build-tools",
+            "e2e",
             "projenrc",
             ".projenrc.ts"
           ],
@@ -242,6 +243,15 @@
         }
       ]
     },
+    "test:e2e": {
+      "name": "test:e2e",
+      "steps": [
+        {
+          "exec": "tsc --noEmit -p e2e/tsconfig.json && vitest run --config e2e/vitest.config.ts",
+          "receiveArgs": true
+        }
+      ]
+    },
     "test:watch": {
       "name": "test:watch",
       "description": "Run jest in watch mode",
@@ -284,6 +294,7 @@
             "up",
             "-R",
             "@aws-cdk/aws-lambda-python-alpha",
+            "@datadog/datadog-api-client",
             "@stylistic/eslint-plugin",
             "@types/jest",
             "@types/node",
@@ -307,6 +318,7 @@
             "ts-jest",
             "ts-node",
             "typescript",
+            "vitest",
             "loglevel",
             "aws-cdk-lib",
             "constructs"
