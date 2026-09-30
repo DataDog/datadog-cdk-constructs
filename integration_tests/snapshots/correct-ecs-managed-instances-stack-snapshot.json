@@ -1,0 +1,850 @@
+{
+ "Resources": {
+  "sampleDaemonTaskDefinitionExecutionRole8791DC54": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/sampleDaemonTaskDefinition/ExecutionRole/Resource"
+   }
+  },
+  "sampleDaemonTaskDefinitionTaskRole2465A95E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/sampleDaemonTaskDefinition/TaskRole/Resource"
+   }
+  },
+  "sampleDaemonTaskDefinitionTaskRoleDefaultPolicyFA57AAE0": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances",
+        "ecs:DescribeTasks",
+        "ecs:ListTasks"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeTags"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "sampleDaemonTaskDefinitionTaskRoleDefaultPolicyFA57AAE0",
+    "Roles": [
+     {
+      "Ref": "sampleDaemonTaskDefinitionTaskRole2465A95E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/sampleDaemonTaskDefinition/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "sampleDaemonTaskDefinition2A825C5A": {
+   "Type": "AWS::ECS::DaemonTaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Cpu": 256,
+      "Environment": [
+       {
+        "Name": "ECS_MANAGED_INSTANCES",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "X.X.X"
+       },
+       {
+        "Name": "DD_API_KEY",
+        "Value": "exampleApiKey"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       },
+       {
+        "Name": "DD_CRI_SOCKET_PATH",
+        "Value": "/var/run/containerd/containerd.sock"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
+        "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_APM_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_URL",
+        "Value": "unix:///var/run/datadog/dsd.socket"
+       },
+       {
+        "Name": "DD_TRACE_AGENT_URL",
+        "Value": "unix:///var/run/datadog/apm.socket"
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "agent health"
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 15,
+       "Timeout": 5
+      },
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 512,
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/containerd/containerd.sock",
+        "ReadOnly": true,
+        "SourceVolume": "containerd_sock"
+       },
+       {
+        "ContainerPath": "/host/proc",
+        "ReadOnly": true,
+        "SourceVolume": "proc"
+       },
+       {
+        "ContainerPath": "/host/sys/fs/cgroup",
+        "ReadOnly": true,
+        "SourceVolume": "cgroup"
+       },
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "datadog-agent"
+     }
+    ],
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "sampleDaemonTaskDefinitionExecutionRole8791DC54",
+      "Arn"
+     ]
+    },
+    "Family": "datadog-agent-daemon",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "sampleDaemonTaskDefinitionTaskRole2465A95E",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "Host": {
+       "SourcePath": "/var/run/containerd/containerd.sock"
+      },
+      "Name": "containerd_sock"
+     },
+     {
+      "Host": {
+       "SourcePath": "/proc/"
+      },
+      "Name": "proc"
+     },
+     {
+      "Host": {
+       "SourcePath": "/sys/fs/cgroup/"
+      },
+      "Name": "cgroup"
+     },
+     {
+      "Host": {
+       "SourcePath": "/var/run/datadog"
+      },
+      "Name": "dd-sockets"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/sampleDaemonTaskDefinition/TaskDefinition"
+   }
+  },
+  "sampleDaemonTaskDefinitionDaemonE06DC097": {
+   "Type": "AWS::ECS::Daemon",
+   "Properties": {
+    "CapacityProviderArns": [
+     "arn:aws:ecs:sa-east-1:601427279990:capacity-provider/example-capacity-provider"
+    ],
+    "ClusterArn": "arn:aws:ecs:sa-east-1:601427279990:cluster/example-cluster",
+    "DaemonName": "datadog-agent-daemon-datadog-agent",
+    "DaemonTaskDefinitionArn": {
+     "Fn::GetAtt": [
+      "sampleDaemonTaskDefinition2A825C5A",
+      "DaemonTaskDefinitionArn"
+     ]
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false
+     },
+     "BakeTimeInMinutes": 0,
+     "DrainPercent": 25
+    },
+    "EnableECSManagedTags": true,
+    "EnableExecuteCommand": false,
+    "PropagateTags": "DAEMON",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ]
+   },
+   "DependsOn": [
+    "sampleDaemonTaskDefinition2A825C5A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/sampleDaemonTaskDefinition/Daemon"
+   }
+  },
+  "tcpDaemonTaskDefinitionExecutionRoleEE60114D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/tcpDaemonTaskDefinition/ExecutionRole/Resource"
+   }
+  },
+  "tcpDaemonTaskDefinitionTaskRoleB8C1E015": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/tcpDaemonTaskDefinition/TaskRole/Resource"
+   }
+  },
+  "tcpDaemonTaskDefinitionTaskRoleDefaultPolicy529238CB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances",
+        "ecs:DescribeTasks",
+        "ecs:ListTasks"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeTags"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "tcpDaemonTaskDefinitionTaskRoleDefaultPolicy529238CB",
+    "Roles": [
+     {
+      "Ref": "tcpDaemonTaskDefinitionTaskRoleB8C1E015"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/tcpDaemonTaskDefinition/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "tcpDaemonTaskDefinition0C935EC8": {
+   "Type": "AWS::ECS::DaemonTaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Cpu": 256,
+      "Environment": [
+       {
+        "Name": "ECS_MANAGED_INSTANCES",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "X.X.X"
+       },
+       {
+        "Name": "DD_API_KEY",
+        "Value": "exampleApiKey"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       },
+       {
+        "Name": "DD_CRI_SOCKET_PATH",
+        "Value": "/var/run/containerd/containerd.sock"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
+        "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_APM_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_AGENT_HOST",
+        "Value": "169.254.172.2"
+       },
+       {
+        "Name": "DD_DOGSTATSD_NON_LOCAL_TRAFFIC",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_APM_NON_LOCAL_TRAFFIC",
+        "Value": "true"
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "agent health"
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 15,
+       "Timeout": 5
+      },
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 512,
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/containerd/containerd.sock",
+        "ReadOnly": true,
+        "SourceVolume": "containerd_sock"
+       },
+       {
+        "ContainerPath": "/host/proc",
+        "ReadOnly": true,
+        "SourceVolume": "proc"
+       },
+       {
+        "ContainerPath": "/host/sys/fs/cgroup",
+        "ReadOnly": true,
+        "SourceVolume": "cgroup"
+       }
+      ],
+      "Name": "datadog-agent"
+     }
+    ],
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "tcpDaemonTaskDefinitionExecutionRoleEE60114D",
+      "Arn"
+     ]
+    },
+    "Family": "datadog-agent-daemon",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "tcpDaemonTaskDefinitionTaskRoleB8C1E015",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "Host": {
+       "SourcePath": "/var/run/containerd/containerd.sock"
+      },
+      "Name": "containerd_sock"
+     },
+     {
+      "Host": {
+       "SourcePath": "/proc/"
+      },
+      "Name": "proc"
+     },
+     {
+      "Host": {
+       "SourcePath": "/sys/fs/cgroup/"
+      },
+      "Name": "cgroup"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/tcpDaemonTaskDefinition/TaskDefinition"
+   }
+  },
+  "tcpDaemonTaskDefinitionDaemon8FB64ABE": {
+   "Type": "AWS::ECS::Daemon",
+   "Properties": {
+    "CapacityProviderArns": [
+     "arn:aws:ecs:sa-east-1:601427279990:capacity-provider/example-capacity-provider"
+    ],
+    "ClusterArn": "arn:aws:ecs:sa-east-1:601427279990:cluster/example-cluster",
+    "DaemonName": "datadog-agent-daemon-datadog-agent",
+    "DaemonTaskDefinitionArn": {
+     "Fn::GetAtt": [
+      "tcpDaemonTaskDefinition0C935EC8",
+      "DaemonTaskDefinitionArn"
+     ]
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false
+     },
+     "BakeTimeInMinutes": 0,
+     "DrainPercent": 25
+    },
+    "EnableECSManagedTags": true,
+    "EnableExecuteCommand": false,
+    "PropagateTags": "DAEMON",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ]
+   },
+   "DependsOn": [
+    "tcpDaemonTaskDefinition0C935EC8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/tcpDaemonTaskDefinition/Daemon"
+   }
+  },
+  "taskDefinitionOnlyExecutionRoleD17C80FD": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/taskDefinitionOnly/ExecutionRole/Resource"
+   }
+  },
+  "taskDefinitionOnlyTaskRole4B7800EB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/taskDefinitionOnly/TaskRole/Resource"
+   }
+  },
+  "taskDefinitionOnlyTaskRoleDefaultPolicy2CBC25CD": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances",
+        "ecs:DescribeTasks",
+        "ecs:ListTasks"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeTags"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "taskDefinitionOnlyTaskRoleDefaultPolicy2CBC25CD",
+    "Roles": [
+     {
+      "Ref": "taskDefinitionOnlyTaskRole4B7800EB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/taskDefinitionOnly/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "taskDefinitionOnlyTaskDefinition587EB1D5": {
+   "Type": "AWS::ECS::DaemonTaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Cpu": 256,
+      "Environment": [
+       {
+        "Name": "ECS_MANAGED_INSTANCES",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "X.X.X"
+       },
+       {
+        "Name": "DD_API_KEY",
+        "Value": "exampleApiKey"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       },
+       {
+        "Name": "DD_CRI_SOCKET_PATH",
+        "Value": "/var/run/containerd/containerd.sock"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
+        "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_APM_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_URL",
+        "Value": "unix:///var/run/datadog/dsd.socket"
+       },
+       {
+        "Name": "DD_TRACE_AGENT_URL",
+        "Value": "unix:///var/run/datadog/apm.socket"
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "agent health"
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 15,
+       "Timeout": 5
+      },
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 512,
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/containerd/containerd.sock",
+        "ReadOnly": true,
+        "SourceVolume": "containerd_sock"
+       },
+       {
+        "ContainerPath": "/host/proc",
+        "ReadOnly": true,
+        "SourceVolume": "proc"
+       },
+       {
+        "ContainerPath": "/host/sys/fs/cgroup",
+        "ReadOnly": true,
+        "SourceVolume": "cgroup"
+       },
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       }
+      ],
+      "Name": "datadog-agent"
+     }
+    ],
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "taskDefinitionOnlyExecutionRoleD17C80FD",
+      "Arn"
+     ]
+    },
+    "Family": "datadog-agent-daemon",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "taskDefinitionOnlyTaskRole4B7800EB",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "Host": {
+       "SourcePath": "/var/run/containerd/containerd.sock"
+      },
+      "Name": "containerd_sock"
+     },
+     {
+      "Host": {
+       "SourcePath": "/proc/"
+      },
+      "Name": "proc"
+     },
+     {
+      "Host": {
+       "SourcePath": "/sys/fs/cgroup/"
+      },
+      "Name": "cgroup"
+     },
+     {
+      "Host": {
+       "SourcePath": "/var/run/datadog"
+      },
+      "Name": "dd-sockets"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/taskDefinitionOnly/TaskDefinition"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "vX:XXXXXX:XXXXXX"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
