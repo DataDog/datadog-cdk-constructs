@@ -2278,9 +2278,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk-lib@npm:2.266.0":
-  version: 2.266.0
-  resolution: "aws-cdk-lib@npm:2.266.0"
+"aws-cdk-lib@npm:2.267.0":
+  version: 2.267.0
+  resolution: "aws-cdk-lib@npm:2.267.0"
   dependencies:
     "@aws-cdk/asset-awscli-v1": "npm:2.2.292"
     "@aws-cdk/asset-node-proxy-agent-v6": "npm:^2.1.2"
@@ -2299,7 +2299,7 @@ __metadata:
     yaml: "npm:1.10.3"
   peerDependencies:
     constructs: ^10.5.0
-  checksum: 10c0/ede67e2e64a838dec2b052769dc7aa44025a9003f8c0288151c91015b4fec648b3e492188b0c6d0586ec0943b0304af4f960230986ff2138d03c45d5fc980dcc
+  checksum: 10c0/173ba4e71aab5566ce3e627ffa311190a72059162ed2dd3ea1cddfd95bacb6bc7b4125cc43d374e06cb3df82aa318afa44665a9647ce0e2a8f7e3d28555c79b1
   languageName: node
   linkType: hard
 
@@ -3064,7 +3064,7 @@ __metadata:
     "@types/node": "npm:^22"
     "@typescript-eslint/eslint-plugin": "npm:^8"
     "@typescript-eslint/parser": "npm:^8"
-    aws-cdk-lib: "npm:2.266.0"
+    aws-cdk-lib: "npm:2.267.0"
     constructs: "npm:10.5.1"
     esbuild: "npm:^0.28.2"
     eslint: "npm:^9"
@@ -3079,14 +3079,14 @@ __metadata:
     jsii-pacmak: "npm:^1.140.0"
     jsii-rosetta: "npm:~5.9.0"
     loglevel: "npm:^1.9.2"
-    prettier: "npm:^3.9.8"
-    projen: "npm:^0.103.25"
+    prettier: "npm:^3.9.9"
+    projen: "npm:^0.103.27"
     standard-version: "npm:^9.5.0"
-    ts-jest: "npm:^29.4.12"
+    ts-jest: "npm:^29.4.14"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
-    aws-cdk-lib: ^2.266.0
+    aws-cdk-lib: ^2.267.0
     constructs: ^10.5.1
   languageName: unknown
   linkType: soft
@@ -6642,12 +6642,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.9.8":
-  version: 3.9.8
-  resolution: "prettier@npm:3.9.8"
+"prettier@npm:^3.9.9":
+  version: 3.9.9
+  resolution: "prettier@npm:3.9.9"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/257e5ef11ba5006d0b0712271705701c065c8003e07763f996ce185d39633902f3fe1f814839eed76f75c97b6d5376d6157bd9f44db18cacb1dbdcb263cc66ae
+  checksum: 10c0/d50ea2537b2ff7dbd5088a214f4d936484e55c665cea2185b477a55b0770be55f3b156a71f63a9a639def6b334667bb327139dc85f2a1041c0a34752cdc74647
   languageName: node
   linkType: hard
 
@@ -6677,9 +6677,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"projen@npm:^0.103.25":
-  version: 0.103.25
-  resolution: "projen@npm:0.103.25"
+"projen@npm:^0.103.27":
+  version: 0.103.27
+  resolution: "projen@npm:0.103.27"
   dependencies:
     "@iarna/toml": "npm:^2.2.5"
     case: "npm:^1.6.3"
@@ -6701,7 +6701,7 @@ __metadata:
     constructs: ^10.5.0
   bin:
     projen: bin/projen
-  checksum: 10c0/813c2d46419201c2fe4748bfa744d534609ce26f8693754e76bb349c4e815bcb809f41b6bdf2aaf3a6e112c562101d1e4560bb547759eab3c5e55b7f531e2ed7
+  checksum: 10c0/26b50b8494b4386cd400334e815644cf7d5d2bf8da8853be65427ef0ef765e5cad190a4507ef234f60182c03be83c48052eb322c3cf133a5ae1330c7548dd5dc
   languageName: node
   linkType: hard
 
@@ -7648,9 +7648,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.4.12":
-  version: 29.4.12
-  resolution: "ts-jest@npm:29.4.12"
+"ts-jest@npm:^29.4.14":
+  version: 29.4.14
+  resolution: "ts-jest@npm:29.4.14"
   dependencies:
     bs-logger: "npm:^0.2.6"
     fast-json-stable-stringify: "npm:^2.1.0"
@@ -7662,7 +7662,7 @@ __metadata:
     type-fest: "npm:^4.41.0"
     yargs-parser: "npm:^21.1.1"
   peerDependencies:
-    "@babel/core": ">=7.0.0-beta.0 <8"
+    "@babel/core": ">=7.0.0-beta.0 <9"
     "@jest/transform": ^29.0.0 || ^30.0.0
     "@jest/types": ^29.0.0 || ^30.0.0
     babel-jest: ^29.0.0 || ^30.0.0
@@ -7684,7 +7684,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/cf08cf4b417085578db038b525c8b22cf6af689601eab697fe84a46fa07bddcd506bd961c607c8f25c705e90ea8ac8ecf258fc200161f4e0882d0d7db4db9ec9
+  checksum: 10c0/58780804871e5752d7f42e69a38ea0716d0a6330272f3a253cf10dbf8c59390f64f2da6fff3d93dcb1bc514d8fa5d02963d8ef6d062fdfa96113b3aad0fd9331
   languageName: node
   linkType: hard
 
