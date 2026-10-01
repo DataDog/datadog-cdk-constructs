@@ -81,7 +81,7 @@ export function isCpuArchitectureArm64(props: ecs.FargateTaskDefinitionProps | u
   if (cpuArchitecture === undefined) {
     return false;
   }
-   return cpuArchitectureName(cpuArchitecture) === cpuArchitectureName(ecs.CpuArchitecture.ARM64);
+  return cpuArchitectureName(cpuArchitecture) === cpuArchitectureName(ecs.CpuArchitecture.ARM64);
 }
 
 function cpuArchitectureName(cpuArchitecture: ecs.CpuArchitecture): string | undefined {
