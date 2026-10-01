@@ -2737,6 +2737,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aws-cdk@npm:2.1143.0":
+  version: 2.1143.0
+  resolution: "aws-cdk@npm:2.1143.0"
+  bin:
+    cdk: bin/cdk
+  checksum: 10c0/cf543203ae45c6bff2eee519be3d40e87b8e6ec8bccefaaaf6e26b2390255f30b98ac1e5c58bbd952d15982207877bdb95456b0fc7c18723b4893e8b389c88f5
+  languageName: node
+  linkType: hard
+
 "babel-jest@npm:30.5.2":
   version: 30.5.2
   resolution: "babel-jest@npm:30.5.2"
@@ -3544,6 +3553,7 @@ __metadata:
     "@types/node": "npm:^22"
     "@typescript-eslint/eslint-plugin": "npm:^8"
     "@typescript-eslint/parser": "npm:^8"
+    aws-cdk: "npm:2.1143.0"
     aws-cdk-lib: "npm:2.266.0"
     constructs: "npm:10.5.1"
     esbuild: "npm:^0.28.2"

@@ -300,6 +300,7 @@
             "@types/node",
             "@typescript-eslint/eslint-plugin",
             "@typescript-eslint/parser",
+            "aws-cdk",
             "esbuild",
             "eslint-config-prettier",
             "eslint-import-resolver-typescript",

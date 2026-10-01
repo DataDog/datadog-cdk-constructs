@@ -35,6 +35,11 @@
       "type": "build"
     },
     {
+      "name": "aws-cdk",
+      "version": "2.1143.0",
+      "type": "build"
+    },
+    {
       "name": "esbuild",
       "type": "build"
     },

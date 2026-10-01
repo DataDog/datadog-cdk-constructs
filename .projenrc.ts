@@ -50,6 +50,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     // e2e suite (runs out of e2e/, separate from the jsii-packaged library)
     "vitest@^3.2.4",
     "@datadog/datadog-api-client@^1.34.1",
+    "aws-cdk@2.1143.0",
   ],
   gitignore: [
     "*.js",
