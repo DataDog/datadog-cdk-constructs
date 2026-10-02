@@ -76,6 +76,18 @@ export function isOperatingSystemLinux(props: ecs.FargateTaskDefinitionProps | u
   return props.runtimePlatform.operatingSystemFamily.isLinux();
 }
 
+export function isCpuArchitectureArm64(props: ecs.FargateTaskDefinitionProps | undefined): boolean {
+  const cpuArchitecture = props?.runtimePlatform?.cpuArchitecture;
+  if (cpuArchitecture === undefined) {
+    return false;
+  }
+  return cpuArchitectureName(cpuArchitecture) === cpuArchitectureName(ecs.CpuArchitecture.ARM64);
+}
+
+function cpuArchitectureName(cpuArchitecture: ecs.CpuArchitecture): string | undefined {
+  return (cpuArchitecture as unknown as { _cpuArchitecture?: string })._cpuArchitecture;
+}
+
 export function configureEcsPolicies(task: ecs.TaskDefinition) {
   task.addToTaskRolePolicy(
     new iam.PolicyStatement({

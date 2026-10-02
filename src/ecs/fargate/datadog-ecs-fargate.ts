@@ -6,10 +6,36 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
+import { Annotations, Tags } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import log from "loglevel";
-import { DatadogEcsFargateDefaultProps, EntryPointPrefixCWS, DatadogAgentServiceName } from "./constants";
+import {
+  getInjectionFragments,
+  getLanguageFragments,
+  getTracerImage,
+  hasEnvFragment,
+  hasInjectionModeTag,
+  mergeInjectionEnvironment,
+} from "./apm-instrumentation";
+import {
+  CWSContainerName,
+  DatadogAgentServiceName,
+  DatadogEcsFargateDefaultProps,
+  EntryPointPrefixCWS,
+  InitVolumeContainerName,
+  InjectionModeTagKey,
+  InjectionModeTagWarningId,
+  LogRouterContainerName,
+  SingleLanguageInjectionMode,
+  SingleLanguageInjectionModeTag,
+  TracerContainerName,
+  TracerCopyEntryPoint,
+  TracerLogsWarningId,
+  TracerMountPath,
+  TracerUser,
+  TracerVolumeName,
+} from "./constants";
 import { FargateEnvVarManager } from "./environment";
 import { DatadogECSFargateProps, LoggingType } from "./interfaces";
 import { mergeFargateProps, validateECSFargateProps } from "./utils";
@@ -17,6 +43,7 @@ import {
   addCdkConstructVersionTag,
   configureEcsPolicies,
   getSecretApiKey,
+  isCpuArchitectureArm64,
   isOperatingSystemLinux,
   validateECSBaseProps,
 } from "../utils";
@@ -62,6 +89,9 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   public readonly datadogContainer: ecs.ContainerDefinition;
   public readonly logContainer?: ecs.ContainerDefinition;
   public readonly cwsContainer?: ecs.ContainerDefinition;
+  public readonly tracerContainer?: ecs.ContainerDefinition;
+  private readonly applicationContainerNames: string[] = [];
+  private tracerTarget?: ecs.ContainerDefinition;
 
   constructor(
     scope: Construct,
@@ -120,6 +150,18 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       this.logContainer = this.createLogContainer(this.datadogProps);
     }
 
+    // Volume + Container for automatic APM instrumentation
+    if (this.datadogProps.apmInstrumentation !== undefined) {
+      this.addVolume({
+        name: TracerVolumeName,
+      });
+      this.tracerContainer = this.createTracerContainer(this.datadogProps);
+      Tags.of(this).add(InjectionModeTagKey, SingleLanguageInjectionMode, {
+        includeResourceTypes: ["AWS::ECS::TaskDefinition"],
+      });
+      this.node.addValidation({ validate: () => this.validateAPMInstrumentation() });
+    }
+
     configureEcsPolicies(this);
     addCdkConstructVersionTag(this);
   }
@@ -130,16 +172,48 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
    * Modifies properties of container to support specified agent configuration in task.
    */
   public addContainer(id: string, containerProps: ecs.ContainerDefinitionOptions): ecs.ContainerDefinition {
-    const instrumentedProps = this.configureContainerProps(id, containerProps);
+    const isTracerTarget = this.selectTracerTarget(containerProps.containerName ?? id);
+    const instrumentedProps = this.configureContainerProps(id, containerProps, isTracerTarget);
     const container = super.addContainer(id, instrumentedProps);
-    this.configureContainer(container, instrumentedProps);
+    this.configureContainer(container, instrumentedProps, isTracerTarget);
     return container;
+  }
+
+  /**
+   * Whether the added container loads the tracer. Without `containerName`, the only application
+   * container is selected, so a second one is rejected rather than chosen by the order they were added.
+   */
+  private selectTracerTarget(containerName: string): boolean {
+    const config = this.datadogProps.apmInstrumentation;
+    if (config === undefined) {
+      return false;
+    }
+
+    this.applicationContainerNames.push(containerName);
+    const requestedName = config.containerName?.trim() || undefined;
+    if (requestedName !== undefined && containerName !== requestedName) {
+      return false;
+    }
+    if (this.tracerTarget !== undefined) {
+      if (requestedName !== undefined) {
+        throw new Error(`More than one container is named ${requestedName}. Give each container a unique name.`);
+      }
+      const names = this.applicationContainerNames.join(", ");
+      throw new Error(
+        `Cannot select a container for automatic APM instrumentation because the task definition has several: ${names}. Set \`apmInstrumentation.containerName\` to the container that loads the tracer.`,
+      );
+    }
+    return true;
   }
 
   /**
    * Modifies the container props to support specified Datadog agent configuration.
    */
-  private configureContainerProps(id: string, props: ecs.ContainerDefinitionOptions): ecs.ContainerDefinitionOptions {
+  private configureContainerProps(
+    id: string,
+    props: ecs.ContainerDefinitionOptions,
+    isTracerTarget: boolean,
+  ): ecs.ContainerDefinitionOptions {
     const instrumentedProps = {
       ...props,
     };
@@ -167,13 +241,26 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       }
     }
 
+    // APM instrumentation configuration on props
+    if (isTracerTarget) {
+      instrumentedProps.environment = mergeInjectionEnvironment(
+        props.containerName ?? id,
+        props,
+        getInjectionFragments(this.datadogProps.apmInstrumentation!),
+      );
+    }
+
     return instrumentedProps;
   }
 
   /**
    * Configures the container to support Datadog agent configuration.
    */
-  private configureContainer(container: ecs.ContainerDefinition, props: ecs.ContainerDefinitionOptions): void {
+  private configureContainer(
+    container: ecs.ContainerDefinition,
+    props: ecs.ContainerDefinitionOptions,
+    isTracerTarget: boolean,
+  ): void {
     // Datadog agent container dependencies
     if (this.datadogProps.isDatadogDependencyEnabled && this.datadogProps.datadogHealthCheck !== undefined) {
       container.addContainerDependencies({
@@ -243,6 +330,20 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       }
     }
 
+    // APM instrumentation configuration
+    if (isTracerTarget) {
+      container.addMountPoints({
+        sourceVolume: TracerVolumeName,
+        containerPath: TracerMountPath,
+        readOnly: false,
+      });
+      container.addContainerDependencies({
+        container: this.tracerContainer!,
+        condition: ecs.ContainerDependencyCondition.SUCCESS,
+      });
+      this.tracerTarget = container;
+    }
+
     // Universal Service Tagging configuration:
     if (this.datadogProps.env) {
       container.addEnvironment("DD_ENV", this.datadogProps.env);
@@ -261,7 +362,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   private thisCreateInitContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const initVolumeContainer = super.addContainer("init-volume", {
       image: ecs.ContainerImage.fromRegistry(`${props.registry}:${props.imageVersion}`),
-      containerName: "init-volume",
+      containerName: InitVolumeContainerName,
       cpu: 0,
       memoryLimitMiB: 128,
       essential: false,
@@ -342,7 +443,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
   private createLogContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
     const fluentbitConfig = props.logCollection!.fluentbitConfig;
     const fluentbitContainer = this.addFirelensLogRouter(`fluent-bit-${this.family}`, {
-      containerName: "datadog-log-router",
+      containerName: LogRouterContainerName,
       image: ecs.ContainerImage.fromRegistry(`${fluentbitConfig!.registry}:${fluentbitConfig!.imageVersion}`),
       cpu: fluentbitConfig!.cpu,
       memoryLimitMiB: fluentbitConfig!.memoryLimitMiB,
@@ -420,7 +521,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
 
   private createCWSContainer(): ecs.ContainerDefinition {
     const cwsContainer = super.addContainer("cws-instrumentation", {
-      containerName: "cws-instrumentation-init",
+      containerName: CWSContainerName,
       image: ecs.ContainerImage.fromRegistry("datadog/cws-instrumentation:latest"),
       cpu: this.datadogProps.cws!.cpu,
       memoryLimitMiB: this.datadogProps.cws!.memoryLimitMiB,
@@ -434,6 +535,88 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       readOnly: false,
     });
     return cwsContainer;
+  }
+
+  private createTracerContainer(props: DatadogECSFargateInternalProps): ecs.ContainerDefinition {
+    const logging = props.logCollection!.isEnabled ? this.createLogDriver(TracerContainerName) : undefined;
+    const tracerContainer = super.addContainer(TracerContainerName, {
+      containerName: TracerContainerName,
+      image: ecs.ContainerImage.fromRegistry(getTracerImage(props.apmInstrumentation!)),
+      essential: false,
+      user: TracerUser,
+      entryPoint: [TracerCopyEntryPoint],
+      command: [TracerMountPath],
+      logging: logging,
+    });
+    tracerContainer.addMountPoints({
+      sourceVolume: TracerVolumeName,
+      containerPath: TracerMountPath,
+      readOnly: false,
+    });
+    if (logging === undefined) {
+      Annotations.of(tracerContainer).addWarningV2(
+        TracerLogsWarningId,
+        `The ${TracerContainerName} container has no log configuration, so if copying the tracer fails, nothing records the failure. Enable \`logCollection\` to collect its logs.`,
+      );
+    }
+    return tracerContainer;
+  }
+
+  /**
+   * Reports a missing tracer target, or tracer settings on it that changed after it was added.
+   * Warns when its DD_TAGS no longer records the injection mode.
+   */
+  private validateAPMInstrumentation(): string[] {
+    const config = this.datadogProps.apmInstrumentation!;
+    if (this.tracerTarget === undefined) {
+      if (this.applicationContainerNames.length === 0) {
+        return ["Automatic APM instrumentation requires an application container. Add one with `addContainer`."];
+      }
+      const names = this.applicationContainerNames.join(", ");
+      return [
+        `Container ${config.containerName?.trim()} was not found. Set \`apmInstrumentation.containerName\` to one of: ${names}.`,
+      ];
+    }
+
+    const targetName = this.tracerTarget.containerName;
+    const rendered = this.tracerTarget.renderContainerDefinition();
+    const environment = new Map(
+      ((rendered.environment ?? []) as ecs.CfnTaskDefinition.KeyValuePairProperty[]).map(({ name, value }) => [
+        name,
+        value,
+      ]),
+    );
+    const secretNames = new Set(
+      ((rendered.secrets ?? []) as ecs.CfnTaskDefinition.SecretProperty[]).map(({ name }) => name),
+    );
+
+    const errors: string[] = [];
+    for (const fragment of getLanguageFragments(config)) {
+      if (secretNames.has(fragment.name)) {
+        errors.push(
+          `${fragment.name} on container ${targetName} comes from a secret, so the tracer cannot load. Set ${fragment.name} in \`environment\` when calling \`addContainer\` instead.`,
+        );
+      } else if (!hasEnvFragment(environment.get(fragment.name), fragment)) {
+        errors.push(
+          `${fragment.name} on container ${targetName} changed after \`addContainer\`, so the tracer cannot load. Set ${fragment.name} in \`environment\` when calling \`addContainer\` instead.`,
+        );
+      }
+    }
+
+    const tracerMounts = this.tracerTarget.mountPoints.filter(({ containerPath }) => containerPath === TracerMountPath);
+    if (tracerMounts.length > 1) {
+      errors.push(
+        `Container ${targetName} mounts more than one volume at ${TracerMountPath}, where the tracer is copied. Mount your volume at a different path.`,
+      );
+    }
+
+    if (!hasInjectionModeTag(environment.get("DD_TAGS"))) {
+      Annotations.of(this.tracerTarget).addWarningV2(
+        InjectionModeTagWarningId,
+        `DD_TAGS on container ${targetName} changed after \`addContainer\` and no longer includes ${SingleLanguageInjectionModeTag}, so Datadog can't tell that the tracer was added automatically. Tracing still works. Set DD_TAGS in \`environment\` when calling \`addContainer\` instead.`,
+      );
+    }
+    return errors;
   }
 
   private getCompleteProps(
@@ -454,6 +637,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       envVarManager: new FargateEnvVarManager(mergedProps),
       datadogSecret: getSecretApiKey(this.scope, mergedProps),
       isLinux: isLinux,
+      isArm64: isCpuArchitectureArm64(taskProps),
       isProtocolRequired: isProtocolRequired,
       isSocketRequired: isSocketRequired,
     };

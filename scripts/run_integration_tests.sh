@@ -25,8 +25,10 @@ STACK_CONFIG_PATHS=(
     "typescript/apigateway-stack.ts"
     "python/lambda_python_stack.py"
     "python/step_functions_python_stack.py"
+    "python/ecs_fargate_python_stack.py"
     "go/lambda_go_stack.go"
     "go/step_functions_go_stack.go"
+    "go/ecs_fargate_go_stack.go"
     "java/App.java"
 )
 

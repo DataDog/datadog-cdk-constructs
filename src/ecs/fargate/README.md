@@ -52,6 +52,7 @@ const ecsDatadog = new DatadogECSFargate({
   apm: <APM_FEATURE_CONFIG>,
   cws: <CWS_FEATURE_CONFIG>,
   logCollection: <LOG_COLLECTION_FEATURE_CONFIG>,
+  apmInstrumentation: <APM_INSTRUMENTATION_CONFIG>,
   env: <STRING>,
   service: <STRING>,
   version: <STRING>,
@@ -165,6 +166,7 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `apm`                        | `APMFeatureConfig`                  | APM feature configuration.                                                                                                                                                                                                                                                        |
 | `cws`                        | `FargateCWSFeatureConfig`           | CWS feature configuration for Fargate.                                                                                                                                                                                                                                            |
 | `logCollection`              | `FargateLogCollectionFeatureConfig` | Log collection configuration for Fargate.                                                                                                                                                                                                                                         |
+| `apmInstrumentation`         | `APMInstrumentationConfig`          | Automatic APM instrumentation configuration. Adds the Datadog tracer to an application container without changing its image.                                                                                                                                                      |
 | `env`                        | `string`                            | The task environment name. Used for tagging (UST).                                                                                                                                                                                                                                |
 | `service`                    | `string`                            | The task service name. Used for tagging (UST).                                                                                                                                                                                                                                    |
 | `version`                    | `string`                            | The task version. Used for tagging (UST).                                                                                                                                                                                                                                         |
@@ -185,7 +187,69 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `isEnabled`                  | `boolean` | Enables APM.                                                                                                                                                                                     |
 | `isSocketEnabled`            | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false.                                                                                                                |
 | `traceInferredProxyServices` | `boolean` | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
-| `isProfilingEnabled`         | `boolean` | Enables Profiling. (Requires APM SSI on application containers)                                                                                                                                  |
+| `isProfilingEnabled`         | `boolean` | Enables Profiling. Requires the Datadog tracer in the application container, installed in the image or added with `apmInstrumentation`.                                                          |
+
+### APMInstrumentationConfig
+
+| Property        | Type             | Description                                                                                                                             |
+| --------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `language`      | `TracerLanguage` | The application language, which selects the tracer to add. Required.                                                                    |
+| `tracerVersion` | `string`         | The version of the tracer to add. Defaults to `latest`.                                                                                 |
+| `tracerLibc`    | `TracerLibc`     | The C standard library that the application image uses. Defaults to `GLIBC`.                                                            |
+| `containerName` | `string`         | The name of the application container that loads the tracer. Required when the task definition has more than one application container. |
+
+Use `apmInstrumentation` to trace an application whose image doesn't include the Datadog tracer:
+
+```typescript
+const ecsDatadog = new DatadogECSFargate({
+  apiKeySecret: <SECRET>,
+});
+const fargateTaskDefinition = ecsDatadog.fargateTaskDefinition(
+  this,
+  "DatadogTypescriptTask",
+  {<TASK_DEFINITION_PROPS>},
+  {
+    apmInstrumentation: {
+      language: TracerLanguage.NODEJS,
+    },
+  },
+);
+fargateTaskDefinition.addContainer("app", {
+  image: ContainerImage.fromRegistry(<STRING>),
+  environment: {
+    NODE_OPTIONS: "--max-old-space-size=4096",
+  },
+});
+```
+
+When the task starts, a `datadog-tracer` container copies the tracer into a `datadog-tracer` volume and exits. The application container mounts the volume at `/datadog-lib`, starts after the copy succeeds, and loads the tracer through its language's startup variable, such as `NODE_OPTIONS` or `JAVA_TOOL_OPTIONS`. The construct adds to the values you set for these variables instead of replacing them. The Datadog Agent container receives the traces.
+
+- Set `apmInstrumentation` in `fargateTaskDefinition` for each task definition that needs it. When you set it on `DatadogECSFargate`, it applies to every task definition the construct creates, and Python, Go, and Java code can't turn it off for a single task definition.
+- When you add more than one container with `addContainer`, set `containerName` to the container that loads the tracer.
+- Set the tracer startup variables and `DD_TAGS` in `environment` when you call `addContainer`. Don't set them in `secrets` or environment files, or change them later with `addEnvironment`.
+- Don't use the `datadog-tracer` name or the `/datadog-lib` path for your own containers, volumes, or mount points.
+- To collect the logs of the `datadog-tracer` container, enable `logCollection`.
+- Automatic APM instrumentation is only supported on Linux, and requires `apm.isEnabled`. .NET isn't supported on ARM64 tasks, and .NET tracer versions earlier than 3.0 aren't supported. Ruby doesn't support musl.
+- Go isn't supported. Install `dd-trace-go` in the application image instead.
+- Java 24 and later may print warnings about native access. To suppress them, add `--enable-native-access=ALL-UNNAMED` to `JAVA_TOOL_OPTIONS`. The construct doesn't add this flag because older Java versions fail to start with it.
+
+### TracerLanguage Enum
+
+| Value    | Description |
+| -------- | ----------- |
+| `JAVA`   | Java.       |
+| `NODEJS` | Node.js.    |
+| `DOTNET` | .NET.       |
+| `PYTHON` | Python.     |
+| `RUBY`   | Ruby.       |
+| `PHP`    | PHP.        |
+
+### TracerLibc Enum
+
+| Value   | Description                                           |
+| ------- | ----------------------------------------------------- |
+| `GLIBC` | Used by most Linux images, such as Debian and Ubuntu. |
+| `MUSL`  | Used by Alpine Linux images.                          |
 
 ### CWSFeatureConfig
 
@@ -273,6 +337,7 @@ The `DatadogECSFargate` construct is designed to simplify the integration of Dat
    - The construct provides granular control over Datadog features, such as:
      - **DogStatsD**: Enables custom metrics collection with configurable cardinality and socket support.
      - **APM**: Enables trace collection with optional Unix Domain Socket support.
+     - **APM instrumentation**: Adds the Datadog tracer to an application container at startup, without changing its image.
      - **CWS**: Adds a security monitoring init container and wraps added container entrypoint.
      - **LogCollection**: Forwards logs to Datadog through the Fluentbit container.
    - These features are enabled or disabled based on the properties provided in the `DatadogECSFargateProps`.
