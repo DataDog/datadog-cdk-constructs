@@ -11,7 +11,6 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
-import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import {
   APP_CONTAINER_NAME,
@@ -25,6 +24,7 @@ import {
   type SsiCase,
   appImage,
   languageFamily,
+  requireApiKey,
   requireEcsResources,
   requireEnv,
 } from "./config";
@@ -41,17 +41,15 @@ const runId = requireEnv("E2E_RUN_ID");
 const createdTs = requireEnv("E2E_CREATED_TS");
 const network = JSON.parse(requireEnv("E2E_NETWORK")) as ResolvedNetwork;
 const resources = requireEcsResources();
+const apiKey = requireApiKey();
 const runIdTag = `${RUN_ID_TAG_KEY}:${runId}`;
 
 const TRACER_LOGS_WARNING_ID = "datadog-cdk-constructs-v2:apmInstrumentationTracerLogsNotCollected";
 
 class EcsFargateWorkloadStack extends Stack {
-  private readonly apiKeySecret: secretsmanager.ISecret;
-
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    this.apiKeySecret = secretsmanager.Secret.fromSecretCompleteArn(this, "ApiKeySecret", resources.apiKeySecret.arn);
     const vpc = ec2.Vpc.fromVpcAttributes(this, "Vpc", {
       vpcId: network.vpcId,
       availabilityZones: [...new Set(network.subnets.map(({ availabilityZone }) => availabilityZone))],
@@ -156,8 +154,7 @@ class EcsFargateWorkloadStack extends Stack {
 
   private datadogProps(service: string): DatadogECSFargateProps {
     return {
-      apiKeySecret: this.apiKeySecret,
-      apiKeySecretField: resources.apiKeySecret.field,
+      apiKey,
       site: SITE,
       service,
       env: ENV_NAME,

@@ -176,7 +176,7 @@ export const waitForAgentHealthy = async (
     if (statuses.includes("UNHEALTHY")) {
       assert.fail(
         `The ${AGENT_CONTAINER_NAME} container of ${serviceName} failed its health check, so no telemetry will arrive. ` +
-          "This may be caused by an unusable API key: check that AWS_ECS_API_KEY_SECRET_ARN holds the right key",
+          "This may be caused by an unusable API key.",
       );
     }
     if (attempt < AGENT_HEALTH_ATTEMPTS) {

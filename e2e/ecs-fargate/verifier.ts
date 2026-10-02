@@ -60,17 +60,16 @@ export interface ServiceExpectation {
   site: string;
   runId: string;
   createdTs: string;
-  /** The reference the Agent and the log router resolve the API key from. */
-  apiKeyValueFrom: string;
+  apiKey: string;
 }
 
 /**
- * The Agent sidecar, the socket transport, the unified service tags, the API key reference, and the
+ * The Agent sidecar, the socket transport, the unified service tags, the API key, and the
  * tags the construct and the suite stamp on the revision.
  */
 export const verifyServiceInstrumented = (
   taskDefinition: DescribedTaskDefinition,
-  { service, env, version, site, runId, createdTs, apiKeyValueFrom }: ServiceExpectation,
+  { service, env, version, site, runId, createdTs, apiKey }: ServiceExpectation,
 ): void => {
   const agent = containerNamed(taskDefinition, AGENT_CONTAINER_NAME);
   assert.equal(agent.image, AGENT_IMAGE);
@@ -86,12 +85,6 @@ export const verifyServiceInstrumented = (
   assert.equal(agentEnv.DD_VERSION, version);
   assert.equal(agentEnv.DD_ECS_TASK_COLLECTION_ENABLED, "true");
   assert.equal(agentEnv.DD_DOGSTATSD_TAG_CARDINALITY, "orchestrator");
-  // The key stays a Secrets Manager reference, never a value in the task definition.
-  assert.deepEqual(
-    agent.secrets?.find(({ name }) => name === "DD_API_KEY"),
-    { name: "DD_API_KEY", valueFrom: apiKeyValueFrom },
-  );
-  assert.equal(agentEnv.DD_API_KEY, undefined, "the API key must not be written in plain text");
 
   const app = containerNamed(taskDefinition, APP_CONTAINER_NAME);
   const appEnv = envByName(app);
@@ -127,13 +120,13 @@ export const verifyServiceInstrumented = (
 export interface LogCollectionExpectation {
   service: string;
   runId: string;
-  apiKeyValueFrom: string;
+  apiKey: string;
 }
 
 /** The FireLens router, every other container routed through it, and the application's log identity. */
 export const verifyLogCollection = (
   taskDefinition: DescribedTaskDefinition,
-  { service, runId, apiKeyValueFrom }: LogCollectionExpectation,
+  { service, runId, apiKey }: LogCollectionExpectation,
 ): void => {
   const router = containerNamed(taskDefinition, LOG_ROUTER_CONTAINER_NAME);
   assert.equal(router.image, LOG_ROUTER_IMAGE);
@@ -148,8 +141,16 @@ export const verifyLogCollection = (
     assert.equal(logConfiguration?.logDriver, "awsfirelens", `${container.name} logs bypass the log router`);
     assert.equal(logConfiguration?.options?.Name, "datadog");
     assert.equal(logConfiguration?.options?.provider, "ecs");
-    assert.deepEqual(logConfiguration?.secretOptions, [{ name: "apikey", valueFrom: apiKeyValueFrom }]);
-    assert.equal(logConfiguration?.options?.apikey, undefined, "the API key must not be written in plain text");
+    assert.equal(
+      logConfiguration?.options?.apikey === apiKey,
+      true,
+      `${container.name} log driver must use the suite API key`,
+    );
+    assert.equal(
+      logConfiguration?.secretOptions?.some(({ name }) => name === "apikey") ?? false,
+      false,
+      `${container.name} log driver must not read the API key from a secret`,
+    );
   }
 
   const appOptions = containerNamed(taskDefinition, APP_CONTAINER_NAME).logConfiguration?.options ?? {};

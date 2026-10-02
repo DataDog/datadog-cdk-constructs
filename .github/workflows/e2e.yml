@@ -37,7 +37,6 @@ jobs:
       AWS_ECS_SUBNETS: ${{ vars.AWS_ECS_SUBNETS_E2E }}
       AWS_ECS_SECURITY_GROUP: ${{ vars.AWS_ECS_SECURITY_GROUP_E2E }}
       AWS_ECS_APP_IMAGE_REGISTRY: ${{ vars.AWS_ECS_APP_IMAGE_REGISTRY_E2E }}
-      AWS_ECS_API_KEY_SECRET_ARN: ${{ vars.AWS_ECS_API_KEY_SECRET_ARN_E2E }}
       AWS_ECS_LOG_GROUP: ${{ vars.AWS_ECS_LOG_GROUP_E2E }}
     steps:
       - name: Checkout
@@ -78,7 +77,6 @@ jobs:
       - name: Run ECS Fargate e2e suite
         run: yarn test:e2e ecs-fargate
         env:
-          # Used by the telemetry checker to query spans and logs. The Agent reads its own key from
-          # AWS_ECS_API_KEY_SECRET_ARN.
-          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY_E2E }}
-          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY_E2E }}
+          # The Agent and FireLens submit with this key. The app key is only for querying telemetry.
+          DATADOG_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
+          DATADOG_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}

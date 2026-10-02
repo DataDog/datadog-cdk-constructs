@@ -127,7 +127,6 @@ describe("cdk ecs fargate e2e", () => {
 
   beforeAll(async () => {
     await runPhase("validating credentials and resources", async () => {
-      // The Agent reads its key from AWS_ECS_API_KEY_SECRET_ARN; these keys query the telemetry.
       requireAnyEnv(["DATADOG_API_KEY", "DD_API_KEY"]);
       requireAnyEnv(["DATADOG_APP_KEY", "DD_APP_KEY"]);
       resources = requireEcsResources();
@@ -201,7 +200,7 @@ describe("cdk ecs fargate e2e", () => {
         expect(service.taskDefinition, "the service runs the instrumented revision").toBe(taskDefinitionArn);
 
         const serviceTaskDefinition = await describeTaskDefinition(taskDefinitionArn);
-        const apiKeyValueFrom = resources.apiKeySecret.valueFrom;
+        const apiKey = process.env.DATADOG_API_KEY ?? process.env.DD_API_KEY ?? "";
         verifyServiceInstrumented(serviceTaskDefinition, {
           service: serviceName,
           env: ENV_NAME,
@@ -209,9 +208,9 @@ describe("cdk ecs fargate e2e", () => {
           site: SITE,
           runId,
           createdTs,
-          apiKeyValueFrom,
+          apiKey,
         });
-        verifyLogCollection(serviceTaskDefinition, { service: serviceName, runId, apiKeyValueFrom });
+        verifyLogCollection(serviceTaskDefinition, { service: serviceName, runId, apiKey });
         verifySsiInstrumented(serviceTaskDefinition, SERVICE_SSI_CASE);
 
         for (const ssiCase of SSI_CASES) {
