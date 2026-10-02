@@ -81,4 +81,4 @@ jobs:
           # Used by the telemetry checker to query spans and logs. The Agent reads its own key from
           # AWS_ECS_API_KEY_SECRET_ARN.
           DATADOG_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
-          DATADOG_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}
+          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY_E2E }}
