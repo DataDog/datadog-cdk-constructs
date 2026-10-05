@@ -45,6 +45,14 @@ export const requireEnv = (name: string): string => {
   return value;
 };
 
+export interface ApiKeySecretReference {
+  readonly arn: string;
+  /** The JSON field that holds the key, when the secret is not the bare key. */
+  readonly field?: string;
+  /** The reference ECS resolves the key from, as the task definition records it. */
+  readonly valueFrom: string;
+}
+
 /**
  * The account resources the suite deploys into. They are provisioned outside this repository and
  * shared with datadog-ci's ECS Fargate suite, which reads the same variables.
@@ -54,8 +62,17 @@ export interface EcsResources {
   readonly subnets: string[];
   readonly securityGroup: string;
   readonly appImageRegistry: string;
+  readonly apiKeySecret: ApiKeySecretReference;
   readonly logGroup: string;
 }
+
+// Accepts a bare secret ARN, or one that names the JSON field holding the key (`<arn>:<field>::`).
+const parseApiKeySecret = (reference: string): ApiKeySecretReference => {
+  const parts = reference.split(":");
+  const arn = parts.slice(0, 7).join(":");
+  const field = parts[7] || undefined;
+  return { arn, field, valueFrom: field ? `${arn}:${field}::` : arn };
+};
 
 export const requireEcsResources = (): EcsResources => ({
   cluster: requireEnv("AWS_ECS_CLUSTER"),
@@ -65,17 +82,9 @@ export const requireEcsResources = (): EcsResources => ({
     .filter(Boolean),
   securityGroup: requireEnv("AWS_ECS_SECURITY_GROUP"),
   appImageRegistry: requireEnv("AWS_ECS_APP_IMAGE_REGISTRY"),
+  apiKeySecret: parseApiKeySecret(requireEnv("AWS_ECS_API_KEY_SECRET_ARN")),
   logGroup: requireEnv("AWS_ECS_LOG_GROUP"),
 });
-
-/** The dd-sts API key. The Agent and FireLens submit with it, and the checker queries with it. */
-export const requireApiKey = (): string => {
-  const apiKey = process.env.DATADOG_API_KEY || process.env.DD_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing required environment variable: one of DATADOG_API_KEY, DD_API_KEY");
-  }
-  return apiKey;
-};
 
 /** The VPC and availability zones of the configured subnets, which the CDK app cannot look up. */
 export interface ResolvedNetwork {

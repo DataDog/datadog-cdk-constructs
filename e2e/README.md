@@ -5,7 +5,7 @@
 The suite runs the `DatadogECSFargate` construct against a temporary ECS Fargate service:
 
 1. Deploy the workload with plain Fargate task definitions: a Node.js service, and one task definition for each tracer language.
-2. Deploy it again with `DatadogECSFargateTaskDefinition` in their place, and verify each new revision: the Datadog Agent and log router sidecars, the API key, and the injected tracer.
+2. Deploy it again with `DatadogECSFargateTaskDefinition` in their place, and verify each new revision: the Datadog Agent and log router sidecars, the API key reference, and the injected tracer.
 3. Send requests to the service and wait for its spans and logs in Datadog.
 4. Confirm `cdk diff --fail` reports no changes.
 5. Destroy the stack and verify that the service and task definitions are gone.
@@ -16,15 +16,14 @@ The language task definitions are registered but never run, so only the Node.js 
 
 The suite deploys into resources that are provisioned outside this repository and shared with the datadog-ci ECS Fargate suite. Set these variables:
 
-| Variable                     | Description                                                                                                                       |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `AWS_ECS_CLUSTER`            | The ECS cluster that runs the service.                                                                                            |
-| `AWS_ECS_SUBNETS`            | Comma-separated public subnets of one VPC.                                                                                        |
-| `AWS_ECS_SECURITY_GROUP`     | A security group that allows inbound traffic on port 8080.                                                                        |
-| `AWS_ECS_APP_IMAGE_REGISTRY` | The registry that hosts the `node-ssi`, `dotnet-ssi`, `java-ssi`, `php-ssi`, `python-ssi`, and `ruby-ssi` fixture images.         |
-| `AWS_ECS_LOG_GROUP`          | The CloudWatch log group for the uninstrumented service.                                                                          |
-| `DATADOG_API_KEY`            | The API key the Agent and FireLens submit with, and that the checker uses to query spans and logs. `DD_API_KEY` is also accepted. |
-| `DATADOG_APP_KEY`            | The application key the checker uses to query spans and logs. `DD_APP_KEY` is also accepted.                                      |
+| Variable                     | Description                                                                                                                                                                                     |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AWS_ECS_CLUSTER`            | The ECS cluster that runs the service.                                                                                                                                                          |
+| `AWS_ECS_SUBNETS`            | Comma-separated public subnets of one VPC.                                                                                                                                                      |
+| `AWS_ECS_SECURITY_GROUP`     | A security group that allows inbound traffic on port 8080.                                                                                                                                      |
+| `AWS_ECS_APP_IMAGE_REGISTRY` | The registry that hosts the `node-ssi`, `dotnet-ssi`, `java-ssi`, `php-ssi`, `python-ssi`, and `ruby-ssi` fixture images.                                                                       |
+| `AWS_ECS_API_KEY_SECRET_ARN` | The complete ARN of a Secrets Manager secret that holds a Datadog API key, optionally followed by `:<json-field>::`. The key must belong to the organization whose telemetry the suite queries. |
+| `AWS_ECS_LOG_GROUP`          | The CloudWatch log group for the uninstrumented service.                                                                                                                                        |
 
 The account must be CDK-bootstrapped in the region of these resources. The suite defaults to `eu-central-1` and `datadoghq.com`. Set `AWS_REGION` or `DD_SITE` to override them.
 
