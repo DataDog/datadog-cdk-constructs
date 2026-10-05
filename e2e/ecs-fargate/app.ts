@@ -96,7 +96,7 @@ class EcsFargateWorkloadStack extends Stack {
         logCollection: {
           isEnabled: true,
           fluentbitConfig: {
-            logDriverConfig: { hostEndpoint: `http-intake.logs.${SITE}`, serviceName, sourceName: "nodejs", tls:"on" },
+            logDriverConfig: { hostEndpoint: `http-intake.logs.${SITE}`, serviceName, sourceName: "nodejs", tls: "on" },
           },
         },
         apmInstrumentation: { language: SERVICE_SSI_CASE.language },
