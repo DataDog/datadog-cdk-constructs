@@ -41,7 +41,7 @@ aws-vault exec sso-serverless-sandbox-account-admin -- \
 
 ### CI
 
-[The E2E workflow](../.github/workflows/e2e.yml) runs the suite when the ECS construct or the suite changes, once the `AWS_ECS_*_E2E` repository variables are set. It assumes the `AWS_ROLE_ARN_E2E` role through GitHub OIDC and gets short-lived Datadog keys through `dd-sts`.
+[The E2E workflow](../.github/workflows/e2e.yml) runs the suite when the ECS construct or the suite changes, once the `AWS_ECS_*_E2E` repository variables are set. It assumes the `AWS_ROLE_ARN_E2E` role through GitHub OIDC and reads the Datadog API and application keys from the `DATADOG_API_KEY_E2E` and `DATADOG_APP_KEY_E2E` secrets.
 
 Besides deploying through the CDK bootstrap roles, the role needs these read permissions: `ecs:DescribeTaskDefinition`, `ecs:ListTaskDefinitions`, `ecs:DescribeServices`, `ecs:ListTasks`, `ecs:DescribeTasks`, `ec2:DescribeSubnets`, and `ec2:DescribeNetworkInterfaces`. Grant them in `serverless-ci/e2e/terraform/aws/policies/datadog-cdk-e2e-deploy.json`.
 
