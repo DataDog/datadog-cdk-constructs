@@ -54,8 +54,7 @@ export interface ApiKeySecretReference {
 }
 
 /**
- * The account resources the suite deploys into. They are provisioned outside this repository and
- * shared with datadog-ci's ECS Fargate suite, which reads the same variables.
+ * The account resources the suite deploys into. They are provisioned outside this repository
  */
 export interface EcsResources {
   readonly cluster: string;
@@ -115,7 +114,7 @@ export const SERVICE_SSI_CASE: SsiCase = {
   nativeEnv: { name: "NODE_OPTIONS", value: "--require /datadog-lib/node_modules/dd-trace/init.js" },
 };
 
-// Mirrors datadog-ci's SSI cases. Each language gets a task definition that is registered and
+// Each language gets a task definition that is registered and
 // verified but never run.
 export const SSI_CASES: readonly SsiCase[] = [
   {

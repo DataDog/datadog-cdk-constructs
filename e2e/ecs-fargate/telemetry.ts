@@ -8,11 +8,6 @@
 
 import { client, v2 } from "@datadog/datadog-api-client";
 
-// Mirrors datadog-ci's ECS Fargate telemetry check rather than the shared Lambda checker: the
-// identity is part of the query, so a match proves the service, env, version, and run reached
-// Datadog together. The injected tracer records the run id as a span attribute (`@`), while FireLens
-// sends it as a log tag.
-
 const POLL_INTERVAL_SECONDS = 30;
 const MAX_ATTEMPTS = 20;
 

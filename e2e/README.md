@@ -14,7 +14,7 @@ The language task definitions are registered but never run, so only the Node.js 
 
 ### Resources
 
-The suite deploys into resources that are provisioned outside this repository and shared with the datadog-ci ECS Fargate suite. Set these variables:
+The suite deploys into resources that are provisioned outside this repository. Set these variables:
 
 | Variable                     | Description                                                                                                                                                                                     |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

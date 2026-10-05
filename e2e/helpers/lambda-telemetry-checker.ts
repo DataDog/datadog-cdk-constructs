@@ -13,8 +13,7 @@ import {client, v2} from '@datadog/datadog-api-client';
 
 import {RUN_ID_TAG_KEY} from './naming';
 
-// Runner-agnostic telemetry poller. Mirrors the datadog-ci reference
-// (cloud-run-telemetry-checker.ts): poll spans + logs on a bounded budget, then assert
+// Runner-agnostic telemetry poller: poll spans + logs on a bounded budget, then assert
 // *identity* on the matched records, not mere existence.
 
 const POLL_INTERVAL_SECONDS = 15;
