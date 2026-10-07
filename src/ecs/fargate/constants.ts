@@ -122,6 +122,11 @@ export const TracerCopyEntryPoint = "/datadog-init/copy-lib.sh";
 export const TracerUser = "0";
 
 /**
+ * Log driver the tracer container reuses from the container that loads the tracer
+ */
+export const AwsLogsLogDriver = "awslogs";
+
+/**
  * Task definition tag recording the automatic APM instrumentation mode
  */
 export const InjectionModeTagKey = "dd_sls_injection_mode";

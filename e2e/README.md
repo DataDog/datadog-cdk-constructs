@@ -47,7 +47,7 @@ Besides deploying through the CDK bootstrap roles, the role needs these read per
 
 ### Resource cleanup
 
-Each run names its stack, service, and task definition families after `one-e2e-cdk-ecs-<runid>`, and tags them with its run ID and creation time. The suite always attempts `cdk destroy`. The shared sweeper only removes Lambda functions and their log groups, so delete any stack that an interrupted run leaves behind:
+Each run names its stack, service, and task definition families after `one-e2e-cdk-ecs-<runid>`, and tags them with its run ID and creation time. The suite always attempts `cdk destroy` at the end.
 
 ```bash
 aws cloudformation delete-stack --stack-name one-e2e-cdk-ecs-<runid> --region eu-central-1

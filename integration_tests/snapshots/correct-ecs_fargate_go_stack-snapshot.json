@@ -130,25 +130,6 @@
       "ReadonlyRootFilesystem": false
      },
      {
-      "Command": [
-       "/datadog-lib"
-      ],
-      "EntryPoint": [
-       "/datadog-init/copy-lib.sh"
-      ],
-      "Essential": false,
-      "Image": "public.ecr.aws/datadog/dd-lib-java-init:latest",
-      "MountPoints": [
-       {
-        "ContainerPath": "/datadog-lib",
-        "ReadOnly": false,
-        "SourceVolume": "datadog-tracer"
-       }
-      ],
-      "Name": "datadog-tracer",
-      "User": "0"
-     },
-     {
       "DependsOn": [
        {
         "Condition": "SUCCESS",
@@ -199,6 +180,25 @@
        }
       ],
       "Name": "javaApp"
+     },
+     {
+      "Command": [
+       "/datadog-lib"
+      ],
+      "EntryPoint": [
+       "/datadog-init/copy-lib.sh"
+      ],
+      "Essential": false,
+      "Image": "public.ecr.aws/datadog/dd-lib-java-init:latest",
+      "MountPoints": [
+       {
+        "ContainerPath": "/datadog-lib",
+        "ReadOnly": false,
+        "SourceVolume": "datadog-tracer"
+       }
+      ],
+      "Name": "datadog-tracer",
+      "User": "0"
      }
     ],
     "Cpu": "256",

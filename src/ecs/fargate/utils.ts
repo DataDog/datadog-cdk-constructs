@@ -7,8 +7,10 @@
  */
 
 import { Token } from "aws-cdk-lib";
+import * as ecs from "aws-cdk-lib/aws-ecs";
 import log from "loglevel";
 import {
+  AwsLogsLogDriver,
   DatadogManagedContainerNames,
   ParseJsonFirelensConfigFileType,
   ParseJsonFirelensConfigFileValue,
@@ -127,6 +129,10 @@ function validateAPMInstrumentationProps(props: DatadogECSFargateInternalProps):
   if (!languages.includes(language)) {
     throw new Error(`The \`apmInstrumentation.language\` property must be one of: ${languages.join(", ")}.`);
   }
+  const libcs = Object.values(TracerLibc);
+  if (tracerLibc !== undefined && !libcs.includes(tracerLibc)) {
+    throw new Error(`The \`apmInstrumentation.tracerLibc\` property must be one of: ${libcs.join(", ")}.`);
+  }
   if (props.isLinux === false) {
     throw new Error("Automatic APM instrumentation is only supported on Linux.");
   }
@@ -169,4 +175,15 @@ function validateAPMInstrumentationProps(props: DatadogECSFargateInternalProps):
       `Cannot add the tracer to the ${requestedName} container, which the construct manages. Set \`apmInstrumentation.containerName\` to an application container.`,
     );
   }
+}
+
+/**
+ * Copies the container's awslogs configuration, or returns undefined when it uses another log driver.
+ */
+export function copyAwsLogsDriver(container: ecs.ContainerDefinition): ecs.LogDriver | undefined {
+  const config = container.logDriverConfig;
+  if (config?.logDriver !== AwsLogsLogDriver) {
+    return undefined;
+  }
+  return new ecs.GenericLogDriver({ logDriver: config.logDriver, options: { ...config.options } });
 }

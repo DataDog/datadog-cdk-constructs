@@ -121,11 +121,43 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       Annotations.fromStack(stack).hasNoWarning("*", TracerLogsWarning);
     });
 
-    it("warns that the tracer container's logs aren't collected when log collection is disabled", () => {
-      addApp(createTask());
+    it("sends the tracer container's logs where the application container's awslogs driver sends them", () => {
+      addApp(createTask(), "app", { logging: ecs.LogDrivers.awsLogs({ streamPrefix: "app" }) });
+      const { containers } = synthesizeTask();
+
+      expect(containers.get("datadog-tracer")?.LogConfiguration).toEqual(containers.get("app")?.LogConfiguration);
+      Template.fromStack(stack).resourceCountIs("AWS::Logs::LogGroup", 1);
+      Annotations.fromStack(stack).hasNoWarning("*", TracerLogsWarning);
+    });
+
+    it("prefers the log router over the application container's awslogs driver", () => {
+      addApp(createTask({ logCollection: { isEnabled: true } }), "app", {
+        logging: ecs.LogDrivers.awsLogs({ streamPrefix: "app" }),
+      });
+
+      expect(synthesizeTask().containers.get("datadog-tracer")?.LogConfiguration?.LogDriver).toBe("awsfirelens");
+    });
+
+    it("doesn't reuse an application log driver other than awslogs", () => {
+      addApp(createTask(), "app", {
+        logging: new ecs.GenericLogDriver({
+          logDriver: "splunk",
+          options: { "splunk-url": "https://splunk.example.com" },
+        }),
+      });
 
       expect(synthesizeTask().containers.get("datadog-tracer")?.LogConfiguration).toBeUndefined();
       Annotations.fromStack(stack).hasWarning("*", TracerLogsWarning);
+    });
+
+    it("warns that the tracer container's logs aren't collected when no log configuration applies to it", () => {
+      addApp(createTask());
+
+      expect(synthesizeTask().containers.get("datadog-tracer")?.LogConfiguration).toBeUndefined();
+      Annotations.fromStack(stack).hasWarning(
+        "*",
+        Match.stringLikeRegexp("Enable `logCollection`, or use the `awslogs` log driver on container app\\."),
+      );
     });
   });
 
@@ -281,6 +313,40 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       expect(() => addApp(task, "Second", { containerName: "web" })).toThrow(/More than one container is named web/);
     });
 
+    it("counts containers that were not added with addContainer", () => {
+      const task = createTask();
+      new ecs.ContainerDefinition(stack, "App", {
+        taskDefinition: task,
+        image: ecs.ContainerImage.fromRegistry("my-app"),
+      });
+      addApp(task, "xray");
+
+      expect(() => synthesizeTask()).toThrow(/several: App, xray\. Set `apmInstrumentation.containerName`/);
+    });
+
+    it("reports a selected container that was not added with addContainer", () => {
+      const task = createTask({ apmInstrumentation: { language: TracerLanguage.NODEJS, containerName: "App" } });
+      new ecs.ContainerDefinition(stack, "App", {
+        taskDefinition: task,
+        image: ecs.ContainerImage.fromRegistry("my-app"),
+      });
+      addApp(task, "xray");
+
+      expect(() => synthesizeTask()).toThrow(/Container App was not added with `addContainer`/);
+    });
+
+    it("rejects a container that shares the selected name but was not added with addContainer", () => {
+      const task = createTask({ apmInstrumentation: { language: TracerLanguage.NODEJS, containerName: "web" } });
+      addApp(task, "First", { containerName: "web" });
+      new ecs.ContainerDefinition(stack, "Second", {
+        taskDefinition: task,
+        containerName: "web",
+        image: ecs.ContainerImage.fromRegistry("my-app"),
+      });
+
+      expect(() => synthesizeTask()).toThrow(/More than one container is named web/);
+    });
+
     it("reports a selected container that was never added", () => {
       addApp(createTask({ apmInstrumentation: { language: TracerLanguage.NODEJS, containerName: "worker" } }));
 
@@ -394,7 +460,7 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       expect(() => createTask({}, { runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.ARM64 } })).not.toThrow();
     });
 
-    it("detects ARM64 through the SDK constant rather than a hardcoded string", () => {
+    it("detects ARM64 from the task's runtime platform", () => {
       expect(isCpuArchitectureArm64({ runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.ARM64 } })).toBe(true);
       expect(isCpuArchitectureArm64({ runtimePlatform: { cpuArchitecture: ecs.CpuArchitecture.of("ARM64") } })).toBe(
         true,
@@ -423,6 +489,14 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       expect(() => createTask({ apmInstrumentation: { language: "go" as unknown as TracerLanguage } })).toThrow(
         "The `apmInstrumentation.language` property must be one of: java, nodejs, dotnet, python, ruby, php.",
       );
+    });
+
+    it("rejects an unsupported tracer libc", () => {
+      expect(() =>
+        createTask({
+          apmInstrumentation: { language: TracerLanguage.NODEJS, tracerLibc: "uclibc" as unknown as TracerLibc },
+        }),
+      ).toThrow("The `apmInstrumentation.tracerLibc` property must be one of: glibc, musl.");
     });
   });
 

@@ -922,25 +922,6 @@
       "ReadonlyRootFilesystem": true
      },
      {
-      "Command": [
-       "/datadog-lib"
-      ],
-      "EntryPoint": [
-       "/datadog-init/copy-lib.sh"
-      ],
-      "Essential": false,
-      "Image": "public.ecr.aws/datadog/dd-lib-js-init:latest",
-      "MountPoints": [
-       {
-        "ContainerPath": "/datadog-lib",
-        "ReadOnly": false,
-        "SourceVolume": "datadog-tracer"
-       }
-      ],
-      "Name": "datadog-tracer",
-      "User": "0"
-     },
-     {
       "DependsOn": [
        {
         "Condition": "SUCCESS",
@@ -991,6 +972,25 @@
        }
       ],
       "Name": "nodeApp"
+     },
+     {
+      "Command": [
+       "/datadog-lib"
+      ],
+      "EntryPoint": [
+       "/datadog-init/copy-lib.sh"
+      ],
+      "Essential": false,
+      "Image": "public.ecr.aws/datadog/dd-lib-js-init:latest",
+      "MountPoints": [
+       {
+        "ContainerPath": "/datadog-lib",
+        "ReadOnly": false,
+        "SourceVolume": "datadog-tracer"
+       }
+      ],
+      "Name": "datadog-tracer",
+      "User": "0"
      }
     ],
     "Cpu": "256",

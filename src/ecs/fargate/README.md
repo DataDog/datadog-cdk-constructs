@@ -225,10 +225,10 @@ fargateTaskDefinition.addContainer("app", {
 When the task starts, a `datadog-tracer` container copies the tracer into a `datadog-tracer` volume and exits. The application container mounts the volume at `/datadog-lib`, starts after the copy succeeds, and loads the tracer through its language's startup variable, such as `NODE_OPTIONS` or `JAVA_TOOL_OPTIONS`. The construct adds to the values you set for these variables instead of replacing them. The Datadog Agent container receives the traces.
 
 - Set `apmInstrumentation` in `fargateTaskDefinition` for each task definition that needs it. When you set it on `DatadogECSFargate`, it applies to every task definition the construct creates, and Python, Go, and Java code can't turn it off for a single task definition.
-- When you add more than one container with `addContainer`, set `containerName` to the container that loads the tracer.
+- Add the container that loads the tracer with `addContainer`. If the task definition has any other container besides the ones the construct adds, such as a sidecar, set `containerName` to the container that loads the tracer.
 - Set the tracer startup variables and `DD_TAGS` in `environment` when you call `addContainer`. Don't set them in `secrets` or environment files, or change them later with `addEnvironment`.
 - Don't use the `datadog-tracer` name or the `/datadog-lib` path for your own containers, volumes, or mount points.
-- To collect the logs of the `datadog-tracer` container, enable `logCollection`.
+- The `datadog-tracer` container sends its logs to Datadog when you enable `logCollection`. Otherwise, it sends them to same location as the main container, if that container uses the `awslogs` log driver.
 - Automatic APM instrumentation is only supported on Linux, and requires `apm.isEnabled`. .NET isn't supported on ARM64 tasks, and .NET tracer versions earlier than 3.0 aren't supported. Ruby doesn't support musl.
 - Go isn't supported. Install `dd-trace-go` in the application image instead.
 - Java 24 and later may print warnings about native access. To suppress them, add `--enable-native-access=ALL-UNNAMED` to `JAVA_TOOL_OPTIONS`. The construct doesn't add this flag because older Java versions fail to start with it.

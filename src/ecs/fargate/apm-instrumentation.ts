@@ -160,11 +160,6 @@ export function mergeInjectionEnvironment(
   fragments: EnvFragment[],
 ): Record<string, string> {
   const environment = { ...props.environment };
-  if (props.environmentFiles !== undefined && props.environmentFiles.length > 0) {
-    throw new Error(
-      `Cannot add the tracer to container ${containerName} because it uses \`environmentFiles\`, whose variables can't be safely merged. Set the tracer's variables in \`environment\` instead, or remove the environment files.`,
-    );
-  }
   for (const fragment of fragments) {
     if (props.secrets?.[fragment.name] !== undefined) {
       throw new Error(
