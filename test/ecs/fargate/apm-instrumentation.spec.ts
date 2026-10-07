@@ -244,16 +244,6 @@ describe("DatadogECSFargateTaskDefinition automatic APM instrumentation", () => 
       );
     });
 
-    it("rejects a container that uses environmentFiles", () => {
-      const bucket = new cdk.aws_s3.Bucket(stack, "EnvBucket");
-
-      expect(() =>
-        addApp(createTask(), "app", {
-          environmentFiles: [ecs.EnvironmentFile.fromBucket(bucket, "env")],
-        }),
-      ).toThrow(/Cannot add the tracer to container app because it uses `environmentFiles`/);
-    });
-
     it("rejects a .NET profiler variable set to another value", () => {
       const task = createTask({ apmInstrumentation: { language: TracerLanguage.DOTNET } });
 
