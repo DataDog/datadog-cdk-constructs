@@ -12,6 +12,60 @@ import { CWSFeatureConfig, DatadogECSBaseProps, LogCollectionFeatureConfig } fro
 export interface DatadogECSFargateProps extends DatadogECSBaseProps {
   readonly logCollection?: FargateLogCollectionFeatureConfig;
   readonly cws?: FargateCWSFeatureConfig;
+  /**
+   * Automatic APM instrumentation configuration.
+   * Adds the Datadog tracer to an application container without changing its image.
+   */
+  readonly apmInstrumentation?: APMInstrumentationConfig;
+}
+
+/**
+ * Automatic APM instrumentation configuration
+ */
+export interface APMInstrumentationConfig {
+  /**
+   * The application language, which selects the tracer to add.
+   */
+  readonly language: TracerLanguage;
+  /**
+   * The version of the tracer to add. Defaults to `latest`.
+   */
+  readonly tracerVersion?: string;
+  /**
+   * The C standard library that the application image uses. Defaults to `GLIBC`.
+   */
+  readonly tracerLibc?: TracerLibc;
+  /**
+   * The name of the application container that loads the tracer.
+   * Required when the task definition has more than one application container.
+   */
+  readonly containerName?: string;
+}
+
+/**
+ * Application language for automatic APM instrumentation.
+ */
+export enum TracerLanguage {
+  JAVA = "java",
+  NODEJS = "nodejs",
+  DOTNET = "dotnet",
+  PYTHON = "python",
+  RUBY = "ruby",
+  PHP = "php",
+}
+
+/**
+ * C standard library of the application image.
+ */
+export enum TracerLibc {
+  /**
+   * Used by most Linux images, such as Debian and Ubuntu.
+   */
+  GLIBC = "glibc",
+  /**
+   * Used by Alpine Linux images.
+   */
+  MUSL = "musl",
 }
 
 export interface FargateCWSFeatureConfig extends CWSFeatureConfig {

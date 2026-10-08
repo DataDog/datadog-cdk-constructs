@@ -6,9 +6,17 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
+import { Token } from "aws-cdk-lib";
+import * as ecs from "aws-cdk-lib/aws-ecs";
 import log from "loglevel";
-import { ParseJsonFirelensConfigFileType, ParseJsonFirelensConfigFileValue } from "./constants";
-import { DatadogECSFargateProps, LoggingType } from "./interfaces";
+import {
+  AwsLogsLogDriver,
+  DatadogManagedContainerNames,
+  ParseJsonFirelensConfigFileType,
+  ParseJsonFirelensConfigFileValue,
+  TracerImageTagRegExp,
+} from "./constants";
+import { DatadogECSFargateProps, LoggingType, TracerLanguage, TracerLibc } from "./interfaces";
 import { DatadogECSFargateInternalProps } from "./internal.interfaces";
 
 export function mergeFargateProps(
@@ -109,4 +117,73 @@ export function validateECSFargateProps(props: DatadogECSFargateInternalProps): 
   if (props.orchestratorExplorer === undefined) {
     throw new Error("The `orchestratorExplorer` property must be defined.");
   }
+
+  if (props.apmInstrumentation !== undefined) {
+    validateAPMInstrumentationProps(props);
+  }
+}
+
+function validateAPMInstrumentationProps(props: DatadogECSFargateInternalProps): void {
+  const { language, tracerVersion, tracerLibc, containerName } = props.apmInstrumentation!;
+  const languages = Object.values(TracerLanguage);
+  if (!languages.includes(language)) {
+    throw new Error(`The \`apmInstrumentation.language\` property must be one of: ${languages.join(", ")}.`);
+  }
+  const libcs = Object.values(TracerLibc);
+  if (tracerLibc !== undefined && !libcs.includes(tracerLibc)) {
+    throw new Error(`The \`apmInstrumentation.tracerLibc\` property must be one of: ${libcs.join(", ")}.`);
+  }
+  if (props.isLinux === false) {
+    throw new Error("Automatic APM instrumentation is only supported on Linux.");
+  }
+  if (!props.apm!.isEnabled) {
+    throw new Error("Automatic APM instrumentation requires `apm.isEnabled` to be true.");
+  }
+
+  // A version only known at deployment is left to the image pull
+  const isVersionKnown = tracerVersion !== undefined && !Token.isUnresolved(tracerVersion);
+  if (isVersionKnown && !TracerImageTagRegExp.test(tracerVersion)) {
+    throw new Error(
+      `The \`apmInstrumentation.tracerVersion\` property ${JSON.stringify(tracerVersion)} is not a valid image tag.`,
+    );
+  }
+
+  if (language === TracerLanguage.RUBY && tracerLibc === TracerLibc.MUSL) {
+    throw new Error(
+      "Automatic APM instrumentation for Ruby does not support musl. Use `TracerLibc.GLIBC`, or install the tracer in the application image.",
+    );
+  }
+  if (language === TracerLanguage.DOTNET) {
+    if (props.isArm64) {
+      throw new Error(
+        "Automatic APM instrumentation for .NET is not supported on ARM64. Use an X86_64 task, or install the tracer in the application image.",
+      );
+    }
+    const pinnedMajor = isVersionKnown ? tracerVersion.match(/^v?(\d+)(?:\.|$)/)?.[1] : undefined;
+    if (pinnedMajor !== undefined && Number(pinnedMajor) < 3) {
+      throw new Error(
+        `Automatic APM instrumentation for .NET requires tracer version 3.0 or later, but \`tracerVersion\` is ${JSON.stringify(
+          tracerVersion,
+        )}.`,
+      );
+    }
+  }
+
+  const requestedName = containerName?.trim();
+  if (requestedName && DatadogManagedContainerNames.has(requestedName)) {
+    throw new Error(
+      `Cannot add the tracer to the ${requestedName} container, which the construct manages. Set \`apmInstrumentation.containerName\` to an application container.`,
+    );
+  }
+}
+
+/**
+ * Copies the container's awslogs configuration, or returns undefined when it uses another log driver.
+ */
+export function copyAwsLogsDriver(container: ecs.ContainerDefinition): ecs.LogDriver | undefined {
+  const config = container.logDriverConfig;
+  if (config?.logDriver !== AwsLogsLogDriver) {
+    return undefined;
+  }
+  return new ecs.GenericLogDriver({ logDriver: config.logDriver, options: { ...config.options } });
 }

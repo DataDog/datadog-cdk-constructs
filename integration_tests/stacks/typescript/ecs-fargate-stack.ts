@@ -8,7 +8,7 @@
 
 import { Stack, StackProps, App } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
-import { DatadogECSFargate } from "../../../src/index";
+import { DatadogECSFargate, TracerLanguage } from "../../../src/index";
 
 export class ExampleStack extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
@@ -59,6 +59,19 @@ export class ExampleStack extends Stack {
     );
     exampleTaskDefinition.addContainer("ecsExample", {
       image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+    });
+
+    // APM Instrumentation Task Definition
+    const apmInstrumentationTaskDefinition = ecsDatadog.fargateTaskDefinition(
+      this,
+      "apmInstrumentationTaskDefinition",
+      { memoryLimitMiB: 512, cpu: 256 },
+      { apmInstrumentation: { language: TracerLanguage.NODEJS } },
+    );
+    apmInstrumentationTaskDefinition.addContainer("nodeApp", {
+      image: ecs.ContainerImage.fromRegistry("ecs-sample-image/node-app"),
+      // the tracer is appended to this value
+      environment: { NODE_OPTIONS: "--max-old-space-size=256" },
     });
   }
 }

@@ -47,6 +47,10 @@
     "node_modules/",
     "*.generated.ts",
     "coverage",
+    "e2e/helpers/exec.ts",
+    "e2e/helpers/lambda-telemetry-checker.ts",
+    "e2e/helpers/lambda-verifier.ts",
+    "e2e/helpers/naming.ts",
     "!.projenrc.ts",
     "!projenrc/**/*.ts"
   ],
@@ -154,6 +158,7 @@
         "devDependencies": [
           "**/test/**",
           "**/build-tools/**",
+          "e2e/**",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],
