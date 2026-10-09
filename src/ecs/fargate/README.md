@@ -188,6 +188,7 @@ For more general information, reference the [Datadog ECS Fargate Docs](https://d
 | `isSocketEnabled`            | `boolean` | Enables APM traces traffic over Unix Domain Socket. Falls back to TCP when false.                                                                                                                |
 | `traceInferredProxyServices` | `boolean` | Enables inferred spans for proxy services like AWS API Gateway. When enabled, the tracer will create spans for proxy services by using headers passed from the proxy service to the application. |
 | `isProfilingEnabled`         | `boolean` | Enables Profiling. Requires the Datadog tracer in the application container, installed in the image or added with `apmInstrumentation`.                                                          |
+| `dataStreams`                | `boolean` | Enables Data Streams Monitoring on the application containers.                                                                                                                                   |
 
 ### APMInstrumentationConfig
 

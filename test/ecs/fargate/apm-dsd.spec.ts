@@ -201,6 +201,49 @@ describe("DatadogECSFargateTaskDefinition", () => {
     });
   });
 
+  it("should inject DD_DATA_STREAMS_ENABLED on app containers, not the agent, when dataStreams is enabled", () => {
+    datadogProps = { ...datadogProps, apm: { isEnabled: true, dataStreams: true } };
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    taskDefinition.addContainer("app-container", {
+      containerName: "app-container",
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+      memoryLimitMiB: 512,
+    });
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: "datadog-agent",
+          Environment: Match.not(Match.arrayWith([Match.objectLike({ Name: "DD_DATA_STREAMS_ENABLED" })])),
+        }),
+        Match.objectLike({
+          Name: "app-container",
+          Environment: Match.arrayWith([Match.objectLike({ Name: "DD_DATA_STREAMS_ENABLED", Value: "true" })]),
+        }),
+      ]),
+    });
+  });
+
+  it("should not inject DD_DATA_STREAMS_ENABLED by default", () => {
+    const taskDefinition = new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    taskDefinition.addContainer("app-container", {
+      containerName: "app-container",
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+      memoryLimitMiB: 512,
+    });
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: "app-container",
+          Environment: Match.not(Match.arrayWith([Match.objectLike({ Name: "DD_DATA_STREAMS_ENABLED" })])),
+        }),
+      ]),
+    });
+  });
+
   it("should enable origin detection when isOriginDetectionEnabled is true", () => {
     datadogProps = {
       ...datadogProps,

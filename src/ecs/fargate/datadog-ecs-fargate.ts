@@ -335,6 +335,9 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
       if (this.datadogProps.apm!.isProfilingEnabled) {
         container.addEnvironment("DD_PROFILING_ENABLED", "true");
       }
+      if (this.datadogProps.apm!.dataStreams) {
+        container.addEnvironment("DD_DATA_STREAMS_ENABLED", "true");
+      }
     }
 
     // APM instrumentation configuration
