@@ -22,6 +22,7 @@ STACK_CONFIG_PATHS=(
     "typescript/lambda-java-function-stack.ts"
     "typescript/step-function-stack.ts"
     "typescript/ecs-fargate-stack.ts"
+    "typescript/ecs-managed-instances-stack.ts"
     "typescript/apigateway-stack.ts"
     "python/lambda_python_stack.py"
     "python/step_functions_python_stack.py"
