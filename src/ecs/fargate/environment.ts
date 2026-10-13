@@ -19,7 +19,7 @@ export class FargateEnvVarManager extends EnvVarManager {
     this.addAll(props.environmentVariables);
 
     this.add("DD_INSTALL_INFO_TOOL", "cdk");
-    this.add("DD_INSTALL_INFO_TOOL_VERSION", "datadog-cdk-constructs");
+    this.add("DD_INSTALL_INFO_TOOL_VERSION", "datadog-cdk-constructs/ecs-fargate");
     this.add("DD_INSTALL_INFO_INSTALLER_VERSION", versionJson.version);
 
     this.add("DD_API_KEY", props.apiKey);
