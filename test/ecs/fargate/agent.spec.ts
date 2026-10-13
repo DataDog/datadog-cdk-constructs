@@ -53,6 +53,23 @@ describe("DatadogECSFargateTaskDefinition", () => {
     });
   });
 
+  it("reports the Fargate construct in the install info tool version", () => {
+    new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, datadogProps);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::TaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: "datadog-agent",
+          Environment: Match.arrayWith([
+            { Name: "DD_INSTALL_INFO_TOOL", Value: "cdk" },
+            { Name: "DD_INSTALL_INFO_TOOL_VERSION", Value: "datadog-cdk-constructs/ecs-fargate" },
+          ]),
+        }),
+      ]),
+    });
+  });
+
   it("should add environment variables to the agent container", () => {
     datadogProps = {
       ...datadogProps,

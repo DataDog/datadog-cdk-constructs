@@ -70,7 +70,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_TOOL_VERSION",
-        "Value": "datadog-cdk-constructs"
+        "Value": "datadog-cdk-constructs/ecs-fargate"
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
@@ -312,7 +312,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_TOOL_VERSION",
-        "Value": "datadog-cdk-constructs"
+        "Value": "datadog-cdk-constructs/ecs-fargate"
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
@@ -587,7 +587,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_TOOL_VERSION",
-        "Value": "datadog-cdk-constructs"
+        "Value": "datadog-cdk-constructs/ecs-fargate"
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
@@ -821,7 +821,7 @@
        },
        {
         "Name": "DD_INSTALL_INFO_TOOL_VERSION",
-        "Value": "datadog-cdk-constructs"
+        "Value": "datadog-cdk-constructs/ecs-fargate"
        },
        {
         "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
