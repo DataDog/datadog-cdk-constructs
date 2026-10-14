@@ -452,8 +452,8 @@ __metadata:
   linkType: hard
 
 "@datadog/datadog-api-client@npm:^1.34.1":
-  version: 1.63.0
-  resolution: "@datadog/datadog-api-client@npm:1.63.0"
+  version: 1.64.0
+  resolution: "@datadog/datadog-api-client@npm:1.64.0"
   dependencies:
     "@types/buffer-from": "npm:^1.1.0"
     "@types/node": "npm:*"
@@ -463,7 +463,7 @@ __metadata:
     form-data: "npm:^4.0.4"
     loglevel: "npm:^1.8.1"
     pako: "npm:^2.0.4"
-  checksum: 10c0/0f7bf7dd8ff9a497a3b855f875dbedd0047a800f76981d3bf5ae8979bae68a42a63f1611defe9fb0c3d4ddf048a687dbd96365b2ccdf856a4b95fecde2899f3a
+  checksum: 10c0/4a57e10ab861c3e80036303b4de325a7f54cc2f2c0ba3bb2d857aebcaa3721aafa6a180d58f9203db985b31ca64470520b6f79eadac54b04f338081601f8fc50
   languageName: node
   linkType: hard
 
@@ -1885,11 +1885,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 26.6.4
-  resolution: "@types/node@npm:26.6.4"
+  version: 26.6.5
+  resolution: "@types/node@npm:26.6.5"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/094e7362df9200ba4c2da09131ca3b5d1aa51535a268a24e4ee2546d9c5a323d1d30cbdaaaa3db7ef8b2387572d1f9edabb11538ab7a09d3bca33ae5cddc2b1b
+  checksum: 10c0/4f791f69466ace7842c09e7bef96cb1ddbb65cf3db916ef7e84f0e2b2a17220b6b816dc7539d01520cadfb17ed7169b8214910900493e0a83be8bc7d124ec20a
   languageName: node
   linkType: hard
 
