@@ -42,6 +42,7 @@ import { DatadogECSFargateProps, LoggingType } from "./interfaces";
 import { copyAwsLogsDriver, mergeFargateProps, validateECSFargateProps } from "./utils";
 import {
   addCdkConstructVersionTag,
+  addGlobalTagsWarnings,
   configureEcsPolicies,
   getSecretApiKey,
   isCpuArchitectureArm64,
@@ -107,6 +108,7 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     this.datadogProps = this.getCompleteProps(props, datadogProps);
     validateECSBaseProps(this.datadogProps);
     validateECSFargateProps(this.datadogProps);
+    addGlobalTagsWarnings(this, this.datadogProps);
 
     this.datadogContainer = this.createAgentContainer(this.datadogProps);
 
@@ -483,7 +485,8 @@ export class DatadogECSFargateTaskDefinition extends ecs.FargateTaskDefinition {
     const logServiceName = name ?? fluentbitLogDriverConfig.serviceName;
     const logSourceName = name ?? fluentbitLogDriverConfig.sourceName;
 
-    let logTags = this.datadogProps.envVarManager.retrieve("DD_TAGS");
+    // Fluent Bit expects comma-separated tags, so use globalTags instead of the converted DD_TAGS
+    let logTags = this.datadogProps.globalTags ?? this.datadogProps.envVarManager.retrieve("DD_TAGS");
     if (this.datadogProps.clusterName !== undefined) {
       if (logTags === undefined) {
         logTags = "";

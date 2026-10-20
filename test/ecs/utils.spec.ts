@@ -1,12 +1,20 @@
 import * as cdk from "aws-cdk-lib";
+import { Annotations, Match } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
+import {
+  AgentTagsCommaWarningId,
+  GlobalTagsTokenWarningId,
+  GlobalTagsWhitespaceWarningId,
+} from "../../src/ecs/constants";
 import {
   validateECSBaseProps,
   isOperatingSystemLinux,
   getSecretApiKey,
   addCdkConstructVersionTag,
+  addGlobalTagsWarnings,
+  toAgentTags,
 } from "../../src/ecs/utils";
 
 describe("utils", () => {
@@ -187,6 +195,60 @@ describe("utils", () => {
           },
         ],
       });
+    });
+  });
+
+  describe("toAgentTags", () => {
+    it.each([
+      ["env:prod,team:payments", "env:prod team:payments"],
+      ["env:prod, team:payments", "env:prod  team:payments"],
+      ["env:prod", "env:prod"],
+      ["env:prod,", "env:prod "],
+      ["", ""],
+    ])("converts %p to %p", (globalTags, expected) => {
+      expect(toAgentTags(globalTags)).toEqual(expected);
+    });
+
+    it("keeps tokens in the converted tags", () => {
+      const param = new cdk.CfnParameter(stack, "Env");
+      const agentTags = toAgentTags(`env:${param.valueAsString},team:payments`);
+      expect(stack.resolve(agentTags)).toEqual({ "Fn::Join": ["", ["env:", { Ref: "Env" }, " team:payments"]] });
+    });
+  });
+
+  describe("addGlobalTagsWarnings", () => {
+    const warning = (id: string) => Match.stringLikeRegexp(`\\[ack: ${id}\\]`);
+
+    it.each(["env:prod,team:payments", "env:prod, team:payments", "env:prod"])(
+      "does not warn for comma-separated global tags %p",
+      (globalTags) => {
+        addGlobalTagsWarnings(scope, { globalTags, environmentVariables: { DD_TAGS: "a:1,b:2" } });
+        Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
+      },
+    );
+
+    it.each(["env:prod team:payments", "env:prod,team:Data Platform"])(
+      "warns when a global tags item in %p contains whitespace",
+      (globalTags) => {
+        addGlobalTagsWarnings(scope, { globalTags });
+        Annotations.fromStack(stack).hasWarning("*", warning(GlobalTagsWhitespaceWarningId));
+      },
+    );
+
+    it("warns when global tags contain a token", () => {
+      const param = new cdk.CfnParameter(stack, "Tags");
+      addGlobalTagsWarnings(scope, { globalTags: param.valueAsString });
+      Annotations.fromStack(stack).hasWarning("*", warning(GlobalTagsTokenWarningId));
+    });
+
+    it("warns when DD_TAGS in environmentVariables contains commas and global tags are not set", () => {
+      addGlobalTagsWarnings(scope, { environmentVariables: { DD_TAGS: "env:prod,team:payments" } });
+      Annotations.fromStack(stack).hasWarning("*", warning(AgentTagsCommaWarningId));
+    });
+
+    it("does not warn when DD_TAGS in environmentVariables is whitespace-separated", () => {
+      addGlobalTagsWarnings(scope, { environmentVariables: { DD_TAGS: "env:prod team:payments" } });
+      Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
     });
   });
 });
