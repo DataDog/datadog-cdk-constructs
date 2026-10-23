@@ -6,13 +6,14 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import { Tags } from "aws-cdk-lib";
+import { Annotations, Tags, Token } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 import log from "loglevel";
+import { AgentTagsCommaWarningId, GlobalTagsTokenWarningId, GlobalTagsWhitespaceWarningId } from "./constants";
 import { DatadogECSBaseProps } from "./interfaces";
 import * as versionJson from "../../version.json";
 import { invalidSiteError, siteList, TagKeys } from "../constants";
@@ -110,4 +111,42 @@ export function addCdkConstructVersionTag(task: ecs.TaskDefinition): void {
   Tags.of(task).add(TagKeys.CDK, `v${versionJson.version}`, {
     includeResourceTypes: ["AWS::ECS::TaskDefinition"],
   });
+}
+
+/**
+ * Converts comma-separated global tags to the whitespace-separated format that the Agent reads from DD_TAGS.
+ */
+export function toAgentTags(globalTags: string): string {
+  return globalTags.replace(/,/g, " ");
+}
+
+/**
+ * Warns about global tags and DD_TAGS values that the construct can't format correctly for the Agent.
+ */
+export function addGlobalTagsWarnings(scope: Construct, props: DatadogECSBaseProps): void {
+  const globalTags = props.globalTags;
+  if (globalTags === undefined) {
+    if (props.environmentVariables?.DD_TAGS?.includes(",")) {
+      Annotations.of(scope).addWarningV2(
+        AgentTagsCommaWarningId,
+        "DD_TAGS in `environmentVariables` contains commas, but the Datadog Agent separates tags with whitespace. Set `globalTags` instead, which accepts comma-separated tags.",
+      );
+    }
+    return;
+  }
+  if (Token.isUnresolved(globalTags)) {
+    Annotations.of(scope).addWarningV2(
+      GlobalTagsTokenWarningId,
+      "`globalTags` contains a token. Commas inside the resolved value of the token aren't converted to the whitespace-separated format of DD_TAGS.",
+    );
+  }
+  for (const tag of globalTags.split(",")) {
+    if (/\S\s+\S/.test(tag)) {
+      Annotations.of(scope).addWarningV2(
+        GlobalTagsWhitespaceWarningId,
+        `\`globalTags\` item "${tag.trim()}" contains whitespace. Separate tags with commas. Tag values can't contain whitespace.`,
+      );
+      return;
+    }
+  }
 }

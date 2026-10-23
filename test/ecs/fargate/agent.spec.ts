@@ -97,7 +97,7 @@ describe("DatadogECSFargateTaskDefinition", () => {
           Environment: Match.arrayWith([
             Match.objectEquals({
               Name: "DD_TAGS",
-              Value: "tag1:value1,tag2:value2",
+              Value: "tag1:value1 tag2:value2",
             }),
             Match.objectEquals({
               Name: "DD_CUSTOM_ENV_VAR",

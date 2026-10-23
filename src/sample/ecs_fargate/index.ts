@@ -48,9 +48,7 @@ export class ExampleStack extends Stack {
       apiKeySecret: secret,
       clusterName: cluster.clusterName,
       isDatadogDependencyEnabled: false,
-      environmentVariables: {
-        DD_TAGS: "team:cont-p, owner:container-monitoring",
-      },
+      globalTags: "team:cont-p,owner:container-monitoring",
       dogstatsd: {
         isEnabled: true,
       },
@@ -131,7 +129,7 @@ export class ExampleStack extends Stack {
       },
       {
         apiKeySecret: secret,
-        globalTags: "team:cont-p, owner:container-monitoring",
+        globalTags: "team:cont-p,owner:container-monitoring",
       },
     );
     task.addContainer("DummyDogstatsd", {
