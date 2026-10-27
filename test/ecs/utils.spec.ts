@@ -3,11 +3,7 @@ import { Annotations, Match } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
-import {
-  AgentTagsCommaWarningId,
-  GlobalTagsTokenWarningId,
-  GlobalTagsWhitespaceWarningId,
-} from "../../src/ecs/constants";
+import { AgentTagsCommaWarningId, GlobalTagsWhitespaceWarningId } from "../../src/ecs/constants";
 import {
   validateECSBaseProps,
   isOperatingSystemLinux,
@@ -235,10 +231,13 @@ describe("utils", () => {
       },
     );
 
-    it("warns when global tags contain a token", () => {
+    it.each([
+      ["a token", (param: cdk.CfnParameter) => param.valueAsString],
+      ["a token inside literal tags", (param: cdk.CfnParameter) => `env:${param.valueAsString},team:payments`],
+    ])("does not warn when global tags contain %s", (_, globalTags) => {
       const param = new cdk.CfnParameter(stack, "Tags");
-      addGlobalTagsWarnings(scope, { globalTags: param.valueAsString });
-      Annotations.fromStack(stack).hasWarning("*", warning(GlobalTagsTokenWarningId));
+      addGlobalTagsWarnings(scope, { globalTags: globalTags(param) });
+      Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
     });
 
     it("warns when DD_TAGS in environmentVariables contains commas and global tags are not set", () => {

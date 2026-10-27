@@ -6,14 +6,14 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import { Annotations, Tags, Token } from "aws-cdk-lib";
+import { Annotations, Tags } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 import log from "loglevel";
-import { AgentTagsCommaWarningId, GlobalTagsTokenWarningId, GlobalTagsWhitespaceWarningId } from "./constants";
+import { AgentTagsCommaWarningId, GlobalTagsWhitespaceWarningId } from "./constants";
 import { DatadogECSBaseProps } from "./interfaces";
 import * as versionJson from "../../version.json";
 import { invalidSiteError, siteList, TagKeys } from "../constants";
@@ -133,12 +133,6 @@ export function addGlobalTagsWarnings(scope: Construct, props: DatadogECSBasePro
       );
     }
     return;
-  }
-  if (Token.isUnresolved(globalTags)) {
-    Annotations.of(scope).addWarningV2(
-      GlobalTagsTokenWarningId,
-      "`globalTags` contains a token. Commas inside the resolved value of the token aren't converted to the whitespace-separated format of DD_TAGS.",
-    );
   }
   for (const tag of globalTags.split(",")) {
     if (/\S\s+\S/.test(tag)) {
