@@ -484,6 +484,29 @@ describe("DatadogECSFargateLogging", () => {
       expect(logTags(template)).toEqual("env:prod,team:payments");
     });
 
+    it("passes a JSON array of global tags to the Agent and the log router unchanged", () => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: '["env:prod","team:payments"]',
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual('["env:prod","team:payments"]');
+      expect(logTags(template)).toEqual('["env:prod","team:payments"]');
+    });
+
+    it("converts token global tags for the Agent with CloudFormation functions and keeps them for the log router", () => {
+      const param = new cdk.CfnParameter(stack, "Tags");
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: param.valueAsString,
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual({ "Fn::Join": [" ", { "Fn::Split": [",", { Ref: "Tags" }] }] });
+      expect(logTags(template)).toEqual({ Ref: "Tags" });
+    });
+
     it("uses global tags instead of DD_TAGS in environmentVariables for the Agent and the log router", () => {
       new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
         ...datadogProps,

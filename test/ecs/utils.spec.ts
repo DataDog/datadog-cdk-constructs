@@ -201,14 +201,24 @@ describe("utils", () => {
       ["env:prod", "env:prod"],
       ["env:prod,", "env:prod "],
       ["", ""],
+      ['["env:prod","team:payments"]', '["env:prod","team:payments"]'],
+      [' ["env:prod", "team:payments"]', ' ["env:prod", "team:payments"]'],
     ])("converts %p to %p", (globalTags, expected) => {
       expect(toAgentTags(globalTags)).toEqual(expected);
     });
 
-    it("keeps tokens in the converted tags", () => {
+    it("converts a token with CloudFormation functions", () => {
+      const param = new cdk.CfnParameter(stack, "Tags");
+      const agentTags = toAgentTags(param.valueAsString);
+      expect(stack.resolve(agentTags)).toEqual({ "Fn::Join": [" ", { "Fn::Split": [",", { Ref: "Tags" }] }] });
+    });
+
+    it("converts a token inside literal tags with CloudFormation functions", () => {
       const param = new cdk.CfnParameter(stack, "Env");
       const agentTags = toAgentTags(`env:${param.valueAsString},team:payments`);
-      expect(stack.resolve(agentTags)).toEqual({ "Fn::Join": ["", ["env:", { Ref: "Env" }, " team:payments"]] });
+      expect(stack.resolve(agentTags)).toEqual({
+        "Fn::Join": [" ", { "Fn::Split": [",", { "Fn::Join": ["", ["env:", { Ref: "Env" }, ",team:payments"]] }] }],
+      });
     });
   });
 
@@ -243,6 +253,14 @@ describe("utils", () => {
     it("warns when DD_TAGS in environmentVariables contains commas and global tags are not set", () => {
       addGlobalTagsWarnings(scope, { environmentVariables: { DD_TAGS: "env:prod,team:payments" } });
       Annotations.fromStack(stack).hasWarning("*", warning(AgentTagsCommaWarningId));
+    });
+
+    it.each([
+      [{ globalTags: '["env:prod", "team:Data Platform"]' }],
+      [{ environmentVariables: { DD_TAGS: '["env:prod","team:payments"]' } }],
+    ])("does not warn for a JSON array of tags in %p", (props) => {
+      addGlobalTagsWarnings(scope, props);
+      Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
     });
 
     it("does not warn when DD_TAGS in environmentVariables is whitespace-separated", () => {

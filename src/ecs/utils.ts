@@ -6,7 +6,7 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import { Annotations, Tags } from "aws-cdk-lib";
+import { Annotations, Fn, Tags, Token } from "aws-cdk-lib";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
@@ -114,9 +114,23 @@ export function addCdkConstructVersionTag(task: ecs.TaskDefinition): void {
 }
 
 /**
+ * Returns true for a JSON array of tags, which the Agent also accepts in DD_TAGS.
+ */
+function isJsonArrayTags(tags: string): boolean {
+  return tags.trimStart().startsWith("[");
+}
+
+/**
  * Converts comma-separated global tags to the whitespace-separated format that the Agent reads from DD_TAGS.
+ * A JSON array of tags is passed through unchanged. For a token, CloudFormation does the conversion at deploy time.
  */
 export function toAgentTags(globalTags: string): string {
+  if (isJsonArrayTags(globalTags)) {
+    return globalTags;
+  }
+  if (Token.isUnresolved(globalTags)) {
+    return Fn.join(" ", Fn.split(",", globalTags));
+  }
   return globalTags.replace(/,/g, " ");
 }
 
@@ -126,12 +140,16 @@ export function toAgentTags(globalTags: string): string {
 export function addGlobalTagsWarnings(scope: Construct, props: DatadogECSBaseProps): void {
   const globalTags = props.globalTags;
   if (globalTags === undefined) {
-    if (props.environmentVariables?.DD_TAGS?.includes(",")) {
+    const agentTags = props.environmentVariables?.DD_TAGS;
+    if (agentTags !== undefined && agentTags.includes(",") && !isJsonArrayTags(agentTags)) {
       Annotations.of(scope).addWarningV2(
         AgentTagsCommaWarningId,
         "DD_TAGS in `environmentVariables` contains commas, but the Datadog Agent separates tags with whitespace. Set `globalTags` instead, which accepts comma-separated tags.",
       );
     }
+    return;
+  }
+  if (isJsonArrayTags(globalTags)) {
     return;
   }
   for (const tag of globalTags.split(",")) {
