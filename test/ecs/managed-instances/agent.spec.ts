@@ -206,6 +206,21 @@ describe("DatadogECSManagedInstancesDaemonTaskDefinition - agent container", () 
     });
   });
 
+  it("converts comma-separated global tags to whitespace-separated DD_TAGS", () => {
+    datadogProps = { ...datadogProps, globalTags: "env:prod,team:payments" };
+    new ecsDatadog.DatadogECSManagedInstancesDaemonTaskDefinition(scope, id, datadogProps);
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::ECS::DaemonTaskDefinition", {
+      ContainerDefinitions: Match.arrayWith([
+        Match.objectLike({
+          Name: "datadog-agent",
+          Environment: Match.arrayWith([Match.objectEquals({ Name: "DD_TAGS", Value: "env:prod team:payments" })]),
+        }),
+      ]),
+    });
+  });
+
   it("does not set DD_CLUSTER_NAME when clusterName is not provided", () => {
     new ecsDatadog.DatadogECSManagedInstancesDaemonTaskDefinition(scope, id, datadogProps);
     const template = Template.fromStack(stack);

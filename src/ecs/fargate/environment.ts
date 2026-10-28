@@ -11,6 +11,7 @@ import { FargateDefaultEnvVars } from "./constants";
 import { DatadogECSFargateProps } from "./interfaces";
 import * as versionJson from "../../../version.json";
 import { EnvVarManager } from "../environment";
+import { toAgentTags } from "../utils";
 
 export class FargateEnvVarManager extends EnvVarManager {
   constructor(props: DatadogECSFargateProps) {
@@ -34,7 +35,9 @@ export class FargateEnvVarManager extends EnvVarManager {
           "and the props. The environment variable will be overwritten.",
       );
     }
-    this.add("DD_TAGS", props.globalTags);
+    if (props.globalTags !== undefined) {
+      this.add("DD_TAGS", toAgentTags(props.globalTags));
+    }
     this.add("DD_CLUSTER_NAME", props.clusterName);
 
     if (props.dogstatsd!.isOriginDetectionEnabled) {

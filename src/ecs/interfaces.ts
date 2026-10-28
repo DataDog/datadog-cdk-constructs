@@ -89,6 +89,8 @@ export interface DatadogECSBaseProps {
   readonly environmentVariables?: Record<string, string>;
   /**
    * Global tags to apply to all data sent by the Agent.
+   * Use a comma-separated list of key:value pairs, for example "env:prod,team:payments".
+   * Tag values can't contain commas or whitespace.
    * Overrides any DD_TAGS values in environmentVariables.
    */
   readonly globalTags?: string;
