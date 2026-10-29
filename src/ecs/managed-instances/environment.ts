@@ -11,6 +11,7 @@ import { ContainerCriSocketPath, ManagedInstancesDefaultEnvVars } from "./consta
 import { DatadogECSManagedInstancesProps } from "./interfaces";
 import * as versionJson from "../../../version.json";
 import { EnvVarManager } from "../environment";
+import { toAgentTags } from "../utils";
 
 export class ManagedInstancesEnvVarManager extends EnvVarManager {
   constructor(props: DatadogECSManagedInstancesProps, isSocketRequired: boolean, isProtocolRequired: boolean) {
@@ -35,7 +36,9 @@ export class ManagedInstancesEnvVarManager extends EnvVarManager {
           "and the props. The environment variable will be overwritten.",
       );
     }
-    this.add("DD_TAGS", props.globalTags);
+    if (props.globalTags !== undefined) {
+      this.add("DD_TAGS", toAgentTags(props.globalTags));
+    }
     this.add("DD_CLUSTER_NAME", props.clusterName);
 
     if (props.dogstatsd!.isEnabled && props.dogstatsd!.isOriginDetectionEnabled) {

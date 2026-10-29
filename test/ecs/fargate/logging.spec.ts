@@ -1,8 +1,9 @@
 import * as cdk from "aws-cdk-lib";
-import { Template, Match } from "aws-cdk-lib/assertions";
+import { Annotations, Template, Match } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Construct } from "constructs";
 import * as ecsDatadog from "../../../src/ecs";
+import { AgentTagsCommaWarningId, GlobalTagsWhitespaceWarningId } from "../../../src/ecs/constants";
 import { ParseJsonFirelensConfigFileType } from "../../../src/ecs/fargate/constants";
 
 describe("DatadogECSFargateLogging", () => {
@@ -444,6 +445,102 @@ describe("DatadogECSFargateLogging", () => {
           },
         }),
       ]),
+    });
+  });
+
+  describe("global tags", () => {
+    const agentContainer = (template: Template) => {
+      const [taskDefinition] = Object.values(template.findResources("AWS::ECS::TaskDefinition"));
+      return taskDefinition.Properties.ContainerDefinitions.find((c: any) => c.Name === "datadog-agent");
+    };
+    const agentTags = (template: Template) =>
+      agentContainer(template).Environment.find((e: any) => e.Name === "DD_TAGS")?.Value;
+    const logTags = (template: Template) => agentContainer(template).LogConfiguration.Options.dd_tags;
+
+    it.each([
+      ["env:prod,team:payments", "env:prod team:payments", "env:prod,team:payments, ecs_cluster_name:test-cluster"],
+      ["env:prod, team:payments", "env:prod  team:payments", "env:prod, team:payments, ecs_cluster_name:test-cluster"],
+      ["env:prod", "env:prod", "env:prod, ecs_cluster_name:test-cluster"],
+    ])("sends %p to the Agent as %p and to the log router as %p", (globalTags, expectedAgentTags, expectedLogTags) => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        clusterName: "test-cluster",
+        globalTags,
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual(expectedAgentTags);
+      expect(logTags(template)).toEqual(expectedLogTags);
+    });
+
+    it("sends global tags to the log router unchanged when clusterName is not set", () => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: "env:prod,team:payments",
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual("env:prod team:payments");
+      expect(logTags(template)).toEqual("env:prod,team:payments");
+    });
+
+    it("passes a JSON array of global tags to the Agent and the log router unchanged", () => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: '["env:prod","team:payments"]',
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual('["env:prod","team:payments"]');
+      expect(logTags(template)).toEqual('["env:prod","team:payments"]');
+    });
+
+    it("converts token global tags for the Agent with CloudFormation functions and keeps them for the log router", () => {
+      const param = new cdk.CfnParameter(stack, "Tags");
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: param.valueAsString,
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual({ "Fn::Join": [" ", { "Fn::Split": [",", { Ref: "Tags" }] }] });
+      expect(logTags(template)).toEqual({ Ref: "Tags" });
+    });
+
+    it("uses global tags instead of DD_TAGS in environmentVariables for the Agent and the log router", () => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: "env:prod,team:payments",
+        environmentVariables: { DD_TAGS: "old:value" },
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual("env:prod team:payments");
+      expect(logTags(template)).toEqual("env:prod,team:payments");
+    });
+
+    it("sends DD_TAGS in environmentVariables unchanged when global tags are not set", () => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        environmentVariables: { DD_TAGS: "env:prod,team:payments" },
+      });
+      const template = Template.fromStack(stack);
+
+      expect(agentTags(template)).toEqual("env:prod,team:payments");
+      expect(logTags(template)).toEqual("env:prod,team:payments");
+      Annotations.fromStack(stack).hasWarning("*", Match.stringLikeRegexp(`\\[ack: ${AgentTagsCommaWarningId}\\]`));
+    });
+
+    it("warns when a global tags item contains whitespace", () => {
+      new ecsDatadog.DatadogECSFargateTaskDefinition(scope, id, props, {
+        ...datadogProps,
+        globalTags: "env:prod team:payments",
+      });
+
+      Annotations.fromStack(stack).hasWarning(
+        "*",
+        Match.stringLikeRegexp(`\\[ack: ${GlobalTagsWhitespaceWarningId}\\]`),
+      );
     });
   });
 });
