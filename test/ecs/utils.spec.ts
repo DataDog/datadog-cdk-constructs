@@ -1,12 +1,16 @@
 import * as cdk from "aws-cdk-lib";
+import { Annotations, Match } from "aws-cdk-lib/assertions";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
+import { AgentTagsCommaWarningId, GlobalTagsWhitespaceWarningId } from "../../src/ecs/constants";
 import {
   validateECSBaseProps,
   isOperatingSystemLinux,
   getSecretApiKey,
   addCdkConstructVersionTag,
+  addGlobalTagsWarnings,
+  toAgentTags,
 } from "../../src/ecs/utils";
 
 describe("utils", () => {
@@ -187,6 +191,81 @@ describe("utils", () => {
           },
         ],
       });
+    });
+  });
+
+  describe("toAgentTags", () => {
+    it.each([
+      ["env:prod,team:payments", "env:prod team:payments"],
+      ["env:prod, team:payments", "env:prod  team:payments"],
+      ["env:prod", "env:prod"],
+      ["env:prod,", "env:prod "],
+      ["", ""],
+      ['["env:prod","team:payments"]', '["env:prod","team:payments"]'],
+      [' ["env:prod", "team:payments"]', ' ["env:prod", "team:payments"]'],
+    ])("converts %p to %p", (globalTags, expected) => {
+      expect(toAgentTags(globalTags)).toEqual(expected);
+    });
+
+    it("converts a token with CloudFormation functions", () => {
+      const param = new cdk.CfnParameter(stack, "Tags");
+      const agentTags = toAgentTags(param.valueAsString);
+      expect(stack.resolve(agentTags)).toEqual({ "Fn::Join": [" ", { "Fn::Split": [",", { Ref: "Tags" }] }] });
+    });
+
+    it("converts a token inside literal tags with CloudFormation functions", () => {
+      const param = new cdk.CfnParameter(stack, "Env");
+      const agentTags = toAgentTags(`env:${param.valueAsString},team:payments`);
+      expect(stack.resolve(agentTags)).toEqual({
+        "Fn::Join": [" ", { "Fn::Split": [",", { "Fn::Join": ["", ["env:", { Ref: "Env" }, ",team:payments"]] }] }],
+      });
+    });
+  });
+
+  describe("addGlobalTagsWarnings", () => {
+    const warning = (id: string) => Match.stringLikeRegexp(`\\[ack: ${id}\\]`);
+
+    it.each(["env:prod,team:payments", "env:prod, team:payments", "env:prod"])(
+      "does not warn for comma-separated global tags %p",
+      (globalTags) => {
+        addGlobalTagsWarnings(scope, { globalTags, environmentVariables: { DD_TAGS: "a:1,b:2" } });
+        Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
+      },
+    );
+
+    it.each(["env:prod team:payments", "env:prod,team:Data Platform"])(
+      "warns when a global tags item in %p contains whitespace",
+      (globalTags) => {
+        addGlobalTagsWarnings(scope, { globalTags });
+        Annotations.fromStack(stack).hasWarning("*", warning(GlobalTagsWhitespaceWarningId));
+      },
+    );
+
+    it.each([
+      ["a token", (param: cdk.CfnParameter) => param.valueAsString],
+      ["a token inside literal tags", (param: cdk.CfnParameter) => `env:${param.valueAsString},team:payments`],
+    ])("does not warn when global tags contain %s", (_, globalTags) => {
+      const param = new cdk.CfnParameter(stack, "Tags");
+      addGlobalTagsWarnings(scope, { globalTags: globalTags(param) });
+      Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
+    });
+
+    it("warns when DD_TAGS in environmentVariables contains commas and global tags are not set", () => {
+      addGlobalTagsWarnings(scope, { environmentVariables: { DD_TAGS: "env:prod,team:payments" } });
+      Annotations.fromStack(stack).hasWarning("*", warning(AgentTagsCommaWarningId));
+    });
+
+    it.each([
+      [{ globalTags: '["env:prod", "team:Data Platform"]' }],
+      [{ environmentVariables: { DD_TAGS: '["env:prod","team:payments"]' } }],
+    ])("does not warn for a JSON array of tags in %p", (props) => {
+      addGlobalTagsWarnings(scope, props);
+      Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
+    });
+
+    it("does not warn when DD_TAGS in environmentVariables is whitespace-separated", () => {
+      addGlobalTagsWarnings(scope, { environmentVariables: { DD_TAGS: "env:prod team:payments" } });
+      Annotations.fromStack(stack).hasNoWarning("*", Match.anyValue());
     });
   });
 });

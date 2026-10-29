@@ -44,3 +44,9 @@ export const DatadogEcsBaseDefaultProps: DatadogECSBaseProps = {
     timeout: Duration.seconds(5),
   },
 };
+
+/**
+ * IDs of the global tags warnings
+ */
+export const GlobalTagsWhitespaceWarningId = "datadog-cdk-constructs-v2:globalTagsWhitespace";
+export const AgentTagsCommaWarningId = "datadog-cdk-constructs-v2:agentTagsComma";

@@ -23,7 +23,7 @@ import { DatadogECSManagedInstancesInternalProps } from "./internal.interfaces";
 import { mergeManagedInstancesProps, validateECSManagedInstancesProps } from "./utils";
 import * as versionJson from "../../../version.json";
 import { TagKeys } from "../../constants";
-import { getSecretApiKey, validateECSBaseProps } from "../utils";
+import { addGlobalTagsWarnings, getSecretApiKey, validateECSBaseProps } from "../utils";
 
 type VolumeProperty = ecs.CfnDaemonTaskDefinition.VolumeProperty;
 type MountPointProperty = ecs.CfnDaemonTaskDefinition.MountPointProperty;
@@ -137,6 +137,7 @@ export class DatadogECSManagedInstancesDaemonTaskDefinition extends Construct {
     this.datadogProps = this.getCompleteProps(datadogProps);
     validateECSBaseProps(this.datadogProps);
     validateECSManagedInstancesProps(this.datadogProps);
+    addGlobalTagsWarnings(this, this.datadogProps);
 
     this.executionRole = this.resolveExecutionRole();
     this.taskRole = this.resolveTaskRole();
