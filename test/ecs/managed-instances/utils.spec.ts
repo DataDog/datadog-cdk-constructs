@@ -125,9 +125,9 @@ describe("validateECSManagedInstancesProps", () => {
     expect(() => validateECSManagedInstancesProps(props)).toThrow("The `family` property must be defined.");
   });
 
-  it("throws when logCollection.isEnabled is true", () => {
+  it("does not throw when logCollection.isEnabled is true", () => {
     props.logCollection.isEnabled = true;
-    expect(() => validateECSManagedInstancesProps(props)).toThrow(/log collection/i);
+    expect(() => validateECSManagedInstancesProps(props)).not.toThrow();
   });
 
   describe("volumes", () => {
@@ -243,7 +243,7 @@ describe("validateECSManagedInstancesProps", () => {
 
   it("bypasses all validation when DD_CDK_BYPASS_VALIDATION is set", () => {
     delete props.family;
-    props.logCollection.isEnabled = true;
+    props.readOnlyRootFilesystem = true;
     process.env.DD_CDK_BYPASS_VALIDATION = "true";
     try {
       expect(() => validateECSManagedInstancesProps(props)).not.toThrow();

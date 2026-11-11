@@ -85,6 +85,9 @@ class CdkPythonStack(Stack):
             ],
             dogstatsd={"is_enabled": True},
             apm={"is_enabled": True},
+            # Collect the logs of application containers that use the
+            # json-file log driver. Requires Datadog Agent 7.87.0 or later.
+            log_collection={"is_enabled": True},
             global_tags="owner:datadog, team:contp",
         )
 
@@ -109,6 +112,9 @@ class CdkPythonStack(Stack):
             image=ecs.ContainerImage.from_registry("ghcr.io/datadog/apps-dogstatsd:main"),
             essential=True,
             memory_limit_mib=256,
+            # The Datadog Agent daemon collects the logs of containers that
+            # use the json-file log driver.
+            logging=ecs.LogDrivers.json_file(),
             environment={
                 **{pair.name: pair.value for pair in daemon.dogstatsd_environment},
                 **{pair.name: pair.value for pair in daemon.apm_environment},

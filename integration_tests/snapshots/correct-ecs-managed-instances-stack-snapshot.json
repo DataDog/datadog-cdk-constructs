@@ -563,6 +563,312 @@
     "aws:cdk:path": "ecs-managed-instances-stack/tcpDaemonTaskDefinition/Daemon"
    }
   },
+  "logCollectionDaemonTaskDefinitionExecutionRole9444A3D9": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/logCollectionDaemonTaskDefinition/ExecutionRole/Resource"
+   }
+  },
+  "logCollectionDaemonTaskDefinitionTaskRole9FA544F7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/logCollectionDaemonTaskDefinition/TaskRole/Resource"
+   }
+  },
+  "logCollectionDaemonTaskDefinitionTaskRoleDefaultPolicyA1CFC1F4": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances",
+        "ecs:DescribeTasks",
+        "ecs:ListTasks"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeTags"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "logCollectionDaemonTaskDefinitionTaskRoleDefaultPolicyA1CFC1F4",
+    "Roles": [
+     {
+      "Ref": "logCollectionDaemonTaskDefinitionTaskRole9FA544F7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/logCollectionDaemonTaskDefinition/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "logCollectionDaemonTaskDefinition78BFD808": {
+   "Type": "AWS::ECS::DaemonTaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Cpu": 256,
+      "Environment": [
+       {
+        "Name": "ECS_MANAGED_INSTANCES",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL",
+        "Value": "cdk"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_TOOL_VERSION",
+        "Value": "datadog-cdk-constructs/ecs-managed-instances"
+       },
+       {
+        "Name": "DD_INSTALL_INFO_INSTALLER_VERSION",
+        "Value": "X.X.X"
+       },
+       {
+        "Name": "DD_API_KEY",
+        "Value": "exampleApiKey"
+       },
+       {
+        "Name": "DD_ENV",
+        "Value": "prod"
+       },
+       {
+        "Name": "DD_CRI_SOCKET_PATH",
+        "Value": "/var/run/containerd/containerd.sock"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_TAG_CARDINALITY",
+        "Value": "orchestrator"
+       },
+       {
+        "Name": "DD_APM_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_USE_DOGSTATSD",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_ECS_TASK_COLLECTION_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_LOGS_ENABLED",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL",
+        "Value": "true"
+       },
+       {
+        "Name": "DD_DOGSTATSD_URL",
+        "Value": "unix:///var/run/datadog/dsd.socket"
+       },
+       {
+        "Name": "DD_TRACE_AGENT_URL",
+        "Value": "unix:///var/run/datadog/apm.socket"
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "agent health"
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 15,
+       "Timeout": 5
+      },
+      "Image": "public.ecr.aws/datadog/agent:latest",
+      "Memory": 512,
+      "MountPoints": [
+       {
+        "ContainerPath": "/var/run/containerd/containerd.sock",
+        "ReadOnly": true,
+        "SourceVolume": "containerd_sock"
+       },
+       {
+        "ContainerPath": "/host/proc",
+        "ReadOnly": true,
+        "SourceVolume": "proc"
+       },
+       {
+        "ContainerPath": "/host/sys/fs/cgroup",
+        "ReadOnly": true,
+        "SourceVolume": "cgroup"
+       },
+       {
+        "ContainerPath": "/var/run/datadog",
+        "ReadOnly": false,
+        "SourceVolume": "dd-sockets"
+       },
+       {
+        "ContainerPath": "/var/log/ecs/json-file",
+        "ReadOnly": true,
+        "SourceVolume": "json_file_logs"
+       }
+      ],
+      "Name": "datadog-agent"
+     }
+    ],
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "logCollectionDaemonTaskDefinitionExecutionRole9444A3D9",
+      "Arn"
+     ]
+    },
+    "Family": "datadog-agent-daemon-logs",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "logCollectionDaemonTaskDefinitionTaskRole9FA544F7",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "Host": {
+       "SourcePath": "/var/run/containerd/containerd.sock"
+      },
+      "Name": "containerd_sock"
+     },
+     {
+      "Host": {
+       "SourcePath": "/proc/"
+      },
+      "Name": "proc"
+     },
+     {
+      "Host": {
+       "SourcePath": "/sys/fs/cgroup/"
+      },
+      "Name": "cgroup"
+     },
+     {
+      "Host": {
+       "SourcePath": "/var/run/datadog"
+      },
+      "Name": "dd-sockets"
+     },
+     {
+      "Name": "json_file_logs",
+      "LogDriverVolumeConfiguration": {
+       "Driver": "json-file"
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/logCollectionDaemonTaskDefinition/TaskDefinition"
+   }
+  },
+  "logCollectionDaemonTaskDefinitionDaemon84CF772A": {
+   "Type": "AWS::ECS::Daemon",
+   "Properties": {
+    "CapacityProviderArns": [
+     "arn:aws:ecs:sa-east-1:601427279990:capacity-provider/example-capacity-provider"
+    ],
+    "ClusterArn": "arn:aws:ecs:sa-east-1:601427279990:cluster/example-cluster",
+    "DaemonName": "datadog-agent-daemon-logs-datadog-agent",
+    "DaemonTaskDefinitionArn": {
+     "Fn::GetAtt": [
+      "logCollectionDaemonTaskDefinition78BFD808",
+      "DaemonTaskDefinitionArn"
+     ]
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false
+     },
+     "BakeTimeInMinutes": 0,
+     "DrainPercent": 25
+    },
+    "EnableECSManagedTags": true,
+    "EnableExecuteCommand": false,
+    "PropagateTags": "DAEMON",
+    "Tags": [
+     {
+      "Key": "dd_cdk_construct",
+      "Value": "vX.XX.X"
+     }
+    ]
+   },
+   "DependsOn": [
+    "logCollectionDaemonTaskDefinition78BFD808"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ecs-managed-instances-stack/logCollectionDaemonTaskDefinition/Daemon"
+   }
+  },
   "taskDefinitionOnlyExecutionRoleD17C80FD": {
    "Type": "AWS::IAM::Role",
    "Properties": {
