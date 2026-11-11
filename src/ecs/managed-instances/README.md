@@ -1,6 +1,6 @@
 # Datadog ECS Managed Instances Construct
 
-The `DatadogECSManagedInstances` construct deploys the Datadog Agent as an `AWS::ECS::Daemon` on AWS ECS Managed Instances. It creates and configures the daemon task definition (and, optionally, the daemon itself) so the Agent runs once per instance and collects metrics, traces, and DogStatsD data for the workloads on that instance.
+The `DatadogECSManagedInstances` construct deploys the Datadog Agent as an `AWS::ECS::Daemon` on AWS ECS Managed Instances. It creates and configures the daemon task definition (and, optionally, the daemon itself) so the Agent runs once per instance and collects metrics, traces, DogStatsD data and, optionally, container logs for the workloads on that instance.
 
 ## Installation
 
@@ -49,6 +49,7 @@ const ecsDatadog = new DatadogECSManagedInstances({
   apm: <APM_FEATURE_CONFIG>,
   networkMonitoring: <NETWORK_MONITORING_FEATURE_CONFIG>,
   processCollection: <PROCESS_COLLECTION_FEATURE_CONFIG>,
+  logCollection: <LOG_COLLECTION_FEATURE_CONFIG>,
   createDaemon: <BOOLEAN>,
   clusterArn: <STRING>,
   capacityProviderArns: <STRING[]>,
@@ -145,10 +146,10 @@ For more general information, reference the [Datadog ECS Managed Instances Docs]
 | `taskRole`               | `iam.IRole`                             | The IAM role that allows the Datadog Agent container to make calls to other AWS services. Created automatically if not provided.                                                       |
 | `executionRole`          | `iam.IRole`                             | The IAM role that grants the Amazon ECS container agent permission to make AWS API calls. Created automatically if not provided.                                                       |
 | `volumes`                | `ManagedInstancesVolume[]`              | Additional host-path volumes to mount into the Datadog Agent container, beyond the ones this construct manages (containerd socket, `/proc`, `/sys/fs/cgroup`, UDS sockets, network monitoring debug mount). |
-| `logCollection`          | `LogCollectionFeatureConfig`            | Log collection is not supported for the Datadog Agent running as an ECS Managed Daemon. Setting `isEnabled: true` here causes construct validation to fail.                            |
+| `logCollection`          | `LogCollectionFeatureConfig`            | Configuration for container log collection with the `json-file` log driver. See [Log collection](#log-collection). Requires Datadog Agent 7.87.0 or later. Default: disabled.            |
 | `networkMonitoring`      | `NetworkMonitoringFeatureConfig`        | Configuration for Datadog Cloud Network Monitoring. Linux only.                                                                                                                         |
 | `processCollection`      | `ProcessCollectionFeatureConfig`        | Configuration for Datadog Live Process collection.                                                                                                                                      |
-| `agentLogConfiguration`  | `ManagedInstancesLogConfiguration`      | Log configuration for the Datadog Agent container's own logs (not application container logs), e.g. routing to CloudWatch via the `awslogs` driver.                                    |
+| `agentLogConfiguration`  | `ManagedInstancesLogConfiguration`      | Log configuration for the Datadog Agent container's own logs (not application container logs), e.g. routing to CloudWatch via the `awslogs` driver, or `json-file` to have the Agent collect its own logs when `logCollection` is enabled. |
 | `criSocketPath`          | `string`                                | Path to the containerd socket on the host. ECS Managed Instances uses containerd, not Docker. The socket is always mounted at `/var/run/containerd/containerd.sock` inside the Agent container. Default: `/var/run/containerd/containerd.sock`.                                       |
 | `procPath`               | `string`                                | Path to the `/proc` directory on the host. Default: `/proc/`.                                                                                                                           |
 | `cgroupPath`             | `string`                                | Path to the cgroup directory on the host. Default: `/sys/fs/cgroup/`.                                                                                                                   |
@@ -203,10 +204,42 @@ For more general information, reference the [Datadog ECS Managed Instances Docs]
 
 | Property        | Type      | Description                                                                                                                                        |
 | --------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`          | `string`  | The volume name. Cannot be `containerd_sock`, `proc`, `cgroup`, `dd-sockets` or `debug`, which the construct manages. Letters, numbers, underscores and hyphens only. |
+| `name`          | `string`  | The volume name. Cannot be `containerd_sock`, `proc`, `cgroup`, `dd-sockets`, `debug` or, with `logCollection` enabled, `json_file_logs`, which the construct manages. Letters, numbers, underscores and hyphens only. |
 | `hostPath`      | `string`  | The absolute path on the host to mount.                                                                                                            |
 | `containerPath` | `string`  | The absolute path inside the Datadog Agent container. Default: the same as `hostPath`.                                                             |
 | `readOnly`      | `boolean` | Mounts the volume read-only. Default: `true`.                                                                                                      |
+
+## Log collection
+
+The Datadog Agent daemon can collect the logs of application containers that use the [`json-file` log driver](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/managed-daemons-task-definitions.html#managed-daemons-volumes). Log collection requires Datadog Agent 7.87.0 or later and is off by default.
+
+Set `logCollection.isEnabled` to `true`. The construct then:
+
+- adds a log driver volume named `json_file_logs` with the `json-file` driver to the daemon task definition,
+- mounts it read-only at `/var/log/ecs/json-file` in the Datadog Agent container,
+- sets `DD_LOGS_ENABLED=true` and `DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true` on the Datadog Agent container.
+
+The Agent collects logs only from containers that use the `json-file` log driver. Set it on each application container in its own task definition:
+
+```typescript
+const daemon = new DatadogECSManagedInstancesDaemonTaskDefinition(this, "DatadogDaemon", {
+  family: "datadog-agent-daemon",
+  apiKeySecret: secret,
+  clusterArn: cluster.clusterArn,
+  capacityProviderArns: [capacityProviderArn],
+  logCollection: { isEnabled: true },
+});
+
+appTaskDefinition.addContainer("app", {
+  image: ecs.ContainerImage.fromRegistry("my-app"),
+  memoryLimitMiB: 256,
+  logging: ecs.LogDrivers.jsonFile(),
+});
+```
+
+Containers that use another log driver (for example `awslogs` or FireLens) are not collected. To collect the Agent's own logs as well, set `agentLogConfiguration.logDriver` to `json-file`.
+
+The `LogDriverVolumeConfiguration` volume property is set with a CloudFormation property override, so log collection works with this package's minimum `aws-cdk-lib` version. A CDK CLI with an older bundled CloudFormation schema can print a `CloudFormation-Validate::F3002` warning for this property during `cdk synth`; the template is still valid.
 
 ## Deployment Behavior
 
@@ -218,7 +251,7 @@ The `AWS::ECS::DaemonTaskDefinition` and `AWS::ECS::Daemon` resources behave dif
 
 ## Misc
 
-- Log collection for application containers is not supported when the Datadog Agent runs as an ECS Managed Daemon. Use the FireLens log driver or the `awslogs` driver configured directly on your application task definition instead. Setting `logCollection.isEnabled` to `true` fails construct validation.
+- Log collection for application containers only covers containers that use the `json-file` log driver. See [Log collection](#log-collection).
 - When DogStatsD or APM is enabled without Unix Domain Socket support, application containers reach the Agent over TCP at a static daemon bridge IP, since daemons on an ECS Managed Instance share a single network namespace. Use a Datadog client library to send this traffic; a hand-rolled socket sender cannot populate origin detection, which depends on the client embedding the container ID in the payload.
 - Only attach one Datadog Agent daemon per capacity provider. Every daemon attached to a capacity provider runs on every instance in it, sharing that instance's network namespace, so two Datadog Agent daemons on the same capacity provider (for example, while migrating from another deployment of this module) collide on fixed host resources: the DogStatsD port (8125), the Agent's internal API port (5001), and the UDS socket paths under `/var/run/datadog`. Fully remove one daemon before attaching another to the same capacity provider.
 - This deployment mode requires Datadog Agent version 7.77.0 or later.
@@ -249,6 +282,7 @@ The `DatadogECSManagedInstances` construct manages the Datadog-specific configur
      - **APM**: Enables trace collection, over the same UDS socket volume or TCP.
      - **Cloud Network Monitoring**: Adds the Linux capabilities and host mount the Agent needs for network monitoring.
      - **Live Process Collection**: Enables process-level telemetry from the host.
+     - **Log Collection**: Mounts the `json-file` log driver volume so the Agent collects the logs of application containers that use the `json-file` log driver.
    - These features are enabled or disabled based on the properties provided in `DatadogECSManagedInstancesProps`.
 
 4. **Wiring Application Containers**:

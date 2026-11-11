@@ -28,6 +28,26 @@ export const DatadogAgentServiceName = "datadog-agent";
 export const MinimumAgentVersion = "7.77.0";
 
 /**
+ * Minimum Datadog Agent version required for container log collection with
+ * the `json-file` log driver on ECS Managed Instances.
+ */
+export const MinimumLogCollectionAgentVersion = "7.87.0";
+
+/**
+ * Name of the log driver volume that exposes the logs of containers using the
+ * `json-file` log driver to the Datadog Agent. Only added when log collection
+ * is enabled.
+ */
+export const JsonFileLogsVolumeName = "json_file_logs";
+
+/**
+ * Path inside the Datadog Agent container where the `json-file` log driver
+ * volume is mounted. The Agent reads container logs from
+ * `<path>/<container id>/*-json.log`.
+ */
+export const JsonFileLogsContainerPath = "/var/log/ecs/json-file";
+
+/**
  * The path where the host containerd socket is mounted inside the Datadog
  * Agent container, regardless of the host path configured via `criSocketPath`.
  */

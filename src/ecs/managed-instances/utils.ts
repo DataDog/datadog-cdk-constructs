@@ -7,7 +7,12 @@
  */
 
 import log from "loglevel";
-import { ManagedContainerPaths, ManagedVolumeNames } from "./constants";
+import {
+  JsonFileLogsContainerPath,
+  JsonFileLogsVolumeName,
+  ManagedContainerPaths,
+  ManagedVolumeNames,
+} from "./constants";
 import { DatadogECSManagedInstancesProps } from "./interfaces";
 import { DatadogECSManagedInstancesInternalProps } from "./internal.interfaces";
 
@@ -70,16 +75,6 @@ export function validateECSManagedInstancesProps(props: DatadogECSManagedInstanc
     throw new Error("The `family` property must be defined.");
   }
 
-  // Container log collection through the agent is not supported in daemon
-  // mode on ECS Managed Instances.
-  if (props.logCollection?.isEnabled) {
-    throw new Error(
-      "Container log collection through the Datadog Agent is not supported in daemon mode on ECS Managed " +
-        "Instances. Use the FireLens log driver or the 'awslogs' driver configured directly on your " +
-        "application task definition instead.",
-    );
-  }
-
   // The Agent needs writable directories (configuration, temp, run), and a
   // daemon task has no sibling containers to depend on the Agent.
   if (props.readOnlyRootFilesystem) {
@@ -92,18 +87,28 @@ export function validateECSManagedInstancesProps(props: DatadogECSManagedInstanc
     );
   }
 
+  // With log collection on, the construct also manages the json-file log
+  // driver volume and its mount point, so user volumes cannot reuse them.
+  const isLogCollectionEnabled = props.logCollection?.isEnabled === true;
+  const managedVolumeNames = isLogCollectionEnabled
+    ? [...ManagedVolumeNames, JsonFileLogsVolumeName]
+    : ManagedVolumeNames;
+  const managedContainerPaths = isLogCollectionEnabled
+    ? [...ManagedContainerPaths, JsonFileLogsContainerPath]
+    : ManagedContainerPaths;
+
   const seenVolumeNames = new Set<string>();
-  const seenContainerPaths = new Set<string>(ManagedContainerPaths);
+  const seenContainerPaths = new Set<string>(managedContainerPaths);
   for (const volume of props.volumes ?? []) {
     if (!/^[a-zA-Z0-9_-]{1,255}$/.test(volume.name)) {
       throw new Error(
         `Invalid volume name "${volume.name}". Use letters, numbers, underscores and hyphens, up to 255 characters.`,
       );
     }
-    if (ManagedVolumeNames.includes(volume.name)) {
+    if (managedVolumeNames.includes(volume.name)) {
       throw new Error(
         `The volume name "${volume.name}" is used by a volume this construct manages. ` +
-          `Choose a name other than: ${ManagedVolumeNames.join(", ")}.`,
+          `Choose a name other than: ${managedVolumeNames.join(", ")}.`,
       );
     }
     if (seenVolumeNames.has(volume.name)) {
