@@ -28,12 +28,6 @@ export const DatadogAgentServiceName = "datadog-agent";
 export const MinimumAgentVersion = "7.77.0";
 
 /**
- * Minimum Datadog Agent version required for container log collection with
- * the `json-file` log driver on ECS Managed Instances.
- */
-export const MinimumLogCollectionAgentVersion = "7.87.0";
-
-/**
  * Name of the log driver volume that exposes the logs of containers using the
  * `json-file` log driver to the Datadog Agent. Only added when log collection
  * is enabled.

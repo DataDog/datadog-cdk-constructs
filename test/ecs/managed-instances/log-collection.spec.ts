@@ -103,8 +103,9 @@ describe("DatadogECSManagedInstancesDaemonTaskDefinition - log collection", () =
     });
 
     it("matches the daemon task definition in the Datadog documentation sample", () => {
-      // The volumes, mount points and log environment variables of
+      // Hand-copied from the volumes, mount points and log environment variables of
       // datadog-agent-ecs-managed-instances-daemon-logs.json in DataDog/documentation.
+      // Nothing links the two, so update this test if that sample changes.
       datadogProps = {
         ...datadogProps,
         dogstatsd: { isEnabled: false },
@@ -162,6 +163,43 @@ describe("DatadogECSManagedInstancesDaemonTaskDefinition - log collection", () =
       };
       expect(() => new ecsDatadog.DatadogECSManagedInstancesDaemonTaskDefinition(scope, id, datadogProps)).toThrow(
         /already mounted in the Datadog Agent container/,
+      );
+    });
+  });
+
+  describe("when logCollection is overridden through daemonTaskDefinition()", () => {
+    function logVolumeNames() {
+      return synthesizedTaskDefinition()
+        .Volumes.filter((volume: { LogDriverVolumeConfiguration?: unknown }) => volume.LogDriverVolumeConfiguration)
+        .map((volume: { Name: string }) => volume.Name);
+    }
+
+    it("turns log collection off when the override disables it", () => {
+      const ecsDatadog2 = new ecsDatadog.DatadogECSManagedInstances({
+        ...datadogProps,
+        logCollection: { isEnabled: true },
+      });
+      ecsDatadog2.daemonTaskDefinition(scope, id, { family: "test-family", logCollection: { isEnabled: false } });
+
+      expect(logVolumeNames()).toEqual([]);
+      const [agentContainer] = synthesizedTaskDefinition().ContainerDefinitions;
+      expect(
+        agentContainer.MountPoints.map((mountPoint: { SourceVolume: string }) => mountPoint.SourceVolume),
+      ).not.toContain("json_file_logs");
+      expect(agentContainer.Environment.map((env: { Name: string }) => env.Name)).not.toContain("DD_LOGS_ENABLED");
+    });
+
+    it("turns log collection on when the override enables it", () => {
+      const ecsDatadog2 = new ecsDatadog.DatadogECSManagedInstances(datadogProps);
+      ecsDatadog2.daemonTaskDefinition(scope, id, { family: "test-family", logCollection: { isEnabled: true } });
+
+      expect(logVolumeNames()).toEqual(["json_file_logs"]);
+      const [agentContainer] = synthesizedTaskDefinition().ContainerDefinitions;
+      expect(agentContainer.Environment).toEqual(
+        expect.arrayContaining([
+          { Name: "DD_LOGS_ENABLED", Value: "true" },
+          { Name: "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL", Value: "true" },
+        ]),
       );
     });
   });
