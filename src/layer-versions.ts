@@ -15,7 +15,7 @@
  */
 
 export class DatadogDefaultLayerVersions {
-  public static readonly NODE = 143;
+  public static readonly NODE = 144;
   public static readonly PYTHON = 130;
   public static readonly JAVA = 30;
   public static readonly DOTNET = 28;
