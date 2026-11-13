@@ -52,8 +52,8 @@ class LambdaWorkloadStack extends Stack {
       return;
     }
 
-    // The Node layer uses the construct's default version. The extension has no default, so the suite
-    // passes the default the construct ships.
+    // The Node layer uses the construct's default version. The construct adds the extension only when a
+    // version is set, so the suite passes its default.
     const datadogLambda = new DatadogLambda(this, "Datadog", {
       extensionLayerVersion: DatadogDefaultLayerVersions.EXTENSION,
       // The construct grants the function read access to the secret.
