@@ -1,29 +1,154 @@
 name: e2e
 
-# Full instrumentation lifecycle against a live, ephemeral ECS Fargate service.
+# Full instrumentation lifecycles against live, ephemeral Lambda and ECS Fargate workloads.
 on:
   push:
     branches: [main]
     paths:
-      - "src/ecs/**"
+      - "src/**"
       - "e2e/**"
       - "package.json"
       - "yarn.lock"
       - ".github/workflows/e2e.yml"
   pull_request:
     paths:
-      - "src/ecs/**"
+      - "src/**"
       - "e2e/**"
       - "package.json"
       - "yarn.lock"
       - ".github/workflows/e2e.yml"
   workflow_dispatch:
 
+# Queue runs per ref instead of cancelling them, because a cancelled run can leak resources mid-deploy.
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      lambda: ${{ steps.filter.outputs.lambda }}
+      ecs: ${{ steps.filter.outputs.ecs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - name: Filter changed paths
+        id: filter
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4
+        with:
+          filters: |
+            shared: &shared
+              - "e2e/helpers/**"
+              - "e2e/tsconfig.json"
+              - "e2e/vitest.config.ts"
+              - "package.json"
+              - "yarn.lock"
+              - ".github/workflows/e2e.yml"
+            lambda:
+              - *shared
+              - "src/**"
+              - "e2e/lambda.test.ts"
+              - "e2e/lambda/**"
+            ecs:
+              - *shared
+              - "src/ecs/**"
+              - "e2e/ecs-fargate.test.ts"
+              - "e2e/ecs-fargate/**"
+
+  lambda-e2e:
+    needs: changes
+    # Fork pull requests cannot use the canonical repository's OIDC identities.
+    if: >-
+      (github.event_name == 'workflow_dispatch' || needs.changes.outputs.lambda == 'true') &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION_E2E || 'ap-northeast-3' }}
+      DD_SITE: ${{ vars.DD_SITE_E2E || 'datadoghq.com' }}
+      AWS_LAMBDA_API_KEY_SECRET_ARN: ${{ vars.AWS_LAMBDA_API_KEY_SECRET_ARN_E2E }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      # Enable Corepack before setup-node so its package-manager cache step detects
+      # the yarn berry version from package.json instead of falling back to yarn 1.
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node 24
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      # GitHub-OIDC role in the serverless sandbox account that deploys through the CDK bootstrap
+      # roles. See serverless-ci/e2e/terraform/aws/oidc-roles.tf.
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN_E2E }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Short-lived Datadog API and application keys through OIDC federation (dd-sts), governed by the
+      # datadog-cdk-constructs-e2e policy in dd-source.
+      - name: Get Datadog credentials (dd-sts)
+        id: dd-sts
+        uses: DataDog/dd-sts-action@2e8187910199bd93129520183c093e19aa585c75 # v1.0.0
+        with:
+          policy: datadog-cdk-constructs-e2e
+
+      # The function's extension reads its key from this secret, so the workload ships to the same
+      # org the suite queries.
+      - name: Seed workload Datadog API key
+        env:
+          DD_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
+        run: |
+          aws secretsmanager put-secret-value \
+            --secret-id "$AWS_LAMBDA_API_KEY_SECRET_ARN" \
+            --secret-string "$DD_API_KEY" >/dev/null
+
+      - name: Resolve account id
+        run: echo "CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
+
+      - name: Set run ID
+        run: echo "E2E_RUN_ID=$(openssl rand -hex 4)" >> "$GITHUB_ENV"
+
+      - name: Run Lambda e2e suite
+        run: yarn test:e2e lambda
+        env:
+          DATADOG_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
+          DATADOG_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}
+
+      # Catches a stack left behind when the suite times out or the run is cancelled.
+      - name: Delete leftover stack
+        if: always() && env.E2E_RUN_ID != ''
+        run: |
+          stack="one-e2e-cdk-lambda-$E2E_RUN_ID"
+          if aws cloudformation describe-stacks --stack-name "$stack" >/dev/null 2>&1; then
+            aws cloudformation delete-stack --stack-name "$stack" \
+              --role-arn "arn:aws:iam::$CDK_DEFAULT_ACCOUNT:role/cdk-hnb659fds-cfn-exec-role-$CDK_DEFAULT_ACCOUNT-$AWS_REGION"
+            aws cloudformation wait stack-delete-complete --stack-name "$stack"
+          fi
+
   ecs-fargate-e2e:
+    needs: changes
     # Fork pull requests cannot use the canonical repository's OIDC identities, and the suite needs
     # the ECS resources that the AWS_ECS_*_E2E repository variables name.
-    if: vars.AWS_ECS_CLUSTER_E2E != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    if: >-
+      (github.event_name == 'workflow_dispatch' || needs.changes.outputs.ecs == 'true') &&
+      vars.AWS_ECS_CLUSTER_E2E != '' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     # Bounds the cost of a deployment that never stabilizes.
     timeout-minutes: 90
@@ -31,7 +156,7 @@ jobs:
       id-token: write
       contents: read
     env:
-      AWS_REGION: 'eu-central-1'
+      AWS_REGION: "eu-central-1"
       DD_SITE: ${{ vars.DD_SITE_E2E || 'datadoghq.com' }}
       AWS_ECS_CLUSTER: ${{ vars.AWS_ECS_CLUSTER_E2E }}
       AWS_ECS_SUBNETS: ${{ vars.AWS_ECS_SUBNETS_E2E }}
@@ -62,7 +187,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN_E2E }}
-          aws-region: 'eu-central-1'
+          aws-region: "eu-central-1"
 
       - name: Resolve account id
         run: echo "CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_ENV"
