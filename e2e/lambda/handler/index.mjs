@@ -3,16 +3,14 @@
  * under the Apache License Version 2.0.
  *
  * This product includes software developed at Datadog (https://www.datadoghq.com/).
- * Copyright 2021 Datadog, Inc.
+ * Copyright 2026 Datadog, Inc.
  */
 
-// Minimal hello-world handler for the e2e workload, duplicated from
-// serverless-self-monitoring (lambda-managed-instances/handlers/default/nodejs).
-// It just emits a log line and returns 200 -- tracing is auto-injected and logs
-// are auto-collected by the Datadog Lambda layer + extension, so no tracer setup
-// is needed here. The DD_TAGS-provided run id appears on the resulting telemetry.
+// Minimal handler for the e2e workload, duplicated from serverless-self-monitoring
+// (lambda-managed-instances/handlers/default/nodejs). The Datadog layer and extension trace the
+// invocation and collect this log line, so the handler needs no tracer setup.
 export const handler = async () => {
-  console.log(`hello from one-e2e cdk lambda workload (run ${process.env.E2E_RUN_ID ?? "unknown"})`);
+  console.log("hello from the one-e2e cdk lambda workload");
 
   return {
     statusCode: 200,
