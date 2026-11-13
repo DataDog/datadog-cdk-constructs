@@ -71,6 +71,7 @@ export const verifierConfig = (runId: string): LambdaVerifierConfig => ({
       DD_ENV: ENV_NAME,
       DD_VERSION: ENV_VERSION,
       DD_SITE: SITE,
+      DD_API_KEY_SECRET_ARN: requireEnv("AWS_LAMBDA_API_KEY_SECRET_ARN"),
       DD_TAGS: `${RUN_ID_TAG_KEY}:${runId}`,
       DD_TRACE_ENABLED: "true",
       // With the extension, the construct collects logs through DD_SERVERLESS_LOGS_ENABLED and turns
