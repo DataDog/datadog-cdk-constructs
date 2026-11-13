@@ -1,5 +1,45 @@
 # E2E tests
 
+## Lambda
+
+The suite runs the `DatadogLambda` construct against a temporary Node.js Lambda function:
+
+1. Deploy the function without the construct.
+2. Deploy it again with `DatadogLambda`, and verify its layers, handler, runtime, environment, and tags.
+3. Invoke the function and wait for its spans and logs in Datadog.
+4. Confirm `cdk diff --fail` reports no changes.
+5. Destroy the stack and verify that the function, its log group, and the stack are gone.
+
+The function uses the construct's default Node and extension layer versions.
+
+### Resources
+
+Set `AWS_LAMBDA_API_KEY_SECRET_ARN` to the complete ARN of a Secrets Manager secret that holds a Datadog API key. The key must belong to the organization whose telemetry the suite queries. The account must be CDK-bootstrapped. The suite defaults to `ap-northeast-3` and `datadoghq.com`. Set `AWS_REGION` or `DD_SITE` to override them.
+
+### Run locally
+
+You need Node 22+, Yarn, AWS credentials for the account, and Datadog API and application keys for the serverless org. You can set `AWS_LAMBDA_API_KEY_SECRET_ARN` in a gitignored `e2e/.env.local` file.
+
+```bash
+aws-vault exec sso-serverless-sandbox-account-admin -- \
+  dd-auth --domain ddserverless.datadoghq.com -- bash -c '
+    export DATADOG_API_KEY="$DD_API_KEY" DATADOG_APP_KEY="$DD_APP_KEY"
+    yarn test:e2e lambda
+  '
+```
+
+### CI
+
+[The E2E workflow](../.github/workflows/e2e.yml) runs the suite when the construct or the suite changes. It assumes the `AWS_ROLE_ARN_E2E` role through GitHub OIDC and gets short-lived Datadog keys through `dd-sts`. Before the suite runs, it writes the API key into the `AWS_LAMBDA_API_KEY_SECRET_ARN_E2E` secret. The role and secret are defined in `serverless-ci/e2e/terraform/aws`.
+
+### Resource cleanup
+
+Each run names its stack and function `one-e2e-cdk-lambda-<runid>`, and tags them with its run ID and creation time. The suite always attempts `cdk destroy` at the end. If the run times out or is cancelled, a final workflow step deletes the stack, and the shared sweeper deletes stale stacks that remain.
+
+```bash
+aws cloudformation delete-stack --stack-name one-e2e-cdk-lambda-<runid> --region ap-northeast-3
+```
+
 ## ECS Fargate
 
 The suite runs the `DatadogECSFargate` construct against a temporary ECS Fargate service:
