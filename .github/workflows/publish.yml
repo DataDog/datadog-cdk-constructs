@@ -1,0 +1,57 @@
+name: Publish npm package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    if: startsWith(github.event.release.tag_name, 'v2-')
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+
+      - name: Validate release version
+        id: release
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          node <<'NODE'
+          const assert = require('node:assert/strict');
+          const fs = require('node:fs');
+          const tag = process.env.RELEASE_TAG;
+          assert.match(tag, /^v2-(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
+          const version = tag.slice(3);
+          assert.equal(require('./version.json').version, version, 'Tag must match version.json');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          NODE
+
+      - name: Set up Node 24
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build npm package
+        run: |
+          yarn pre-compile
+          yarn compile
+          yarn package:js
+
+      - name: Publish npm package
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: npm publish "dist/js/datadog-cdk-constructs-v2@${RELEASE_VERSION}.jsii.tgz" --access public --registry https://registry.npmjs.org
