@@ -285,7 +285,7 @@ npmScripts.addDeletionOverride("scripts.compat");
 projenTasks.addDeletionOverride("scripts.test:compile");
 // Replaces the removed `scripts` project option (dropped in projen 0.100/0.101).
 project.addTask("check-formatting", {
-  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/ecs-fargate/**/*.ts",
+  exec: "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/ecs-fargate/**/*.ts e2e/lambda/**/*.ts",
 });
 project.addTask("test:e2e", {
   exec: "tsc --noEmit -p e2e/tsconfig.json && vitest run --config e2e/vitest.config.ts",

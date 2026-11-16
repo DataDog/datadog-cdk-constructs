@@ -30,7 +30,7 @@
       "name": "check-formatting",
       "steps": [
         {
-          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/ecs-fargate/**/*.ts"
+          "exec": "prettier --check src/**/*.ts integration_tests/**/*.ts examples/**/*.ts e2e/*.ts e2e/ecs-fargate/**/*.ts e2e/lambda/**/*.ts"
         }
       ]
     },
