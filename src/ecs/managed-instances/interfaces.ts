@@ -40,9 +40,14 @@ export interface DatadogECSManagedInstancesProps extends DatadogECSBaseProps {
   readonly volumes?: ManagedInstancesVolume[];
 
   /**
-   * Log collection is not supported for the Datadog Agent running as an
-   * ECS Managed Daemon on ECS Managed Instances. Defining this property with
-   * `isEnabled: true` will cause construct validation to fail.
+   * Configuration for container log collection. When enabled, the Datadog
+   * Agent collects the logs of every application container on the instance
+   * that uses the `json-file` log driver. The construct mounts the `json-file`
+   * log driver volume into the Agent container and sets `DD_LOGS_ENABLED` and
+   * `DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL`. Set `logDriver` to `json-file` on
+   * each application container whose logs you want to collect. Requires
+   * Datadog Agent 7.87.0 or later.
+   * @default - log collection is disabled
    */
   readonly logCollection?: LogCollectionFeatureConfig;
   /**
@@ -55,8 +60,9 @@ export interface DatadogECSManagedInstancesProps extends DatadogECSBaseProps {
   readonly processCollection?: ProcessCollectionFeatureConfig;
   /**
    * Log configuration for the Datadog Agent container's OWN logs (not application
-   * container logs, which the agent cannot collect in daemon mode on ECS Managed
-   * Instances), e.g. routing to CloudWatch via the awslogs driver.
+   * container logs, see `logCollection`), e.g. routing to CloudWatch via the
+   * awslogs driver. With `logCollection` enabled, set `logDriver` to `json-file`
+   * to have the Agent collect its own logs too.
    */
   readonly agentLogConfiguration?: ManagedInstancesLogConfiguration;
 
@@ -152,8 +158,9 @@ export interface DatadogECSManagedInstancesProps extends DatadogECSBaseProps {
  */
 export interface ManagedInstancesVolume {
   /**
-   * The volume name. Cannot be `containerd_sock`, `proc`, `cgroup`, `dd-sockets` or
-   * `debug`, which the construct manages. Letters, numbers, underscores and hyphens only.
+   * The volume name. Cannot be `containerd_sock`, `proc`, `cgroup`, `dd-sockets`, `debug`
+   * or, with log collection enabled, `json_file_logs`, which the construct manages.
+   * Letters, numbers, underscores and hyphens only.
    */
   readonly name: string;
   /**

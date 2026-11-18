@@ -210,13 +210,6 @@ describe("DatadogECSManagedInstancesDaemonTaskDefinition - AWS::ECS::Daemon", ()
       );
     });
 
-    it("throws when logCollection.isEnabled is true", () => {
-      datadogProps = { ...datadogProps, logCollection: { isEnabled: true } };
-      expect(() => new ecsDatadog.DatadogECSManagedInstancesDaemonTaskDefinition(scope, id, datadogProps)).toThrow(
-        /log collection/i,
-      );
-    });
-
     it("does not require clusterArn/capacityProviderArns when createDaemon is false", () => {
       datadogProps = {
         family: "test-family",

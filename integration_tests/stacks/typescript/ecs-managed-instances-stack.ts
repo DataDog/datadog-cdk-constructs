@@ -39,6 +39,11 @@ export class ExampleStack extends Stack {
     });
 
     // Daemon task definition without creating the AWS::ECS::Daemon resource
+    ecsDatadog.daemonTaskDefinition(this, "logCollectionDaemonTaskDefinition", {
+      family: "datadog-agent-daemon-logs",
+      logCollection: { isEnabled: true },
+    });
+
     ecsDatadog.daemonTaskDefinition(this, "taskDefinitionOnly", {
       family: "datadog-agent-daemon",
       createDaemon: false,

@@ -64,6 +64,13 @@ export class ManagedInstancesEnvVarManager extends EnvVarManager {
       this.add("DD_SYSTEM_PROBE_NETWORK_ENABLED", "true");
     }
 
+    // The Agent tails the logs of every container that uses the json-file log
+    // driver, from the log driver volume the construct mounts.
+    if (props.logCollection?.isEnabled) {
+      this.add("DD_LOGS_ENABLED", "true");
+      this.add("DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL", "true");
+    }
+
     // TCP fallback: the Agent must accept non-local traffic from application
     // containers that reach it over the daemon bridge.
     if (isProtocolRequired) {

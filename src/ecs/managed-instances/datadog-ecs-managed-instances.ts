@@ -16,6 +16,8 @@ import {
   DaemonBridgeIpv4,
   DatadogAgentServiceName,
   DatadogEcsManagedInstancesDefaultProps,
+  JsonFileLogsContainerPath,
+  JsonFileLogsVolumeName,
 } from "./constants";
 import { ManagedInstancesEnvVarManager } from "./environment";
 import { DatadogECSManagedInstancesProps } from "./interfaces";
@@ -158,6 +160,7 @@ export class DatadogECSManagedInstancesDaemonTaskDefinition extends Construct {
       volumes: volumeMounts.map((volumeMount) => volumeMount.volume),
       tags: this.renderTags(),
     });
+    this.addJsonFileLogDriverVolumeConfiguration(volumeMounts);
 
     if (this.datadogProps.createDaemon) {
       this.daemon = new ecs.CfnDaemon(this, "Daemon", {
@@ -267,6 +270,16 @@ export class DatadogECSManagedInstancesDaemonTaskDefinition extends Construct {
       ? [networkMonitoringVolumeMount]
       : [];
 
+    // A log driver volume has no host path: ECS fills it with the logs of the
+    // containers on the instance that use the json-file log driver. Its
+    // LogDriverVolumeConfiguration is set by
+    // addJsonFileLogDriverVolumeConfiguration.
+    const jsonFileLogsVolumeMount: VolumeMount = {
+      volume: { name: JsonFileLogsVolumeName },
+      mountPoint: { sourceVolume: JsonFileLogsVolumeName, containerPath: JsonFileLogsContainerPath, readOnly: true },
+    };
+    const logCollectionVolumeMounts: VolumeMount[] = props.logCollection?.isEnabled ? [jsonFileLogsVolumeMount] : [];
+
     const userVolumeMounts: VolumeMount[] = (props.volumes ?? []).map((volume) => ({
       volume: { name: volume.name, host: { sourcePath: volume.hostPath } },
       mountPoint: {
@@ -276,7 +289,29 @@ export class DatadogECSManagedInstancesDaemonTaskDefinition extends Construct {
       },
     }));
 
-    return [...criVolumeMounts, ...socketVolumeMounts, ...networkMonitoringVolumeMounts, ...userVolumeMounts];
+    return [
+      ...criVolumeMounts,
+      ...socketVolumeMounts,
+      ...networkMonitoringVolumeMounts,
+      ...logCollectionVolumeMounts,
+      ...userVolumeMounts,
+    ];
+  }
+
+  /**
+   * Sets `LogDriverVolumeConfiguration` on the json-file log driver volume.
+   *
+   * The typed `logDriverVolumeConfiguration` volume property only exists in
+   * aws-cdk-lib 2.276.0 and later, above this package's aws-cdk-lib floor, so
+   * it is set with a property override. Switch to the typed property once the
+   * floor is raised.
+   */
+  private addJsonFileLogDriverVolumeConfiguration(volumeMounts: VolumeMount[]): void {
+    const index = volumeMounts.findIndex((volumeMount) => volumeMount.volume.name === JsonFileLogsVolumeName);
+    if (index === -1) {
+      return;
+    }
+    this.taskDefinition.addPropertyOverride(`Volumes.${index}.LogDriverVolumeConfiguration`, { Driver: "json-file" });
   }
 
   private buildAgentContainerDefinition(
