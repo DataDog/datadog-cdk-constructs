@@ -126,21 +126,31 @@ export function applyEnvVariables(lam: LambdaFunction, baseProps: DatadogLambdaS
   setEnvIfUnset(ENABLE_DD_TRACING_ENV_VAR, baseProps.enableDatadogTracing);
 
   const runtimeType = runtimeLookup[lam.runtime.name];
+  const pythonTracerSupported = runtimeType === RuntimeType.PYTHON && (baseProps.pythonLayerVersion ?? 0) >= 114;
+  const javaTracerSupported =
+    runtimeType === RuntimeType.JAVA &&
+    (baseProps.javaLayerVersion ?? 0) >= 31 &&
+    (baseProps.extensionLayerVersion ?? 0) >= 102;
 
-  if (baseProps.datadogAppSecMode === "tracer" && runtimeType !== RuntimeType.PYTHON) {
+  if (
+    baseProps.datadogAppSecMode === "tracer" &&
+    runtimeType !== RuntimeType.PYTHON &&
+    runtimeType !== RuntimeType.JAVA
+  ) {
     throw new Error(
-      `\`datadogAppSecMode\` is set to \`tracer\`. This requires the function to be a Python runtime. Found: ${runtimeType}`,
+      `\`datadogAppSecMode\` is set to \`tracer\`. This requires the function to be a Python or Java runtime. Found: ${runtimeType}`,
     );
   }
 
   if (
-    (baseProps.datadogAppSecMode === "on" &&
-      runtimeType === RuntimeType.PYTHON &&
-      baseProps.pythonLayerVersion &&
-      baseProps.pythonLayerVersion >= 114) ||
+    (baseProps.datadogAppSecMode === "on" && (pythonTracerSupported || javaTracerSupported)) ||
     baseProps.datadogAppSecMode === "tracer"
   ) {
     setEnvIfUnset(ENABLE_DD_APPSEC_ENV_VAR, "true");
+    if (runtimeType === RuntimeType.JAVA) {
+      // The extension flag takes precedence over the tracer flag, so clear it.
+      setTrackedEnv(lam, ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "false");
+    }
   } else if (baseProps.datadogAppSecMode === "on" || baseProps.datadogAppSecMode === "extension") {
     setEnvIfUnset(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
     setEnvIfUnset(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "true");
