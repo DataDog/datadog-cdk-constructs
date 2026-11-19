@@ -515,5 +515,6 @@ export function handleSettingPropDefaults(props: DatadogLambdaProps): DatadogLam
     extensionLayerVersion: extensionLayerVersion,
     extensionLayerArn: extensionLayerArn,
     pythonLayerVersion: props.pythonLayerVersion,
+    javaLayerVersion: props.javaLayerVersion,
   };
 }
