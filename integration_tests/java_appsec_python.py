@@ -13,7 +13,10 @@ from datadog_cdk_constructs_v2 import DatadogLambda, DatadogAppSecMode
 
 
 class JavaAppSecTest(unittest.TestCase):
-    def synthesize(self, java_version, extension_version, mode=DatadogAppSecMode.ON):
+    def synthesize(
+        self, java_version, extension_version, mode=DatadogAppSecMode.ON,
+        redirect_handler=True, environment=None,
+    ):
         stack = Stack(App(), "Stack")
         function = lambda_.Function(
             stack,
@@ -30,7 +33,10 @@ class JavaAppSecTest(unittest.TestCase):
             java_layer_version=java_version,
             extension_layer_version=extension_version,
             datadog_app_sec_mode=mode,
+            redirect_handler=redirect_handler,
         )
+        for key, value in (environment or {}).items():
+            datadog.set_environment(function, key, value)
         datadog.add_lambda_functions([function])
         functions = Template.from_stack(stack).find_resources("AWS::Lambda::Function")
         return next(iter(functions.values()))["Properties"]["Environment"]["Variables"]
@@ -48,6 +54,25 @@ class JavaAppSecTest(unittest.TestCase):
                 env = self.synthesize(java, extension)
                 self.assertEqual(env.get("DD_APPSEC_ENABLED"), "true" if tracer else None)
                 self.assertEqual(env["DD_SERVERLESS_APPSEC_ENABLED"], str(not tracer).lower())
+                self.assertEqual(env["AWS_LAMBDA_EXEC_WRAPPER"], "/opt/datadog_wrapper")
+
+    def test_explicit_legacy_configuration(self):
+        for mode in [DatadogAppSecMode.ON, DatadogAppSecMode.TRACER]:
+            with self.subTest(mode=mode):
+                env = self.synthesize(31, 102, mode, environment={
+                    "DD_APPSEC_ENABLED": "false",
+                    "DD_SERVERLESS_APPSEC_ENABLED": "true",
+                })
+                self.assertEqual(env["DD_APPSEC_ENABLED"], "false")
+                self.assertEqual(env["DD_SERVERLESS_APPSEC_ENABLED"], "true")
+                self.assertEqual(env["AWS_LAMBDA_EXEC_WRAPPER"], "/opt/datadog_wrapper")
+
+    def test_tracer_without_handler_redirection(self):
+        for mode in [DatadogAppSecMode.ON, DatadogAppSecMode.TRACER]:
+            with self.subTest(mode=mode):
+                env = self.synthesize(31, 102, mode, redirect_handler=False)
+                self.assertEqual(env["DD_APPSEC_ENABLED"], "true")
+                self.assertEqual(env["DD_SERVERLESS_APPSEC_ENABLED"], "false")
                 self.assertEqual(env["AWS_LAMBDA_EXEC_WRAPPER"], "/opt/datadog_wrapper")
 
     def test_explicit_extension(self):

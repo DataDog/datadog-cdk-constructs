@@ -114,11 +114,43 @@ describe("Java AppSec version selection", () => {
     expectMode(stack, true);
   });
 
-  it("clears a tracked extension flag when switching to tracer mode", () => {
+  it.each([DatadogAppSecMode.ON, DatadogAppSecMode.TRACER])(
+    "%s preserves explicit legacy configuration",
+    (datadogAppSecMode) => {
+      const { stack, fn, datadog } = setup({ datadogAppSecMode });
+      datadog.setEnvironment(fn, "DD_APPSEC_ENABLED", "false");
+      datadog.setEnvironment(fn, "DD_SERVERLESS_APPSEC_ENABLED", "true");
+      datadog.addLambdaFunctions([fn]);
+      expect(variables(stack)).toMatchObject({
+        DD_APPSEC_ENABLED: "false",
+        DD_SERVERLESS_APPSEC_ENABLED: "true",
+        AWS_LAMBDA_EXEC_WRAPPER: "/opt/datadog_wrapper",
+      });
+    },
+  );
+
+  it.each(["true", "TRUE", "1", "t"])("preserves explicit extension enablement %s", (value) => {
     const { stack, fn, datadog } = setup();
-    datadog.setEnvironment(fn, "DD_SERVERLESS_APPSEC_ENABLED", "true");
+    datadog.setEnvironment(fn, "DD_SERVERLESS_APPSEC_ENABLED", value);
     datadog.addLambdaFunctions([fn]);
-    expectMode(stack, true);
+    expect(variables(stack).DD_SERVERLESS_APPSEC_ENABLED).toBe(value);
+    expect(variables(stack).DD_APPSEC_ENABLED).toBeUndefined();
+  });
+
+  it.each([DatadogAppSecMode.ON, DatadogAppSecMode.TRACER])(
+    "%s loads the Java tracer when handler redirection is disabled",
+    (datadogAppSecMode) => {
+      const { stack, fn, datadog } = setup({ datadogAppSecMode, redirectHandler: false });
+      datadog.addLambdaFunctions([fn]);
+      expectMode(stack, true);
+    },
+  );
+
+  it("preserves a tracked custom wrapper when handler redirection is disabled", () => {
+    const { stack, fn, datadog } = setup({ redirectHandler: false });
+    datadog.setEnvironment(fn, "AWS_LAMBDA_EXEC_WRAPPER", "/opt/custom-wrapper");
+    datadog.addLambdaFunctions([fn]);
+    expect(variables(stack).AWS_LAMBDA_EXEC_WRAPPER).toBe("/opt/custom-wrapper");
   });
 
   it("preserves legacy extension flag precedence without errors", () => {
