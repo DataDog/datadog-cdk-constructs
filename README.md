@@ -285,7 +285,7 @@ _Note_: The descriptions use the npm package parameters, but they also apply to 
 
 #### Memory requirements
 
-The Datadog Lambda Extension and tracer add memory overhead to your function (about 69 MB for Python), which can cause out-of-memory errors and timeouts on functions with little memory. When `addLambdaFunctions` instruments a function with less than 256 MB of memory, the construct emits a CDK warning with the reason `lambda_low_memory`. If `memorySize` is not set, the function uses the Lambda default of 128 MB, so the warning is emitted. If `memorySize` is a token that is only resolved at deploy time, no warning is emitted.
+The Datadog Lambda Extension and tracer add memory overhead to your function (about 70 MB for Python), which can cause out-of-memory errors and timeouts on functions with little memory. When `addLambdaFunctions` instruments a function with less than 256 MB of memory, the construct emits a CDK warning with the reason `lambda_low_memory`. If `memorySize` is not set, the function uses the Lambda default of 128 MB, so the warning is emitted. If `memorySize` is a token that is only resolved at deploy time, no warning is emitted.
 
 The function is still instrumented. To avoid issues, increase the function's memory to at least 256 MB. To silence the warning, set `suppressLowMemoryWarning` to `true`.
 

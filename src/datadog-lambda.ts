@@ -308,7 +308,7 @@ export function warnIfLowMemory(lambdaFunction: LambdaFunction): void {
   const functionName = getFunctionDisplayName(lambdaFunction);
   Annotations.of(lambdaFunction).addWarningV2(
     LowMemoryWarningId,
-    `Function ${functionName} has ${memorySize} MB of memory, below the recommended minimum of ${LOW_MEMORY_THRESHOLD_MB} MB (${LOW_MEMORY_REASON}). The Datadog Lambda Extension and tracer add memory overhead (about 69 MB for Python), which can cause out-of-memory errors and timeouts. Increase the function's memory to at least ${LOW_MEMORY_THRESHOLD_MB} MB, or set suppressLowMemoryWarning to true to silence this warning.`,
+    `Function ${functionName} has ${memorySize} MB of memory, below the recommended minimum of ${LOW_MEMORY_THRESHOLD_MB} MB (${LOW_MEMORY_REASON}). The Datadog Lambda Extension and tracer add memory overhead (about 70 MB for Python), which can cause out-of-memory errors and timeouts. Increase the function's memory to at least ${LOW_MEMORY_THRESHOLD_MB} MB, or set suppressLowMemoryWarning to true to silence this warning.`,
   );
 }
 
