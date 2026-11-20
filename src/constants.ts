@@ -129,4 +129,4 @@ export const LOW_MEMORY_REASON = "lambda_low_memory";
  * Memory size (in MB) that AWS Lambda applies when `MemorySize` is not set.
  */
 export const DEFAULT_LAMBDA_MEMORY_MB = 128;
-export const LowMemoryWarningId = "@datadog/datadog-cdk-constructs:lambdaLowMemory";
+export const LowMemoryWarningId = "datadog-cdk-constructs-v2:lambdaLowMemory";
