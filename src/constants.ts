@@ -115,3 +115,18 @@ export const siteList: string[] = [
 ];
 
 export const invalidSiteError = `Warning: Invalid site URL. Must be one of: ${siteList.join(", ")}.`;
+
+/**
+ * Lambda functions with less memory than this (in MB) are considered low-memory. The Datadog
+ * Lambda Extension and tracer add memory overhead that can cause out-of-memory errors and timeouts.
+ */
+export const LOW_MEMORY_THRESHOLD_MB = 256;
+/**
+ * Reason code recorded when a Lambda function is below `LOW_MEMORY_THRESHOLD_MB`.
+ */
+export const LOW_MEMORY_REASON = "lambda_low_memory";
+/**
+ * Memory size (in MB) that AWS Lambda applies when `MemorySize` is not set.
+ */
+export const DEFAULT_LAMBDA_MEMORY_MB = 128;
+export const LowMemoryWarningId = "@datadog/datadog-cdk-constructs:lambdaLowMemory";
