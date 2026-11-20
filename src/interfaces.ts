@@ -77,7 +77,7 @@ export interface DatadogLambdaProps {
   readonly llmObsAgentlessEnabled?: boolean;
   /**
    * Silence the warning emitted when an instrumented Lambda function has less than 256 MB of memory.
-   * The function is instrumented either way.
+   * The construct instruments the function either way.
    *
    * @default false
    */
