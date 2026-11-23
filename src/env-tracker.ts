@@ -60,10 +60,6 @@ export function mergeTrackedGitTags(lam: LambdaFunction, value: string): void {
   writeTags(lam, tracked);
 }
 
-export function getTrackedEnv(lam: LambdaFunction, key: string): string | undefined {
-  return ddEnvTracker.get(lam.permissionsNode)?.values.get(key);
-}
-
 export function hasTrackedEnv(lam: LambdaFunction, key: string): boolean {
   const tracked = ddEnvTracker.get(lam.permissionsNode);
   return key === DD_TAGS ? (tracked?.tagsSet ?? false) : (tracked?.values.has(key) ?? false);

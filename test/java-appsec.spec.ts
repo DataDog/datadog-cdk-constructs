@@ -31,10 +31,8 @@ function variables(stack: Stack) {
 function expectMode(stack: Stack, tracer: boolean) {
   const env = variables(stack);
   expect(env.DD_APPSEC_ENABLED).toBe(tracer ? "true" : undefined);
-  expect(env).toMatchObject({
-    DD_SERVERLESS_APPSEC_ENABLED: String(!tracer),
-    AWS_LAMBDA_EXEC_WRAPPER: "/opt/datadog_wrapper",
-  });
+  expect(env.DD_SERVERLESS_APPSEC_ENABLED).toBe(tracer ? undefined : "true");
+  expect(env.AWS_LAMBDA_EXEC_WRAPPER).toBe("/opt/datadog_wrapper");
 }
 
 describe("Java AppSec version selection", () => {
@@ -107,11 +105,11 @@ describe("Java AppSec version selection", () => {
     expect(variables(stack).DD_APPSEC_ENABLED).toBeUndefined();
   });
 
-  it("clears a previously configured extension flag when enabling the tracer", () => {
+  it("preserves an extension flag configured directly on the function", () => {
     const { stack, fn, datadog } = setup();
     fn.addEnvironment("DD_SERVERLESS_APPSEC_ENABLED", "true");
     datadog.addLambdaFunctions([fn]);
-    expectMode(stack, true);
+    expect(variables(stack)).toMatchObject({ DD_APPSEC_ENABLED: "true", DD_SERVERLESS_APPSEC_ENABLED: "true" });
   });
 
   it.each([DatadogAppSecMode.ON, DatadogAppSecMode.TRACER])(
@@ -129,26 +127,31 @@ describe("Java AppSec version selection", () => {
     },
   );
 
-  it.each(["true", "TRUE", "1", "t"])("preserves explicit extension enablement %s", (value) => {
-    const { stack, fn, datadog } = setup();
-    datadog.setEnvironment(fn, "DD_SERVERLESS_APPSEC_ENABLED", value);
-    datadog.addLambdaFunctions([fn]);
-    expect(variables(stack).DD_SERVERLESS_APPSEC_ENABLED).toBe(value);
-    expect(variables(stack).DD_APPSEC_ENABLED).toBeUndefined();
-  });
-
   it.each([DatadogAppSecMode.ON, DatadogAppSecMode.TRACER])(
-    "%s loads the Java tracer when handler redirection is disabled",
+    "%s preserves a tracked extension flag alongside the tracer setting",
     (datadogAppSecMode) => {
-      const { stack, fn, datadog } = setup({ datadogAppSecMode, redirectHandler: false });
+      const { stack, fn, datadog } = setup({ datadogAppSecMode });
+      datadog.setEnvironment(fn, "DD_SERVERLESS_APPSEC_ENABLED", "true");
       datadog.addLambdaFunctions([fn]);
-      expectMode(stack, true);
+      expect(variables(stack)).toMatchObject({ DD_APPSEC_ENABLED: "true", DD_SERVERLESS_APPSEC_ENABLED: "true" });
     },
   );
 
-  it("preserves a tracked custom wrapper when handler redirection is disabled", () => {
+  it.each([DatadogAppSecMode.ON, DatadogAppSecMode.TRACER])(
+    "%s respects disabled handler redirection",
+    (datadogAppSecMode) => {
+      const { stack, fn, datadog } = setup({ datadogAppSecMode, redirectHandler: false });
+      datadog.addLambdaFunctions([fn]);
+      const env = variables(stack);
+      expect(env.DD_APPSEC_ENABLED).toBe("true");
+      expect(env.DD_SERVERLESS_APPSEC_ENABLED).toBeUndefined();
+      expect(env.AWS_LAMBDA_EXEC_WRAPPER).toBeUndefined();
+    },
+  );
+
+  it("preserves a custom wrapper when handler redirection is disabled", () => {
     const { stack, fn, datadog } = setup({ redirectHandler: false });
-    datadog.setEnvironment(fn, "AWS_LAMBDA_EXEC_WRAPPER", "/opt/custom-wrapper");
+    fn.addEnvironment("AWS_LAMBDA_EXEC_WRAPPER", "/opt/custom-wrapper");
     datadog.addLambdaFunctions([fn]);
     expect(variables(stack).AWS_LAMBDA_EXEC_WRAPPER).toBe("/opt/custom-wrapper");
   });
@@ -178,7 +181,7 @@ describe("Java AppSec version selection", () => {
       const env = resource.Properties.Environment.Variables;
       if (resource.Properties.Runtime === "java21") {
         expect(env.DD_APPSEC_ENABLED).toBe("true");
-        expect(env.DD_SERVERLESS_APPSEC_ENABLED).toBe("false");
+        expect(env.DD_SERVERLESS_APPSEC_ENABLED).toBeUndefined();
       } else if (resource.Properties.Runtime === "python3.12") {
         expect(env.DD_APPSEC_ENABLED).toBe("true");
         expect(env.DD_SERVERLESS_APPSEC_ENABLED).toBeUndefined();

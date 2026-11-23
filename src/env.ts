@@ -8,7 +8,7 @@
 
 import log from "loglevel";
 import { runtimeLookup, RuntimeType } from "./constants";
-import { setTrackedEnv, getTrackedEnv, hasTrackedEnv, mergeTrackedGitTags, setTrackedPropTags } from "./env-tracker";
+import { setTrackedEnv, hasTrackedEnv, mergeTrackedGitTags, setTrackedPropTags } from "./env-tracker";
 import { DatadogLambdaProps, DatadogLambdaStrictProps, LambdaFunction } from "./interfaces";
 
 export const AWS_LAMBDA_EXEC_WRAPPER_KEY = "AWS_LAMBDA_EXEC_WRAPPER";
@@ -146,17 +146,7 @@ export function applyEnvVariables(lam: LambdaFunction, baseProps: DatadogLambdaS
     (baseProps.datadogAppSecMode === "on" && (pythonTracerSupported || javaTracerSupported)) ||
     baseProps.datadogAppSecMode === "tracer"
   ) {
-    if (runtimeType === RuntimeType.JAVA) {
-      setEnvIfUnset(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
-      // Explicit extension configuration takes precedence over automatic tracer selection.
-      const extensionEnabled = /^(1|t|true)$/i.test(getTrackedEnv(lam, ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR) ?? "");
-      if (!extensionEnabled) {
-        setEnvIfUnset(ENABLE_DD_APPSEC_ENV_VAR, "true");
-        setEnvIfUnset(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "false");
-      }
-    } else {
-      setEnvIfUnset(ENABLE_DD_APPSEC_ENV_VAR, "true");
-    }
+    setEnvIfUnset(ENABLE_DD_APPSEC_ENV_VAR, "true");
   } else if (baseProps.datadogAppSecMode === "on" || baseProps.datadogAppSecMode === "extension") {
     setEnvIfUnset(AWS_LAMBDA_EXEC_WRAPPER_KEY, AWS_LAMBDA_EXEC_WRAPPER_VAL);
     setEnvIfUnset(ENABLE_DD_SERVERLESS_APPSEC_ENV_VAR, "true");
