@@ -260,9 +260,7 @@ export class DatadogLambda extends Construct {
 
 export function addCdkConstructVersionTag(lambdaFunction: LambdaFunction): void {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
-  Tags.of(
-    lambdaFunction instanceof lambda.SingletonFunction ? lambdaFunction.permissionsNode.defaultChild! : lambdaFunction,
-  ).add(TagKeys.CDK, `v${versionJson.version}`, {
+  Tags.of(getCfnFunction(lambdaFunction) ?? lambdaFunction).add(TagKeys.CDK, `v${versionJson.version}`, {
     includeResourceTypes: ["AWS::Lambda::Function"],
   });
 }
@@ -285,7 +283,7 @@ export function getLambdaMemorySize(lambdaFunction: LambdaFunction): number | un
   if (memorySize === undefined) {
     return DEFAULT_LAMBDA_MEMORY_MB;
   }
-  if (Token.isUnresolved(memorySize) || typeof memorySize !== "number") {
+  if (Token.isUnresolved(memorySize)) {
     return undefined;
   }
   return memorySize;
