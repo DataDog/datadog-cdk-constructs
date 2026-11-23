@@ -277,7 +277,10 @@ function addLayer(
   if (layerArn !== undefined) {
     let lambdaLayer = layers.get(layerArn);
     if (lambdaLayer === undefined) {
-      lambdaLayer = lambda.LayerVersion.fromLayerVersionArn(scope, layerId, layerArn);
+      // fromLayerVersionArn marks the layer compatible with Runtime.ALL, which CDK hashes into the
+      // logical id of Function.currentVersion. That list grows with every new runtime, which renames
+      // the version of an unchanged function and fails the deploy. The ARN is hashed through Layers.
+      lambdaLayer = lambda.LayerVersion.fromLayerVersionAttributes(scope, layerId, { layerVersionArn: layerArn });
       layers.set(layerArn, lambdaLayer);
     }
     log.debug(`Adding layer ${lambdaLayer} to Lambda: ${lam.functionName}`);

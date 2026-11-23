@@ -960,6 +960,31 @@ describe("isGovCloud", () => {
       ],
     });
   });
+
+  it("keeps the logical id of currentVersion when a new Lambda runtime is created", () => {
+    const synthVersionLogicalId = (): string => {
+      const app = new App({ context: { "@aws-cdk/aws-lambda:recognizeLayerVersion": true } });
+      const stack = new Stack(app, "stack", { env: { region: "us-east-1" } });
+      const hello = new lambda.Function(stack, "HelloHandler", {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        code: lambda.Code.fromInline("exports.handler = async () => {};"),
+        handler: "index.handler",
+      });
+      new lambda.Alias(stack, "Live", { aliasName: "live", version: hello.currentVersion });
+      new DatadogLambda(stack, "Datadog", {
+        nodeLayerVersion: NODE_LAYER_VERSION,
+        extensionLayerVersion: EXTENSION_LAYER_VERSION,
+        apiKey: "1234",
+      }).addLambdaFunctions([hello]);
+
+      return Object.keys(Template.fromStack(stack).findResources("AWS::Lambda::Version"))[0];
+    };
+
+    const before = synthVersionLogicalId();
+    new lambda.Runtime("nodejs99.x", lambda.RuntimeFamily.NODEJS);
+
+    expect(synthVersionLogicalId()).toEqual(before);
+  });
 });
 
 describe("generateLambdaLayerId", () => {
