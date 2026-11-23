@@ -1,5 +1,5 @@
 import { App, Fn, Stack, Token } from "aws-cdk-lib";
-import { Match, Template } from "aws-cdk-lib/assertions";
+import { Annotations, Match, Template } from "aws-cdk-lib/assertions";
 import { Key } from "aws-cdk-lib/aws-kms";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
@@ -1248,5 +1248,126 @@ describe("setEnvironment", () => {
         },
       },
     });
+  });
+});
+
+describe("low memory warning", () => {
+  const lowMemoryWarning = (name: string, memory: number) =>
+    Match.stringLikeRegexp(
+      `^Function ${name} has ${memory} MB of memory, below the recommended minimum of 256 MB \\(lambda_low_memory\\)\\. The Datadog Lambda Extension and tracer add memory overhead \\(about 70 MB for Python\\), which can cause out-of-memory errors and timeouts\\. Increase the function's memory to at least 256 MB, or set suppressLowMemoryWarning to true to silence this warning\\.`,
+    );
+  const anyLowMemoryWarning = Match.stringLikeRegexp("lambda_low_memory");
+
+  function setup(
+    functionProps: Partial<lambda.FunctionProps> = {},
+    suppressLowMemoryWarning?: boolean,
+  ): { stack: Stack; hello: lambda.Function } {
+    const app = new App();
+    const stack = new Stack(app, "stack", { env: { region: "us-east-1" } });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+      ...functionProps,
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerVersion: 100,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+      suppressLowMemoryWarning,
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    return { stack, hello };
+  }
+
+  it("warns when memory is below 256 MB and still instruments the function", () => {
+    const { stack } = setup({ memorySize: 128, functionName: "my-small-fn" });
+    Annotations.fromStack(stack).hasWarning("/stack/HelloHandler", lowMemoryWarning("my-small-fn", 128));
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Handler: "datadog_lambda.handler.handler",
+      Layers: Match.arrayWith([Match.stringLikeRegexp("Datadog-Extension")]),
+    });
+  });
+
+  it("warns at 255 MB", () => {
+    const { stack } = setup({ memorySize: 255 });
+    Annotations.fromStack(stack).hasWarning("/stack/HelloHandler", lowMemoryWarning("stack/HelloHandler", 255));
+  });
+
+  it("does not warn at 256 MB", () => {
+    const { stack } = setup({ memorySize: 256 });
+    Annotations.fromStack(stack).hasNoWarning("*", anyLowMemoryWarning);
+  });
+
+  it("warns when memory is not set, since the default is 128 MB", () => {
+    const { stack } = setup();
+    Annotations.fromStack(stack).hasWarning("/stack/HelloHandler", lowMemoryWarning("stack/HelloHandler", 128));
+  });
+
+  it("does not warn when memory is an unresolved token", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", { env: { region: "us-east-1" } });
+    const hello = new lambda.Function(stack, "HelloHandler", {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    });
+    (hello.node.defaultChild as lambda.CfnFunction).memorySize = Token.asNumber(Fn.ref("MemoryParam"));
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerVersion: 100,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+    });
+    datadogLambda.addLambdaFunctions([hello]);
+    Annotations.fromStack(stack).hasNoWarning("*", anyLowMemoryWarning);
+  });
+
+  it("does not warn when suppressLowMemoryWarning is true", () => {
+    const { stack } = setup({ memorySize: 128 }, true);
+    Annotations.fromStack(stack).hasNoWarning("*", anyLowMemoryWarning);
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      Handler: "datadog_lambda.handler.handler",
+    });
+  });
+
+  it("warns for low-memory SingletonFunctions", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", { env: { region: "us-east-1" } });
+    const singleton = new lambda.SingletonFunction(stack, "Singleton", {
+      uuid: "00000000-0000-0000-0000-000000000000",
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+      memorySize: 128,
+    });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerVersion: 100,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+    });
+    datadogLambda.addLambdaFunctions([singleton]);
+    Annotations.fromStack(stack).hasWarning("/stack/Singleton", lowMemoryWarning("stack/Singleton", 128));
+  });
+
+  it("checks each function across multiple addLambdaFunctions calls", () => {
+    const app = new App();
+    const stack = new Stack(app, "stack", { env: { region: "us-east-1" } });
+    const props = {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromInline("test"),
+      handler: "hello.handler",
+    };
+    const big = new lambda.Function(stack, "Big", { ...props, memorySize: 1024 });
+    const small = new lambda.Function(stack, "Small", { ...props, memorySize: 128 });
+    const datadogLambda = new DatadogLambda(stack, "Datadog", {
+      pythonLayerVersion: 100,
+      extensionLayerVersion: EXTENSION_LAYER_VERSION,
+      apiKey: "1234",
+    });
+    datadogLambda.addLambdaFunctions([big]);
+    datadogLambda.addLambdaFunctions([small]);
+    const annotations = Annotations.fromStack(stack);
+    annotations.hasNoWarning("/stack/Big", anyLowMemoryWarning);
+    annotations.hasWarning("/stack/Small", lowMemoryWarning("stack/Small", 128));
   });
 });

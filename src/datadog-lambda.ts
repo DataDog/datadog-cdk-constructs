@@ -6,7 +6,7 @@
  * Copyright 2020-2026 Datadog, Inc.
  */
 
-import { Tags, Stack } from "aws-cdk-lib";
+import { Annotations, Tags, Stack, Token } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -31,6 +31,10 @@ import {
   DD_TAGS,
   siteList,
   invalidSiteError,
+  DEFAULT_LAMBDA_MEMORY_MB,
+  LOW_MEMORY_REASON,
+  LOW_MEMORY_THRESHOLD_MB,
+  LowMemoryWarningId,
 } from "./index";
 import { DatadogAppSecMode, LambdaFunction } from "./interfaces";
 import { setTags } from "./tag";
@@ -176,6 +180,9 @@ export class DatadogLambda extends Construct {
       if (baseProps.sourceCodeIntegration) {
         this.addGitCommitMetadata([lambdaFunction]);
       }
+      if (this.props.suppressLowMemoryWarning !== true) {
+        warnIfLowMemory(lambdaFunction);
+      }
       this.lambdas.push(lambdaFunction);
     }
   }
@@ -253,11 +260,54 @@ export class DatadogLambda extends Construct {
 
 export function addCdkConstructVersionTag(lambdaFunction: LambdaFunction): void {
   log.debug(`Adding CDK Construct version tag: ${versionJson.version}`);
-  Tags.of(
-    lambdaFunction instanceof lambda.SingletonFunction ? lambdaFunction.permissionsNode.defaultChild! : lambdaFunction,
-  ).add(TagKeys.CDK, `v${versionJson.version}`, {
+  Tags.of(getCfnFunction(lambdaFunction) ?? lambdaFunction).add(TagKeys.CDK, `v${versionJson.version}`, {
     includeResourceTypes: ["AWS::Lambda::Function"],
   });
+}
+
+function getCfnFunction(lambdaFunction: LambdaFunction): lambda.CfnFunction | undefined {
+  return (lambdaFunction instanceof lambda.SingletonFunction ? lambdaFunction.permissionsNode : lambdaFunction.node)
+    .defaultChild as lambda.CfnFunction | undefined;
+}
+
+/**
+ * Returns the configured memory size (in MB) of the function, the Lambda default when it is not set,
+ * or undefined when it is an unresolved token that can't be checked at synth time.
+ */
+export function getLambdaMemorySize(lambdaFunction: LambdaFunction): number | undefined {
+  const cfnFunction = getCfnFunction(lambdaFunction);
+  if (cfnFunction === undefined) {
+    return undefined;
+  }
+  const memorySize = cfnFunction.memorySize;
+  if (memorySize === undefined) {
+    return DEFAULT_LAMBDA_MEMORY_MB;
+  }
+  if (Token.isUnresolved(memorySize)) {
+    return undefined;
+  }
+  return memorySize;
+}
+
+function getFunctionDisplayName(lambdaFunction: LambdaFunction): string {
+  const cfnFunction = getCfnFunction(lambdaFunction);
+  const functionName = cfnFunction?.functionName;
+  if (functionName !== undefined && !Token.isUnresolved(functionName)) {
+    return functionName;
+  }
+  return lambdaFunction.node.path;
+}
+
+export function warnIfLowMemory(lambdaFunction: LambdaFunction): void {
+  const memorySize = getLambdaMemorySize(lambdaFunction);
+  if (memorySize === undefined || memorySize >= LOW_MEMORY_THRESHOLD_MB) {
+    return;
+  }
+  const functionName = getFunctionDisplayName(lambdaFunction);
+  Annotations.of(lambdaFunction).addWarningV2(
+    LowMemoryWarningId,
+    `Function ${functionName} has ${memorySize} MB of memory, below the recommended minimum of ${LOW_MEMORY_THRESHOLD_MB} MB (${LOW_MEMORY_REASON}). The Datadog Lambda Extension and tracer add memory overhead (about 70 MB for Python), which can cause out-of-memory errors and timeouts. Increase the function's memory to at least ${LOW_MEMORY_THRESHOLD_MB} MB, or set suppressLowMemoryWarning to true to silence this warning.`,
+  );
 }
 
 function setTagsForFunction(lambdaFunction: LambdaFunction, props: DatadogLambdaProps): void {
