@@ -113,6 +113,11 @@ func NewAppStackWithDatadogManagedInstances(scope constructs.Construct, id strin
 			Apm: &ddcdkconstruct.APMFeatureConfig{
 				IsEnabled: jsii.Bool(true),
 			},
+			// Collect the logs of application containers that use the
+			// json-file log driver. Requires Datadog Agent 7.87.0 or later.
+			LogCollection: &ddcdkconstruct.LogCollectionFeatureConfig{
+				IsEnabled: jsii.Bool(true),
+			},
 		},
 	)
 	daemon := datadog.DaemonTaskDefinition(
@@ -155,6 +160,9 @@ func NewAppStackWithDatadogManagedInstances(scope constructs.Construct, id strin
 			Essential:      jsii.Bool(true),
 			MemoryLimitMiB: jsii.Number(256),
 			Environment:    &appEnvironment,
+			// The Datadog Agent daemon collects the logs of containers that
+			// use the json-file log driver.
+			Logging: awsecs.LogDrivers_JsonFile(&awsecs.JsonFileLogDriverProps{}),
 		},
 	)
 
